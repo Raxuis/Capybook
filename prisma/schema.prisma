@@ -12,3 +12,59 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id         String       @id @default(cuid())
+  email      String       @unique
+  name       String?
+  password   String
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  UserBook   UserBook[]
+  Session    Session[]
+  BookReview BookReview[]
+}
+
+model UserBook {
+  id            String   @id @default(cuid())
+  userId        String
+  bookId        String
+  isCurrentBook Boolean  @default(false)
+  progress      Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  User          User     @relation(fields: [userId], references: [id])
+  Book          Book     @relation(fields: [bookId], references: [id])
+}
+
+model Book {
+  id         String       @id @default(cuid())
+  isbn       String       @unique
+  title      String
+  author     String
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  UserBook   UserBook[]
+  BookReview BookReview[]
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  User      User     @relation(fields: [userId], references: [id])
+}
+
+model BookReview {
+  id        String   @id @default(cuid())
+  userId    String
+  bookId    String
+  rating    Int?
+  review    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  User      User     @relation(fields: [userId], references: [id])
+  Book      Book     @relation(fields: [bookId], references: [id])
+}
