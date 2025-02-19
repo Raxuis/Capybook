@@ -32,7 +32,7 @@ export default function RootLayout({
         <body
             className={`${inter.variable} ${manrope.variable} antialiased`}
         >
-        <Layout className="flex flex-col min-h-screen min-w-screen">
+        <Layout className="flex flex-col min-h-screen min-w-screen relative pt-28">
             <Header/>
             {children}
             <Dock/>
