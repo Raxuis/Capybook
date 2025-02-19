@@ -1,5 +1,5 @@
 import Image, {type StaticImageData} from "next/image";
-import {cn} from "@/lib/utils";
+import {cn} from "@/lib/cn";
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip";
 import Link from "next/link";
 
