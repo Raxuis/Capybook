@@ -13,7 +13,7 @@ export default {
         extend: {
             fontFamily: {
                 inter: ["Inter", "sans-serif"],
-                merriweather: ["Merriweather", "serif"]
+                manrope: ["manrope", "serif"]
             },
             colors: {
                 background: 'hsl(var(--background))',
