@@ -26,7 +26,7 @@ export default function Header() {
                         className="relative overflow-hidden font-inter group px-6 py-4 rounded-xl border border-gray-300 shadow-md transition-all duration-300
         bg-white/30 backdrop-blur-md hover:shadow-lg hover:border-amber-500"
                     >
-                        <Link href="/book-shelf" className="flex items-center gap-2 font-semibold text-lg">
+                        <Link href="/login" className="flex items-center gap-2 font-semibold text-lg">
                             <span
                                 className="relative z-10 text-gray-900 transition-colors duration-300 group-hover:text-amber-600">
                                 Commencer l&#39;aventure

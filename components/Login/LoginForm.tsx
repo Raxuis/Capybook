@@ -1,6 +1,6 @@
-import { signIn } from "@/auth"
+import {signIn} from "@/auth"
 
-export function SignInForm() {
+export function LoginForm() {
     return (
         <form
             action={async (formData) => {
@@ -10,13 +10,13 @@ export function SignInForm() {
         >
             <label>
                 Email
-                <input name="email" type="email" />
+                <input name="email" type="email"/>
             </label>
             <label>
                 Password
-                <input name="password" type="password" />
+                <input name="password" type="password"/>
             </label>
-            <button>Sign In</button>
+            <button>Login</button>
         </form>
     )
 }
