@@ -5,6 +5,9 @@ import React from "react";
 import {Layout} from "@/components/Layout";
 import Header from "../components/Header";
 import Dock from "@/components/Dock";
+import {ViewTransitions} from 'next-view-transitions'
+import {Toaster} from "@/components/ui/toaster";
+
 
 const inter = Inter({
     variable: "--font-inter",
@@ -19,7 +22,7 @@ const manrope = Manrope({
 });
 export const metadata: Metadata = {
     title: "Livre Track 📕",
-    description: "A simple way to track your reading progress.",
+    description: "La façon la plus simple de suivre votre progression en lecture.",
 };
 
 export default function RootLayout({
@@ -28,16 +31,19 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="en">
-        <body
-            className={`${inter.variable} ${manrope.variable} antialiased`}
-        >
-        <Layout className="flex flex-col min-h-screen min-w-screen relative pt-28">
-            <Header/>
-            {children}
-            <Dock/>
-        </Layout>
-        </body>
-        </html>
+        <ViewTransitions>
+            <html lang="en">
+            <body
+                className={`${inter.variable} ${manrope.variable} antialiased`}
+            >
+            <Layout className="flex flex-col min-h-screen min-w-screen relative pt-28">
+                <Header/>
+                {children}
+                <Dock/>
+                <Toaster/>
+            </Layout>
+            </body>
+            </html>
+        </ViewTransitions>
     );
 }

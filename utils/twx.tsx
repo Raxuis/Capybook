@@ -1,6 +1,6 @@
-import { createTwc } from 'react-twc';
-import { cn } from '@/lib/cn';
+import {createTwc} from 'react-twc';
+import {cn} from '@/lib/utils';
 
 export const twx = createTwc({
-    compose: cn
+    compose: cn,
 });
