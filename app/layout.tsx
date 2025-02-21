@@ -7,6 +7,7 @@ import Header from "../components/Header";
 import Dock from "@/components/Dock";
 import {ViewTransitions} from 'next-view-transitions'
 import {Toaster} from "@/components/ui/toaster";
+import {SessionProvider} from "next-auth/react";
 
 
 const inter = Inter({
@@ -31,19 +32,21 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <ViewTransitions>
-            <html lang="en">
-            <body
-                className={`${inter.variable} ${manrope.variable} antialiased`}
-            >
-            <Layout className="flex flex-col min-h-screen min-w-screen relative pt-28">
-                <Header/>
-                {children}
-                <Dock/>
-                <Toaster/>
-            </Layout>
-            </body>
-            </html>
-        </ViewTransitions>
+        <SessionProvider>
+            <ViewTransitions>
+                <html lang="en">
+                <body
+                    className={`${inter.variable} ${manrope.variable} antialiased`}
+                >
+                <Layout className="flex flex-col min-h-screen min-w-screen relative pt-28">
+                    <Header/>
+                    {children}
+                    <Dock/>
+                    <Toaster/>
+                </Layout>
+                </body>
+                </html>
+            </ViewTransitions>
+        </SessionProvider>
     );
 }

@@ -1,14 +1,41 @@
-import {signIn} from "@/auth"
+"use client";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
-import {Label} from "@/components/ui/label";
-import {useId} from "react";
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
 import {Link} from "next-view-transitions";
 import Image from "next/image";
+import {useForm} from "react-hook-form";
+import {z} from "zod";
+import {SignInSchema} from "@/utils/zod";
+import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 
 export default function LoginForm() {
-    const id = useId();
+    const form = useForm<z.infer<typeof SignInSchema>>({
+        defaultValues: {
+            email: "",
+            password: ""
+        }
+    })
+
+    async function onSubmit(values: z.infer<typeof SignInSchema>) {
+        if (values) {
+            try {
+                const response = await fetch("/api/login", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify(values),
+                });
+
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.error || "Login failed");
+
+                console.log("Login successful", data);
+            } catch (error) {
+                console.error(error);
+            }
+        }
+    }
+
     return (
         <Card className="p-4 max-w-xl mx-auto w-full mt-20">
             <div className="flex flex-col items-center gap-2">
@@ -27,29 +54,40 @@ export default function LoginForm() {
             </div>
 
             <CardContent>
-                <form className="space-y-5" action={async (formData) => {
-                    "use server"
-                    await signIn("credentials", formData)
-                }}>
-                    <div className="space-y-4">
-                        <div className="*:not-first:mt-2">
-                            <Label htmlFor={`${id}-email`}>Email</Label>
-                            <Input id={`${id}-email`} placeholder="john@doe.com" type="email" required/>
-                        </div>
-                        <div className="*:not-first:mt-2">
-                            <Label htmlFor={`${id}-password`}>Mot de passe</Label>
-                            <Input
-                                id={`${id}-password`}
-                                placeholder="Entrez votre mot de passe"
-                                type="password"
-                                required
-                            />
-                        </div>
-                    </div>
-                    <Button type="button" className="w-full">
-                        Se connecter
-                    </Button>
-                </form>
+                <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                        <FormField
+                            control={form.control}
+                            name="email"
+                            render={({field}) => (
+                                <FormItem>
+                                    <FormLabel>Email</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="john@doe.com" {...field} />
+                                    </FormControl>
+                                    <FormMessage/>
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="password"
+                            render={({field}) => (
+                                <FormItem>
+                                    <FormLabel>Mot de passe</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="Entrez votre mot de passe." {...field} />
+                                    </FormControl>
+                                    <FormMessage/>
+                                </FormItem>
+                            )}
+                        />
+                        <Button type="submit" className="w-full">
+                            Se connecter
+                        </Button>
+                    </form>
+                </Form>
             </CardContent>
             <CardFooter>
                 <p className="text-sm text-muted-foreground">
