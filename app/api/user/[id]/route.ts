@@ -46,5 +46,7 @@ export const GET = createZodRoute()
             return NextResponse.json({error: 'User not found'}, {status: 404});
         }
 
+        console.log(user)
+
         return NextResponse.json(user, {status: 200});
     });
