@@ -9,6 +9,7 @@ interface MagnetProps extends HTMLAttributes<HTMLDivElement> {
     inactiveTransition?: string;
     wrapperClassName?: string;
     innerClassName?: string;
+    parentRef?: React.RefObject<HTMLElement | null>; // Ajout d'un ref parent pour éviter que le bouton ne sorte du header
 }
 
 export const MagneticButton: React.FC<MagnetProps> = ({
@@ -20,6 +21,7 @@ export const MagneticButton: React.FC<MagnetProps> = ({
                                                           inactiveTransition = "transform 0.5s ease-in-out",
                                                           wrapperClassName = "",
                                                           innerClassName = "",
+                                                          parentRef, // 🔹 Ajout de la ref du parent
                                                           ...props
                                                       }) => {
     const [isActive, setIsActive] = useState<boolean>(false);
@@ -33,19 +35,27 @@ export const MagneticButton: React.FC<MagnetProps> = ({
         }
 
         const handleMouseMove = (e: MouseEvent) => {
-            if (!magnetRef.current) return;
+            if (!magnetRef.current || !parentRef?.current) return;
 
-            const {left, top, width, height} = magnetRef.current.getBoundingClientRect();
-            const centerX = left + width / 2;
-            const centerY = top + height / 2;
+            const magnetRect = magnetRef.current.getBoundingClientRect();
+            const parentRect = parentRef.current.getBoundingClientRect(); // 🔹 Dimensions du parent
+
+            const centerX = magnetRect.left + magnetRect.width / 2;
+            const centerY = magnetRect.top + magnetRect.height / 2;
 
             const distX = Math.abs(centerX - e.clientX);
             const distY = Math.abs(centerY - e.clientY);
 
-            if (distX < width / 2 + padding && distY < height / 2 + padding) {
+            if (distX < magnetRect.width / 2 + padding && distY < magnetRect.height / 2 + padding) {
                 setIsActive(true);
-                const offsetX = (e.clientX - centerX) / magnetStrength;
-                const offsetY = (e.clientY - centerY) / magnetStrength;
+
+                let offsetX = (e.clientX - centerX) / magnetStrength;
+                let offsetY = (e.clientY - centerY) / magnetStrength;
+
+                // 🔹 Empêcher le bouton de dépasser du parent
+                offsetX = Math.max(-magnetRect.left + parentRect.left, Math.min(offsetX, parentRect.right - magnetRect.right));
+                offsetY = Math.max(-magnetRect.top + parentRect.top, Math.min(offsetY, parentRect.bottom - magnetRect.bottom));
+
                 setPosition({x: offsetX, y: offsetY});
             } else {
                 setIsActive(false);
@@ -57,17 +67,13 @@ export const MagneticButton: React.FC<MagnetProps> = ({
         return () => {
             window.removeEventListener("mousemove", handleMouseMove);
         };
-    }, [padding, disabled, magnetStrength]);
+    }, [padding, disabled, magnetStrength, parentRef]);
 
     const transitionStyle = isActive ? activeTransition : inactiveTransition;
 
     return (
-        <div
-            ref={magnetRef}
-            className={wrapperClassName}
-            style={{position: "relative", display: "inline-block"}}
-            {...props}
-        >
+        <div ref={magnetRef} className={wrapperClassName}
+             style={{position: "relative", display: "inline-block"}} {...props}>
             <div
                 className={innerClassName}
                 style={{
