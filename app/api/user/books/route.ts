@@ -39,7 +39,6 @@ export const POST = createZodRoute()
       if (existingUserBook) {
         return NextResponse.json({ error: 'User already added this book' }, { status: 400 });
       }
-      console.log(book)
 
       await prisma.userBook.create({
         data: {

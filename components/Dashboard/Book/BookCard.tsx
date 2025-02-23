@@ -22,9 +22,6 @@ export default function BookCard({
   isInLibrary,
   isInWishlist,
 }: BookCardProps) {
-  console.log(book);
-  console.log(isInLibrary);
-  console.log(isInWishlist);
   return (
     <div
       className={cn(

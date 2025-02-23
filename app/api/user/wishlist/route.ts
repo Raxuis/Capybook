@@ -44,8 +44,6 @@ export const POST = createZodRoute()
         return NextResponse.json({ error: 'User already added this book to wishlist' }, { status: 400 });
       }
 
-      console.log(book)
-
       await prisma.userBookWishlist.create({
         data: {
           userId,
