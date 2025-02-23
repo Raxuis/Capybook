@@ -12,17 +12,17 @@ export function Dock() {
                 <div className="flex items-end overflow-x-auto rounded-3xl pl-2">
                     <AppIcon imgSrc={"/home.png"}
                              withoutBackground={true}
-                             tooltip="Home"
+                             tooltip="Accueil"
                              link="/"
                     />
                     <AppIcon imgSrc={"/progress.png"}
                              withoutBackground={true}
-                             tooltip="Your Reading Progress"
+                             tooltip="Votre progression"
                              link="/progress"
                     />
                     <AppIcon
                         imgSrc={"/list.png"}
-                        tooltip="The Book Shelf"
+                        tooltip="La bibliothèque"
                         link="/book-shelf"
                     />
                 </div>

@@ -28,8 +28,9 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  UserBook   UserBook[]
-  BookReview BookReview[]
+  UserBook         UserBook[]
+  BookReview       BookReview[]
+  UserBookWishlist UserBookWishlist[]
 }
 
 model Account {
@@ -83,15 +84,26 @@ model UserBook {
   Book          Book     @relation(fields: [bookId], references: [id])
 }
 
+model UserBookWishlist {
+  id        String   @id @default(cuid())
+  userId    String
+  bookId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  User      User     @relation(fields: [userId], references: [id])
+  Book      Book     @relation(fields: [bookId], references: [id])
+}
+
 model Book {
-  id         String       @id @default(cuid())
-  isbn       String       @unique
-  title      String
-  author     String
-  createdAt  DateTime     @default(now())
-  updatedAt  DateTime     @updatedAt
-  UserBook   UserBook[]
-  BookReview BookReview[]
+  id               String             @id @default(cuid())
+  isbn             String             @unique
+  title            String
+  author           String
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  UserBook         UserBook[]
+  BookReview       BookReview[]
+  UserBookWishlist UserBookWishlist[]
 }
 
 model BookReview {

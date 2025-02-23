@@ -9,6 +9,11 @@ type UserWithRelations = Prisma.UserGetPayload<{
                 Book: true
             }
         },
+        BookWishlist: {
+            include: {
+                Book: true
+            }
+        },
         BookReview: {
             include: {
                 Book: true

@@ -29,6 +29,11 @@ export const GET = createZodRoute()
                         Book: true
                     }
                 },
+                UserWishList: {
+                    include: {
+                        Book: true
+                    }
+                },
                 BookReview: {
                     include: {
                         Book: true
