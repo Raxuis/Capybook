@@ -15,8 +15,8 @@ const BookShelf = ({ userId }: { userId: string | null }) => {
     books,
     isError,
     isLoading,
-    addToLibrary,
-    addToWishlist,
+    toggleLibrary,
+    toggleWishlist,
     isInLibrary,
     isInWishlist
   } = useBooks(debouncedBookName, userId ?? undefined);
@@ -43,8 +43,8 @@ const BookShelf = ({ userId }: { userId: string | null }) => {
               <BookCard
                 key={book.key}
                 book={book}
-                addToLibrary={addToLibrary}
-                addToWishlist={addToWishlist}
+                toggleLibrary={toggleLibrary}
+                toggleWishlist={toggleWishlist}
                 isInLibrary={isInLibrary(book.key) ?? false}
                 isInWishlist={isInWishlist(book.key) ?? false}
               />

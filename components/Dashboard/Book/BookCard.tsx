@@ -8,8 +8,8 @@ import SimplifiedTooltip from "@/components/SimplifiedTooltip";
 type BookCardProps = {
   book: Book;
   className?: string;
-  addToLibrary: (book: Book) => void;
-  addToWishlist: (book: Book) => void;
+  toggleLibrary: (book: Book) => void;
+  toggleWishlist: (book: Book) => void;
   isInLibrary: boolean;
   isInWishlist: boolean;
 };
@@ -17,8 +17,8 @@ type BookCardProps = {
 export default function BookCard({
   book,
   className,
-  addToLibrary,
-  addToWishlist,
+  toggleLibrary,
+  toggleWishlist,
   isInLibrary,
   isInWishlist,
 }: BookCardProps) {
@@ -49,8 +49,8 @@ export default function BookCard({
               {book.first_publish_year}
             </span>
             <div className="flex gap-2 items-center">
-              <SimplifiedTooltip tooltipContent="Ajouter à ma bibliothèque" asChild>
-                <button onClick={() => addToLibrary(book)} disabled={isInLibrary}>
+              <SimplifiedTooltip tooltipContent={isInLibrary ? "Retirer de la bibliothèque" : "Ajouter à ma bibliothèque"} asChild>
+                <button onClick={() => toggleLibrary(book)}>
                   <Plus
                     size={24}
                     className={cn(
@@ -60,8 +60,10 @@ export default function BookCard({
                   />
                 </button>
               </SimplifiedTooltip>
-              <SimplifiedTooltip tooltipContent="Ajouter à ma liste de souhaits" asChild>
-                <button onClick={() => addToWishlist(book)} disabled={isInWishlist}>
+              <SimplifiedTooltip tooltipContent={
+                isInWishlist ? "Retirer de la liste de souhaits" : "Ajouter à ma liste de souhaits"
+              } asChild>
+                <button onClick={() => toggleWishlist(book)}>
                   {isInWishlist ? (
                     <FcLike size={24} className="duration-200" />
                   ) : (

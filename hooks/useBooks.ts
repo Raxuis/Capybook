@@ -31,31 +31,31 @@ export function useBooks(bookName: string | null, userId?: string) {
   const isInLibrary = (bookKey: string) => user?.UserBook.some((ub) => ub.Book.key === bookKey);
   const isInWishlist = (bookKey: string) => user?.UserBookWishlist.some((uw) => uw.Book.key === bookKey);
 
-  const addToLibrary = async (book: Book) => {
+  const toggleLibrary = async (book: Book) => {
     if (!userId) return;
     try {
-      await axios.post(
-        "/api/user/books",
-        { userId, bookKey: book.key },
-        { headers: { "Content-Type": "application/json" } }
-      );
+      if (isInLibrary(book.key)) {
+        await axios.delete(`/api/user/books`, { data: { userId, bookKey: book.key } });
+      } else {
+        await axios.post("/api/user/books", { userId, bookKey: book.key });
+      }
       await mutate(`/api/user/${userId}`);
     } catch (error) {
-      console.error("Erreur lors de l'ajout à la bibliothèque:", error);
+      console.error("Erreur lors de la modification de la bibliothèque:", error);
     }
   };
 
-  const addToWishlist = async (book: Book) => {
+  const toggleWishlist = async (book: Book) => {
     if (!userId) return;
     try {
-      await axios.post(
-        "/api/user/wishlist",
-        { userId, bookKey: book.key },
-        { headers: { "Content-Type": "application/json" } }
-      );
+      if (isInWishlist(book.key)) {
+        await axios.delete(`/api/user/wishlist`, { data: { userId, bookKey: book.key } });
+      } else {
+        await axios.post("/api/user/wishlist", { userId, bookKey: book.key });
+      }
       await mutate(`/api/user/${userId}`);
     } catch (error) {
-      console.error("Erreur lors de l'ajout à la wishlist:", error);
+      console.error("Erreur lors de la modification de la wishlist:", error);
     }
   };
 
@@ -66,7 +66,7 @@ export function useBooks(bookName: string | null, userId?: string) {
     isUserLoading,
     isInLibrary,
     isInWishlist,
-    addToLibrary,
-    addToWishlist,
+    toggleLibrary,
+    toggleWishlist,
   };
 }
