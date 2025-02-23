@@ -22,15 +22,14 @@ export default function Header() {
             <Layout className="flex flex-row items-center justify-between py-4 relative">
                 <Link href="/" className="flex items-center gap-3 font-manrope text-2xl font-bold text-gray-900">
                     <Image src="/icon.png" alt="Livre Track Icon" width={40} height={40}
-                           className="rounded-lg shadow-md"/>
+                           className="rounded-full p-1 shadow-md"/>
                     Livre Track
                 </Link>
                 <MagneticButton parentRef={headerRef}>
                     <Button
                         variant="outline"
                         asChild
-                        className="relative overflow-hidden font-inter group p-6 rounded-full border border-gray-300 shadow-md transition-all duration-300
-        bg-white/30 backdrop-blur-md hover:shadow-lg hover:border-amber-500"
+                        className="relative overflow-hidden font-inter group p-6 rounded-full border border-gray-300 shadow-md transition-all duration-300 bg-white/30 backdrop-blur-md hover:shadow-lg hover:border-amber-500"
                     >
                         <Link href={
                             session.data ? "/dashboard" : "/login"

@@ -15,10 +15,27 @@ export const GET = createZodRoute()
         if (!id) {
             return NextResponse.json({error: 'No id provided'}, {status: 400});
         }
-        const user = await prisma.user.findUnique({
-            where: {id}
-        })
 
+        const user = await prisma.user.findUnique({
+            where: {id},
+            select: {
+                id: true,
+                email: true,
+                username: true,
+                name: true,
+                image: true,
+                UserBook: {
+                    include: {
+                        Book: true
+                    }
+                },
+                BookReview: {
+                    include: {
+                        Book: true
+                    }
+                }
+            }
+        })
 
         if (!user) {
             return NextResponse.json({error: 'User not found'}, {status: 404});
