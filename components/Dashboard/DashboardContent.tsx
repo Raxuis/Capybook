@@ -2,7 +2,7 @@
 
 import React from 'react';
 import {useUser} from "@/hooks/useUser";
-import DashboardBadge from "@/app/dashboard/DashboardBadge";
+import DashboardBadge from "@/components/Dashboard/DashboardBadge";
 import {Book, Star} from "lucide-react";
 
 interface DashboardContentProps {

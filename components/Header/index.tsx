@@ -17,7 +17,7 @@ export default function Header() {
     return (
         <header
             ref={headerRef}
-            className="fixed top-4 backdrop-blur-lg border border-gray-200 rounded-full max-w-5xl w-full mx-auto"
+            className="fixed top-4 backdrop-blur-lg border border-gray-200 rounded-full max-w-5xl w-full mx-auto z-50"
         >
             <Layout className="flex flex-row items-center justify-between py-4 relative">
                 <Link href="/" className="flex items-center gap-3 font-manrope text-2xl font-bold text-gray-900">
