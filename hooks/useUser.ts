@@ -25,7 +25,7 @@ type UserWithRelations = Prisma.UserGetPayload<{
 
 export function useUser(userId?: string) {
     useEffect(() => {
-        console.log("🔍 Recherche de l'utilisateur... :", userId);
+        console.log("🔍 Recherche de l'utilisateur... ");
     })
     const {data, error, isLoading, isValidating} = useSWR<UserWithRelations>(
         `/api/user/${userId || null}`,

@@ -1,9 +1,11 @@
 import { cn } from "@/lib/utils";
 import { Book } from "@/hooks/useBooks";
 import { Badge } from "@/components/ui/badge";
-import { Plus } from "lucide-react";
+import { BookOpen, Plus, X } from "lucide-react";
 import { FcLikePlaceholder, FcLike } from "react-icons/fc";
 import SimplifiedTooltip from "@/components/SimplifiedTooltip";
+import Image from "next/image";
+import {Button} from "@/components/ui/button";
 
 type BookCardProps = {
   book: Book;
@@ -15,87 +17,98 @@ type BookCardProps = {
 };
 
 export default function BookCard({
-  book,
-  className,
-  toggleLibrary,
-  toggleWishlist,
-  isInLibrary,
-  isInWishlist,
-}: BookCardProps) {
+                                   book,
+                                   className,
+                                   toggleLibrary,
+                                   toggleWishlist,
+                                   isInLibrary,
+                                   isInWishlist,
+                                 }: BookCardProps) {
+  const formatList = (items?: string[]) => {
+    if (!items || items.length === 0) return "Non disponible";
+    return items.join(", ");
+  };
+
   return (
-    <div
-      className={cn(
-        "relative flex gap-8 p-8 w-full items-center justify-start rounded-2xl border border-transparent bg-neutral-100 backdrop-blur-[10px] transition duration-150 ease-in-out hover:scale-105 hover:border-neutral-500/20 dark:bg-neutral-800 group",
-        className,
-      )}
-    >
-      {book.cover_i && (
-        <div className="rounded-sm">
-          <img
-            src={`https://covers.openlibrary.org/b/id/${book.cover_i}-S.jpg`}
-            alt={book.title}
-            className="h-full w-full object-cover"
-          />
-        </div>
-      )}
-      <div className="flex flex-col gap-2 w-full text-neutral-700 dark:text-neutral-300">
-        <div className="flex items-center justify-between">
-          <p className="font-bold text-lg w-3/4">{book.title}</p>
-          <div className="flex flex-col gap-1 items-end">
-            <span className="text-sm text-neutral-400 dark:text-neutral-500">
-              {book.first_publish_year}
-            </span>
-            <div className="flex gap-2 items-center">
-              <SimplifiedTooltip tooltipContent={isInLibrary ? "Retirer de la bibliothèque" : "Ajouter à ma bibliothèque"} asChild>
-                <button onClick={() => toggleLibrary(book)}>
-                  <Plus
-                    size={24}
-                    className={cn(
-                      "duration-200",
-                      isInLibrary ? "text-amber-500" : "text-amber-500/50"
-                    )}
-                  />
-                </button>
-              </SimplifiedTooltip>
-              <SimplifiedTooltip tooltipContent={
-                isInWishlist ? "Retirer de la liste de souhaits" : "Ajouter à ma liste de souhaits"
-              } asChild>
-                <button onClick={() => toggleWishlist(book)}>
-                  {isInWishlist ? (
-                    <FcLike size={24} className="duration-200" />
-                  ) : (
-                    <FcLikePlaceholder size={24} className="duration-200" />
+      <div className={cn("flex flex-col h-full border rounded-lg overflow-hidden bg-white shadow-sm hover:shadow-md transition-shadow", className)}>
+        <div className="relative">
+          {book.cover_i ? (
+              <div className="aspect-[2/3] w-full bg-gray-100 relative">
+                <Image
+                    src={`https://covers.openlibrary.org/b/id/${book.cover_i}-M.jpg`}
+                    alt={book.title}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                />
+              </div>
+          ) : (
+              <div className="aspect-[2/3] w-full bg-gray-100 flex items-center justify-center">
+                <BookOpen className="h-16 w-16 text-gray-300" />
+              </div>
+          )}
+
+          <div className="absolute top-2 right-2 flex flex-col gap-2">
+            <SimplifiedTooltip tooltipContent={isInLibrary ? "Retirer de ma bibliothèque" : "Ajouter à ma bibliothèque"} asChild>
+              <Button
+                  onClick={() => toggleLibrary(book)}
+                  className={cn(
+                      "h-8 w-8 flex items-center justify-center rounded-full",
+                      isInLibrary
+                          ? "bg-primary text-white hover:bg-primary/90"
+                          : "bg-white text-gray-700 hover:bg-gray-100 border"
                   )}
-                </button>
-              </SimplifiedTooltip>
-            </div>
+              >
+                {isInLibrary ? <X size={16} /> : <Plus size={16} />}
+              </Button>
+            </SimplifiedTooltip>
+
+            <SimplifiedTooltip tooltipContent={isInWishlist ? "Retirer des favoris" : "Ajouter aux favoris"} asChild>
+              <Button
+                  onClick={() => toggleWishlist(book)}
+                  className="h-8 w-8 flex items-center justify-center bg-white rounded-full border hover:bg-gray-100"
+              >
+                {isInWishlist ? <FcLike size={18} /> : <FcLikePlaceholder size={18} />}
+              </Button>
+            </SimplifiedTooltip>
           </div>
         </div>
-        <div className="flex justify-between">
-          <div className="flex flex-col gap-1">
-            <p className="text-xs">Langues disponibles :</p>
-            <div className="flex gap-1">
-              {book.language &&
-                book.language.map((lang) => (
-                  <Badge key={lang} className="text-[10px]">
-                    {lang}
-                  </Badge>
-                ))}
-            </div>
+
+        <div className="flex flex-col flex-grow p-4">
+          <div className="mb-auto">
+            <h3 className="font-semibold text-lg line-clamp-2 mb-1">{book.title}</h3>
+            {book.first_publish_year && (
+                <Badge variant="outline" className="mb-3">
+                  {book.first_publish_year}
+                </Badge>
+            )}
           </div>
-          <div className="flex flex-col gap-1 items-end">
-            <p className="text-xs">Auteur :</p>
-            <div className="flex gap-1">
-              {book.author_name &&
-                book.author_name.map((author) => (
-                  <Badge key={author} className="text-[10px]">
-                    {author}
-                  </Badge>
-                ))}
+
+          <div className="mt-4 space-y-2 text-sm">
+            <div>
+              <p className="text-gray-500 font-medium mb-1">Auteur :</p>
+              <p className="line-clamp-2">{formatList(book.author_name)}</p>
             </div>
+
+            {book.language && book.language.length > 0 && (
+                <div>
+                  <p className="text-gray-500 font-medium mb-1">Langues :</p>
+                  <div className="flex flex-wrap gap-1">
+                    {book.language.slice(0, 3).map((lang, idx) => (
+                        <Badge key={idx} variant="secondary" className="text-xs">
+                          {lang}
+                        </Badge>
+                    ))}
+                    {book.language.length > 3 && (
+                        <Badge variant="secondary" className="text-xs">
+                          +{book.language.length - 3}
+                        </Badge>
+                    )}
+                  </div>
+                </div>
+            )}
           </div>
         </div>
       </div>
-    </div>
   );
 }

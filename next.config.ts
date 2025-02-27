@@ -5,24 +5,8 @@ const nextConfig: NextConfig = {
         remotePatterns: [
             {
                 protocol: 'https',
-                hostname: 'cdn.dribbble.com',
+                hostname: 'covers.openlibrary.org',
             },
-            {
-                protocol: 'https',
-                hostname: 'upload.wikimedia.org',
-            },
-            {
-                protocol: 'https',
-                hostname: 'encrypted-tbn0.gstatic.com',
-            },
-            {
-                protocol: 'https',
-                hostname: 'www.01net.com',
-            },
-            {
-                protocol: 'https',
-                hostname: 'logo-marque.com',
-            }
         ],
     },
 

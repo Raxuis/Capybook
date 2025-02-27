@@ -4,7 +4,7 @@ import {useSession, signOut} from 'next-auth/react';
 import {Layout} from "@/components/Layout";
 import {Link} from "next-view-transitions";
 import {Button} from "@/components/ui/button";
-import {Sparkles, UserRoundIcon} from "lucide-react";
+import {Sparkles} from "lucide-react";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -12,7 +12,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import {Avatar, AvatarFallback} from "@/components/ui/avatar";
+import {Avatar, AvatarImage} from "@/components/ui/avatar";
 import Image from "next/image";
 import {useAuth} from "@/hooks/useAuth";
 
@@ -53,12 +53,9 @@ export default function Header() {
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <Button variant="outline" size="icon" className="rounded-full">
-                                    <Avatar>
-                                        <AvatarFallback className="flex items-center justify-center w-full h-full">
-                                            {session.user.name ? <UserRoundIcon size={16} className="opacity-60"
-                                                                                aria-hidden="true"/> : "JD"}
-                                        </AvatarFallback>
-                                        <span className="sr-only">Toggle user menu</span>
+
+                                    <Avatar className="h-8 w-8 border-1 border-gray-300">
+                                        <AvatarImage src="/user.svg" alt="Profile picture"/>
                                     </Avatar>
                                 </Button>
                             </DropdownMenuTrigger>
