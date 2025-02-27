@@ -1,20 +1,34 @@
 'use client';
 
+import {useState} from "react";
 import {useUser} from "@/hooks/useUser";
 import DashboardBadge from "@/components/Dashboard/DashboardBadge";
-import {Book, Star, Loader2, AlertCircle, Library, BookOpen, Heart} from "lucide-react";
+import {Book, Star, Loader2, AlertCircle, Library, BookOpen, Heart, Info} from "lucide-react";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import {Avatar, AvatarFallback} from "@/components/ui/avatar";
 import {Badge} from "@/components/ui/badge";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {formatList} from "@/utils/formatList";
+import {Book as BookType, useBooks} from "@/hooks/useBooks";
+import {Button} from "@/components/ui/button";
+import axios from "axios";
+import BookModal from "@/components/Dashboard/BookModal";
 
 interface DashboardContentProps {
     userId?: string;
 }
 
+export type MoreInfoBook = BookType & {
+    description?: string;
+    subjects: string[];
+    cover?: string;
+}
+
 export default function DashboardContent({userId}: DashboardContentProps) {
     const {user, isError, isValidating, isLoading} = useUser(userId);
+    const [selectedBook, setSelectedBook] = useState<MoreInfoBook | null>(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const {isInLibrary, isInWishlist, toggleLibrary, toggleWishlist} = useBooks(undefined, userId);
 
     if (isLoading || isValidating) {
         return (
@@ -46,6 +60,23 @@ export default function DashboardContent({userId}: DashboardContentProps) {
     const hasReviews = user.BookReview.length > 0;
     const hasWishlist = user.UserBookWishlist.length > 0;
     const userInitials = user.username.slice(0, 2).toUpperCase();
+
+    const openBookModal = async (book: BookType) => {
+        try {
+            const bookInfos = await axios.get(`/api/book?bookKey=${book.key}`).then(res => res.data);
+            if (!bookInfos) return;
+            const bookForModal = {
+                ...book,
+                description: bookInfos.description.value,
+                subjects: bookInfos.subjects,
+            };
+            console.log(bookForModal);
+            setSelectedBook(bookForModal);
+            setIsModalOpen(true);
+        } catch (error) {
+            console.error("Erreur lors du chargement du livre :", error);
+        }
+    };
 
     return (
         <div className="max-w-4xl mx-auto p-4 space-y-6">
@@ -137,9 +168,19 @@ export default function DashboardContent({userId}: DashboardContentProps) {
                             {user.UserBook.map(userBook => (
                                 <Card key={userBook.id}
                                       className="overflow-hidden transition-all hover:shadow-md group">
-                                    <CardHeader className="p-4 pb-2 bg-primary/5">
+                                    <CardHeader
+                                        className="p-4 pb-2 bg-primary/5 flex flex-row items-center justify-between space-y-0">
                                         <CardTitle
                                             className="text-lg font-medium line-clamp-1">{userBook.Book.title}</CardTitle>
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            className="h-8 w-8 p-0 pt-0.5"
+                                            onClick={() => openBookModal(userBook.Book as BookType)}
+                                        >
+                                            <Info className="h-4 w-4"/>
+                                            <span className="sr-only">Détails</span>
+                                        </Button>
                                     </CardHeader>
                                     <CardContent className="p-4 pt-2 flex items-center justify-between">
                                         <div className="flex items-center">
@@ -172,9 +213,19 @@ export default function DashboardContent({userId}: DashboardContentProps) {
                             {user.UserBookWishlist.map(wishlistItem => (
                                 <Card key={wishlistItem.id}
                                       className="overflow-hidden transition-all hover:shadow-md group border-rose-100 hover:border-rose-200">
-                                    <CardHeader className="p-4 pb-2 bg-rose-50">
+                                    <CardHeader
+                                        className="p-4 pb-2 bg-rose-50 flex flex-row items-center justify-between space-y-0">
                                         <CardTitle
                                             className="text-lg font-medium line-clamp-1">{wishlistItem.Book.title}</CardTitle>
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            className="h-8 w-8 p-0 pt-0.5"
+                                            onClick={() => openBookModal(wishlistItem.Book as BookType)}
+                                        >
+                                            <Info className="h-4 w-4"/>
+                                            <span className="sr-only">Détails</span>
+                                        </Button>
                                     </CardHeader>
                                     <CardContent className="p-4 pt-2 flex items-center justify-between space-x-2">
                                         <div className="flex items-center">
@@ -210,11 +261,22 @@ export default function DashboardContent({userId}: DashboardContentProps) {
                             {user.BookReview.map(review => (
                                 <Card key={review.id} className="overflow-hidden">
                                     <CardHeader
-                                        className="p-4 pb-2 flex flex-row items-start justify-between bg-primary/5">
+                                        className="p-4 pb-2 flex flex-row items-center justify-between bg-primary/5 space-y-0">
                                         <CardTitle className="text-lg font-medium">{review.Book.title}</CardTitle>
-                                        <div className="flex items-center bg-white px-2 py-1 rounded-full">
-                                            <Star className="h-3 w-3 text-amber-500 mr-1 inline-block"/>
-                                            <span className="text-sm font-bold">{review.rating}/5</span>
+                                        <div className="flex items-center">
+                                            <div className="flex items-center bg-white px-2 py-1 rounded-full mr-2">
+                                                <Star className="h-3 w-3 text-amber-500 mr-1 inline-block"/>
+                                                <span className="text-sm font-bold">{review.rating}/5</span>
+                                            </div>
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className="h-8 w-8 p-0 pt-0.5"
+                                                onClick={() => openBookModal(review.Book as BookType)}
+                                            >
+                                                <Info className="h-4 w-4"/>
+                                                <span className="sr-only">Détails</span>
+                                            </Button>
                                         </div>
                                     </CardHeader>
                                     <CardContent className="p-4">
@@ -237,6 +299,17 @@ export default function DashboardContent({userId}: DashboardContentProps) {
                     )}
                 </TabsContent>
             </Tabs>
+
+            {/* Modal pour les détails du livre */}
+            <BookModal
+                book={selectedBook}
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                isInLibrary={isInLibrary}
+                isInWishlist={isInWishlist}
+                toggleLibrary={toggleLibrary}
+                toggleWishlist={toggleWishlist}
+            />
         </div>
     );
 }
