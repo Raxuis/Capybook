@@ -8,7 +8,9 @@ const UserBookSchema = z.object({
     book: z.object(
         {
             key: z.string(),
-            title: z.string()
+            title: z.string(),
+            author_name: z.array(z.string()).optional(),
+            cover_i: z.number().optional(),
         }
     ),
 });
@@ -33,7 +35,12 @@ export const POST = createZodRoute()
 
             if (!newBook) {
                 newBook = await prisma.book.create({
-                    data: {key: book.key, title: book.title}
+                    data: {
+                        key: book.key,
+                        title: book.title,
+                        authors: book.author_name,
+                        cover: "https://covers.openlibrary.org/b/id/" + book.cover_i + "-M.jpg"
+                    }
                 });
             }
 
@@ -54,7 +61,7 @@ export const POST = createZodRoute()
 
             return NextResponse.json(
                 {
-                    message: `User with id: ${userId} added book with key: ${book.key} and title: ${book.title}`
+                    message: `User with id: ${userId} added book with title: ${book.title}`
                 }, {status: 201});
         } catch (error) {
             if (error instanceof z.ZodError) {
@@ -86,7 +93,12 @@ export const DELETE = createZodRoute()
 
             if (!newBook) {
                 newBook = await prisma.book.create({
-                    data: {key: book.key, title: book.title}
+                    data: {
+                        key: book.key,
+                        title: book.title,
+                        authors: book.author_name,
+                        cover: "https://covers.openlibrary.org/b/id/" + book.cover_i + "-M.jpg"
+                    }
                 });
             }
 

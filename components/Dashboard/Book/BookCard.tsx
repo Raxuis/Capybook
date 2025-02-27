@@ -6,6 +6,7 @@ import { FcLikePlaceholder, FcLike } from "react-icons/fc";
 import SimplifiedTooltip from "@/components/SimplifiedTooltip";
 import Image from "next/image";
 import {Button} from "@/components/ui/button";
+import {formatList} from "@/utils/formatList";
 
 type BookCardProps = {
   book: Book;
@@ -24,10 +25,6 @@ export default function BookCard({
                                    isInLibrary,
                                    isInWishlist,
                                  }: BookCardProps) {
-  const formatList = (items?: string[]) => {
-    if (!items || items.length === 0) return "Non disponible";
-    return items.join(", ");
-  };
 
   return (
       <div className={cn("flex flex-col h-full border rounded-lg overflow-hidden bg-white shadow-sm hover:shadow-md transition-shadow", className)}>
@@ -86,7 +83,7 @@ export default function BookCard({
 
           <div className="mt-4 space-y-2 text-sm">
             <div>
-              <p className="text-gray-500 font-medium mb-1">Auteur :</p>
+              <p className="text-gray-500 font-medium mb-1">Auteur(s) :</p>
               <p className="line-clamp-2">{formatList(book.author_name)}</p>
             </div>
 

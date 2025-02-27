@@ -8,7 +8,9 @@ const UserWishlistSchema = z.object({
     book: z.object(
         {
             key: z.string(),
-            title: z.string()
+            title: z.string(),
+            author_name: z.array(z.string()).optional(),
+            cover_i: z.number().optional(),
         }
     ),
 });
@@ -27,7 +29,7 @@ export const POST = createZodRoute()
                 return NextResponse.json({error: 'User does not exist'}, {status: 400});
             }
 
-            if (!book || !book.key || !book.title) {
+            if (!book) {
                 return NextResponse.json({error: 'Book is required'}, {status: 400});
             }
 
@@ -37,7 +39,12 @@ export const POST = createZodRoute()
 
             if (!newBook) {
                 newBook = await prisma.book.create({
-                    data: {key: book.key, title: book.title}
+                    data: {
+                        key: book.key,
+                        title: book.title,
+                        authors: book.author_name,
+                        cover: "https://covers.openlibrary.org/b/id/" + book.cover_i + "-M.jpg"
+                    }
                 });
             }
 
@@ -93,7 +100,12 @@ export const DELETE = createZodRoute()
 
             if (!newBook) {
                 newBook = await prisma.book.create({
-                    data: {key: book.key, title: book.title}
+                    data: {
+                        key: book.key,
+                        title: book.title,
+                        authors: book.author_name,
+                        cover: "https://covers.openlibrary.org/b/id/" + book.cover_i + "-M.jpg"
+                    }
                 });
             }
 

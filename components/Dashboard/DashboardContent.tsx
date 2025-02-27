@@ -7,6 +7,7 @@ import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import {Avatar, AvatarFallback} from "@/components/ui/avatar";
 import {Badge} from "@/components/ui/badge";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
+import {formatList} from "@/utils/formatList";
 
 interface DashboardContentProps {
     userId?: string;
@@ -144,7 +145,7 @@ export default function DashboardContent({userId}: DashboardContentProps) {
                                         <div className="flex items-center">
                                             <BookOpen className="h-4 w-4 mr-2 text-muted-foreground"/>
                                             <span className="text-sm text-muted-foreground">
-                                                {userBook.Book.author || "Auteur inconnu"}
+                                                {userBook.Book.authors || "Auteur inconnu"}
                                             </span>
                                         </div>
                                         <Badge
@@ -175,17 +176,18 @@ export default function DashboardContent({userId}: DashboardContentProps) {
                                         <CardTitle
                                             className="text-lg font-medium line-clamp-1">{wishlistItem.Book.title}</CardTitle>
                                     </CardHeader>
-                                    <CardContent className="p-4 pt-2 flex items-center justify-between">
+                                    <CardContent className="p-4 pt-2 flex items-center justify-between space-x-2">
                                         <div className="flex items-center">
                                             <BookOpen className="h-4 w-4 mr-2 text-muted-foreground"/>
                                             <span className="text-sm text-muted-foreground">
-                                                {wishlistItem.Book.author || "Auteur inconnu"}
+                                                {formatList(wishlistItem.Book.authors) || "Auteur(s) inconnu(s)"}
                                             </span>
                                         </div>
                                         <div className="flex items-center">
                                             <Badge
                                                 className="text-xs bg-rose-100 group-hover:bg-rose-200 cursor-default text-rose-700 rounded-full">
-                                                Souhaité depuis le {new Date(wishlistItem.createdAt).toLocaleDateString()}
+                                                Souhaité depuis
+                                                le {new Date(wishlistItem.createdAt).toLocaleDateString()}
                                             </Badge>
                                         </div>
                                     </CardContent>
