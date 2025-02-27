@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { useDebounce } from "@uidotdev/usehooks";
 import BookCard from "@/components/Dashboard/Book/BookCard";
 
-const BookShelf = ({ userId }: { userId: string | null }) => {
+const Library = ({ userId }: { userId: string | null }) => {
   const [bookNameQuery, setBookNameQuery] = useQueryState("");
   const debouncedBookName = useDebounce(bookNameQuery, 500);
 
@@ -30,7 +30,7 @@ const BookShelf = ({ userId }: { userId: string | null }) => {
       <Input
         value={bookNameQuery || ""}
         onChange={(e) => setBookNameQuery(e.target.value)}
-        placeholder="Search for a book..."
+        placeholder="Recherchez un livre..."
         className="mt-4"
       />
       {isError && <p>Erreur lors de la recherche.</p>}
@@ -58,4 +58,4 @@ const BookShelf = ({ userId }: { userId: string | null }) => {
   );
 };
 
-export default BookShelf;
+export default Library;

@@ -2,12 +2,13 @@
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
-import {Link} from "next-view-transitions";
+import {Link, useTransitionRouter} from "next-view-transitions";
 import Image from "next/image";
 import {useForm} from "react-hook-form";
 import {z} from "zod";
 import {SignInSchema} from "@/utils/zod";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
+import {useAuth} from "@/hooks/useAuth";
 
 export default function LoginForm() {
     const form = useForm<z.infer<typeof SignInSchema>>({
@@ -16,6 +17,9 @@ export default function LoginForm() {
             password: ""
         }
     })
+    const router = useTransitionRouter()
+    const {setAuthenticated} = useAuth();
+
 
     async function onSubmit(values: z.infer<typeof SignInSchema>) {
         if (values) {
@@ -29,7 +33,11 @@ export default function LoginForm() {
                 const data = await response.json();
                 if (!response.ok) throw new Error(data.error || "Login failed");
 
-                console.log("Login successful", data);
+
+                router.push("/book-shelf");
+                setAuthenticated(true);
+
+
             } catch (error) {
                 console.error(error);
             }

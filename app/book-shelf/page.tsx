@@ -1,9 +1,15 @@
+import React from 'react';
+import type {Metadata} from "next";
 import {auth} from "@/auth";
-import BookShelf from "@/components/Dashboard/Book/BookShelf";
+import DashboardContent from '@/components/Dashboard/DashboardContent';
 
-export default async function BookShelfWrapper() {
+export const metadata: Metadata = {
+    title: "Livre Track Dashboard",
+    description: "Le tableau de bord de Livre Track",
+};
+
+export default async function Dashboard() {
     const session = await auth();
-    const userId = session?.user?.id || null;
 
-    return <BookShelf userId={userId} />;
+    return <DashboardContent userId={session?.user?.id}/>;
 }

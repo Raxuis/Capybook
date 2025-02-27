@@ -10,6 +10,10 @@ export const {handlers, signIn, signOut, auth} = NextAuth({
     adapter: PrismaAdapter(prisma),
     session: {
         strategy: "jwt",
+        maxAge: 30 * 24 * 60 * 60,
+    },
+    jwt: {
+        maxAge: 30 * 24 * 60 * 60,
     },
     providers: [
         Credentials({
@@ -38,6 +42,7 @@ export const {handlers, signIn, signOut, auth} = NextAuth({
                 session.user = {
                     id: token.sub as string,
                     email: token.email as string,
+                    name: token.name as string,
                     emailVerified: null
                 };
             }
@@ -47,6 +52,7 @@ export const {handlers, signIn, signOut, auth} = NextAuth({
             if (user) {
                 token.id = user.id;
                 token.email = user.email;
+                token.name = user.name;
             }
             return token;
         },

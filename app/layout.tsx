@@ -9,6 +9,7 @@ import {ViewTransitions} from 'next-view-transitions'
 import {Toaster} from "@/components/ui/toaster";
 import {SessionProvider} from "next-auth/react";
 import {NuqsAdapter} from 'nuqs/adapters/next/app'
+import {SWRProvider} from "@/providers/swr-providers";
 
 
 const inter = Inter({
@@ -33,23 +34,25 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <SessionProvider>
-            <NuqsAdapter>
-                <ViewTransitions>
-                    <html lang="en">
-                    <body
-                        className={`${inter.variable} ${manrope.variable} antialiased`}
-                    >
-                    <Layout className="flex flex-col min-h-screen min-w-screen relative pt-28">
-                        <Header/>
-                        {children}
-                        <Dock/>
-                        <Toaster/>
-                    </Layout>
-                    </body>
-                    </html>
-                </ViewTransitions>
-            </NuqsAdapter>
-        </SessionProvider>
+        <SWRProvider>
+            <SessionProvider>
+                <NuqsAdapter>
+                    <ViewTransitions>
+                        <html lang="en">
+                        <body
+                            className={`${inter.variable} ${manrope.variable} antialiased`}
+                        >
+                        <Layout className="flex flex-col min-h-screen min-w-screen relative pt-28">
+                            <Header/>
+                            {children}
+                            <Dock/>
+                            <Toaster/>
+                        </Layout>
+                        </body>
+                        </html>
+                    </ViewTransitions>
+                </NuqsAdapter>
+            </SessionProvider>
+        </SWRProvider>
     );
 }

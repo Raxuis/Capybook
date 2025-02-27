@@ -35,9 +35,9 @@ export function useBooks(bookName: string | null, userId?: string) {
     if (!userId) return;
     try {
       if (isInLibrary(book.key)) {
-        await axios.delete(`/api/user/books`, { data: { userId, bookKey: book.key } });
+        await axios.delete(`/api/user/books`, { data: { userId, book: book } });
       } else {
-        await axios.post("/api/user/books", { userId, bookKey: book.key });
+        await axios.post("/api/user/books", { userId, book: book });
       }
       await mutate(`/api/user/${userId}`);
     } catch (error) {
@@ -49,9 +49,9 @@ export function useBooks(bookName: string | null, userId?: string) {
     if (!userId) return;
     try {
       if (isInWishlist(book.key)) {
-        await axios.delete(`/api/user/wishlist`, { data: { userId, bookKey: book.key } });
+        await axios.delete(`/api/user/wishlist`, { data: { userId, book: book } });
       } else {
-        await axios.post("/api/user/wishlist", { userId, bookKey: book.key });
+        await axios.post("/api/user/wishlist", { userId, book: book });
       }
       await mutate(`/api/user/${userId}`);
     } catch (error) {

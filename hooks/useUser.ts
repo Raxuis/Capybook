@@ -1,6 +1,7 @@
 import useSWR from "swr";
-import { fetcher } from "@/utils/fetcher";
-import { Prisma } from "@prisma/client";
+import {fetcher} from "@/utils/fetcher";
+import {Prisma} from "@prisma/client";
+import {useEffect} from "react";
 
 type UserWithRelations = Prisma.UserGetPayload<{
     include: {
@@ -23,14 +24,19 @@ type UserWithRelations = Prisma.UserGetPayload<{
 }>;
 
 export function useUser(userId?: string) {
-    const { data, error, isLoading } = useSWR<UserWithRelations>(
-        userId ? `/api/user/${userId}` : null,
-        fetcher<UserWithRelations>
+    useEffect(() => {
+        console.log("🔍 Recherche de l'utilisateur... :", userId);
+    })
+    const {data, error, isLoading, isValidating} = useSWR<UserWithRelations>(
+        `/api/user/${userId || null}`,
+        fetcher<UserWithRelations>,
+        {revalidateOnFocus: false, revalidateOnReconnect: false}
     );
 
     return {
         user: data,
         isLoading,
+        isValidating,
         isError: !!error,
     };
 }

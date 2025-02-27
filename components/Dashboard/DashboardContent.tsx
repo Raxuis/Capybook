@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import {useUser} from "@/hooks/useUser";
 import DashboardBadge from "@/components/Dashboard/DashboardBadge";
 import {Book, Star} from "lucide-react";
@@ -10,18 +9,18 @@ interface DashboardContentProps {
 }
 
 export default function DashboardContent({userId}: DashboardContentProps) {
-    const {user, isLoading, isError} = useUser(userId);
-
-    if (isLoading) return <div>Chargement...</div>;
+    const {user, isError, isValidating, isLoading} = useUser(userId);
+    if (isLoading || isValidating) return <div>Chargement...</div>;
     if (isError) return <div>Erreur lors du chargement des données...</div>;
-    if (!user) return <div>Utilisateur non trouvé</div>;
+    if (!user) return <div>No user</div>;
+
 
     return (
         <div>
             <h1>Bonjour {user.username}</h1>
 
             <div className="flex gap-4 pt-4">
-                <DashboardBadge type="userBook" className="w-1/4">
+                <DashboardBadge type="userBook" className="flex justify-center items-center">
                     {
                         user.UserBook.length === 0 ? (
                             <>
@@ -31,13 +30,17 @@ export default function DashboardContent({userId}: DashboardContentProps) {
                         ) : (
                             <>
                                 <Book size={12} className="inline-block mr-2"/>
-                                <span>Vous avez {user.UserBook.length} livres dans votre bibliothèque</span>
+                                <span>Vous avez {user.UserBook.length} livre{user.UserBook.length !== 1 && (
+                                    <span>
+                    s
+                  </span>
+                                )} dans votre bibliothèque</span>
                             </>
                         )
                     }
                 </DashboardBadge>
 
-                <DashboardBadge type="bookReview" className="w-1/4">
+                <DashboardBadge type="bookReview" className="flex justify-center items-center">
                     {
                         user.BookReview.length === 0 ? (
                             <>
@@ -47,7 +50,11 @@ export default function DashboardContent({userId}: DashboardContentProps) {
                         ) : (
                             <>
                                 <Star size={12} className="inline-block mr-2"/>
-                                <span>Vous avez écrit {user.BookReview.length} avis</span>
+                                <span>Vous avez écrit {user.BookReview.length} avi {user.BookReview.length !== 1 && (
+                                    <span>
+                    s
+                  </span>
+                                )}</span>
                             </>
                         )
                     }
@@ -61,7 +68,7 @@ export default function DashboardContent({userId}: DashboardContentProps) {
                         <ul>
                             {user.UserBook.map(userBook => (
                                 <li key={userBook.id}>
-                                    {userBook.Book.title} - {userBook.Book.author}
+                                    {userBook.Book.title}
                                 </li>
                             ))}
                         </ul>
