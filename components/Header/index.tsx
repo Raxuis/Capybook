@@ -49,7 +49,7 @@ export default function Header() {
                                 className="absolute inset-0 bg-gradient-to-r from-amber-500 to-yellow-400 opacity-0 transition-opacity duration-500 group-hover:opacity-20"></span>
                         </Link>
                     </Button>
-                    {session?.user ? (
+                    {isAuthenticated ? (
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <Button variant="outline" size="icon" className="rounded-full">
@@ -60,10 +60,18 @@ export default function Header() {
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent>
-                                <DropdownMenuItem className="font-bold">
-                                    {session.user.name ? session.user.name : "Anonymous"}
-                                </DropdownMenuItem>
-                                <DropdownMenuSeparator/>
+                                {
+                                    !!session?.user && (
+                                        <>
+                                            <DropdownMenuItem className="font-bold">
+                                                {
+                                                    session.user?.name ? session.user.name : "Anonymous"
+                                                }
+                                            </DropdownMenuItem>
+                                            <DropdownMenuSeparator/>
+                                        </>
+                                    )
+                                }
                                 <DropdownMenuItem asChild>
                                     <Button variant="outline" className="block w-full text-left"
                                             onClick={handleSignOut}>
