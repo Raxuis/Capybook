@@ -91,7 +91,7 @@ const BookModal = ({
                                     Genres(s)
                                 </h3>
                                 <div className="flex flex-wrap gap-1 mt-1">
-                                    {book.subjects.map((subject, idx) => (
+                                    {book.subjects.slice(0, 5).map((subject, idx) => (
                                         <Badge key={idx} variant="secondary" className="text-xs">
                                             {subject}
                                         </Badge>
