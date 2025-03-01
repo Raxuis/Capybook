@@ -1,8 +1,8 @@
 "use client";
 
-import {useSession, signOut} from 'next-auth/react';
+// import {useSession, signOut} from 'next-auth/react';
 import {BookOpen, Menu, X} from "lucide-react";
-import {useAuth} from "@/hooks/useAuth";
+// import {useAuth} from "@/hooks/useAuth";
 import {AnimatePresence, motion} from "motion/react";
 import {useState, useEffect} from "react";
 import {navigation} from "@/constants";
@@ -14,6 +14,7 @@ import {usePathname} from 'next/navigation'
 export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
+    const {navigation: headerElements} = navigation;
     // const {data: session} = useSession();
     // const {isAuthenticated} = useAuth();
     const pathname = usePathname();
@@ -41,19 +42,6 @@ export default function Header() {
 
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen);
-    };
-
-    const navigateToSection = (sectionId: string) => {
-        setScrolled(true);
-
-        requestAnimationFrame(() => {
-            const element = document.getElementById(sectionId);
-            console.log(element);
-            if (element) {
-                element.scrollIntoView({behavior: 'smooth'});
-            }
-            setScrolled(false);
-        });
     };
 
     // const handleSignOut = async () => {
@@ -94,7 +82,7 @@ export default function Header() {
 
                 {/* Desktop Navigation */}
                 <nav className="hidden md:flex items-center gap-6">
-                    {pathname === "/" && navigation.map((item, index) => (
+                    {pathname === "/" && headerElements.map((item, index) => (
                         <motion.a
                             key={item.link}
                             href={item.link}
@@ -121,7 +109,7 @@ export default function Header() {
                         className="md:hidden absolute w-full bg-background border-b py-4 px-4 shadow-lg overflow-hidden"
                     >
                         <nav className="flex flex-col gap-4">
-                            {pathname === "/" && navigation.map((item, index) => (
+                            {pathname === "/" && headerElements.map((item, index) => (
                                 <motion.a
                                     key={item.link}
                                     href={item.link}
