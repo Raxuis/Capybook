@@ -2,7 +2,7 @@ import type {Metadata} from "next";
 import {Inter, Manrope} from "next/font/google";
 import "./globals.css";
 import React from "react";
-import {Layout} from "@/components/Layout";
+// import {Layout} from "@/components/Layout";
 import Header from "../components/Header";
 import Dock from "@/components/Dock";
 import {ViewTransitions} from 'next-view-transitions'
@@ -42,12 +42,12 @@ export default function RootLayout({
                         <body
                             className={`${inter.variable} ${manrope.variable} antialiased`}
                         >
-                        <Layout className="flex flex-col min-h-screen min-w-screen relative pt-28">
+                        <div className="min-h-screen flex flex-col">
                             <Header/>
-                            {children}
+                                {children}
                             <Dock/>
                             <Toaster/>
-                        </Layout>
+                        </div>
                         </body>
                         </html>
                     </ViewTransitions>

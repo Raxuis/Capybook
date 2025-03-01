@@ -1,88 +1,131 @@
 "use client";
 
-import {useSession, signOut} from 'next-auth/react';
-import {Layout} from "@/components/Layout";
+// import {useSession, signOut} from 'next-auth/react';
+import {BookOpen, Menu, X} from "lucide-react";
+// import {useAuth} from "@/hooks/useAuth";
+import {AnimatePresence, motion} from "motion/react";
+import {useState, useEffect} from "react";
+import {navigation} from "@/constants";
+import {cn} from "@/lib/utils";
 import {Link} from "next-view-transitions";
-import {Button} from "@/components/ui/button";
-import {Sparkles} from "lucide-react";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu";
-import {Avatar, AvatarImage} from "@/components/ui/avatar";
-import Image from "next/image";
-import {useAuth} from "@/hooks/useAuth";
+import {usePathname} from 'next/navigation'
+
 
 export default function Header() {
-    const {data: session} = useSession();
-    const {isAuthenticated} = useAuth();
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [scrolled, setScrolled] = useState(false);
+    const {navigation: headerElements} = navigation;
+    // const {data: session} = useSession();
+    // const {isAuthenticated} = useAuth();
+    const pathname = usePathname();
 
-    const handleSignOut = async () => {
-        await signOut({redirectTo: '/login'});
+    useEffect(() => {
+        const handleScroll = () => {
+            const offset = window.scrollY;
+            console.log(offset);
+            if (offset > 50) {
+                setScrolled(true);
+            } else {
+                setScrolled(false);
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll);
+
+        // Call once to set initial state
+        handleScroll();
+
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, []);
+
+    const toggleMenu = () => {
+        setIsMenuOpen(!isMenuOpen);
     };
 
-    return (
-        <header
-            className="fixed top-4 backdrop-blur-lg border border-gray-200 rounded-full max-w-5xl w-full mx-auto z-50">
-            <Layout className="flex flex-row items-center justify-between py-4 relative">
-                <Link href="/" className="flex items-center gap-3 font-manrope text-2xl font-bold text-gray-900">
-                    <Image src="/icon.png" alt="Livre Track Icon" width={40} height={40}
-                           className="rounded-full p-1 shadow-md"/>
-                    Livre Track
-                </Link>
-                <div className="flex items-center gap-4">
-                    <Button variant="outline" asChild
-                            className="relative overflow-hidden font-inter group p-6 rounded-full border border-gray-300 shadow-md transition-all duration-300 bg-white/30 backdrop-blur-md hover:shadow-lg hover:border-amber-500">
-                        <Link href={session || isAuthenticated ? "/book-shelf" : "/login"}
-                              className="flex items-center gap-2 font-semibold text-lg">
-                            <span
-                                className="relative z-10 text-gray-900 transition-colors duration-300 group-hover:text-amber-600">
-                                Commencer l&#39;aventure
-                            </span>
-                            <Sparkles
-                                className="relative z-10 -me-1 ms-2 opacity-70 transition-transform duration-300 group-hover:scale-110 group-hover:text-amber-600"
-                                size={18} strokeWidth={2} aria-hidden="true"/>
-                            <span
-                                className="absolute inset-0 bg-gradient-to-r from-amber-500 to-yellow-400 opacity-0 transition-opacity duration-500 group-hover:opacity-20"></span>
-                        </Link>
-                    </Button>
-                    {isAuthenticated ? (
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="outline" size="icon" className="rounded-full">
+    // const handleSignOut = async () => {
+    //     await signOut({redirectTo: '/login'});
+    // };
 
-                                    <Avatar className="h-8 w-8 border-1 border-gray-300">
-                                        <AvatarImage src="/user.svg" alt="Profile picture"/>
-                                    </Avatar>
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent>
-                                {
-                                    !!session?.user && (
-                                        <>
-                                            <DropdownMenuItem className="font-bold">
-                                                {
-                                                    session.user?.name ? session.user.name : "Anonymous"
-                                                }
-                                            </DropdownMenuItem>
-                                            <DropdownMenuSeparator/>
-                                        </>
-                                    )
-                                }
-                                <DropdownMenuItem asChild>
-                                    <Button variant="outline" className="block w-full text-left"
-                                            onClick={handleSignOut}>
-                                        Logout
-                                    </Button>
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                    ) : null}
-                </div>
-            </Layout>
-        </header>
+    return (
+        <motion.header
+            initial={{y: -100}}
+            animate={{y: 0}}
+            transition={{duration: 0.5, ease: "easeOut"}}
+            className={cn(
+                "sticky top-0 z-50 transition-all duration-300",
+                scrolled
+                    ? "bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b shadow-sm py-4"
+                    : "bg-transparent py-4"
+            )}
+        >
+            <div className="container mx-auto px-4 flex justify-between items-center">
+                <motion.div
+                    whileHover={{scale: 1.05}}
+                    transition={{type: "spring", stiffness: 300}}
+                >
+                    <Link href="/" className="flex items-center gap-2">
+                        <BookOpen className="h-8 w-8 text-primary"/>
+                        <span className="text-xl font-bold">LivreTrack</span>
+                    </Link>
+                </motion.div>
+
+                {/* Mobile menu button */}
+                <button
+                    className="md:hidden p-2"
+                    onClick={toggleMenu}
+                    aria-label={isMenuOpen ? "Fermer le menu" : "Ouvrir le menu"}
+                >
+                    {isMenuOpen ? <X className="h-6 w-6"/> : <Menu className="h-6 w-6"/>}
+                </button>
+
+                {/* Desktop Navigation */}
+                <nav className="hidden md:flex items-center gap-6">
+                    {pathname === "/" && headerElements.map((item, index) => (
+                        <motion.a
+                            key={item.link}
+                            href={item.link}
+                            className="text-sm font-medium hover:text-primary transition-colors"
+                            whileHover={{scale: 1.1, color: "var(--primary)"}}
+                            initial={{opacity: 0, y: -20}}
+                            animate={{opacity: 1, y: 0}}
+                            transition={{duration: 0.3, delay: index * 0.1}}
+                        >
+                            {item.label}
+                        </motion.a>
+                    ))}
+                </nav>
+            </div>
+
+            {/* Mobile Navigation */}
+            <AnimatePresence>
+                {isMenuOpen && (
+                    <motion.div
+                        initial={{height: 0, opacity: 0}}
+                        animate={{height: "auto", opacity: 1}}
+                        exit={{height: 0, opacity: 0}}
+                        transition={{duration: 0.3}}
+                        className="md:hidden absolute w-full bg-background border-b py-4 px-4 shadow-lg overflow-hidden"
+                    >
+                        <nav className="flex flex-col gap-4">
+                            {pathname === "/" && headerElements.map((item, index) => (
+                                <motion.a
+                                    key={item.link}
+                                    href={item.link}
+                                    className="text-sm font-medium hover:text-primary transition-colors"
+                                    onClick={() => toggleMenu()}
+                                    initial={{opacity: 0, x: -20}}
+                                    animate={{opacity: 1, x: 0}}
+                                    transition={{duration: 0.3, delay: index * 0.1}}
+                                >
+                                    {item.label}
+                                </motion.a>
+                            ))}
+                        </nav>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </motion.header>
     );
 }
