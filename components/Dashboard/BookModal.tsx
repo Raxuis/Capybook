@@ -150,8 +150,8 @@ const BookModal = ({
                     )}
                     {!inLibrary && (
                         <Button
-                            variant="default"
-                            className="w-full sm:w-auto"
+                            variant="outline"
+                            className="w-full sm:w-auto hover:bg-green-300"
                             onClick={() => toggleLibrary(book)}
                         >
                             <BookIcon className="h-4 w-4 mr-2"/>
@@ -161,7 +161,7 @@ const BookModal = ({
                     {!inWishlist && (
                         <Button
                             variant="outline"
-                            className="w-full sm:w-auto"
+                            className="w-full sm:w-auto hover:bg-amber-300"
                             onClick={() => toggleWishlist(book)}
                         >
                             <Heart className="h-4 w-4 mr-2"/>
@@ -169,8 +169,8 @@ const BookModal = ({
                         </Button>
                     )}
                     <Button
-                        variant="secondary"
-                        className="w-full sm:w-auto"
+                        variant="outline"
+                        className="bg-gray-100 hover:bg-gray-200 w-full sm:w-auto"
                         onClick={onClose}
                     >
                         Fermer

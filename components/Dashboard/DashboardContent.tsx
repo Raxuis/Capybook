@@ -175,7 +175,7 @@ export default function DashboardContent({userId}: DashboardContentProps) {
                                         <Button
                                             variant="ghost"
                                             size="icon"
-                                            className="h-8 w-8 p-0 pt-0.5"
+                                            className="h-8 w-8 p-0 pt-0.5 hover:bg-transparent"
                                             onClick={() => openBookModal(userBook.Book as BookType)}
                                         >
                                             <Info className="h-4 w-4"/>
