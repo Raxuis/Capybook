@@ -31,6 +31,7 @@ export default function DashboardContent({userId}: DashboardContentProps) {
     const [selectedBook, setSelectedBook] = useState<MoreInfoBook | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isChangingCollection, setIsChangingCollection] = useState(false);
+    const [isLoadingBookDetails, setIsLoadingBookDetails] = useState(false);
     const {isInLibrary, isInWishlist, toggleLibrary, toggleWishlist} = useBooks(undefined, userId);
 
     const handleToggleLibrary = useCallback(async (book: BookType) => {
@@ -65,7 +66,6 @@ export default function DashboardContent({userId}: DashboardContentProps) {
         }
     }, [toggleWishlist]);
 
-    // Show initial loading state only when first loading the page
     if ((isLoading || isValidating) && !user && !isChangingCollection) {
         return (
             <div className="flex flex-col items-center justify-center min-h-screen p-4">
@@ -98,18 +98,26 @@ export default function DashboardContent({userId}: DashboardContentProps) {
     const userInitials = user.username.slice(0, 2).toUpperCase();
 
     const openBookModal = async (book: BookType) => {
+        setIsModalOpen(true);
+        setSelectedBook(null);
+        setIsLoadingBookDetails(true);
+
         try {
             const bookInfos = await axios.get(`/api/book?bookKey=${book.key}`).then(res => res.data);
-            if (!bookInfos) return;
+            if (!bookInfos) {
+                setIsLoadingBookDetails(false);
+                return;
+            }
             const bookForModal = {
                 ...book,
                 description: bookInfos.description?.value || "Aucune description disponible",
                 subjects: bookInfos.subjects || [],
             };
             setSelectedBook(bookForModal);
-            setIsModalOpen(true);
         } catch (error) {
             console.error("Erreur lors du chargement du livre :", error);
+        } finally {
+            setIsLoadingBookDetails(false);
         }
     };
 
@@ -368,6 +376,7 @@ export default function DashboardContent({userId}: DashboardContentProps) {
                 isInWishlist={isInWishlist}
                 toggleLibrary={handleToggleLibrary}
                 toggleWishlist={handleToggleWishlist}
+                isLoading={isLoadingBookDetails}
             />
         </div>
     );

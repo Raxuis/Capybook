@@ -15,6 +15,7 @@ import {Book} from "@/hooks/useBooks";
 import {formatList} from "@/utils/formatList";
 import {MoreInfoBook} from "@/components/Dashboard/DashboardContent";
 import {useState} from "react";
+import {Skeleton} from "@/components/ui/skeleton";
 
 interface BookModalProps {
     book: MoreInfoBook | null;
@@ -24,6 +25,7 @@ interface BookModalProps {
     isInWishlist: (key: string) => boolean | undefined;
     toggleLibrary: (book: Book) => Promise<void>;
     toggleWishlist: (book: Book) => Promise<void>;
+    isLoading?: boolean;
 }
 
 const BookModal = ({
@@ -34,14 +36,16 @@ const BookModal = ({
                        isInWishlist,
                        toggleLibrary,
                        toggleWishlist,
+                       isLoading = false,
                    }: BookModalProps) => {
 
     const [loadingLibrary, setLoadingLibrary] = useState(false);
     const [loadingWishlist, setLoadingWishlist] = useState(false);
 
-    if (!book) return null;
+    if (!isOpen) return null;
 
     const handleToggleLibrary = async () => {
+        if (!book) return;
         setLoadingLibrary(true);
         try {
             await toggleLibrary(book);
@@ -53,6 +57,7 @@ const BookModal = ({
     };
 
     const handleToggleWishlist = async () => {
+        if (!book) return;
         setLoadingWishlist(true);
         try {
             await toggleWishlist(book);
@@ -63,24 +68,42 @@ const BookModal = ({
         }
     };
 
-    const inLibrary = isInLibrary(book.key);
-    const inWishlist = isInWishlist(book.key);
+    const inLibrary = book ? isInLibrary(book.key) : false;
+    const inWishlist = book ? isInWishlist(book.key) : false;
 
     return (
         <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
             <DialogContent className="sm:max-w-md md:max-w-lg lg:max-w-xl">
                 <DialogHeader>
-                    <DialogTitle className="text-xl font-bold pr-8">{book.title}</DialogTitle>
-                    {book.description && (
-                        <DialogDescription className="max-h-32 overflow-y-auto text-muted-foreground">
-                            <span>{book.description}</span>
-                        </DialogDescription>
+                    {/*
+                    DialogTitle to avoid error :
+                    - with DialogContent missing DialogTitle
+                    */}
+                    {isLoading ? (
+                        <DialogTitle>
+                            <Skeleton className="h-7 w-3/4 mb-2"/>
+                            <Skeleton className="h-4 w-full mb-1"/>
+                            <Skeleton className="h-4 w-2/3"/>
+                        </DialogTitle>
+                    ) : (
+                        <>
+                            <DialogTitle
+                                className="text-xl font-bold pr-8">{book?.title || "Détails du livre"}</DialogTitle>
+                            {book?.description && (
+                                <DialogDescription className="max-h-32 overflow-y-auto text-muted-foreground">
+                                    <span>{book.description}</span>
+                                </DialogDescription>
+                            )}
+                        </>
                     )}
                 </DialogHeader>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {/* Image/Couverture */}
                     <div className="aspect-[2/3] relative bg-gray-100 rounded-md overflow-hidden">
-                        {book.cover ? (
+                        {isLoading ? (
+                            <Skeleton className="w-full h-full"/>
+                        ) : book?.cover ? (
                             <Image
                                 src={book.cover}
                                 alt={book.title}
@@ -96,14 +119,30 @@ const BookModal = ({
                     </div>
 
                     <div className="md:col-span-2 space-y-4">
-                        {book.authors && book.authors.length > 0 && (
+                        {/* Auteurs */}
+                        {isLoading ? (
+                            <div>
+                                <Skeleton className="h-4 w-24 mb-2"/>
+                                <Skeleton className="h-5 w-3/4"/>
+                            </div>
+                        ) : book?.authors && book.authors.length > 0 && (
                             <div>
                                 <h3 className="text-sm font-medium text-gray-500 mb-1">Auteur(s)</h3>
                                 <p>{formatList(book.authors)}</p>
                             </div>
                         )}
 
-                        {book.subjects && book.subjects.length > 0 && (
+                        {/* Genres/Sujets */}
+                        {isLoading ? (
+                            <div>
+                                <Skeleton className="h-4 w-24 mb-2"/>
+                                <div className="flex flex-wrap gap-1 mt-1">
+                                    <Skeleton className="h-6 w-16 rounded-full"/>
+                                    <Skeleton className="h-6 w-20 rounded-full"/>
+                                    <Skeleton className="h-6 w-24 rounded-full"/>
+                                </div>
+                            </div>
+                        ) : book?.subjects && book.subjects.length > 0 && (
                             <div>
                                 <h3 className="text-sm font-medium text-gray-500 mb-1 flex items-center">
                                     <Globe className="h-4 w-4 mr-1"/>
@@ -119,93 +158,110 @@ const BookModal = ({
                             </div>
                         )}
 
-                        <div className="space-y-2">
-                            <h3 className="text-sm font-medium text-gray-500">Statut du livre</h3>
-                            <div className="flex flex-wrap gap-2">
-                                {inLibrary && (
-                                    <Badge variant="outline"
-                                           className="bg-primary/10 text-primary flex items-center gap-1">
-                                        <BookIcon className="h-3 w-3"/>
-                                        Dans ma bibliothèque
-                                    </Badge>
-                                )}
-                                {inWishlist && (
-                                    <Badge variant="outline"
-                                           className="bg-rose-50 text-rose-600 flex items-center gap-1">
-                                        <Heart className="h-3 w-3"/>
-                                        Dans ma wishlist
-                                    </Badge>
-                                )}
-                                {!inLibrary && !inWishlist && (
-                                    <Badge variant="outline" className="text-gray-500">
-                                        Non ajouté
-                                    </Badge>
-                                )}
+                        {/* Statut */}
+                        {isLoading ? (
+                            <div>
+                                <Skeleton className="h-4 w-24 mb-2"/>
+                                <Skeleton className="h-6 w-40 rounded-full"/>
                             </div>
-                        </div>
+                        ) : (
+                            <div className="space-y-2">
+                                <h3 className="text-sm font-medium text-gray-500">Statut du livre</h3>
+                                <div className="flex flex-wrap gap-2">
+                                    {inLibrary && (
+                                        <Badge variant="outline"
+                                               className="bg-primary/10 text-primary flex items-center gap-1">
+                                            <BookIcon className="h-3 w-3"/>
+                                            Dans ma bibliothèque
+                                        </Badge>
+                                    )}
+                                    {inWishlist && (
+                                        <Badge variant="outline"
+                                               className="bg-rose-50 text-rose-600 flex items-center gap-1">
+                                            <Heart className="h-3 w-3"/>
+                                            Dans ma wishlist
+                                        </Badge>
+                                    )}
+                                    {!inLibrary && !inWishlist && (
+                                        <Badge variant="outline" className="text-gray-500">
+                                            Non ajouté
+                                        </Badge>
+                                    )}
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
 
                 <DialogFooter className="flex flex-col sm:flex-row gap-2 mt-4">
-                    {inLibrary && (
-                        <Button
-                            variant="destructive"
-                            className="w-full sm:w-auto"
-                            onClick={handleToggleLibrary}
-                            disabled={loadingLibrary || loadingWishlist}
-                        >
-                            {loadingLibrary ? (
-                                <Loader2 className="h-4 w-4 animate-spin mr-2"/>
-                            ) : (
-                                <Trash2 className="h-4 w-4 mr-2"/>
+                    {isLoading ? (
+                        <>
+                            <Skeleton className="h-10 w-full sm:w-40 rounded-md"/>
+                            <Skeleton className="h-10 w-full sm:w-40 rounded-md"/>
+                        </>
+                    ) : (
+                        <>
+                            {inLibrary && (
+                                <Button
+                                    variant="destructive"
+                                    className="w-full sm:w-auto"
+                                    onClick={handleToggleLibrary}
+                                    disabled={loadingLibrary || loadingWishlist}
+                                >
+                                    {loadingLibrary ? (
+                                        <Loader2 className="h-4 w-4 animate-spin mr-2"/>
+                                    ) : (
+                                        <Trash2 className="h-4 w-4 mr-2"/>
+                                    )}
+                                    Retirer de ma bibliothèque
+                                </Button>
                             )}
-                            Retirer de ma bibliothèque
-                        </Button>
-                    )}
-                    {inWishlist && (
-                        <Button
-                            variant="destructive"
-                            className="w-full sm:w-auto"
-                            onClick={handleToggleWishlist}
-                            disabled={loadingLibrary || loadingWishlist}
-                        >
-                            {loadingWishlist ? (
-                                <Loader2 className="h-4 w-4 animate-spin mr-2"/>
-                            ) : (
-                                <Trash2 className="h-4 w-4 mr-2"/>
+                            {inWishlist && (
+                                <Button
+                                    variant="destructive"
+                                    className="w-full sm:w-auto"
+                                    onClick={handleToggleWishlist}
+                                    disabled={loadingLibrary || loadingWishlist}
+                                >
+                                    {loadingWishlist ? (
+                                        <Loader2 className="h-4 w-4 animate-spin mr-2"/>
+                                    ) : (
+                                        <Trash2 className="h-4 w-4 mr-2"/>
+                                    )}
+                                    Retirer de ma wishlist
+                                </Button>
                             )}
-                            Retirer de ma wishlist
-                        </Button>
-                    )}
-                    {!inLibrary && (
-                        <Button
-                            variant="outline"
-                            className="w-full sm:w-auto hover:bg-green-300"
-                            onClick={handleToggleLibrary}
-                            disabled={loadingLibrary || loadingWishlist}
-                        >
-                            {loadingLibrary ? (
-                                <Loader2 className="h-4 w-4 animate-spin mr-2"/>
-                            ) : (
-                                <BookIcon className="h-4 w-4 mr-2"/>
+                            {!inLibrary && (
+                                <Button
+                                    variant="outline"
+                                    className="w-full sm:w-auto hover:bg-green-300"
+                                    onClick={handleToggleLibrary}
+                                    disabled={loadingLibrary || loadingWishlist}
+                                >
+                                    {loadingLibrary ? (
+                                        <Loader2 className="h-4 w-4 animate-spin mr-2"/>
+                                    ) : (
+                                        <BookIcon className="h-4 w-4 mr-2"/>
+                                    )}
+                                    Ajouter à ma bibliothèque
+                                </Button>
                             )}
-                            Ajouter à ma bibliothèque
-                        </Button>
-                    )}
-                    {!inWishlist && (
-                        <Button
-                            variant="outline"
-                            className="w-full sm:w-auto hover:bg-amber-300"
-                            onClick={handleToggleWishlist}
-                            disabled={loadingLibrary || loadingWishlist}
-                        >
-                            {loadingWishlist ? (
-                                <Loader2 className="h-4 w-4 animate-spin mr-2"/>
-                            ) : (
-                                <Heart className="h-4 w-4 mr-2"/>
+                            {!inWishlist && (
+                                <Button
+                                    variant="outline"
+                                    className="w-full sm:w-auto hover:bg-amber-300"
+                                    onClick={handleToggleWishlist}
+                                    disabled={loadingLibrary || loadingWishlist}
+                                >
+                                    {loadingWishlist ? (
+                                        <Loader2 className="h-4 w-4 animate-spin mr-2"/>
+                                    ) : (
+                                        <Heart className="h-4 w-4 mr-2"/>
+                                    )}
+                                    Ajouter à ma wishlist
+                                </Button>
                             )}
-                            Ajouter à ma wishlist
-                        </Button>
+                        </>
                     )}
                     <Button
                         variant="outline"
