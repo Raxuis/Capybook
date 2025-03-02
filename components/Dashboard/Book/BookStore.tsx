@@ -1,5 +1,5 @@
 "use client";
-import React, {useEffect, useState} from "react";
+import {useState} from "react";
 import {useBooks} from "@/hooks/useBooks";
 import {useQueryState} from "nuqs";
 import {Input} from "@/components/ui/input";
@@ -8,7 +8,7 @@ import BookCard from "@/components/Dashboard/Book/BookCard";
 import {Search} from "lucide-react";
 import {Skeleton} from "@/components/ui/skeleton";
 
-const Library = ({userId}: { userId: string | null }) => {
+const BookStore = ({userId}: { userId: string | null }) => {
     const [bookNameQuery, setBookNameQuery] = useQueryState("");
     const debouncedBookName = useDebounce(bookNameQuery, 500);
     const {
@@ -21,10 +21,6 @@ const Library = ({userId}: { userId: string | null }) => {
         isInWishlist
     } = useBooks(debouncedBookName, userId ?? undefined);
     const [searchFocused, setSearchFocused] = useState(false);
-
-    useEffect(() => {
-        console.log(books);
-    }, [books]);
 
     return (
         <div className="container max-w-6xl mx-auto px-4 py-8">
@@ -85,7 +81,8 @@ const Library = ({userId}: { userId: string | null }) => {
                     </div>
                     <h3 className="text-xl font-semibold mb-2">Aucun livre trouvé</h3>
                     <p className="text-gray-500 max-w-md">
-                        Aucun livre ne correspond à votre recherche &#34;{bookNameQuery}&#34;. Essayez avec un autre titre ou
+                        Aucun livre ne correspond à votre recherche &#34;{bookNameQuery}&#34;. Essayez avec un autre
+                        titre ou
                         auteur.
                     </p>
                 </div>
@@ -101,4 +98,4 @@ const Library = ({userId}: { userId: string | null }) => {
     );
 };
 
-export default Library;
+export default BookStore;
