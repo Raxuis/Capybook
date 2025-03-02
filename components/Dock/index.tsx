@@ -15,11 +15,6 @@ export function Dock() {
                              tooltip="Accueil"
                              link="/"
                     />
-                    <AppIcon imgSrc={"/progress.png"}
-                             withoutBackground={true}
-                             tooltip="Votre progression"
-                             link="/progress"
-                    />
                     <AppIcon
                         imgSrc={"/book-shelf.png"}
                         tooltip="Votre bibliothèque"

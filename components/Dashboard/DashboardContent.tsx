@@ -14,6 +14,7 @@ import {Button} from "@/components/ui/button";
 import axios from "axios";
 import BookModal from "@/components/Dashboard/BookModal";
 import {mutate} from "swr";
+import ProgressTracker from "@/components/Dashboard/ProgressTracker";
 
 interface DashboardContentProps {
     userId?: string;
@@ -226,17 +227,21 @@ export default function DashboardContent({userId}: DashboardContentProps) {
                                             <span className="sr-only">Détails</span>
                                         </Button>
                                     </CardHeader>
-                                    <CardContent className="p-4 pt-2 flex items-center justify-between">
-                                        <div className="flex items-center">
-                                            <BookOpen className="h-4 w-4 mr-2 text-muted-foreground"/>
-                                            <span className="text-sm text-muted-foreground">
-                                                {userBook.Book.authors || "Auteur inconnu"}
-                                            </span>
+                                    <CardContent className="p-4 pt-3 space-y-4">
+                                        <div className="flex items-center justify-between">
+                                            <div className="flex items-center">
+                                                <BookOpen className="h-4 w-4 mr-2 text-muted-foreground"/>
+                                                <span className="text-sm text-muted-foreground">
+                                                    {userBook.Book.authors || "Auteur inconnu"}
+                                                </span>
+                                            </div>
                                         </div>
-                                        <Badge
-                                            className="text-xs bg-primary/10 group-hover:bg-blue-100 cursor-default text-primary rounded-full">
-                                            {userBook.progress}% lu
-                                        </Badge>
+
+                                        <ProgressTracker
+                                            bookId={userBook.Book.id}
+                                            initialProgress={userBook.progress || 0}
+                                            userId={user.id}
+                                        />
                                     </CardContent>
                                 </Card>
                             ))}
