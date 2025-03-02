@@ -9,38 +9,52 @@ import {
 } from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
 import {Badge} from "@/components/ui/badge";
-import {Book as BookIcon, Heart, Trash2, BookOpen, Globe, Loader2} from "lucide-react";
+import {Book as BookIcon, Heart, Trash2, BookOpen, Globe, Loader2, BookMarked, BookCopy} from "lucide-react";
 import Image from "next/image";
-import {Book} from "@/hooks/useBooks";
+import {useBooks} from "@/hooks/useBooks";
 import {formatList} from "@/utils/formatList";
 import {MoreInfoBook} from "@/components/Dashboard/DashboardContent";
-import {useState} from "react";
+import {useMemo, useState} from "react";
 import {Skeleton} from "@/components/ui/skeleton";
 
 interface BookModalProps {
     book: MoreInfoBook | null;
+    userId?: string;
     isOpen: boolean;
     onClose: () => void;
-    isInLibrary: (key: string) => boolean | undefined;
-    isInWishlist: (key: string) => boolean | undefined;
-    toggleLibrary: (book: Book) => Promise<void>;
-    toggleWishlist: (book: Book) => Promise<void>;
     isLoading?: boolean;
 }
 
 const BookModal = ({
                        book,
+                       userId,
                        isOpen,
                        onClose,
-                       isInLibrary,
-                       isInWishlist,
-                       toggleLibrary,
-                       toggleWishlist,
                        isLoading = false,
                    }: BookModalProps) => {
+    const {
+        isInLibrary,
+        isInWishlist,
+        isCurrentBook,
+        toggleLibrary,
+        toggleWishlist,
+        toggleCurrentBook
+    } = useBooks(undefined, userId);
+
+    // Utilisation de useMemo pour mémoriser les valeurs qui dépendent de book
+    const bookStatus = useMemo(() => {
+        if (!book) return {inLibrary: false, inWishlist: false, isCurrentBookInstance: false};
+
+        return {
+            inLibrary: isInLibrary(book.key),
+            inWishlist: isInWishlist(book.key),
+            isCurrentBookInstance: isCurrentBook(book.key)
+        };
+    }, [book, isInLibrary, isInWishlist, isCurrentBook]);
 
     const [loadingLibrary, setLoadingLibrary] = useState(false);
     const [loadingWishlist, setLoadingWishlist] = useState(false);
+    const [loadingCurrentBook, setLoadingCurrentBook] = useState(false);
 
     if (!isOpen) return null;
 
@@ -68,23 +82,35 @@ const BookModal = ({
         }
     };
 
-    const inLibrary = book ? isInLibrary(book.key) : false;
-    const inWishlist = book ? isInWishlist(book.key) : false;
+    const handleToggleCurrentBook = async () => {
+        if (!book) return;
+        setLoadingCurrentBook(true);
+        try {
+            await toggleCurrentBook(book);
+        } catch (error) {
+            console.error("Error setting current book:", error);
+        } finally {
+            setLoadingCurrentBook(false);
+        }
+    };
+
+    // Déstructuration des valeurs mémorisées
+    const {inLibrary, inWishlist, isCurrentBookInstance} = bookStatus;
 
     return (
         <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
             <DialogContent className="sm:max-w-md md:max-w-lg lg:max-w-xl">
                 <DialogHeader>
-                    {/*
-                    DialogTitle to avoid error :
-                    - with DialogContent missing DialogTitle
-                    */}
                     {isLoading ? (
-                        <DialogTitle>
+                        <>
                             <Skeleton className="h-7 w-3/4 mb-2"/>
+                            <DialogTitle className="sr-only">Chargement...</DialogTitle>
                             <Skeleton className="h-4 w-full mb-1"/>
                             <Skeleton className="h-4 w-2/3"/>
-                        </DialogTitle>
+                            <DialogDescription className="sr-only">
+                                Chargement...
+                            </DialogDescription>
+                        </>
                     ) : (
                         <>
                             <DialogTitle
@@ -190,10 +216,35 @@ const BookModal = ({
                                 </div>
                             </div>
                         )}
+                        {/* Livre Actuel */}
+                        {isLoading ? (
+                            <div>
+                                <Skeleton className="h-4 w-24 mb-2"/>
+                                <Skeleton className="h-6 w-40 rounded-full"/>
+                            </div>
+                        ) : (
+                            <div className="space-y-2">
+                                <h3 className="text-sm font-medium text-gray-500">Statut de lecture</h3>
+                                <div className="flex flex-wrap gap-2">
+                                    {isCurrentBookInstance ? (
+                                        <Badge variant="outline"
+                                               className="bg-indigo-100 text-indigo-600 flex items-center gap-1">
+                                            <BookMarked className="h-3 w-3"/>
+                                            Livre en cours de lecture
+                                        </Badge>
+                                    ) : inLibrary ? (
+                                        <Badge variant="outline" className="text-gray-500 flex items-center gap-1">
+                                            <BookCopy className="h-3 w-3"/>
+                                            Non commencé
+                                        </Badge>
+                                    ) : null}
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
 
-                <DialogFooter className="flex flex-col sm:flex-row gap-2 mt-4">
+                <DialogFooter className="flex flex-col sm:flex-row flex-wrap mt-4 sm:justify-start">
                     {isLoading ? (
                         <>
                             <Skeleton className="h-10 w-full sm:w-40 rounded-md"/>
@@ -201,12 +252,42 @@ const BookModal = ({
                         </>
                     ) : (
                         <>
+                            {inLibrary && !isCurrentBookInstance && (
+                                <Button
+                                    variant="outline"
+                                    className="w-full sm:w-auto hover:bg-indigo-200 border-indigo-300 text-indigo-700"
+                                    onClick={handleToggleCurrentBook}
+                                    disabled={loadingLibrary || loadingWishlist || loadingCurrentBook}
+                                >
+                                    {loadingCurrentBook ? (
+                                        <Loader2 className="h-4 w-4 animate-spin mr-2"/>
+                                    ) : (
+                                        <BookMarked className="h-4 w-4 mr-2"/>
+                                    )}
+                                    Marquer comme en lecture
+                                </Button>
+                            )}
+                            {inLibrary && isCurrentBookInstance && (
+                                <Button
+                                    variant="outline"
+                                    className="w-full sm:w-auto hover:bg-gray-200 border-gray-300"
+                                    onClick={handleToggleCurrentBook}
+                                    disabled={loadingLibrary || loadingWishlist || loadingCurrentBook}
+                                >
+                                    {loadingCurrentBook ? (
+                                        <Loader2 className="h-4 w-4 animate-spin mr-2"/>
+                                    ) : (
+                                        <BookCopy className="h-4 w-4 mr-2"/>
+                                    )}
+                                    Marquer comme non commencé
+                                </Button>
+                            )}
                             {inLibrary && (
                                 <Button
                                     variant="destructive"
                                     className="w-full sm:w-auto"
                                     onClick={handleToggleLibrary}
-                                    disabled={loadingLibrary || loadingWishlist}
+                                    disabled={loadingLibrary || loadingWishlist || loadingCurrentBook}
                                 >
                                     {loadingLibrary ? (
                                         <Loader2 className="h-4 w-4 animate-spin mr-2"/>
@@ -221,7 +302,7 @@ const BookModal = ({
                                     variant="destructive"
                                     className="w-full sm:w-auto"
                                     onClick={handleToggleWishlist}
-                                    disabled={loadingLibrary || loadingWishlist}
+                                    disabled={loadingLibrary || loadingWishlist || loadingCurrentBook}
                                 >
                                     {loadingWishlist ? (
                                         <Loader2 className="h-4 w-4 animate-spin mr-2"/>
@@ -236,7 +317,7 @@ const BookModal = ({
                                     variant="outline"
                                     className="w-full sm:w-auto hover:bg-green-300"
                                     onClick={handleToggleLibrary}
-                                    disabled={loadingLibrary || loadingWishlist}
+                                    disabled={loadingLibrary || loadingWishlist || loadingCurrentBook}
                                 >
                                     {loadingLibrary ? (
                                         <Loader2 className="h-4 w-4 animate-spin mr-2"/>
@@ -251,7 +332,7 @@ const BookModal = ({
                                     variant="outline"
                                     className="w-full sm:w-auto hover:bg-amber-300"
                                     onClick={handleToggleWishlist}
-                                    disabled={loadingLibrary || loadingWishlist}
+                                    disabled={loadingLibrary || loadingWishlist || loadingCurrentBook}
                                 >
                                     {loadingWishlist ? (
                                         <Loader2 className="h-4 w-4 animate-spin mr-2"/>
@@ -263,18 +344,11 @@ const BookModal = ({
                             )}
                         </>
                     )}
-                    <Button
-                        variant="outline"
-                        className="bg-gray-100 hover:bg-gray-200 w-full sm:w-auto"
-                        onClick={onClose}
-                        disabled={loadingLibrary || loadingWishlist}
-                    >
-                        Fermer
-                    </Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>
-    );
+    )
+        ;
 };
 
 export default BookModal;

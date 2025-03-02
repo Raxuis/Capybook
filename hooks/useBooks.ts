@@ -32,6 +32,7 @@ export function useBooks(bookName?: string | null, userId?: string) {
 
     const isInLibrary = (bookKey: string) => user?.UserBook.some((ub) => ub.Book.key === bookKey);
     const isInWishlist = (bookKey: string) => user?.UserBookWishlist.some((uw) => uw.Book.key === bookKey);
+    const isCurrentBook = (bookKey: string) => user?.UserBook.some((ub) => ub.Book.key === bookKey && ub.isCurrentBook);
 
     const toggleLibrary = async (book: Book) => {
         if (!userId) return;
@@ -61,6 +62,27 @@ export function useBooks(bookName?: string | null, userId?: string) {
         }
     };
 
+    const toggleCurrentBook = async (book: Book) => {
+        if (!userId) return;
+        try {
+            const currentBook = user?.UserBook.find((ub) => ub.Book.key === book.key);
+            if (currentBook) {
+                await axios.put(`/api/user/current-book`, {
+                    data: {
+                        userId,
+                        book: book,
+                        isCurrentBook: !currentBook.isCurrentBook
+                    }
+                });
+            } else {
+                await axios.post("/api/user/current-book", {userId, book: book});
+            }
+            await mutate(`/api/user/${userId}`);
+        } catch (error) {
+            console.error("Erreur lors de la modification du livre actuel:", error);
+        }
+    };
+
     return {
         books: data?.docs || [],
         isLoading,
@@ -68,7 +90,9 @@ export function useBooks(bookName?: string | null, userId?: string) {
         isUserLoading,
         isInLibrary,
         isInWishlist,
+        isCurrentBook,
         toggleLibrary,
         toggleWishlist,
+        toggleCurrentBook,
     };
 }
