@@ -55,7 +55,7 @@ export default function BookCard({
                                     />
                                 ) : (
                                     <div className="bg-gray-100 w-full h-full flex items-center justify-center">
-                                        <BookOpen className="h-6 w-6 text-gray-400" />
+                                        <BookOpen className="h-6 w-6 text-gray-400"/>
                                     </div>
                                 )}
                             </div>
@@ -68,7 +68,7 @@ export default function BookCard({
                         </div>
                     ),
                     variant: isInLibrary ? "default" : "success",
-                    icon: isInLibrary ? <X className="h-4 w-4" /> : <Check className="h-4 w-4" />,
+                    icon: isInLibrary ? <X className="h-4 w-4"/> : <Check className="h-4 w-4"/>,
                     duration: 3000,
                 });
                 break;
@@ -89,7 +89,7 @@ export default function BookCard({
                                     />
                                 ) : (
                                     <div className="bg-gray-100 w-full h-full flex items-center justify-center">
-                                        <BookOpen className="h-6 w-6 text-gray-400" />
+                                        <BookOpen className="h-6 w-6 text-gray-400"/>
                                     </div>
                                 )}
                             </div>
@@ -102,7 +102,7 @@ export default function BookCard({
                         </div>
                     ),
                     variant: isInWishlist ? "default" : "success",
-                    icon: isInWishlist ? <X className="h-4 w-4" /> : <Star className="h-4 w-4 fill-current" />,
+                    icon: isInWishlist ? <X className="h-4 w-4"/> : <Star className="h-4 w-4 fill-current"/>,
                     duration: 3000,
                 });
                 break;
@@ -127,15 +127,17 @@ export default function BookCard({
 
                         {/* Animation overlay pour l'ajout à la bibliothèque */}
                         {showAnimation === 'library' && (
-                            <div className="absolute inset-0 bg-black/30 flex items-center justify-center animate-fadein">
-                                <div className={`text-white flex items-center gap-2 text-lg font-medium ${isInLibrary ? 'animate-fadeout' : 'animate-scale-in'}`}>
+                            <div
+                                className="absolute inset-0 bg-black/30 flex items-center justify-center animate-fadein">
+                                <div
+                                    className={`text-white flex items-center gap-2 text-lg font-medium ${isInLibrary ? 'animate-fadeout' : 'animate-scale-in'}`}>
                                     {isInLibrary ? (
                                         <>
-                                            <X className="h-6 w-6" /> Retiré
+                                            <X className="h-6 w-6"/> Retiré
                                         </>
                                     ) : (
                                         <>
-                                            <Library className="h-6 w-6" /> Bibliothèque
+                                            <Library className="h-6 w-6"/> Bibliothèque
                                         </>
                                     )}
                                 </div>
@@ -144,15 +146,17 @@ export default function BookCard({
 
                         {/* Animation overlay pour l'ajout aux favoris */}
                         {showAnimation === 'wishlist' && (
-                            <div className="absolute inset-0 bg-black/30 flex items-center justify-center animate-fadein">
-                                <div className={`text-white flex items-center gap-2 text-lg font-medium ${isInWishlist ? 'animate-fadeout' : 'animate-scale-in'}`}>
+                            <div
+                                className="absolute inset-0 bg-black/30 flex items-center justify-center animate-fadein">
+                                <div
+                                    className={`text-white flex items-center gap-2 text-lg font-medium ${isInWishlist ? 'animate-fadeout' : 'animate-scale-in'}`}>
                                     {isInWishlist ? (
                                         <>
-                                            <X className="h-6 w-6" /> Retiré
+                                            <X className="h-6 w-6"/> Retiré
                                         </>
                                     ) : (
                                         <>
-                                            <Star className="h-6 w-6 fill-current" /> Favori
+                                            <Star className="h-6 w-6 fill-current"/> Favori
                                         </>
                                     )}
                                 </div>
@@ -182,8 +186,9 @@ export default function BookCard({
                         </Button>
                     </SimplifiedTooltip>
 
-                    <SimplifiedTooltip tooltipContent={isInWishlist ? "Retirer des favoris" : "Ajouter aux favoris"}
-                                       asChild>
+                    <SimplifiedTooltip
+                        tooltipContent={isInWishlist ? "Retirer de ma wishlist" : "Ajouter à ma wishlist"}
+                        asChild>
                         <Button
                             onClick={() => handleClick("wishlist")}
                             className="h-8 w-8 flex items-center justify-center bg-white rounded-full border hover:bg-gray-100"
