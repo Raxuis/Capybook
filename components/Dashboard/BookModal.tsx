@@ -9,11 +9,12 @@ import {
 } from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
 import {Badge} from "@/components/ui/badge";
-import {Book as BookIcon, Heart, Trash2, BookOpen, Globe} from "lucide-react";
+import {Book as BookIcon, Heart, Trash2, BookOpen, Globe, Loader2} from "lucide-react";
 import Image from "next/image";
 import {Book} from "@/hooks/useBooks";
 import {formatList} from "@/utils/formatList";
 import {MoreInfoBook} from "@/components/Dashboard/DashboardContent";
+import {useState} from "react";
 
 interface BookModalProps {
     book: MoreInfoBook | null;
@@ -34,14 +35,32 @@ const BookModal = ({
                        toggleLibrary,
                        toggleWishlist,
                    }: BookModalProps) => {
+
+    const [loadingLibrary, setLoadingLibrary] = useState(false);
+    const [loadingWishlist, setLoadingWishlist] = useState(false);
+
     if (!book) return null;
 
-    const handleRemoveFromLibrary = async () => {
-        await toggleLibrary(book);
+    const handleToggleLibrary = async () => {
+        setLoadingLibrary(true);
+        try {
+            await toggleLibrary(book);
+        } catch (error) {
+            console.error("Error toggling library status:", error);
+        } finally {
+            setLoadingLibrary(false);
+        }
     };
 
-    const handleRemoveFromWishlist = async () => {
-        await toggleWishlist(book);
+    const handleToggleWishlist = async () => {
+        setLoadingWishlist(true);
+        try {
+            await toggleWishlist(book);
+        } catch (error) {
+            console.error("Error toggling wishlist status:", error);
+        } finally {
+            setLoadingWishlist(false);
+        }
     };
 
     const inLibrary = isInLibrary(book.key);
@@ -53,7 +72,7 @@ const BookModal = ({
                 <DialogHeader>
                     <DialogTitle className="text-xl font-bold pr-8">{book.title}</DialogTitle>
                     {book.description && (
-                        <DialogDescription className="flex items-center text-muted-foreground">
+                        <DialogDescription className="max-h-32 overflow-y-auto text-muted-foreground">
                             <span>{book.description}</span>
                         </DialogDescription>
                     )}
@@ -132,9 +151,14 @@ const BookModal = ({
                         <Button
                             variant="destructive"
                             className="w-full sm:w-auto"
-                            onClick={handleRemoveFromLibrary}
+                            onClick={handleToggleLibrary}
+                            disabled={loadingLibrary || loadingWishlist}
                         >
-                            <Trash2 className="h-4 w-4 mr-2"/>
+                            {loadingLibrary ? (
+                                <Loader2 className="h-4 w-4 animate-spin mr-2"/>
+                            ) : (
+                                <Trash2 className="h-4 w-4 mr-2"/>
+                            )}
                             Retirer de ma bibliothèque
                         </Button>
                     )}
@@ -142,9 +166,14 @@ const BookModal = ({
                         <Button
                             variant="destructive"
                             className="w-full sm:w-auto"
-                            onClick={handleRemoveFromWishlist}
+                            onClick={handleToggleWishlist}
+                            disabled={loadingLibrary || loadingWishlist}
                         >
-                            <Trash2 className="h-4 w-4 mr-2"/>
+                            {loadingWishlist ? (
+                                <Loader2 className="h-4 w-4 animate-spin mr-2"/>
+                            ) : (
+                                <Trash2 className="h-4 w-4 mr-2"/>
+                            )}
                             Retirer de ma wishlist
                         </Button>
                     )}
@@ -152,9 +181,14 @@ const BookModal = ({
                         <Button
                             variant="outline"
                             className="w-full sm:w-auto hover:bg-green-300"
-                            onClick={() => toggleLibrary(book)}
+                            onClick={handleToggleLibrary}
+                            disabled={loadingLibrary || loadingWishlist}
                         >
-                            <BookIcon className="h-4 w-4 mr-2"/>
+                            {loadingLibrary ? (
+                                <Loader2 className="h-4 w-4 animate-spin mr-2"/>
+                            ) : (
+                                <BookIcon className="h-4 w-4 mr-2"/>
+                            )}
                             Ajouter à ma bibliothèque
                         </Button>
                     )}
@@ -162,9 +196,14 @@ const BookModal = ({
                         <Button
                             variant="outline"
                             className="w-full sm:w-auto hover:bg-amber-300"
-                            onClick={() => toggleWishlist(book)}
+                            onClick={handleToggleWishlist}
+                            disabled={loadingLibrary || loadingWishlist}
                         >
-                            <Heart className="h-4 w-4 mr-2"/>
+                            {loadingWishlist ? (
+                                <Loader2 className="h-4 w-4 animate-spin mr-2"/>
+                            ) : (
+                                <Heart className="h-4 w-4 mr-2"/>
+                            )}
                             Ajouter à ma wishlist
                         </Button>
                     )}
@@ -172,6 +211,7 @@ const BookModal = ({
                         variant="outline"
                         className="bg-gray-100 hover:bg-gray-200 w-full sm:w-auto"
                         onClick={onClose}
+                        disabled={loadingLibrary || loadingWishlist}
                     >
                         Fermer
                     </Button>

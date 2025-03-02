@@ -1,6 +1,6 @@
 'use client';
 
-import {useState} from "react";
+import {useState, useCallback} from "react";
 import {useUser} from "@/hooks/useUser";
 import DashboardBadge from "@/components/Dashboard/DashboardBadge";
 import {Book, Star, Loader2, AlertCircle, Library, BookOpen, Heart, Info} from "lucide-react";
@@ -13,6 +13,7 @@ import {Book as BookType, useBooks} from "@/hooks/useBooks";
 import {Button} from "@/components/ui/button";
 import axios from "axios";
 import BookModal from "@/components/Dashboard/BookModal";
+import {mutate} from "swr";
 
 interface DashboardContentProps {
     userId?: string;
@@ -28,9 +29,43 @@ export default function DashboardContent({userId}: DashboardContentProps) {
     const {user, isError, isValidating, isLoading} = useUser(userId);
     const [selectedBook, setSelectedBook] = useState<MoreInfoBook | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isChangingCollection, setIsChangingCollection] = useState(false);
     const {isInLibrary, isInWishlist, toggleLibrary, toggleWishlist} = useBooks(undefined, userId);
 
-    if (isLoading || isValidating) {
+    const handleToggleLibrary = useCallback(async (book: BookType) => {
+        setIsChangingCollection(true);
+        try {
+            await toggleLibrary(book);
+            await mutate(undefined, {
+                revalidate: true,
+                populateCache: true,
+                rollbackOnError: true
+            });
+        } catch (error) {
+            console.error("Error toggling library status:", error);
+        } finally {
+            setIsChangingCollection(false);
+        }
+    }, [toggleLibrary]);
+
+    const handleToggleWishlist = useCallback(async (book: BookType) => {
+        setIsChangingCollection(true);
+        try {
+            await toggleWishlist(book);
+            await mutate(undefined, {
+                revalidate: true,
+                populateCache: true,
+                rollbackOnError: true
+            });
+        } catch (error) {
+            console.error("Error toggling wishlist status:", error);
+        } finally {
+            setIsChangingCollection(false);
+        }
+    }, [toggleWishlist]);
+
+    // Show initial loading state only when first loading the page
+    if ((isLoading || isValidating) && !user && !isChangingCollection) {
         return (
             <div className="flex flex-col items-center justify-center min-h-screen p-4">
                 <Loader2 className="h-8 w-8 animate-spin text-primary mb-2"/>
@@ -67,10 +102,9 @@ export default function DashboardContent({userId}: DashboardContentProps) {
             if (!bookInfos) return;
             const bookForModal = {
                 ...book,
-                description: bookInfos.description.value,
-                subjects: bookInfos.subjects,
+                description: bookInfos.description?.value || "Aucune description disponible",
+                subjects: bookInfos.subjects || [],
             };
-            console.log(bookForModal);
             setSelectedBook(bookForModal);
             setIsModalOpen(true);
         } catch (error) {
@@ -144,6 +178,16 @@ export default function DashboardContent({userId}: DashboardContentProps) {
                     </div>
                 </DashboardBadge>
             </div>
+
+            {/* Loader overlay for collection changes */}
+            {isChangingCollection && (
+                <div className="fixed inset-0 bg-black/5 flex items-center justify-center z-50">
+                    <div className="bg-white p-4 rounded-lg shadow-lg flex items-center space-x-3">
+                        <Loader2 className="h-5 w-5 animate-spin text-primary"/>
+                        <span>Mise à jour...</span>
+                    </div>
+                </div>
+            )}
 
             {/* Main Content */}
             <Tabs defaultValue={hasBooks ? "library" : hasWishlist ? "wishlist" : "library"} className="w-full">
@@ -307,8 +351,8 @@ export default function DashboardContent({userId}: DashboardContentProps) {
                 onClose={() => setIsModalOpen(false)}
                 isInLibrary={isInLibrary}
                 isInWishlist={isInWishlist}
-                toggleLibrary={toggleLibrary}
-                toggleWishlist={toggleWishlist}
+                toggleLibrary={handleToggleLibrary}
+                toggleWishlist={handleToggleWishlist}
             />
         </div>
     );
