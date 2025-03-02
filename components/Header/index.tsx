@@ -22,7 +22,6 @@ export default function Header() {
     useEffect(() => {
         const handleScroll = () => {
             const offset = window.scrollY;
-            console.log(offset);
             if (offset > 50) {
                 setScrolled(true);
             } else {
@@ -32,7 +31,6 @@ export default function Header() {
 
         window.addEventListener('scroll', handleScroll);
 
-        // Call once to set initial state
         handleScroll();
 
         return () => {

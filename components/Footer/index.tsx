@@ -75,18 +75,6 @@ const Footer = () => {
                     <p className="text-sm text-muted-foreground">
                         © {new Date().getFullYear()} LivreTrack. Tous droits réservés.
                     </p>
-                    <div className="flex gap-4 mt-4 sm:mt-0">
-                        {["Twitter", "Instagram", "LinkedIn", "GitHub"].map((social) => (
-                            <motion.a
-                                key={social}
-                                href="#"
-                                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                                whileHover={{y: -3}}
-                            >
-                                {social}
-                            </motion.a>
-                        ))}
-                    </div>
                 </motion.div>
             </div>
         </motion.footer>
