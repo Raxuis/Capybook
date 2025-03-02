@@ -82,20 +82,28 @@ export default function Header() {
 
                 {/* Desktop Navigation */}
                 <nav className="hidden md:flex items-center gap-6">
-                    {pathname === "/" && headerElements.map((item, index) => (
-                        <motion.a
-                            key={item.link}
-                            href={item.link}
-                            className="text-sm font-medium hover:text-primary transition-colors"
-                            whileHover={{scale: 1.1, color: "var(--primary)"}}
-                            initial={{opacity: 0, y: -20}}
-                            animate={{opacity: 1, y: 0}}
-                            transition={{duration: 0.3, delay: index * 0.1}}
-                        >
-                            {item.label}
-                        </motion.a>
-                    ))}
+                    {
+                        headerElements.map((headerElement) => {
+                            if (headerElement.url === pathname) {
+                                return headerElement.links.map((item, index) => (
+                                    <motion.a
+                                        key={item.link}
+                                        href={item.link}
+                                        className="text-sm font-medium hover:text-primary transition-colors"
+                                        whileHover={{scale: 1.1, color: "var(--primary)"}}
+                                        initial={{opacity: 0, y: -20}}
+                                        animate={{opacity: 1, y: 0}}
+                                        transition={{duration: 0.3, delay: index * 0.1}}
+                                    >
+                                        {item.label}
+                                    </motion.a>
+                                ));
+                            }
+                            return null;
+                        })
+                    }
                 </nav>
+
             </div>
 
             {/* Mobile Navigation */}
@@ -109,19 +117,28 @@ export default function Header() {
                         className="md:hidden absolute w-full bg-background border-b py-4 px-4 shadow-lg overflow-hidden"
                     >
                         <nav className="flex flex-col gap-4">
-                            {pathname === "/" && headerElements.map((item, index) => (
-                                <motion.a
-                                    key={item.link}
-                                    href={item.link}
-                                    className="text-sm font-medium hover:text-primary transition-colors"
-                                    onClick={() => toggleMenu()}
-                                    initial={{opacity: 0, x: -20}}
-                                    animate={{opacity: 1, x: 0}}
-                                    transition={{duration: 0.3, delay: index * 0.1}}
-                                >
-                                    {item.label}
-                                </motion.a>
-                            ))}
+                            <nav className="hidden md:flex items-center gap-6">
+                                {
+                                    headerElements.map((headerElement) => {
+                                        if (headerElement.url === pathname) {
+                                            return headerElement.links.map((item, index) => (
+                                                <motion.a
+                                                    key={item.link}
+                                                    href={item.link}
+                                                    className="text-sm font-medium hover:text-primary transition-colors"
+                                                    onClick={() => toggleMenu()}
+                                                    initial={{opacity: 0, x: -20}}
+                                                    animate={{opacity: 1, x: 0}}
+                                                    transition={{duration: 0.3, delay: index * 0.1}}
+                                                >
+                                                    {item.label}
+                                                </motion.a>
+                                            ));
+                                        }
+                                        return null;
+                                    })
+                                }
+                            </nav>
                         </nav>
                     </motion.div>
                 )}
