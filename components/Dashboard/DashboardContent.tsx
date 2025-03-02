@@ -133,8 +133,8 @@ export default function DashboardContent({userId}: DashboardContentProps) {
                     className="flex items-center p-4 h-full transition-all hover:shadow-md"
                 >
                     <div className="flex items-center space-x-4 w-full">
-                        <div className="flex items-center justify-center bg-primary/10 p-3 rounded-full">
-                            <Library className="h-6 w-6 text-primary"/>
+                        <div className="flex items-center justify-center bg-green-800/10 p-3 rounded-full">
+                            <Library className="h-6 w-6 text-green-800"/>
                         </div>
                         <div>
                             <p className="font-medium">Ma bibliothèque</p>
@@ -235,6 +235,16 @@ export default function DashboardContent({userId}: DashboardContentProps) {
                                                     {userBook.Book.authors || "Auteur inconnu"}
                                                 </span>
                                             </div>
+                                            {
+                                                userBook.progress === 100 && (
+                                                    <Badge
+                                                        variant="outline"
+                                                        className="bg-secondary/10 text-secondary cursor-pointer hover:bg-secondary/20 transition-colors"
+                                                    >
+                                                        Livre fini
+                                                    </Badge>
+                                                )
+                                            }
                                         </div>
 
                                         <ProgressTracker
