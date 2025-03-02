@@ -15,7 +15,6 @@ export const GET = createZodRoute().query(querySchema).handler(async (request, c
     }
 
     try {
-        console.log(`https://openlibrary.org/works/${bookKey}.json`)
         const response = await axios.get(`https://openlibrary.org${bookKey}.json`);
         return NextResponse.json(response.data, {status: 200});
     } catch {

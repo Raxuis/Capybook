@@ -54,17 +54,13 @@ const ProgressTracker = ({bookId, userId, initialProgress = 0}: Props) => {
     const saveProgress = async () => {
         setIsSaving(true);
         try {
-            await axios.post('/api/books/progress', {
+            await axios.post('/api/book/progress', {
                 bookId,
                 userId,
                 progress
             });
 
-            await mutate(undefined, {
-                revalidate: true,
-                populateCache: true,
-                rollbackOnError: true
-            });
+            await mutate(`/api/user/${userId}`);
 
             setIsDirty(false);
         } catch (error) {
