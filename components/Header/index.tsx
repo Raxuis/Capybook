@@ -1,8 +1,8 @@
 "use client";
 
-// import {useSession, signOut} from 'next-auth/react';
+import {signOut} from 'next-auth/react';
 import {BookOpen, Menu, X} from "lucide-react";
-// import {useAuth} from "@/hooks/useAuth";
+import {useAuth} from "@/hooks/useAuth";
 import {AnimatePresence, motion} from "motion/react";
 import {useState, useEffect} from "react";
 import {navigation} from "@/constants";
@@ -15,9 +15,9 @@ export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
     const {navigation: headerElements} = navigation;
-    // const {data: session} = useSession();
-    // const {isAuthenticated} = useAuth();
+    const {isAuthenticated} = useAuth();
     const pathname = usePathname();
+    let headerElementsLength = 0;
 
     useEffect(() => {
         const handleScroll = () => {
@@ -42,9 +42,9 @@ export default function Header() {
         setIsMenuOpen(!isMenuOpen);
     };
 
-    // const handleSignOut = async () => {
-    //     await signOut({redirectTo: '/login'});
-    // };
+    const handleSignOut = async () => {
+        await signOut({redirectTo: '/login'});
+    };
 
     return (
         <motion.header
@@ -100,6 +100,31 @@ export default function Header() {
                             return null;
                         })
                     }
+                    {
+                        isAuthenticated ? (
+                            <motion.button
+                                onClick={handleSignOut}
+                                className="text-sm font-medium hover:text-primary transition-colors"
+                                whileHover={{scale: 1.1, color: "var(--primary)"}}
+                                initial={{opacity: 0, x: -20}}
+                                animate={{opacity: 1, x: 0}}
+                                transition={{duration: 0.3, delay: headerElementsLength * 0.1}}
+                            >
+                                Déconnexion
+                            </motion.button>
+                        ) : (
+                            <motion.a
+                                href="/login"
+                                className="text-sm font-medium hover:text-primary transition-colors"
+                                whileHover={{scale: 1.1, color: "var(--primary)"}}
+                                initial={{opacity: 0, y: -20}}
+                                animate={{opacity: 1, y: 0}}
+                                transition={{duration: 0.3, delay: headerElementsLength * 0.1}}
+                            >
+                                Se connecter
+                            </motion.a>
+                        )
+                    }
                 </nav>
 
             </div>
@@ -115,26 +140,54 @@ export default function Header() {
                         className="md:hidden absolute w-full bg-background border-b py-4 px-4 shadow-lg overflow-hidden"
                     >
                         <nav className="flex flex-col gap-4">
-                            <nav className="hidden md:flex items-center gap-6">
+                            <nav className="flex flex-col md:hidden items-start gap-6">
                                 {
                                     headerElements.map((headerElement) => {
                                         if (headerElement.url === pathname) {
-                                            return headerElement.links.map((item, index) => (
-                                                <motion.a
-                                                    key={item.link}
-                                                    href={item.link}
-                                                    className="text-sm font-medium hover:text-primary transition-colors"
-                                                    onClick={() => toggleMenu()}
-                                                    initial={{opacity: 0, x: -20}}
-                                                    animate={{opacity: 1, x: 0}}
-                                                    transition={{duration: 0.3, delay: index * 0.1}}
-                                                >
-                                                    {item.label}
-                                                </motion.a>
-                                            ));
+                                            return headerElement.links.map((item, index) => {
+                                                headerElementsLength = headerElement.links.length;
+                                                return (
+                                                        <motion.a
+                                                            key={item.link}
+                                                            href={item.link}
+                                                            className="text-sm font-medium hover:text-primary transition-colors"
+                                                            onClick={() => toggleMenu()}
+                                                            initial={{opacity: 0, x: -20}}
+                                                            animate={{opacity: 1, x: 0}}
+                                                            transition={{duration: 0.3, delay: index * 0.1}}
+                                                        >
+                                                            {item.label}
+                                                        </motion.a>
+                                                )
+                                            });
                                         }
                                         return null;
                                     })
+                                }
+                                {
+                                    isAuthenticated ? (
+                                        <motion.button
+                                            onClick={handleSignOut}
+                                            className="text-sm font-medium hover:text-primary transition-colors"
+                                            whileHover={{scale: 1.1, color: "var(--primary)"}}
+                                            initial={{opacity: 0, x: -20}}
+                                            animate={{opacity: 1, x: 0}}
+                                            transition={{duration: 0.3, delay: headerElementsLength * 0.1}}
+                                        >
+                                            Déconnexion
+                                        </motion.button>
+                                    ) : (
+                                        <motion.a
+                                            href="/login"
+                                            className="text-sm font-medium hover:text-primary transition-colors"
+                                            whileHover={{scale: 1.1, color: "var(--primary)"}}
+                                            initial={{opacity: 0, x: -20}}
+                                            animate={{opacity: 1, x: 0}}
+                                            transition={{duration: 0.3, delay: headerElementsLength * 0.1}}
+                                        >
+                                            Se connecter
+                                        </motion.a>
+                                    )
                                 }
                             </nav>
                         </nav>
