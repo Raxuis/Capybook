@@ -7,6 +7,7 @@ import {useDebounce} from "@uidotdev/usehooks";
 import BookCard from "@/components/Dashboard/Book/BookCard";
 import {Search} from "lucide-react";
 import {Skeleton} from "@/components/ui/skeleton";
+import {Link} from "next-view-transitions";
 
 const BookStore = ({userId}: { userId: string | null }) => {
     const [bookNameQuery, setBookNameQuery] = useQueryState("");
@@ -90,7 +91,11 @@ const BookStore = ({userId}: { userId: string | null }) => {
                 <div className="mt-16 flex flex-col items-center justify-center text-center">
                     <h3 className="text-xl font-semibold mb-2">Commencez votre recherche</h3>
                     <p className="text-gray-500 max-w-md">
-                        Recherchez des livres par titre ou auteur pour les ajouter à votre bibliothèque.
+                        Recherchez des livres par titre ou auteur pour les ajouter à {" "}
+                        <Link href="/book-shelf" className="text-primary underline">
+                            votre bibliothèque
+                        </Link>
+                        .
                     </p>
                 </div>
             )}
