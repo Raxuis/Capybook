@@ -1,4 +1,6 @@
 "use client";
+
+import {useState} from "react";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
@@ -9,8 +11,10 @@ import {z} from "zod";
 import {SignInSchema} from "@/utils/zod";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {useAuth} from "@/hooks/useAuth";
+import {LoaderCircleIcon} from "lucide-react";
 
 export default function LoginForm() {
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const form = useForm<z.infer<typeof SignInSchema>>({
         defaultValues: {
             email: "",
@@ -23,6 +27,7 @@ export default function LoginForm() {
 
     async function onSubmit(values: z.infer<typeof SignInSchema>) {
         if (values) {
+            setIsSubmitting(true);
             try {
                 const response = await fetch("/api/login", {
                     method: "POST",
@@ -40,6 +45,8 @@ export default function LoginForm() {
 
             } catch (error) {
                 console.error(error);
+            } finally {
+                setIsSubmitting(false);
             }
         }
     }
@@ -91,7 +98,14 @@ export default function LoginForm() {
                                 </FormItem>
                             )}
                         />
-                        <Button type="submit" className="w-full">
+                        <Button type="submit" className="w-full" disabled={isSubmitting}>
+                            {
+                                isSubmitting && <LoaderCircleIcon
+                                    className="-ms-1 animate-spin"
+                                    size={16}
+                                    aria-hidden="true"
+                                />
+                            }
                             Se connecter
                         </Button>
                     </form>

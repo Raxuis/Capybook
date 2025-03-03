@@ -11,9 +11,12 @@ import {z} from "zod";
 import {useForm} from "react-hook-form";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {useToast} from "@/hooks/use-toast";
+import {LoaderCircleIcon} from "lucide-react";
+import {useState} from "react";
 
 export default function RegisterForm() {
     const {toast} = useToast();
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const form = useForm<z.infer<typeof SignUpSchema>>({
         resolver: zodResolver(SignUpSchema),
@@ -26,6 +29,7 @@ export default function RegisterForm() {
 
     async function onSubmit(values: z.infer<typeof SignUpSchema>) {
         if (values) {
+            setIsSubmitting(true);
             try {
                 const response = await fetch("/api/register", {
                     method: "POST",
@@ -69,6 +73,8 @@ export default function RegisterForm() {
                     title: "Erreur",
                     description: "Une erreur est survenue lors de la création du compte"
                 });
+            } finally {
+                setIsSubmitting(false);
             }
         }
     }
@@ -140,9 +146,17 @@ export default function RegisterForm() {
                             )}
                         />
 
-                        <Button type="submit" className="w-full">
+                        <Button type="submit" className="w-full" disabled={isSubmitting}>
+                            {
+                                isSubmitting && <LoaderCircleIcon
+                                    className="-ms-1 animate-spin"
+                                    size={16}
+                                    aria-hidden="true"
+                                />
+                            }
                             Créer
                         </Button>
+
                     </form>
                 </Form>
             </CardContent>
