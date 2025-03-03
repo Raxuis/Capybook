@@ -110,7 +110,9 @@ const BookModal = ({
                     {isLoading ? (
                         <>
                             <Skeleton className="h-7 w-3/4 mb-2"/>
-                            <DialogTitle className="sr-only">Chargement...</DialogTitle>
+                            <DialogTitle className="sr-only">
+                                Chargement...
+                            </DialogTitle>
                             <Skeleton className="h-4 w-full mb-1"/>
                             <Skeleton className="h-4 w-2/3"/>
                             <DialogDescription className="sr-only">
@@ -132,7 +134,8 @@ const BookModal = ({
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {/* Image/Couverture */}
-                    <div className="aspect-[2/3] relative bg-gray-100 rounded-md overflow-hidden">
+                    <div
+                        className="aspect-[2/3] relative bg-gray-100 rounded-md overflow-hidden max-h-96 mx-auto w-full sm:max-w-[200px]">
                         {isLoading ? (
                             <Skeleton className="w-full h-full"/>
                         ) : book?.cover ? (
@@ -182,8 +185,8 @@ const BookModal = ({
                                 </h3>
                                 <div className="flex flex-wrap gap-1 mt-1">
                                     {book.subjects.slice(0, 5).map((subject, idx) => (
-                                        <Badge key={idx} variant="secondary" className="text-xs">
-                                            {subject}
+                                        <Badge key={idx} variant="secondary" className="text-xs max-w-24">
+                                            {subject.length > 10 ? subject.substring(0, 10) + '...' : subject}
                                         </Badge>
                                     ))}
                                 </div>
@@ -197,62 +200,57 @@ const BookModal = ({
                                 <Skeleton className="h-6 w-40 rounded-full"/>
                             </div>
                         ) : (
-                            <div className="space-y-2">
-                                <h3 className="text-sm font-medium text-gray-500">Statut du livre</h3>
-                                <div className="flex flex-wrap gap-2">
-                                    {inLibrary && (
-                                        <Badge variant="outline"
-                                               className="bg-primary/10 text-primary flex items-center gap-1">
-                                            <BookIcon className="h-3 w-3"/>
-                                            Dans ma bibliothèque
-                                        </Badge>
-                                    )}
-                                    {inWishlist && (
-                                        <Badge variant="outline"
-                                               className="bg-rose-50 text-rose-600 flex items-center gap-1">
-                                            <Heart className="h-3 w-3"/>
-                                            Dans ma wishlist
-                                        </Badge>
-                                    )}
-                                    {!inLibrary && !inWishlist && (
-                                        <Badge variant="outline" className="text-gray-500">
-                                            Non ajouté
-                                        </Badge>
-                                    )}
+                            <div className="grid grid-cols-1 sm:grid-cols-2">
+                                <div className="space-y-2">
+                                    <h3 className="text-sm font-medium text-gray-500">Statut du livre</h3>
+                                    <div className="flex flex-wrap gap-2">
+                                        {inLibrary && (
+                                            <Badge variant="outline"
+                                                   className="bg-primary/10 text-primary flex items-center gap-1">
+                                                <BookIcon className="h-3 w-3"/>
+                                                Dans ma bibliothèque
+                                            </Badge>
+                                        )}
+                                        {inWishlist && (
+                                            <Badge variant="outline"
+                                                   className="bg-rose-50 text-rose-600 flex items-center gap-1">
+                                                <Heart className="h-3 w-3"/>
+                                                Dans ma wishlist
+                                            </Badge>
+                                        )}
+                                        {!inLibrary && !inWishlist && (
+                                            <Badge variant="outline" className="text-gray-500">
+                                                Non ajouté
+                                            </Badge>
+                                        )}
+                                    </div>
                                 </div>
-                            </div>
-                        )}
-                        {/* Livre Actuel */}
-                        {isLoading ? (
-                            <div>
-                                <Skeleton className="h-4 w-24 mb-2"/>
-                                <Skeleton className="h-6 w-40 rounded-full"/>
-                            </div>
-                        ) : (
-                            <div className="space-y-2">
-                                <h3 className="text-sm font-medium text-gray-500">Statut de lecture</h3>
-                                <div className="flex flex-wrap gap-2">
-                                    {isCurrentBookInstance ? (
-                                        <Badge variant="outline"
-                                               className="bg-indigo-100 text-indigo-600 flex items-center gap-1">
-                                            <BookMarked className="h-3 w-3"/>
-                                            Livre en cours de lecture
-                                        </Badge>
-                                    ) : inLibrary ?
-                                        isBookFinishedInstance ?
-                                            (
-                                                <Badge variant="outline"
-                                                       className="bg-green-100 text-green-600 flex items-center gap-1">
-                                                    <BookCopy className="h-3 w-3"/>
-                                                    Terminé
-                                                </Badge>
-                                            )
-                                            : (
-                                                <Badge variant="outline" className="text-gray-500 flex items-center gap-1">
-                                                    <BookCopy className="h-3 w-3"/>
-                                                    Non commencé
-                                                </Badge>
-                                            ) : null}
+                                <div className="space-y-2">
+                                    <h3 className="text-sm font-medium text-gray-500">Statut de lecture</h3>
+                                    <div className="flex flex-wrap gap-2">
+                                        {isCurrentBookInstance ? (
+                                            <Badge variant="outline"
+                                                   className="bg-indigo-100 text-indigo-600 flex items-center gap-1">
+                                                <BookMarked className="h-3 w-3"/>
+                                                En cours de lecture
+                                            </Badge>
+                                        ) : inLibrary ?
+                                            isBookFinishedInstance ?
+                                                (
+                                                    <Badge variant="outline"
+                                                           className="bg-green-100 text-green-600 flex items-center gap-1">
+                                                        <BookCopy className="h-3 w-3"/>
+                                                        Terminé
+                                                    </Badge>
+                                                )
+                                                : (
+                                                    <Badge variant="outline"
+                                                           className="text-gray-500 flex items-center gap-1">
+                                                        <BookCopy className="h-3 w-3"/>
+                                                        Non commencé
+                                                    </Badge>
+                                                ) : null}
+                                    </div>
                                 </div>
                             </div>
                         )}

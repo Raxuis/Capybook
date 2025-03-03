@@ -4,7 +4,7 @@ import {useBooks} from "@/hooks/useBooks";
 import {useQueryState} from "nuqs";
 import {Input} from "@/components/ui/input";
 import {useDebounce} from "@uidotdev/usehooks";
-import BookCard from "@/components/Dashboard/Book/BookCard";
+import BookCard from "@/components/BookStore/BookCard";
 import {Search} from "lucide-react";
 import {Skeleton} from "@/components/ui/skeleton";
 import {Link} from "next-view-transitions";

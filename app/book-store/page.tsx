@@ -1,5 +1,5 @@
 import {auth} from "@/auth";
-import BookStore from "@/components/Dashboard/Book/BookStore";
+import BookStore from "@/components/BookStore/BookStore";
 
 export default async function BookStoreWrapper() {
     const session = await auth();

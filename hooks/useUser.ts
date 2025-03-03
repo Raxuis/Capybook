@@ -3,7 +3,7 @@ import {fetcher} from "@/utils/fetcher";
 import {Prisma} from "@prisma/client";
 import {useEffect} from "react";
 
-type UserWithRelations = Prisma.UserGetPayload<{
+export type UserWithRelations = Prisma.UserGetPayload<{
     include: {
         UserBook: {
             include: {
