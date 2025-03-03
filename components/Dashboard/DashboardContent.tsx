@@ -210,11 +210,15 @@ export default function DashboardContent({userId}: DashboardContentProps) {
                                             }
                                         </div>
 
-                                        <ProgressTracker
-                                            bookId={userBook.Book.id}
-                                            initialProgress={userBook.progress || 0}
-                                            userId={user.id}
-                                        />
+                                        {
+                                            userBook.isCurrentBook && (
+                                                <ProgressTracker
+                                                    bookId={userBook.Book.id}
+                                                    initialProgress={userBook.progress || 0}
+                                                    userId={user.id}
+                                                />
+                                            )
+                                        }
                                     </CardContent>
                                 </Card>
                             ))}

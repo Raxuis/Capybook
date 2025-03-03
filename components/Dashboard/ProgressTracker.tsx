@@ -54,7 +54,7 @@ const ProgressTracker = ({bookId, userId, initialProgress = 0}: Props) => {
     const saveProgress = async () => {
         setIsSaving(true);
         try {
-            await axios.post('/api/book/progress', {
+            await axios.post('/api/user/book/progress', {
                 bookId,
                 userId,
                 progress

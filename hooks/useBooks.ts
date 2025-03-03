@@ -5,6 +5,7 @@ import {useUser} from "@/hooks/useUser";
 import axios from "axios";
 
 export type Book = {
+    id: string;
     key: string;
     title: string;
     cover_i?: number;
@@ -40,6 +41,9 @@ export function useBooks(bookName?: string | null, userId?: string) {
             if (isInLibrary(book.key)) {
                 await axios.delete(`/api/user/books`, {data: {userId, book: book}});
             } else {
+                if (isInWishlist(book.key)) {
+                    await axios.delete(`/api/user/wishlist`, {data: {userId, book: book}});
+                }
                 await axios.post("/api/user/books", {userId, book: book});
             }
             await mutate(`/api/user/${userId}`);
@@ -54,6 +58,9 @@ export function useBooks(bookName?: string | null, userId?: string) {
             if (isInWishlist(book.key)) {
                 await axios.delete(`/api/user/wishlist`, {data: {userId, book: book}});
             } else {
+                if (isInLibrary(book.key)) {
+                    await axios.delete(`/api/user/books`, {data: {userId, book: book}});
+                }
                 await axios.post("/api/user/wishlist", {userId, book: book});
             }
             await mutate(`/api/user/${userId}`);
@@ -66,16 +73,12 @@ export function useBooks(bookName?: string | null, userId?: string) {
         if (!userId) return;
         try {
             const currentBook = user?.UserBook.find((ub) => ub.Book.key === book.key);
-            if (currentBook) {
-                await axios.put(`/api/user/current-book`, {
-                    data: {
-                        userId,
-                        book: book,
-                        isCurrentBook: !currentBook.isCurrentBook
-                    }
+            if (currentBook && book) {
+                await axios.put(`/api/user/book/current-book`, {
+                    userId,
+                    bookId: book.id,
+                    isCurrentBook: !currentBook.isCurrentBook
                 });
-            } else {
-                await axios.post("/api/user/current-book", {userId, book: book});
             }
             await mutate(`/api/user/${userId}`);
         } catch (error) {

@@ -53,6 +53,7 @@ export const POST = createZodRoute().body(bodySchema).handler(async (request, co
         },
         data: {
             progress: progress,
+            isCurrentBook: progress !== 100 && progress !== 0,
         }
     });
 

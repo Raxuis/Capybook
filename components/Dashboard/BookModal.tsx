@@ -41,7 +41,6 @@ const BookModal = ({
         toggleCurrentBook
     } = useBooks(undefined, userId);
 
-    // Utilisation de useMemo pour mémoriser les valeurs qui dépendent de book
     const bookStatus = useMemo(() => {
         if (!book) return {inLibrary: false, inWishlist: false, isCurrentBookInstance: false};
 
@@ -84,6 +83,7 @@ const BookModal = ({
 
     const handleToggleCurrentBook = async () => {
         if (!book) return;
+        console.log("book", book);
         setLoadingCurrentBook(true);
         try {
             await toggleCurrentBook(book);
@@ -94,7 +94,6 @@ const BookModal = ({
         }
     };
 
-    // Déstructuration des valeurs mémorisées
     const {inLibrary, inWishlist, isCurrentBookInstance} = bookStatus;
 
     return (
