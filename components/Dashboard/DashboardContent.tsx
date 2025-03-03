@@ -23,6 +23,7 @@ export type MoreInfoBook = BookType & {
     description?: string;
     subjects: string[];
     cover?: string;
+    finishedAt?: string | null;
 }
 
 export default function DashboardContent({userId}: DashboardContentProps) {
@@ -30,6 +31,8 @@ export default function DashboardContent({userId}: DashboardContentProps) {
     const [selectedBook, setSelectedBook] = useState<MoreInfoBook | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isLoadingBookDetails, setIsLoadingBookDetails] = useState(false);
+
+    console.log("User: ", user);
 
     if ((isLoading || isValidating) && !user) {
         return (
@@ -73,11 +76,15 @@ export default function DashboardContent({userId}: DashboardContentProps) {
                 setIsLoadingBookDetails(false);
                 return;
             }
+
+            console.log('userBook', user.UserBook);
             const bookForModal = {
                 ...book,
                 description: bookInfos.description?.value || "Aucune description disponible",
                 subjects: bookInfos.subjects || [],
             };
+
+            console.log("Book for modal: ", bookForModal);
             setSelectedBook(bookForModal);
         } catch (error) {
             console.error("Erreur lors du chargement du livre :", error);

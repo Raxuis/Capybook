@@ -33,6 +33,7 @@ const BookModal = ({
                        isLoading = false,
                    }: BookModalProps) => {
     const {
+        isBookFinished,
         isInLibrary,
         isInWishlist,
         isCurrentBook,
@@ -42,14 +43,20 @@ const BookModal = ({
     } = useBooks(undefined, userId);
 
     const bookStatus = useMemo(() => {
-        if (!book) return {inLibrary: false, inWishlist: false, isCurrentBookInstance: false};
+        if (!book) return {
+            inLibrary: false,
+            inWishlist: false,
+            isCurrentBookInstance: false,
+            isBookFinishedInstance: false
+        };
 
         return {
             inLibrary: isInLibrary(book.key),
             inWishlist: isInWishlist(book.key),
-            isCurrentBookInstance: isCurrentBook(book.key)
+            isCurrentBookInstance: isCurrentBook(book.key),
+            isBookFinishedInstance: isBookFinished(book.key)
         };
-    }, [book, isInLibrary, isInWishlist, isCurrentBook]);
+    }, [book, isInLibrary, isInWishlist, isCurrentBook, isBookFinished]);
 
     const [loadingLibrary, setLoadingLibrary] = useState(false);
     const [loadingWishlist, setLoadingWishlist] = useState(false);
@@ -94,7 +101,7 @@ const BookModal = ({
         }
     };
 
-    const {inLibrary, inWishlist, isCurrentBookInstance} = bookStatus;
+    const {isBookFinishedInstance, inLibrary, inWishlist, isCurrentBookInstance} = bookStatus;
 
     return (
         <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
@@ -231,12 +238,21 @@ const BookModal = ({
                                             <BookMarked className="h-3 w-3"/>
                                             Livre en cours de lecture
                                         </Badge>
-                                    ) : inLibrary ? (
-                                        <Badge variant="outline" className="text-gray-500 flex items-center gap-1">
-                                            <BookCopy className="h-3 w-3"/>
-                                            Non commencé
-                                        </Badge>
-                                    ) : null}
+                                    ) : inLibrary ?
+                                        isBookFinishedInstance ?
+                                            (
+                                                <Badge variant="outline"
+                                                       className="bg-green-100 text-green-600 flex items-center gap-1">
+                                                    <BookCopy className="h-3 w-3"/>
+                                                    Terminé
+                                                </Badge>
+                                            )
+                                            : (
+                                                <Badge variant="outline" className="text-gray-500 flex items-center gap-1">
+                                                    <BookCopy className="h-3 w-3"/>
+                                                    Non commencé
+                                                </Badge>
+                                            ) : null}
                                 </div>
                             </div>
                         )}
@@ -251,7 +267,7 @@ const BookModal = ({
                         </>
                     ) : (
                         <>
-                            {inLibrary && !isCurrentBookInstance && (
+                            {(inLibrary && !isCurrentBookInstance && !isBookFinishedInstance) && (
                                 <Button
                                     variant="outline"
                                     className="w-full sm:w-auto hover:bg-indigo-200 border-indigo-300 text-indigo-700"
