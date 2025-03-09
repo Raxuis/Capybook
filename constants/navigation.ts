@@ -37,12 +37,20 @@ const navigation: NavigationOptions = [
                 link: "#",
             },
             {
-                label: "Blog",
-                link: "#blog",
+                label: "Histoire",
+                link: "#history",
             },
             {
-                label: "Carrières",
-                link: "#carrières",
+                label: "Services",
+                link: "#services",
+            },
+            {
+                label: "Équipe",
+                link: "#team",
+            },
+            {
+                label: "FAQ",
+                link: "#faq",
             }
         ]
     },

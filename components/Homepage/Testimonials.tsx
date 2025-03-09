@@ -135,30 +135,23 @@ const Testimonials = () => {
                                     </div>
                                     <motion.div
                                         className="relative bg-primary/5 rounded-xl p-4 mt-2"
-                                        initial={{opacity: 0}}
-                                        animate={{opacity: 1}}
-                                        transition={{delay: 0.3, duration: 0.8}}
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        transition={{ delay: 0.3, duration: 0.8 }}
                                     >
                                         <p className="text-lg italic">
-                                            {
-                                                userTestimonials[activeTestimonialIndex].content
-                                            }
+                                            {userTestimonials[activeTestimonialIndex].content}
                                         </p>
                                         <div
-                                            className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-gray-800 border px-4 py-1 rounded-full">
+                                            className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-gray-800 border w-48 sm:w-36 h-8 flex items-center justify-center rounded-full"
+                                        >
                                             <p className="text-xs text-primary font-medium">
-                                                {
-                                                    userTestimonials[activeTestimonialIndex].gender === "male" ?
-                                                        "Utilisateur"
-                                                        : userTestimonials[activeTestimonialIndex].gender === "female"
-                                                            ?
-                                                            'Utilisatrice'
-                                                            : "Ici"
-                                                }
-                                                {" "} depuis {" "}
-                                                {
-                                                    userTestimonials[activeTestimonialIndex].time
-                                                }.
+                                                {userTestimonials[activeTestimonialIndex].gender === "male"
+                                                    ? "Utilisateur"
+                                                    : userTestimonials[activeTestimonialIndex].gender === "female"
+                                                        ? "Utilisatrice"
+                                                        : "Ici"}{" "}
+                                                depuis {userTestimonials[activeTestimonialIndex].time}.
                                             </p>
                                         </div>
                                     </motion.div>
