@@ -71,7 +71,7 @@ function AppIcon({
                         </div>
                     </TooltipTrigger>
                     <TooltipContent
-                        className="text-muted-foreground dark:text-muted p-2 rounded-lg shadow-lg bg-white dark:bg-gray-800 text-sm font-inter">
+                        className="text-muted-foreground dark:text-muted p-2 rounded-lg shadow-lg bg-white dark:bg-gray-800 text-sm">
                         {tooltip}
                     </TooltipContent>
                 </Tooltip>
