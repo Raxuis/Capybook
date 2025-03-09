@@ -91,18 +91,6 @@ const Hero = () => {
                         transition={{duration: 0.8, ease: "easeOut"}}
                     >
                         <motion.div
-                            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[600px] bg-gradient-to-r from-primary/20 to-primary/5 rounded-full blur-3xl"
-                            animate={{
-                                scale: [1, 1.1, 1],
-                                opacity: [0.5, 0.7, 0.5]
-                            }}
-                            transition={{
-                                duration: 8,
-                                repeat: Infinity,
-                                repeatType: "reverse"
-                            }}
-                        />
-                        <motion.div
                             className="relative z-10 flex items-center justify-center"
                             whileHover={{scale: 1.05, rotate: -2}}
                             transition={{type: "spring", stiffness: 200}}
