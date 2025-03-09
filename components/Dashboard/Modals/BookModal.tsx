@@ -18,8 +18,6 @@ import {useMemo, useState} from "react";
 import {Skeleton} from "@/components/ui/skeleton";
 import {motion} from "motion/react";
 
-const MotionDialogContent = motion(DialogContent);
-
 interface BookModalProps {
     book: MoreInfoBook | null;
     userId?: string;
