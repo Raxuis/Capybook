@@ -9,6 +9,8 @@ import {Button} from "@/components/ui/button";
 import {formatList} from "@/utils/formatList";
 import {useToast} from "@/hooks/use-toast";
 import {useCallback, useMemo, useState} from "react";
+import {useReviewModalStore} from "@/store/reviewModalStore";
+import {MoreInfoBook} from "@/components/Dashboard/DashboardContent";
 
 type BookCardProps = {
     book: Book;
@@ -32,6 +34,8 @@ export default function BookCard({
         isInWishlist,
         isReviewed
     } = useBooks(debouncedBookName, userId ?? undefined);
+
+    const {setBookToReview} = useReviewModalStore();
 
     const {toast} = useToast();
     const [showAnimation, setShowAnimation] = useState<ClickType | null>(null);
@@ -137,8 +141,8 @@ export default function BookCard({
     const handleReviewClick = useCallback(() => {
         setShowAnimation("review");
         setTimeout(() => setShowAnimation(null), 1000);
-        console.log("suii");
-    }, []);
+        setBookToReview(book as MoreInfoBook);
+    }, [book, setBookToReview]);
 
     return (
         <div

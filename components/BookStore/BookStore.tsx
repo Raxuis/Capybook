@@ -8,6 +8,7 @@ import BookCard from "@/components/BookStore/BookCard";
 import {Search} from "lucide-react";
 import {Skeleton} from "@/components/ui/skeleton";
 import {Link} from "next-view-transitions";
+import ReviewBookModal from "@/components/BookStore/Modals/ReviewBookModal";
 
 const BookStore = ({userId}: { userId: string | null }) => {
     const [bookNameQuery, setBookNameQuery] = useQueryState("");
@@ -93,6 +94,7 @@ const BookStore = ({userId}: { userId: string | null }) => {
                     </p>
                 </div>
             )}
+            <ReviewBookModal/>
         </div>
     );
 };
