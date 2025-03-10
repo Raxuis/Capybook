@@ -1,7 +1,7 @@
 import useSWR from "swr";
 import {fetcher} from "@/utils/fetcher";
 import {Prisma} from "@prisma/client";
-import {useEffect} from "react";
+import {useMemo} from "react";
 
 export type UserWithRelations = Prisma.UserGetPayload<{
     include: {
@@ -23,20 +23,33 @@ export type UserWithRelations = Prisma.UserGetPayload<{
     }
 }>;
 
+const SWR_CONFIG = {
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false,
+    dedupingInterval: 60000,
+    keepPreviousData: true
+};
+
 export function useUser(userId?: string) {
-    useEffect(() => {
-        console.log("🔍 Recherche de l'utilisateur... ");
-    })
-    const {data, error, isLoading, isValidating} = useSWR<UserWithRelations>(
-        `/api/user/${userId || null}`,
+    const swrKey = useMemo(() =>
+            userId ? `/api/user/${userId}` : null,
+        [userId]);
+
+    const {data, error, isLoading, isValidating, mutate} = useSWR<UserWithRelations>(
+        swrKey,
         fetcher<UserWithRelations>,
-        {revalidateOnFocus: false, revalidateOnReconnect: false}
+        SWR_CONFIG
     );
 
-    return {
+    const refreshUser = useMemo(() => async () => {
+        if (swrKey) await mutate();
+    }, [mutate, swrKey]);
+
+    return useMemo(() => ({
         user: data,
         isLoading,
         isValidating,
-        isError: !!error,
-    };
+        isError: Boolean(error),
+        refreshUser
+    }), [data, error, isLoading, isValidating, refreshUser]);
 }
