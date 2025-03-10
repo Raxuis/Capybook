@@ -3,7 +3,6 @@ import {Book, useBooks} from "@/hooks/useBooks";
 import {Badge} from "@/components/ui/badge";
 import {BookOpen, Plus, X, Library, Star, Check} from "lucide-react";
 import {FcLikePlaceholder, FcLike, FcComments} from "react-icons/fc";
-import {BiComment} from "react-icons/bi";
 import SimplifiedTooltip from "@/components/SimplifiedTooltip";
 import Image from "next/image";
 import {Button} from "@/components/ui/button";
@@ -228,7 +227,7 @@ export default function BookCard({
                     </SimplifiedTooltip>
 
                     {
-                        (bookIsInLibrary && !isReviewed) && (
+                        (bookIsInLibrary && !bookIsReviewed) && (
                             <SimplifiedTooltip
                                 tooltipContent={"Ajouter un avis"}
                                 asChild>
@@ -236,7 +235,7 @@ export default function BookCard({
                                     onClick={handleReviewClick}
                                     className="h-8 w-8 flex items-center justify-center bg-white rounded-full border hover:bg-gray-100"
                                 >
-                                    {bookIsReviewed ? <FcComments size={18}/> : <BiComment size={18}/>}
+                                    <FcComments size={18} className="opacity-40"/>
                                 </Button>
                             </SimplifiedTooltip>
                         )
