@@ -15,9 +15,7 @@ const BookStore = ({userId}: { userId: string | null }) => {
     const {
         books,
         isError,
-        isLoading,
-        isInLibrary,
-        isInWishlist
+        isLoading
     } = useBooks(debouncedBookName, userId ?? undefined);
     const [searchFocused, setSearchFocused] = useState(false);
 
@@ -68,8 +66,6 @@ const BookStore = ({userId}: { userId: string | null }) => {
                             book={book}
                             debouncedBookName={debouncedBookName}
                             userId={userId}
-                            isInLibrary={isInLibrary(book.key) || false}
-                            isInWishlist={isInWishlist(book.key) || false}
                         />
                     ))}
                 </div>

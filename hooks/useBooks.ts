@@ -53,13 +53,15 @@ export function useBooks(bookName?: string | null, userId?: string) {
             libraryKeys: new Set(),
             wishlistKeys: new Set(),
             currentBookKeys: new Set(),
-            finishedBookKeys: new Set()
+            finishedBookKeys: new Set(),
+            reviewedKeys: new Set()
         };
 
         const libraryKeys = new Set();
         const wishlistKeys = new Set();
         const currentBookKeys = new Set();
         const finishedBookKeys = new Set();
+        const reviewedKeys = new Set();
 
         user.UserBook.forEach((ub) => {
             libraryKeys.add(ub.Book.key);
@@ -71,12 +73,20 @@ export function useBooks(bookName?: string | null, userId?: string) {
             wishlistKeys.add(uw.Book.key);
         });
 
-        return {libraryKeys, wishlistKeys, currentBookKeys, finishedBookKeys};
+        // Ajout des clés des livres avec des reviews
+        if (user.BookReview) {
+            user.BookReview.forEach((review) => {
+                reviewedKeys.add(review.Book.key);
+            });
+        }
+
+        return {libraryKeys, wishlistKeys, currentBookKeys, finishedBookKeys, reviewedKeys};
     }, [user]);
 
 
     const isInLibrary = useCallback((bookKey: string) => bookSets.libraryKeys.has(bookKey), [bookSets.libraryKeys]);
     const isInWishlist = useCallback((bookKey: string) => bookSets.wishlistKeys.has(bookKey), [bookSets.wishlistKeys]);
+    const isReviewed = useCallback((bookKey: string) => bookSets.reviewedKeys.has(bookKey), [bookSets.reviewedKeys]);
     const isCurrentBook = useCallback((bookKey: string) => bookSets.currentBookKeys.has(bookKey), [bookSets.currentBookKeys]);
     const isBookFinished = useCallback((bookKey: string) => bookSets.finishedBookKeys.has(bookKey), [bookSets.finishedBookKeys]);
 
@@ -147,6 +157,7 @@ export function useBooks(bookName?: string | null, userId?: string) {
         isInLibrary,
         isInWishlist,
         isCurrentBook,
+        isReviewed,
         toggleLibrary,
         toggleWishlist,
         toggleCurrentBook,
