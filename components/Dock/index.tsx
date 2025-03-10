@@ -16,6 +16,12 @@ export function Dock() {
                              link="/"
                     />
                     <AppIcon
+                        imgSrc={"/about.png"}
+                        tooltip="À propos"
+                        link="/about"
+                        withoutBackground={true}
+                    />
+                    <AppIcon
                         imgSrc={"/book-shelf.png"}
                         tooltip="Votre bibliothèque"
                         link="/book-shelf"
