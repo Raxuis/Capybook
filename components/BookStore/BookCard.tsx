@@ -1,5 +1,5 @@
 import {cn} from "@/lib/utils";
-import {Book} from "@/hooks/useBooks";
+import {Book, useBooks} from "@/hooks/useBooks";
 import {Badge} from "@/components/ui/badge";
 import {BookOpen, Plus, X, Library, Star, Check} from "lucide-react";
 import {FcLikePlaceholder, FcLike} from "react-icons/fc";
@@ -8,13 +8,13 @@ import Image from "next/image";
 import {Button} from "@/components/ui/button";
 import {formatList} from "@/utils/formatList";
 import {useToast} from "@/hooks/use-toast";
-import {useState} from "react";
+import {useMemo, useState} from "react";
 
 type BookCardProps = {
     book: Book;
     className?: string;
-    toggleLibrary: (book: Book) => void;
-    toggleWishlist: (book: Book) => void;
+    debouncedBookName: string | null;
+    userId: string | null;
     isInLibrary: boolean;
     isInWishlist: boolean;
 };
@@ -24,13 +24,38 @@ type ClickType = "library" | "wishlist";
 export default function BookCard({
                                      book,
                                      className,
-                                     toggleLibrary,
-                                     toggleWishlist,
+                                     debouncedBookName,
+                                     userId,
                                      isInLibrary,
                                      isInWishlist,
                                  }: BookCardProps) {
+    const {
+        toggleLibrary,
+        toggleWishlist,
+    } = useBooks(debouncedBookName, userId ?? undefined);
+
     const {toast} = useToast();
     const [showAnimation, setShowAnimation] = useState<ClickType | null>(null);
+
+    const formattedAuthors = useMemo(() => {
+        return book.author_name ? formatList(book.author_name.slice(0, 1)) : "Auteur inconnu";
+    }, [book.author_name]);
+
+    const formattedLanguages = useMemo(() => {
+        const languages = book.language ?? [];
+        if (languages.length === 0) return null;
+
+        return languages.slice(0, 3).map((lang, idx) => (
+            <Badge key={idx} variant="secondary" className="text-xs">
+                {lang}
+            </Badge>
+        ));
+    }, [book.language]);
+
+    const bookCoverUrl = useMemo(() =>
+            book.cover_i ? `https://covers.openlibrary.org/b/id/${book.cover_i}-M.jpg` : null,
+        [book.cover_i]
+    );
 
     const handleClick = (click: ClickType) => {
         setShowAnimation(click);
@@ -45,14 +70,9 @@ export default function BookCard({
                     description: (
                         <div className="flex items-center gap-2">
                             <div className="h-10 w-10 rounded-md overflow-hidden flex-shrink-0">
-                                {book.cover_i ? (
-                                    <Image
-                                        src={`https://covers.openlibrary.org/b/id/${book.cover_i}-S.jpg`}
-                                        alt={book.title}
-                                        width={40}
-                                        height={40}
-                                        className="object-cover w-full h-full"
-                                    />
+                                {bookCoverUrl ? (
+                                    <Image src={bookCoverUrl} alt={book.title} fill className="object-cover"
+                                           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"/>
                                 ) : (
                                     <div className="bg-gray-100 w-full h-full flex items-center justify-center">
                                         <BookOpen className="h-6 w-6 text-gray-400"/>
@@ -95,9 +115,7 @@ export default function BookCard({
                             </div>
                             <div>
                                 <p className="font-medium line-clamp-1">{book.title}</p>
-                                <p className="text-sm text-gray-500 line-clamp-1">
-                                    {book.author_name ? formatList(book.author_name.slice(0, 1)) : "Auteur inconnu"}
-                                </p>
+                                <p className="text-sm text-gray-500 line-clamp-1">{formattedAuthors}</p>
                             </div>
                         </div>
                     ),
@@ -215,16 +233,14 @@ export default function BookCard({
                         <p className="line-clamp-2">{formatList(book.author_name)}</p>
                     </div>
 
-                    {book.language && book.language.length > 0 && (
+                    {formattedLanguages && (
                         <div>
                             <p className="text-gray-500 font-medium mb-1">Langues :</p>
                             <div className="flex flex-wrap gap-1">
-                                {book.language.slice(0, 3).map((lang, idx) => (
-                                    <Badge key={idx} variant="secondary" className="text-xs">
-                                        {lang}
-                                    </Badge>
+                                {formattedLanguages.map((formattedLanguage) => (
+                                    formattedLanguage
                                 ))}
-                                {book.language.length > 3 && (
+                                {book.language && book.language.length > 3 && (
                                     <Badge variant="secondary" className="text-xs">
                                         +{book.language.length - 3}
                                     </Badge>
