@@ -246,7 +246,11 @@ const BookModal = ({
                                         </div>
                                     </div>
                                     <div className="space-y-2">
-                                        <h3 className="text-sm font-medium text-gray-500">Statut de lecture</h3>
+                                        {
+                                            (!inWishlist && inLibrary) && (
+                                                <h3 className="text-sm font-medium text-gray-500">Statut de lecture</h3>
+                                            )
+                                        }
                                         <div className="flex flex-wrap gap-2">
                                             {isCurrentBookInstance ? (
                                                 <Badge variant="outline"
@@ -345,7 +349,7 @@ const BookModal = ({
                                         Retirer de ma wishlist
                                     </Button>
                                 )}
-                                {!inLibrary && (
+                                {!inLibrary && !inWishlist && (
                                     <Button
                                         variant="outline"
                                         className="w-full sm:w-auto hover:bg-green-300"
@@ -360,7 +364,7 @@ const BookModal = ({
                                         Ajouter à ma bibliothèque
                                     </Button>
                                 )}
-                                {!inWishlist && (
+                                {!inWishlist && !inLibrary && (
                                     <Button
                                         variant="outline"
                                         className="w-full sm:w-auto hover:bg-amber-300"
