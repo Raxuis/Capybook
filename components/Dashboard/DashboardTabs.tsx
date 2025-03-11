@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, {useMemo} from 'react';
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {Book, BookOpen, Heart, Info, Star} from "lucide-react";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
@@ -29,13 +29,15 @@ const DashboardTabs = ({
 
 
     return (
-        <Tabs defaultValue={booksStatus.hasBooks ? "library" : booksStatus.hasWishlist ? "wishlist" : "library"} className="w-full">
+        <Tabs defaultValue={booksStatus.hasBooks ? "library" : booksStatus.hasWishlist ? "wishlist" : "library"}
+              className="w-full">
             <TabsList className="grid w-full grid-cols-3 mb-6">
                 <TabsTrigger value="library" disabled={!booksStatus.hasBooks} className="flex items-center space-x-2">
                     <Book className="h-4 w-4"/>
                     <span>Ma bibliothèque</span>
                 </TabsTrigger>
-                <TabsTrigger value="wishlist" disabled={!booksStatus.hasWishlist} className="flex items-center space-x-2">
+                <TabsTrigger value="wishlist" disabled={!booksStatus.hasWishlist}
+                             className="flex items-center space-x-2">
                     <Heart className="h-4 w-4"/>
                     <span>Ma wishlist</span>
                 </TabsTrigger>
@@ -113,7 +115,7 @@ const DashboardTabs = ({
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {user.UserBookWishlist.map(wishlistItem => (
                             <Card key={wishlistItem.id}
-                                  className="overflow-hidden transition-all hover:shadow-md group border-rose-100 hover:border-rose-200">
+                                  className="overflow-hidden transition-all hover:shadow-md border-rose-100 hover:border-rose-200">
                                 <CardHeader
                                     className="p-4 pb-2 bg-rose-50 flex flex-row items-center justify-between space-y-0">
                                     <CardTitle
@@ -137,7 +139,7 @@ const DashboardTabs = ({
                                     </div>
                                     <div className="flex items-center">
                                         <Badge
-                                            className="text-xs bg-rose-100 group-hover:bg-rose-200 cursor-default text-rose-700 rounded-full">
+                                            className="text-xs bg-rose-100 hover:bg-rose-200 cursor-default text-rose-700 rounded-full">
                                             Souhaité depuis
                                             le {new Date(wishlistItem.createdAt).toLocaleDateString()}
                                         </Badge>

@@ -96,7 +96,7 @@ const BookStore = ({userId}: { userId: string | null }) => {
                     </p>
                 </div>
             )}
-            <ReviewBookModal/>
+            <ReviewBookModal userId={userId}/>
         </div>
     );
 };

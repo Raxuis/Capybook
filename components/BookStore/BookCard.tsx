@@ -219,16 +219,21 @@ export default function BookCard({
                         </Button>
                     </SimplifiedTooltip>
 
-                    <SimplifiedTooltip
-                        tooltipContent={bookIsInWishlist ? "Retirer de ma wishlist" : "Ajouter à ma wishlist"}
-                        asChild>
-                        <Button
-                            onClick={handleWishlistClick}
-                            className="h-8 w-8 flex items-center justify-center bg-white rounded-full border hover:bg-gray-100"
-                        >
-                            {bookIsInWishlist ? <FcLike size={18}/> : <FcLikePlaceholder size={18}/>}
-                        </Button>
-                    </SimplifiedTooltip>
+                    {
+                        !bookIsInLibrary && (
+                            <SimplifiedTooltip
+                                tooltipContent={bookIsInWishlist ? "Retirer de ma wishlist" : "Ajouter à ma wishlist"}
+                                asChild>
+                                <Button
+                                    onClick={handleWishlistClick}
+                                    className="h-8 w-8 flex items-center justify-center bg-white rounded-full border hover:bg-gray-100"
+                                >
+                                    {bookIsInWishlist ? <FcLike size={18}/> : <FcLikePlaceholder size={18}/>}
+                                </Button>
+                            </SimplifiedTooltip>
+                        )
+                    }
+
 
                     {
                         (bookIsInLibrary && !bookIsReviewed) && (
