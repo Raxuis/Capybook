@@ -54,14 +54,14 @@ export default function ReviewBookModal(
         if (values) {
             setIsSubmitting(true);
             console.log(book);
-            if (!userId || !book?.id) {
+            if (!userId || !book?.key) {
                 setIsSubmitting(false);
                 return;
             }
             try {
                 await axios.post("/api/user/book/review", {
                     userId,
-                    bookId: book.id,
+                    bookKey: book.key,
                     rating: parseInt(values.rating),
                     feedback: values.feedback
                 });

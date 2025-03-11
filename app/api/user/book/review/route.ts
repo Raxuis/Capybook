@@ -4,17 +4,17 @@ import {NextResponse} from 'next/server';
 import prisma from "@/utils/prisma";
 
 const bodySchema = z.object({
-    bookId: z.string(),
+    bookKey: z.string(),
     userId: z.string(),
     rating: z.number(),
     feedback: z.string(),
 });
 
 export const POST = createZodRoute().body(bodySchema).handler(async (request, context) => {
-    const {bookId, userId, rating, feedback} = context.body;
+    const {bookKey, userId, rating, feedback} = context.body;
 
-    if (!bookId) {
-        return NextResponse.json({error: 'Book id is required'}, {status: 400});
+    if (!bookKey) {
+        return NextResponse.json({error: 'Book key is required'}, {status: 400});
     }
 
     if (!userId) {
@@ -31,18 +31,18 @@ export const POST = createZodRoute().body(bodySchema).handler(async (request, co
 
     const book = await prisma.book.findUnique({
         where: {
-            id: bookId,
+            key: bookKey,
         }
     })
 
     if (!book) {
-        return NextResponse.json({error: "No book with the corresponding id."}, {status: 404})
+        return NextResponse.json({error: "No book with the corresponding key."}, {status: 404})
     }
 
 
     const userBook = await prisma.userBook.findFirst({
         where: {
-            bookId: bookId,
+            bookId: book.id,
             userId: userId,
         }
     });
@@ -54,11 +54,11 @@ export const POST = createZodRoute().body(bodySchema).handler(async (request, co
     const newBook = await prisma.bookReview.updateMany({
         where: {
             userId: userId,
-            bookId: bookId,
+            bookId: book.id,
         },
         data: {
             userId,
-            bookId,
+            bookId: book.id,
             rating,
             feedback,
         }
