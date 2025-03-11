@@ -22,7 +22,9 @@ const BookStore = ({userId}: { userId: string | null }) => {
 
     return (
         <div className="container max-w-6xl mx-auto px-4 py-8">
-            <h1 className="text-3xl font-bold mb-6">Ma Bibliothèque</h1>
+            <h1 className="text-3xl font-bold mb-6">
+                Parcourir les livres
+            </h1>
 
             <div className="relative">
                 <div

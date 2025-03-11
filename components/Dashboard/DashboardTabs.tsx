@@ -121,7 +121,7 @@ const DashboardTabs = ({
                                     <Button
                                         variant="ghost"
                                         size="icon"
-                                        className="h-8 w-8 p-0 pt-0.5"
+                                        className="h-8 w-8 p-0 pt-0.5 hover:bg-transparent"
                                         onClick={() => openBookModal(wishlistItem.Book as BookType)}
                                     >
                                         <Info className="h-4 w-4"/>
@@ -172,7 +172,7 @@ const DashboardTabs = ({
                                         <Button
                                             variant="ghost"
                                             size="icon"
-                                            className="h-8 w-8 p-0 pt-0.5"
+                                            className="h-8 w-8 p-0 pt-0.5 hover:bg-transparent"
                                             onClick={() => openBookModal(review.Book as BookType)}
                                         >
                                             <Info className="h-4 w-4"/>
