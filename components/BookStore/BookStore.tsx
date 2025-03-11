@@ -11,7 +11,7 @@ import {Link} from "next-view-transitions";
 import ReviewBookModal from "@/components/BookStore/Modals/ReviewBookModal";
 
 const BookStore = ({userId}: { userId: string | null }) => {
-    const [bookNameQuery, setBookNameQuery] = useQueryState("");
+    const [bookNameQuery, setBookNameQuery] = useQueryState("bookName", { defaultValue: "" });
     const debouncedBookName = useDebounce(bookNameQuery, 500);
     const {
         books,
