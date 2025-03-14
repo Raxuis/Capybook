@@ -183,8 +183,8 @@ const DashboardTabs = ({
                                     </div>
                                 </CardHeader>
                                 <CardContent className="p-4">
-                                    {review.review ? (
-                                        <p className="text-muted-foreground">{review.review}</p>
+                                    {review.feedback ? (
+                                        <p className="text-muted-foreground">{review.feedback}</p>
                                     ) : (
                                         <p className="text-muted-foreground italic">Pas de commentaire</p>
                                     )}

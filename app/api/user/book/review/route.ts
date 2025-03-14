@@ -10,7 +10,7 @@ const bodySchema = z.object({
     feedback: z.string(),
 });
 
-export const POST = createZodRoute().body(bodySchema).handler(async (request, context) => {
+export const POST = createZodRoute().body(bodySchema).handler(async (_, context) => {
     const {bookKey, userId, rating, feedback} = context.body;
 
     if (!bookKey) {
