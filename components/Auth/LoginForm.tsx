@@ -1,67 +1,63 @@
 "use client";
 
-import {useState} from "react";
-import {Button} from "@/components/ui/button";
-import {Input} from "@/components/ui/input";
-import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
-import {Link} from "next-view-transitions";
-import {useRouter} from 'nextjs-toploader/app';
+import { useState } from "react";
+import { useRouter } from 'nextjs-toploader/app';
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { SignInSchema } from "@/utils/zod";
+import { login } from "@/actions/auth";
+import { useAuth } from "@/hooks/useAuth";
+import { LoaderCircleIcon } from "lucide-react";
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage
+} from "@/components/ui/form";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Link } from "next-view-transitions";
 import Image from "next/image";
-import {useForm} from "react-hook-form";
-import {z} from "zod";
-import {SignInSchema} from "@/utils/zod";
-import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
-import {useAuth} from "@/hooks/useAuth";
-import {LoaderCircleIcon} from "lucide-react";
-import {zodResolver} from "@hookform/resolvers/zod";
 
 export default function LoginForm() {
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const router = useRouter();
+    const { setAuthenticated } = useAuth();
+
     const form = useForm<z.infer<typeof SignInSchema>>({
         resolver: zodResolver(SignInSchema),
         defaultValues: {
             email: "",
             password: ""
         }
-    })
-    const router = useRouter();
-    const {setAuthenticated} = useAuth();
-
+    });
 
     async function onSubmit(values: z.infer<typeof SignInSchema>) {
-        if (values) {
-            setIsSubmitting(true);
-            try {
-                const response = await fetch("/api/login", {
-                    method: "POST",
-                    headers: {"Content-Type": "application/json"},
-                    body: JSON.stringify(values),
-                });
+        setIsSubmitting(true);
+        setErrorMessage(null);
 
-                const data = await response.json();
-                if (!response.ok) throw new Error(data.error || "Login failed");
+        const response = await login(values);
 
-
-                router.push("/book-shelf");
-                setAuthenticated(true);
-
-
-            } catch (error) {
-                console.error(error);
-            } finally {
-                setIsSubmitting(false);
-            }
+        if (response?.error) {
+            setErrorMessage(response.error);
+        } else {
+            setAuthenticated(true);
+            router.push("/book-shelf");
         }
+
+        setIsSubmitting(false);
     }
 
     return (
         <Card className="p-4 max-w-xl mx-auto w-full mt-20">
             <div className="flex flex-col items-center gap-2">
-                <div
-                    className="flex size-11 shrink-0 items-center justify-center rounded-full border"
-                    aria-hidden="true"
-                >
-                    <Image src="/icon.png" alt="livre track icon" width={100} height={100} className="p-1"/>
+                <div className="flex size-11 shrink-0 items-center justify-center rounded-full border" aria-hidden="true">
+                    <Image src="/icon.png" alt="Livre Track Icon" width={100} height={100} className="p-1"/>
                 </div>
                 <CardHeader>
                     <CardTitle className="sm:text-center">De retour ?</CardTitle>
@@ -77,7 +73,7 @@ export default function LoginForm() {
                         <FormField
                             control={form.control}
                             name="email"
-                            render={({field}) => (
+                            render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Email</FormLabel>
                                     <FormControl>
@@ -91,29 +87,27 @@ export default function LoginForm() {
                         <FormField
                             control={form.control}
                             name="password"
-                            render={({field}) => (
+                            render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Mot de passe</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="Entrez votre mot de passe." {...field} />
+                                        <Input type="password" placeholder="Entrez votre mot de passe" {...field} />
                                     </FormControl>
                                     <FormMessage/>
                                 </FormItem>
                             )}
                         />
+
+                        {errorMessage && <p className="text-red-500 text-sm">{errorMessage}</p>}
+
                         <Button type="submit" className="w-full" disabled={isSubmitting}>
-                            {
-                                isSubmitting && <LoaderCircleIcon
-                                    className="-ms-1 animate-spin"
-                                    size={16}
-                                    aria-hidden="true"
-                                />
-                            }
+                            {isSubmitting && <LoaderCircleIcon className="-ms-1 animate-spin" size={16} aria-hidden="true"/>}
                             Se connecter
                         </Button>
                     </form>
                 </Form>
             </CardContent>
+
             <CardFooter>
                 <p className="text-sm text-muted-foreground">
                     Pas encore de compte ? Créez en un {" "}
