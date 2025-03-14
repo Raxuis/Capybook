@@ -8,22 +8,23 @@ import BookCard from "@/components/BookStore/BookCard";
 import {Search} from "lucide-react";
 import {Skeleton} from "@/components/ui/skeleton";
 import {Link} from "next-view-transitions";
+import ReviewBookModal from "@/components/BookStore/Modals/ReviewBookModal";
 
 const BookStore = ({userId}: { userId: string | null }) => {
-    const [bookNameQuery, setBookNameQuery] = useQueryState("");
+    const [bookNameQuery, setBookNameQuery] = useQueryState("bookName", { defaultValue: "" });
     const debouncedBookName = useDebounce(bookNameQuery, 500);
     const {
         books,
         isError,
-        isLoading,
-        isInLibrary,
-        isInWishlist
+        isLoading
     } = useBooks(debouncedBookName, userId ?? undefined);
     const [searchFocused, setSearchFocused] = useState(false);
 
     return (
         <div className="container max-w-6xl mx-auto px-4 py-8">
-            <h1 className="text-3xl font-bold mb-6">Ma Bibliothèque</h1>
+            <h1 className="text-3xl font-bold mb-6">
+                Parcourir les livres
+            </h1>
 
             <div className="relative">
                 <div
@@ -68,8 +69,6 @@ const BookStore = ({userId}: { userId: string | null }) => {
                             book={book}
                             debouncedBookName={debouncedBookName}
                             userId={userId}
-                            isInLibrary={isInLibrary(book.key) || false}
-                            isInWishlist={isInWishlist(book.key) || false}
                         />
                     ))}
                 </div>
@@ -97,6 +96,7 @@ const BookStore = ({userId}: { userId: string | null }) => {
                     </p>
                 </div>
             )}
+            <ReviewBookModal userId={userId}/>
         </div>
     );
 };

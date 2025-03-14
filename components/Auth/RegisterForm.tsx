@@ -13,10 +13,12 @@ import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/
 import {useToast} from "@/hooks/use-toast";
 import {LoaderCircleIcon} from "lucide-react";
 import {useState} from "react";
+import {useRouter} from "nextjs-toploader/app";
 
 export default function RegisterForm() {
     const {toast} = useToast();
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const router = useRouter();
 
     const form = useForm<z.infer<typeof SignUpSchema>>({
         resolver: zodResolver(SignUpSchema),
@@ -65,6 +67,7 @@ export default function RegisterForm() {
                         title: "Succès",
                         description: "Votre compte a été créé avec succès"
                     });
+                    router.push("/login");
                 }
             } catch (error) {
                 console.error(error);
