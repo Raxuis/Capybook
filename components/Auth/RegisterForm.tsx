@@ -14,6 +14,7 @@ import {useToast} from "@/hooks/use-toast";
 import {LoaderCircleIcon} from "lucide-react";
 import {useState} from "react";
 import {useRouter} from "nextjs-toploader/app";
+import {signUp} from "@/actions/auth";
 
 export default function RegisterForm() {
     const {toast} = useToast();
@@ -33,39 +34,31 @@ export default function RegisterForm() {
         if (values) {
             setIsSubmitting(true);
             try {
-                const response = await fetch("/api/register", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(values)
-                });
+                const result = await signUp(values);
 
-                const data = await response.json();
-
-                if (!response.ok) {
-                    if (data.error === 'Username already exists') {
-                        form.setError('username', {
-                            type: 'manual',
-                            message: 'Ce nom d\'utilisateur existe déjà'
+                if (result.error) {
+                    if (result.error === "Username already exists") {
+                        form.setError("username", {
+                            type: "manual",
+                            message: "Ce nom d'utilisateur existe déjà",
                         });
-                    } else if (data.error === 'User already exists') {
-                        form.setError('email', {
-                            type: 'manual',
-                            message: 'Cet email est déjà utilisé'
+                    } else if (result.error === "User already exists") {
+                        form.setError("email", {
+                            type: "manual",
+                            message: "Cet email est déjà utilisé",
                         });
                     } else {
                         toast({
                             variant: "destructive",
                             title: "Erreur",
-                            description: data.error || "Une erreur est survenue"
+                            description: result.error || "Une erreur est survenue",
                         });
                     }
                 } else {
                     form.reset();
                     toast({
                         title: "Succès",
-                        description: "Votre compte a été créé avec succès"
+                        description: "Votre compte a été créé avec succès",
                     });
                     router.push("/login");
                 }
@@ -74,7 +67,7 @@ export default function RegisterForm() {
                 toast({
                     variant: "destructive",
                     title: "Erreur",
-                    description: "Une erreur est survenue lors de la création du compte"
+                    description: "Une erreur est survenue lors de la création du compte",
                 });
             } finally {
                 setIsSubmitting(false);
