@@ -1,5 +1,5 @@
 import {create} from 'zustand';
-import {MoreInfoBook} from "@/components/Dashboard/DashboardContent";
+import {MoreInfoBook} from "@/types";
 
 interface ReviewModalStore {
     showReviewModal: boolean;

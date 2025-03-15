@@ -3,22 +3,15 @@
 import {useState} from "react";
 import {useUser} from "@/hooks/useUser";
 import {Loader2, AlertCircle} from "lucide-react";
-import {Book as BookType} from "@/hooks/useBooks";
 import BookModal from "@/components/Dashboard/Modals/BookModal";
 import DashboardHeader from "@/components/Dashboard/DashboardHeader";
 import DashboardStats from "@/components/Dashboard/DashboardStats";
 import DashboardTabs from "@/components/Dashboard/DashboardTabs";
 import {fetchMoreBookInfos} from "@/actions/book";
+import {MoreInfoBook, Book as BookType} from "@/types";
 
 interface DashboardContentProps {
     userId?: string;
-}
-
-export type MoreInfoBook = BookType & {
-    description?: string;
-    subjects: string[];
-    cover?: string;
-    finishedAt?: string | null;
 }
 
 export default function DashboardContent({userId}: DashboardContentProps) {

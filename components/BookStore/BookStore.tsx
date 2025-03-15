@@ -1,24 +1,43 @@
 "use client";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {useBooks} from "@/hooks/useBooks";
 import {useQueryState} from "nuqs";
 import {Input} from "@/components/ui/input";
 import {useDebounce} from "@uidotdev/usehooks";
 import BookCard from "@/components/BookStore/BookCard";
-import {Search} from "lucide-react";
+import {Search, Barcode} from "lucide-react";
 import {Skeleton} from "@/components/ui/skeleton";
 import {Link} from "next-view-transitions";
 import ReviewBookModal from "@/components/BookStore/Modals/ReviewBookModal";
+import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 
-const BookStore = ({userId}: { userId: string | null }) => {
-    const [bookNameQuery, setBookNameQuery] = useQueryState("bookName", { defaultValue: "" });
-    const debouncedBookName = useDebounce(bookNameQuery, 500);
+interface BookStoreProps {
+    userId: string | null;
+}
+
+const BookStore = ({userId}: BookStoreProps) => {
+    const [search, setSearch] = useQueryState("search", {defaultValue: ""});
+    const [searchType, setSearchType] = useQueryState("type", {defaultValue: ""});
+    const debouncedSearch = useDebounce(search, 500);
     const {
         books,
         isError,
-        isLoading
-    } = useBooks(debouncedBookName, userId ?? undefined);
-    const [searchFocused, setSearchFocused] = useState(false);
+        isLoading,
+    } = useBooks(debouncedSearch, userId ?? undefined, searchType);
+    const [searchFocused, setSearchFocused] = useState<boolean>(false);
+
+    const handleSearchTypeChange = (value: string): void => {
+        setSearchType(value);
+        setSearch("");
+    };
+
+    useEffect(() => {
+        if (searchType === "isbn") {
+            setSearchType("isbn");
+        } else {
+            setSearchType("general");
+        }
+    }, [searchType, setSearchType]);
 
     return (
         <div className="container max-w-6xl mx-auto px-4 py-8">
@@ -26,20 +45,52 @@ const BookStore = ({userId}: { userId: string | null }) => {
                 Parcourir les livres
             </h1>
 
-            <div className="relative">
-                <div
-                    className={`flex items-center border rounded-lg px-3 transition-all ${searchFocused ? 'ring-2 ring-primary shadow-sm' : 'border-gray-300'}`}>
-                    <Search className="h-5 w-5 text-gray-400 mr-2"/>
-                    <Input
-                        value={bookNameQuery || ""}
-                        onChange={(e) => setBookNameQuery(e.target.value)}
-                        onFocus={() => setSearchFocused(true)}
-                        onBlur={() => setSearchFocused(false)}
-                        placeholder="Recherchez un livre par titre, auteur..."
-                        className="border-0 shadow-none focus-visible:ring-0 focus-visible:outline-none"
-                    />
-                </div>
-            </div>
+            <Tabs defaultValue="general" value={searchType} onValueChange={handleSearchTypeChange} className="mb-6">
+                <TabsList className="grid w-full max-w-md grid-cols-2">
+                    <TabsTrigger value="general">Titre / Auteur</TabsTrigger>
+                    <TabsTrigger value="isbn">ISBN</TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="general" className="mt-4">
+                    <div className="relative">
+                        <div
+                            className={`flex items-center border rounded-lg px-3 transition-all ${searchFocused ? 'ring-2 ring-primary shadow-sm' : 'border-gray-300'}`}>
+                            <Search className="h-5 w-5 text-gray-400 mr-2"/>
+                            <Input
+                                value={search || ""}
+                                onChange={(e) => setSearch(e.target.value)}
+                                onFocus={() => setSearchFocused(true)}
+                                onBlur={() => setSearchFocused(false)}
+                                placeholder="Recherchez un livre par titre, auteur..."
+                                className="border-0 shadow-none focus-visible:ring-0 focus-visible:outline-none"
+                            />
+                        </div>
+                    </div>
+                </TabsContent>
+
+                <TabsContent value="isbn" className="mt-4">
+                    <div className="relative">
+                        <div
+                            className={`flex items-center border rounded-lg px-3 transition-all ${searchFocused ? 'ring-2 ring-primary shadow-sm' : 'border-gray-300'}`}>
+                            <Barcode className="h-5 w-5 text-gray-400 mr-2"/>
+                            <Input
+                                value={search || ""}
+                                onChange={(e) => {
+                                    setSearch(e.target.value.replace(/[^0-9\-]/g, ''))
+                                }}
+                                onFocus={() => setSearchFocused(true)}
+                                onBlur={() => setSearchFocused(false)}
+                                placeholder="Entrez un ISBN (ex: 978-3-16-148410-0)"
+                                className="border-0 shadow-none focus-visible:ring-0 focus-visible:outline-none"
+                                inputMode="numeric"
+                            />
+                        </div>
+                        <p className="text-xs text-gray-500 mt-1 ml-1">
+                            Format: ISBN-10 ou ISBN-13 (avec ou sans tirets)
+                        </p>
+                    </div>
+                </TabsContent>
+            </Tabs>
 
             {isError && (
                 <div className="mt-8 p-4 rounded-lg bg-red-50 text-red-600 flex items-center justify-center">
@@ -67,32 +118,41 @@ const BookStore = ({userId}: { userId: string | null }) => {
                         <BookCard
                             key={book.key}
                             book={book}
-                            debouncedBookName={debouncedBookName}
+                            debouncedBookName={debouncedSearch || ""}
                             userId={userId}
                         />
                     ))}
                 </div>
-            ) : (bookNameQuery || "").trim() !== "" ? (
+            ) : (search || "").trim() !== "" ? (
                 <div className="mt-16 flex flex-col items-center justify-center text-center">
                     <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                        <Search className="h-8 w-8 text-gray-400"/>
+                        {searchType === "isbn" ?
+                            <Barcode className="h-8 w-8 text-gray-400"/> :
+                            <Search className="h-8 w-8 text-gray-400"/>
+                        }
                     </div>
                     <h3 className="text-xl font-semibold mb-2">Aucun livre trouvé</h3>
                     <p className="text-gray-500 max-w-md">
-                        Aucun livre ne correspond à votre recherche &#34;{bookNameQuery}&#34;. Essayez avec un autre
-                        titre ou
-                        auteur.
+                        {searchType === "isbn" ?
+                            `Aucun livre ne correspond à l'ISBN "${search}". Vérifiez que le format est correct.` :
+                            `Aucun livre ne correspond à votre recherche "${search}". Essayez avec un autre titre ou auteur.`
+                        }
                     </p>
                 </div>
             ) : (
                 <div className="mt-16 flex flex-col items-center justify-center text-center">
                     <h3 className="text-xl font-semibold mb-2">Commencez votre recherche</h3>
                     <p className="text-gray-500 max-w-md">
-                        Recherchez des livres par titre ou auteur pour les ajouter à {" "}
-                        <Link href="/book-shelf" className="text-primary underline">
-                            votre bibliothèque
-                        </Link>
-                        .
+                        {searchType === "isbn" ?
+                            "Entrez un ISBN pour trouver un livre spécifique." :
+                            "Recherchez des livres par titre ou auteur pour les ajouter à "
+                        }
+                        {searchType !== "isbn" && (
+                            <Link href="/book-shelf" className="text-primary underline">
+                                votre bibliothèque
+                            </Link>
+                        )}
+                        {searchType !== "isbn" && "."}
                     </p>
                 </div>
             )}

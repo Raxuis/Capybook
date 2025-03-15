@@ -3,11 +3,11 @@ import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {Book, BookOpen, Heart, Info, Star} from "lucide-react";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
-import {Book as BookType} from "@/hooks/useBooks";
 import {Badge} from "@/components/ui/badge";
 import ProgressTracker from "@/components/Dashboard/Progress/ProgressTracker";
 import {formatList} from "@/utils/formatList";
 import {UserWithRelations} from "@/hooks/useUser";
+import {Book as BookType} from "@/types";
 
 type Props = {
     user: UserWithRelations;

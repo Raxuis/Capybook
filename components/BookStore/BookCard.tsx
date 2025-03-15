@@ -1,5 +1,5 @@
 import {cn} from "@/lib/utils";
-import {Book, useBooks} from "@/hooks/useBooks";
+import {useBooks} from "@/hooks/useBooks";
 import {Badge} from "@/components/ui/badge";
 import {BookOpen, Plus, X, Library, Star, Check} from "lucide-react";
 import {FcLikePlaceholder, FcLike, FcComments} from "react-icons/fc";
@@ -10,7 +10,7 @@ import {formatList} from "@/utils/formatList";
 import {useToast} from "@/hooks/use-toast";
 import {useCallback, useMemo, useState} from "react";
 import {useReviewModalStore} from "@/store/reviewModalStore";
-import {MoreInfoBook} from "@/components/Dashboard/DashboardContent";
+import {Book, MoreInfoBook} from "@/types";
 
 type BookCardProps = {
     book: Book;
