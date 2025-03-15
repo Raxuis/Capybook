@@ -53,7 +53,6 @@ export default function ReviewBookModal(
     async function onSubmit(values: z.infer<typeof ReviewBookSchema>) {
         if (values) {
             setIsSubmitting(true);
-            console.log(book);
             if (!userId || !book?.key) {
                 setIsSubmitting(false);
                 return;
