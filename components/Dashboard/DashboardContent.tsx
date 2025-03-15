@@ -60,7 +60,9 @@ export default function DashboardContent({userId}: DashboardContentProps) {
 
         try {
             const bookInfos = await fetchMoreBookInfos(book.key);
-            if (!bookInfos) {
+
+            if (!bookInfos || bookInfos.error) {
+                console.warn("Aucune information trouvée pour ce livre.");
                 setIsLoadingBookDetails(false);
                 return;
             }

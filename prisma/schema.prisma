@@ -118,4 +118,6 @@ model BookReview {
   updatedAt DateTime @updatedAt
   User      User     @relation(fields: [userId], references: [id])
   Book      Book     @relation(fields: [bookId], references: [id])
+
+  @@unique([userId, bookId])
 }
