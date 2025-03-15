@@ -76,9 +76,7 @@ const BookStore = ({userId}: BookStoreProps) => {
                             <Input
                                 value={search || ""}
                                 onChange={(e) => {
-                                    // Limiter aux chiffres et tirets pour ISBN
-                                    const value = e.target.value.replace(/[^0-9\-]/g, '');
-                                    setSearch(value);
+                                    setSearch(e.target.value.replace(/[^0-9\-]/g, ''))
                                 }}
                                 onFocus={() => setSearchFocused(true)}
                                 onBlur={() => setSearchFocused(false)}
