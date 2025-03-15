@@ -4,11 +4,11 @@ import {useState} from "react";
 import {useUser} from "@/hooks/useUser";
 import {Loader2, AlertCircle} from "lucide-react";
 import {Book as BookType} from "@/hooks/useBooks";
-import axios from "axios";
 import BookModal from "@/components/Dashboard/Modals/BookModal";
 import DashboardHeader from "@/components/Dashboard/DashboardHeader";
 import DashboardStats from "@/components/Dashboard/DashboardStats";
 import DashboardTabs from "@/components/Dashboard/DashboardTabs";
+import {fetchMoreBookInfos} from "@/actions/book";
 
 interface DashboardContentProps {
     userId?: string;
@@ -59,7 +59,7 @@ export default function DashboardContent({userId}: DashboardContentProps) {
         setIsLoadingBookDetails(true);
 
         try {
-            const bookInfos = await axios.get(`/api/book?bookKey=${book.key}`).then(res => res.data);
+            const bookInfos = await fetchMoreBookInfos(book.key);
             if (!bookInfos) {
                 setIsLoadingBookDetails(false);
                 return;
