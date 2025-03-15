@@ -13,10 +13,10 @@ import {Book as BookIcon, Heart, Trash2, BookOpen, Globe, Loader2, BookMarked, B
 import Image from "next/image";
 import {useBooks} from "@/hooks/useBooks";
 import {formatList} from "@/utils/formatList";
-import {MoreInfoBook} from "@/components/Dashboard/DashboardContent";
 import {useMemo, useState} from "react";
 import {Skeleton} from "@/components/ui/skeleton";
 import {motion} from "motion/react";
+import {MoreInfoBook} from "@/types";
 
 interface BookModalProps {
     book: MoreInfoBook | null;
