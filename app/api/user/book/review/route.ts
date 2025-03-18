@@ -72,7 +72,6 @@ export const POST = createZodRoute().body(bodySchema).handler(async (_, context)
         return NextResponse.json({error: 'An error occurred while retrieving book.'}, {status: 500})
     }
 
-    console.log(newBookReview);
 
     return NextResponse.json({data: newBookReview}, {status: 200})
 });

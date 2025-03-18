@@ -60,11 +60,12 @@ export default function DashboardContent({userId}: DashboardContentProps) {
                 return;
             }
 
-            const bookForModal = {
+            const bookForModal:MoreInfoBook = {
                 ...book,
                 description: bookInfos.description?.value || "Aucune description disponible",
                 subjects: bookInfos.subjects || [],
             };
+
 
             setSelectedBook(bookForModal);
         } catch (error) {

@@ -31,4 +31,5 @@ export type Book = {
     language?: string[];
     authors?: string[];
     isbn?: string[];
+    numberOfPages?: number;
 };

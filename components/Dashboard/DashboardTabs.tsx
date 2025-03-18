@@ -1,6 +1,6 @@
 import React, {useMemo} from 'react';
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
-import {Book, BookOpen, Heart, Info, Star} from "lucide-react";
+import {Book, BookOpen, FileText, Heart, Info, Star} from "lucide-react";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
 import {Badge} from "@/components/ui/badge";
@@ -26,6 +26,8 @@ const DashboardTabs = ({
             hasReviews: user.BookReview.length > 0
         }
     }, [user.UserBook, user.UserBookWishlist, user.BookReview]);
+
+    console.log(user);
 
 
     return (
@@ -87,15 +89,19 @@ const DashboardTabs = ({
                                         }
                                     </div>
 
-                                    {
-                                        userBook.isCurrentBook && (
-                                            <ProgressTracker
-                                                bookId={userBook.Book.id}
-                                                initialProgress={userBook.progress || 0}
-                                                userId={user.id}
-                                            />
+                                    {userBook.isCurrentBook && (
+                                        userBook.Book.numberOfPages ? (
+                                                <ProgressTracker
+                                                    book={userBook.Book as BookType}
+                                                    initialProgress={userBook.progress || 0}
+                                                    userId={user.id}
+                                                />
+                                        ) : (
+                                            <p className="text-muted-foreground text-sm flex items-center">
+                                                <FileText className="h-4 w-4 mr-1"/> Nombre de page indisponible
+                                            </p>
                                         )
-                                    }
+                                    )}
                                 </CardContent>
                             </Card>
                         ))}

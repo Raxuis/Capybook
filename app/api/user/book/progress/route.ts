@@ -9,7 +9,7 @@ const bodySchema = z.object({
     progress: z.number(),
 });
 
-export const POST = createZodRoute().body(bodySchema).handler(async (request, context) => {
+export const PUT = createZodRoute().body(bodySchema).handler(async (request, context) => {
     const {bookId, userId, progress} = context.body;
 
     if (!bookId) {
