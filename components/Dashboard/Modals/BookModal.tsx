@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
 import {Badge} from "@/components/ui/badge";
-import {Book as BookIcon, Heart, Trash2, BookOpen, Globe, Loader2, BookMarked, BookCopy} from "lucide-react";
+import {Book as BookIcon, Heart, Trash2, BookOpen, Globe, Loader2, BookMarked, BookCopy, FileText} from "lucide-react";
 import Image from "next/image";
 import {useBooks} from "@/hooks/useBooks";
 import {formatList} from "@/utils/formatList";
@@ -33,6 +33,7 @@ const BookModal = ({
                        onClose,
                        isLoading = false,
                    }: BookModalProps) => {
+    console.log("book", book);
     const {
         isBookFinished,
         isInLibrary,
@@ -184,6 +185,22 @@ const BookModal = ({
                                 <div>
                                     <h3 className="text-sm font-medium text-gray-500 mb-1">Auteur(s)</h3>
                                     <p>{formatList(book.authors)}</p>
+                                </div>
+                            )}
+
+                            {/* Nombre de pages */}
+                            {isLoading ? (
+                                <div>
+                                    <Skeleton className="h-4 w-24 mb-2"/>
+                                    <Skeleton className="h-5 w-20"/>
+                                </div>
+                            ) : book?.numberOfPages && (
+                                <div>
+                                    <h3 className="text-sm font-medium text-gray-500 mb-1 flex items-center">
+                                        <FileText className="h-4 w-4 mr-1"/>
+                                        Nombre de pages
+                                    </h3>
+                                    <p>{book.numberOfPages} pages</p>
                                 </div>
                             )}
 

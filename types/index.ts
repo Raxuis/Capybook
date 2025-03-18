@@ -18,6 +18,7 @@ export type MoreInfoBook = Book & {
     subjects: string[];
     cover?: string;
     finishedAt?: string | null;
+    numberOfPages?: number;
 }
 
 export type Book = {
