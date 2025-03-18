@@ -3,23 +3,24 @@ import {Slider} from '@/components/ui/slider';
 import {Button} from '@/components/ui/button';
 import {Badge} from '@/components/ui/badge';
 import {Save, Edit2} from 'lucide-react';
-import axios from 'axios';
-import {mutate} from 'swr';
 import {Input} from '@/components/ui/input';
 import {GiRead} from "react-icons/gi";
+import {useBooks} from "@/hooks/useBooks";
 
 interface Props {
-    bookId: string;
+    bookKey: string;
     userId: string;
     initialProgress?: number;
 }
 
-const ProgressTracker = ({bookId, userId, initialProgress = 0}: Props) => {
+const ProgressTracker = ({bookKey, userId, initialProgress = 0}: Props) => {
     const [progress, setProgress] = useState(initialProgress);
     const [isSaving, setIsSaving] = useState(false);
     const [isDirty, setIsDirty] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null);
+
+    const {updateBookProgress} = useBooks(null, userId);
 
     const handleProgressChange = (value: number[]) => {
         const newValue = value[0];
@@ -54,14 +55,7 @@ const ProgressTracker = ({bookId, userId, initialProgress = 0}: Props) => {
     const saveProgress = async () => {
         setIsSaving(true);
         try {
-            await axios.post('/api/user/book/progress', {
-                bookId,
-                userId,
-                progress
-            });
-
-            await mutate(`/api/user/${userId}`);
-
+            await updateBookProgress(bookKey, progress);
             setIsDirty(false);
         } catch (error) {
             console.error("Erreur lors de la mise à jour de la progression:", error);

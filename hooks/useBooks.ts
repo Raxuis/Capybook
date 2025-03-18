@@ -4,7 +4,7 @@ import {useDebounce} from "@uidotdev/usehooks";
 import {useUser} from "@/hooks/useUser";
 import axios from "axios";
 import {useMemo, useCallback} from "react";
-import {Book} from "@/types";
+import {Book, MoreInfoBook} from "@/types";
 
 type OpenLibraryResponse = {
     docs: Book[];
@@ -82,7 +82,25 @@ export function useBooks(bookName?: string | null, userId?: string) {
         if (userId) await mutate(`/api/user/${userId}`);
     }, [userId]);
 
-    const toggleLibrary = useCallback(async (book: Book) => {
+    // Fonction utilitaire pour récupérer le nombre de pages
+    const getBookNumberOfPages = useCallback(async (bookKey: string): Promise<number | null> => {
+        try {
+            const response = await axios.get(`https://openlibrary.org${bookKey}/editions.json`);
+            const editions = response.data.entries;
+
+            for (const edition of editions) {
+                if (edition.number_of_pages) {
+                    return edition.number_of_pages;
+                }
+            }
+            return null;
+        } catch (error) {
+            console.error("Erreur lors de la récupération du nombre de pages:", error);
+            return null;
+        }
+    }, []);
+
+    const toggleLibrary = useCallback(async (book: Book | MoreInfoBook) => {
         if (!userId) return;
         try {
             if (isInLibrary(book.key)) {
@@ -91,13 +109,30 @@ export function useBooks(bookName?: string | null, userId?: string) {
                 if (isInWishlist(book.key)) {
                     await api.delete("/user/wishlist", {data: {userId, book}});
                 }
-                await api.post("/user/books", {userId, book});
+
+                let number_of_pages = null;
+
+                if ('number_of_pages' in book && book.number_of_pages) {
+                    number_of_pages = book.number_of_pages;
+                } else if ('numberOfPages' in book && book.numberOfPages) {
+                    number_of_pages = book.numberOfPages;
+                } else {
+                    number_of_pages = await getBookNumberOfPages(book.key);
+                }
+
+                await api.post("/user/books", {
+                    userId,
+                    book: {
+                        ...book,
+                        number_of_pages
+                    }
+                });
             }
             await mutateUser();
         } catch (error) {
             console.error("Erreur lors de la modification de la bibliothèque:", error);
         }
-    }, [userId, isInLibrary, isInWishlist, mutateUser]);
+    }, [userId, isInLibrary, isInWishlist, mutateUser, getBookNumberOfPages]);
 
     const toggleWishlist = useCallback(async (book: Book) => {
         if (!userId) return;
@@ -116,7 +151,7 @@ export function useBooks(bookName?: string | null, userId?: string) {
         }
     }, [userId, isInWishlist, isInLibrary, mutateUser]);
 
-    const toggleCurrentBook = useCallback(async (book: Book) => {
+    const toggleCurrentBook = useCallback(async (book: Book | MoreInfoBook) => {
         if (!userId) return;
         try {
             const currentBook = user?.UserBook.find((ub) => ub.Book.key === book.key);
@@ -130,6 +165,23 @@ export function useBooks(bookName?: string | null, userId?: string) {
             await mutateUser();
         } catch (error) {
             console.error("Erreur lors de la modification du livre actuel:", error);
+        }
+    }, [userId, user, mutateUser]);
+
+    const updateBookProgress = useCallback(async (bookKey: string, progress: number) => {
+        if (!userId) return;
+        try {
+            const userBook = user?.UserBook.find((ub) => ub.Book.key === bookKey);
+            if (userBook) {
+                await api.put("/user/book/progress", {
+                    userId,
+                    bookId: userBook.Book.id,
+                    progress
+                });
+                await mutateUser();
+            }
+        } catch (error) {
+            console.error("Erreur lors de la mise à jour de la progression:", error);
         }
     }, [userId, user, mutateUser]);
 
@@ -148,5 +200,6 @@ export function useBooks(bookName?: string | null, userId?: string) {
         toggleLibrary,
         toggleWishlist,
         toggleCurrentBook,
+        updateBookProgress,
     };
 }

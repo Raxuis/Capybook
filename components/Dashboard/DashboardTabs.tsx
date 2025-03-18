@@ -90,7 +90,7 @@ const DashboardTabs = ({
                                     {
                                         userBook.isCurrentBook && (
                                             <ProgressTracker
-                                                bookId={userBook.Book.id}
+                                                bookKey={userBook.Book.key}
                                                 initialProgress={userBook.progress || 0}
                                                 userId={user.id}
                                             />
