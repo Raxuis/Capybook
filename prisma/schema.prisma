@@ -101,6 +101,7 @@ model Book {
   title            String
   authors          String[]
   cover            String?
+  numberOfPages    Int?
   createdAt        DateTime           @default(now())
   updatedAt        DateTime           @updatedAt
   UserBook         UserBook[]

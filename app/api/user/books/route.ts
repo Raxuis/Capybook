@@ -5,15 +5,15 @@ import prisma from "@/utils/prisma";
 
 const UserBookSchema = z.object({
     userId: z.string(),
-    book: z.object(
-        {
-            key: z.string(),
-            title: z.string(),
-            author_name: z.array(z.string()).optional(),
-            cover_i: z.number().optional(),
-        }
-    ),
+    book: z.object({
+        key: z.string(),
+        title: z.string(),
+        author_name: z.array(z.string()).optional(),
+        cover_i: z.number().optional(),
+        number_of_pages: z.number().nullable().optional(),
+    }),
 });
+
 
 export const POST = createZodRoute()
     .body(UserBookSchema)
@@ -39,7 +39,8 @@ export const POST = createZodRoute()
                         key: book.key,
                         title: book.title,
                         authors: book.author_name,
-                        cover: "https://covers.openlibrary.org/b/id/" + book.cover_i + "-M.jpg"
+                        cover: "https://covers.openlibrary.org/b/id/" + book.cover_i + "-M.jpg",
+                        numberOfPages: book.number_of_pages ?? null,
                     }
                 });
             }

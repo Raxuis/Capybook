@@ -81,7 +81,7 @@ const BookStore = ({userId}: BookStoreProps) => {
                     </div>
                     <h3 className="text-xl font-semibold mb-2">Aucun livre trouvé</h3>
                     <p className="text-gray-500 max-w-md">
-                        Aucun livre ne correspond à votre recherche "${search}". Essayez avec un autre titre, auteur ou
+                        Aucun livre ne correspond à votre recherche "{search}". Essayez avec un autre titre, auteur ou
                         ISBN.
                     </p>
                 </div>

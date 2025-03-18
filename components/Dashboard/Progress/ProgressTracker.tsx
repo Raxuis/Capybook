@@ -6,14 +6,15 @@ import {Save, Edit2} from 'lucide-react';
 import {Input} from '@/components/ui/input';
 import {GiRead} from "react-icons/gi";
 import {useBooks} from "@/hooks/useBooks";
+import {Book} from "@/types";
 
 interface Props {
-    bookKey: string;
+    book: Book;
     userId: string;
     initialProgress?: number;
 }
 
-const ProgressTracker = ({bookKey, userId, initialProgress = 0}: Props) => {
+const ProgressTracker = ({book, userId, initialProgress = 0}: Props) => {
     const [progress, setProgress] = useState(initialProgress);
     const [isSaving, setIsSaving] = useState(false);
     const [isDirty, setIsDirty] = useState(false);
@@ -55,7 +56,7 @@ const ProgressTracker = ({bookKey, userId, initialProgress = 0}: Props) => {
     const saveProgress = async () => {
         setIsSaving(true);
         try {
-            await updateBookProgress(bookKey, progress);
+            await updateBookProgress(book.key, progress);
             setIsDirty(false);
         } catch (error) {
             console.error("Erreur lors de la mise à jour de la progression:", error);
@@ -90,7 +91,7 @@ const ProgressTracker = ({bookKey, userId, initialProgress = 0}: Props) => {
                         onClick={() => setIsEditing(true)}
                     >
                         <span className="flex items-center">
-                            {progress}%
+                            {progress} pages
                             <Edit2 className="ml-1 h-3 w-3 opacity-50"/>
                         </span>
                     </Badge>
@@ -102,7 +103,7 @@ const ProgressTracker = ({bookKey, userId, initialProgress = 0}: Props) => {
                     defaultValue={[initialProgress]}
                     value={[progress]}
                     onValueChange={handleProgressChange}
-                    max={100}
+                    max={book.numberOfPages}
                     step={1}
                     className="flex-1"
                 />

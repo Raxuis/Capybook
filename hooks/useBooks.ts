@@ -24,7 +24,7 @@ export function useBooks(bookName?: string | null, userId?: string) {
     const shouldFetch = Boolean(debouncedBookName);
 
     const apiUrl = shouldFetch && debouncedBookName
-        ? `https://openlibrary.org/search.json?jscmd=data?q=${encodeURIComponent(debouncedBookName)}`
+        ? `https://openlibrary.org/search.json?q=${encodeURIComponent(debouncedBookName)}`
         : null;
 
     const {data, error, isLoading} = useSWR<OpenLibraryResponse>(
@@ -82,7 +82,6 @@ export function useBooks(bookName?: string | null, userId?: string) {
         if (userId) await mutate(`/api/user/${userId}`);
     }, [userId]);
 
-    // Fonction utilitaire pour récupérer le nombre de pages
     const getBookNumberOfPages = useCallback(async (bookKey: string): Promise<number | null> => {
         try {
             const response = await axios.get(`https://openlibrary.org${bookKey}/editions.json`);
