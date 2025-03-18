@@ -64,8 +64,8 @@ export default function DashboardContent({userId}: DashboardContentProps) {
                 ...book,
                 description: bookInfos.description?.value || "Aucune description disponible",
                 subjects: bookInfos.subjects || [],
-                numberOfPages: bookInfos.number_of_pages || null,
             };
+
 
             setSelectedBook(bookForModal);
         } catch (error) {

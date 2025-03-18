@@ -13,7 +13,7 @@ import {Book as BookIcon, Heart, Trash2, BookOpen, Globe, Loader2, BookMarked, B
 import Image from "next/image";
 import {useBooks} from "@/hooks/useBooks";
 import {formatList} from "@/utils/formatList";
-import {useMemo, useState} from "react";
+import React, {useMemo, useState} from "react";
 import {Skeleton} from "@/components/ui/skeleton";
 import {motion} from "motion/react";
 import {MoreInfoBook} from "@/types";
@@ -33,7 +33,6 @@ const BookModal = ({
                        onClose,
                        isLoading = false,
                    }: BookModalProps) => {
-    console.log("book", book);
     const {
         isBookFinished,
         isInLibrary,
@@ -43,6 +42,7 @@ const BookModal = ({
         toggleWishlist,
         toggleCurrentBook
     } = useBooks(undefined, userId);
+
 
     const bookStatus = useMemo(() => {
         if (!book) return {
@@ -99,7 +99,6 @@ const BookModal = ({
 
     const handleToggleCurrentBook = async () => {
         if (!book) return;
-        console.log("book", book);
         setLoadingCurrentBook(true);
         try {
             await toggleCurrentBook(book);
@@ -198,7 +197,7 @@ const BookModal = ({
                                 <div>
                                     <h3 className="text-sm font-medium text-gray-500 mb-1 flex items-center">
                                         <FileText className="h-4 w-4 mr-1"/>
-                                        Nombre de pages
+                                        Nombre de page <span>{book.numberOfPages > 1 && "s"}</span>
                                     </h3>
                                     <p>{book.numberOfPages} pages</p>
                                 </div>

@@ -91,7 +91,7 @@ const ProgressTracker = ({book, userId, initialProgress = 0}: Props) => {
                         onClick={() => setIsEditing(true)}
                     >
                         <span className="flex items-center">
-                            {progress} pages
+                            {progress} page <span>{progress > 1 && "s"}</span>
                             <Edit2 className="ml-1 h-3 w-3 opacity-50"/>
                         </span>
                     </Badge>
