@@ -31,3 +31,9 @@ export const ReviewBookSchema = object({
         .min(1, {message: "Le commentaire est nécessaire"})
         .max(500, {message: "Le commentaire ne peut pas dépasser 500 caractères"}),
 });
+
+export const PageNumberSchema = object({
+    pageNumber: string()
+        .min(1, {message: "Le nombre de page est nécessaire"})
+        .regex(/^[0-9]+$/, "La nombre de page doit être un nombre"),
+})
