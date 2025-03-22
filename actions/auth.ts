@@ -14,7 +14,7 @@ export async function signUp(formData: unknown) {
         });
 
         if (existingUser) {
-            return {error: "User already exists"};
+            return {error: "Un utilisateur avec cet email existe déjà"};
         }
 
         const existingUsername = await prisma.user.findFirst({
@@ -22,7 +22,7 @@ export async function signUp(formData: unknown) {
         });
 
         if (existingUsername) {
-            return {error: "Username already exists"};
+            return {error: "Le nom d'utilisateur est déjà pris"};
         }
 
         const hashedPassword = await saltAndHashPassword(password);
@@ -35,9 +35,9 @@ export async function signUp(formData: unknown) {
             },
         });
 
-        return {message: `User with email: ${createdUser.email} is created!`};
-    } catch {
-        return {error: "Invalid data"};
+        return {message: `Utilisateur avec email : ${createdUser.email} est créé !`};
+    } catch (e) {
+        return {error: "Erreur lors de la création de l'utilisateur"};
     }
 }
 
@@ -46,11 +46,11 @@ export async function login(formData: unknown) {
         const {email, password} = SignInSchema.parse(formData);
 
         if (!email) {
-            return {error: "Email is required"};
+            return {error: "Email obligatoire"};
         }
 
         if (!password) {
-            return {error: "Password is required"};
+            return {error: "Le mot de passe est requis"};
         }
 
         const response = await signIn("credentials", {
@@ -65,6 +65,6 @@ export async function login(formData: unknown) {
 
         return {success: true};
     } catch {
-        return {error: "Invalid credentials"};
+        return {error: "Email ou mot de passe incorrect"};
     }
 }

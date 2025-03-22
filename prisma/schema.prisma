@@ -77,6 +77,7 @@ model UserBook {
   userId        String
   bookId        String
   isCurrentBook Boolean   @default(false)
+  progressType  String?   @default("percentage")
   progress      Int       @default(0)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt

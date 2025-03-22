@@ -6,11 +6,11 @@ import prisma from "@/utils/prisma";
 const bodySchema = z.object({
     bookId: z.string(),
     userId: z.string(),
-    progress: z.number(),
+    progressType: z.enum(['percentage', 'page']),
 });
 
 export const PUT = createZodRoute().body(bodySchema).handler(async (_, context) => {
-    const {bookId, userId, progress} = context.body;
+    const {bookId, userId, progressType} = context.body;
 
     if (!bookId) {
         return NextResponse.json({error: 'Book id is required'}, {status: 400});
@@ -20,8 +20,8 @@ export const PUT = createZodRoute().body(bodySchema).handler(async (_, context) 
         return NextResponse.json({error: "User id is required"}, {status: 400});
     }
 
-    if (progress === undefined || progress === null) {
-        return NextResponse.json({error: 'Progress is required'}, {status: 400});
+    if (!progressType) {
+        return NextResponse.json({error: 'Progress type is required'}, {status: 400});
     }
 
     const book = await prisma.book.findUnique({
@@ -29,6 +29,8 @@ export const PUT = createZodRoute().body(bodySchema).handler(async (_, context) 
             id: bookId,
         }
     })
+
+    console.log(book);
 
     if (!book) {
         return NextResponse.json({error: "No book with the corresponding id."}, {status: 404})
@@ -42,6 +44,8 @@ export const PUT = createZodRoute().body(bodySchema).handler(async (_, context) 
         }
     });
 
+    console.log(userBook);
+
     if (!userBook) {
         return NextResponse.json({error: 'User doesn\'t have this book yet.'}, {status: 400})
     }
@@ -52,11 +56,11 @@ export const PUT = createZodRoute().body(bodySchema).handler(async (_, context) 
             bookId: bookId,
         },
         data: {
-            progress: progress,
-            isCurrentBook: progress !== 100 && progress !== 0,
-            finishedAt: progress === 100 ? new Date() : null,
+            progressType,
         }
     });
+
+    console.log(newBook);
 
     if (!newBook) {
         return NextResponse.json({error: 'An error occurred while retrieving book.'}, {status: 500})

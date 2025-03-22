@@ -1,4 +1,4 @@
-import {object, string} from "zod"
+import {coerce, object, string} from "zod"
 
 export const SignInSchema = object({
     email: string({required_error: "L'email est nécessaire"})
@@ -31,3 +31,8 @@ export const ReviewBookSchema = object({
         .min(1, {message: "Le commentaire est nécessaire"})
         .max(500, {message: "Le commentaire ne peut pas dépasser 500 caractères"}),
 });
+
+export const PageNumberSchema = object({
+    pageNumber: coerce.number()
+        .min(1, {message: "Le nombre de page est nécessaire"})
+})
