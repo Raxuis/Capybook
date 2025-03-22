@@ -12,6 +12,8 @@ const bodySchema = z.object({
 export const PUT = createZodRoute().body(bodySchema).handler(async (_, context) => {
     const {bookId, userId, progressType} = context.body;
 
+    console.log(bookId, userId, progressType);
+
     if (!bookId) {
         return NextResponse.json({error: 'Book id is required'}, {status: 400});
     }
