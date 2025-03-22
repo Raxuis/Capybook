@@ -29,6 +29,7 @@ const DashboardTabs = ({
         }
     }, [user.UserBook, user.UserBookWishlist, user.BookReview]);
 
+    console.log(user.UserBook);
 
     return (
         <div className="relative">
@@ -77,8 +78,8 @@ const DashboardTabs = ({
                                             <div className="flex items-center">
                                                 <BookOpen className="h-4 w-4 mr-2 text-muted-foreground"/>
                                                 <span className="text-sm text-muted-foreground">
-                                                    {userBook.Book.authors || "Auteur inconnu"}
-                                                </span>
+                          {userBook.Book.authors || "Auteur inconnu"}
+                        </span>
                                             </div>
                                             {
                                                 userBook.progress === 100 && (
@@ -93,14 +94,18 @@ const DashboardTabs = ({
                                         </div>
 
                                         {userBook.isCurrentBook && (
-                                            userBook.Book.numberOfPages ? (
+                                            (userBook.Book.numberOfPages || !userBook.Book.numberOfPages && userBook.progressType === "percentage") ? (
                                                 <ProgressTracker
                                                     book={userBook.Book as BookType}
                                                     initialProgress={userBook.progress || 0}
                                                     userId={user.id}
                                                 />
                                             ) : (
-                                                <NoPageNumber bookId={userBook.Book.id} />
+                                                <NoPageNumber
+                                                    userId={user.id}
+                                                    bookId={userBook.Book.id}
+                                                    bookKey={userBook.Book.key}
+                                                />
                                             )
                                         )}
                                     </CardContent>
@@ -141,8 +146,8 @@ const DashboardTabs = ({
                                         <div className="flex items-center">
                                             <BookOpen className="h-4 w-4 mr-2 text-muted-foreground"/>
                                             <span className="text-sm text-muted-foreground">
-                                                {formatList(wishlistItem.Book.authors) || "Auteur(s) inconnu(s)"}
-                                            </span>
+                        {formatList(wishlistItem.Book.authors) || "Auteur(s) inconnu(s)"}
+                      </span>
                                         </div>
                                         <div className="flex items-center">
                                             <Badge
@@ -209,7 +214,7 @@ const DashboardTabs = ({
                     )}
                 </TabsContent>
             </Tabs>
-            <PageNumberModal/>
+            <PageNumberModal userId={user.id}/>
         </div>
     );
 };

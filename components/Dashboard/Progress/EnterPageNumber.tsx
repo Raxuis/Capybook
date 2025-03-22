@@ -7,30 +7,34 @@ import {
     Dialog,
     DialogContent,
     DialogDescription,
-    DialogFooter,
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
 import {usePageNumberModal} from "@/store/pageNumberModalStore";
-import {PageNumberSchema} from "@/utils/zod";
 import {useForm} from "react-hook-form";
 import {z} from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
+import {useBooks} from "@/hooks/useBooks";
+import {PageNumberSchema} from "@/utils/zod";
 
-export function PageNumberModal() {
-    const {showPageNumberModal, setShowPageNumberModal, closeModal, bookId} = usePageNumberModal();
+export function PageNumberModal({userId}: { userId: string }) {
+    const {showPageNumberModal, setShowPageNumberModal, closeModal, bookId, bookKey} = usePageNumberModal();
+    const {updateBookPageCount} = useBooks(null, userId);
 
     const form = useForm<z.infer<typeof PageNumberSchema>>({
         resolver: zodResolver(PageNumberSchema),
         defaultValues: {
-            pageNumber: "",
+            pageNumber: undefined,
         },
-    })
+    });
 
-    const onSubmit = (values: z.infer<typeof PageNumberSchema>) => {
-        setShowPageNumberModal(false);
-        form.reset();
+    const onSubmit = async (values: z.infer<typeof PageNumberSchema>) => {
+        if (bookId && bookKey) {
+            await updateBookPageCount(bookId, values.pageNumber);
+            closeModal();
+            form.reset();
+        }
     };
 
     return (
@@ -60,6 +64,11 @@ export function PageNumberModal() {
                                             className="col-span-3"
                                             autoFocus
                                             {...field}
+                                            value={field.value ?? ""}
+                                            onChange={(e) => {
+                                                const value = e.target.value;
+                                                field.onChange(value === "" ? undefined : Number(value));
+                                            }}
                                         />
                                     </FormControl>
                                     <FormDescription>
@@ -69,14 +78,10 @@ export function PageNumberModal() {
                                 </FormItem>
                             )}
                         />
-                        <DialogFooter>
-                            <Button type="button" variant="destructive" onClick={closeModal}>
-                                Annuler
-                            </Button>
-                            <Button type="submit" disabled={!form.getValues()}>
-                                Enregistrer
-                            </Button>
-                        </DialogFooter>
+                        <div className="flex justify-end space-x-2">
+                            <Button type="button" variant="outline" onClick={closeModal}>Annuler</Button>
+                            <Button type="submit">Enregistrer</Button>
+                        </div>
                     </form>
                 </Form>
             </DialogContent>

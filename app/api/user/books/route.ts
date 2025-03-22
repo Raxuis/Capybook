@@ -56,14 +56,13 @@ export const POST = createZodRoute()
             await prisma.userBook.create({
                 data: {
                     userId,
-                    bookId: newBook.id
+                    bookId: newBook.id,
+                    progressType: book.number_of_pages ? 'numberOfPages' : 'percentage',
                 }
             });
 
             return NextResponse.json(
-                {
-                    message: `User with id: ${userId} added book with title: ${book.title}`
-                }, {status: 201});
+                {message: `User with id: ${userId} added book with title: ${book.title}`}, {status: 201});
         } catch (error) {
             if (error instanceof z.ZodError) {
                 return NextResponse.json({error: error.issues}, {status: 400});

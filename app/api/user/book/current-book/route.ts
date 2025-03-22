@@ -11,7 +11,6 @@ const bodySchema = z.object({
 
 export const PUT = createZodRoute().body(bodySchema).handler(async (request, context) => {
     const {bookId, userId, isCurrentBook} = context.body;
-    console.log("Received body:", context.body);
 
     if (!bookId) {
         return NextResponse.json({error: "Book id is required"}, {status: 400});
@@ -48,7 +47,7 @@ export const PUT = createZodRoute().body(bodySchema).handler(async (request, con
         where: {userId, isCurrentBook: true},
     });
 
-    // Si l'utilisateur veut activer `isCurrentBook`, on désactive l'ancien livre en tant que "currentBook"
+    // Si l'utilisateur veut activer `isCurrentBook', on désactive l'ancien livre en tant que "currentBook".
     if (isCurrentBook && existingCurrentBook) {
         await prisma.userBook.update({
             where: {id: existingCurrentBook.id},

@@ -6,7 +6,6 @@ const publicPathRegex = /^(?!\/(api|_next\/static|_next\/image|favicon\.ico|site
 export async function middleware(req: NextRequest) {
     const user = await getToken({req, secret: process.env.AUTH_SECRET});
     const path = req.nextUrl.pathname;
-    console.log("user", user);
 
     if (path.startsWith("/api/"))
         return NextResponse.next();

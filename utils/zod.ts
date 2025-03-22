@@ -1,4 +1,4 @@
-import {object, string} from "zod"
+import {coerce, object, string} from "zod"
 
 export const SignInSchema = object({
     email: string({required_error: "L'email est nécessaire"})
@@ -33,7 +33,6 @@ export const ReviewBookSchema = object({
 });
 
 export const PageNumberSchema = object({
-    pageNumber: string()
+    pageNumber: coerce.number()
         .min(1, {message: "Le nombre de page est nécessaire"})
-        .regex(/^[0-9]+$/, "La nombre de page doit être un nombre"),
 })
