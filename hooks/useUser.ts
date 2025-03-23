@@ -1,7 +1,7 @@
-import useSWR from "swr";
 import {fetcher} from "@/utils/fetcher";
 import {Prisma} from "@prisma/client";
 import {useMemo} from "react";
+import useSWR from "swr";
 
 export type UserWithRelations = Prisma.UserGetPayload<{
     include: {
@@ -19,7 +19,8 @@ export type UserWithRelations = Prisma.UserGetPayload<{
             include: {
                 Book: true
             }
-        }
+        },
+        ReadingGoal: true
     }
 }>;
 
