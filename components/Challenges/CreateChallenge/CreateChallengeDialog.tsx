@@ -26,7 +26,7 @@ const CreateChallengeDialog = ({isDialogOpen, setIsDialogOpen, user}: Props) => 
         >
             <DialogTrigger asChild>
                 <Button
-                    className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700">
+                    className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 max-sm:w-full max-sm:mt-2">
                     <Plus className="h-4 w-4 mr-2"/>
                     Nouveau challenge
                 </Button>
