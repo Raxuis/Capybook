@@ -31,8 +31,13 @@ const CreateChallengeForm = ({user, setIsDialogOpen}: Props) => {
 
     const handleCreateChallenge = async (data: ChallengeFormValues) => {
         try {
-            await createChallenge(data);
+            const response = await createChallenge(data);
+            console.log(response);
+            if (!response || response && response.status !== 201) {
+                throw new Error("Erreur lors de la création du challenge");
+            }
             setIsDialogOpen(false);
+            form.reset();
         } catch (error) {
             console.error('Erreur:', error);
         }
@@ -46,10 +51,6 @@ const CreateChallengeForm = ({user, setIsDialogOpen}: Props) => {
             deadline: new Date(new Date().getFullYear(), 11, 31), // 31 décembre de l'année en cours
         },
     });
-
-    const handleDateChange = (date: Date) => {
-        form.setValue("deadline", date);
-    };
 
     return (
         <Form {...form}>
@@ -133,7 +134,7 @@ const CreateChallengeForm = ({user, setIsDialogOpen}: Props) => {
                     render={({field}) => (
                         <FormItem className="flex flex-col">
                             <FormLabel className="flex items-center">
-                                <TbBell className="w-4 h-4 mr-1" />
+                                <TbBell className="w-4 h-4 mr-1"/>
                                 Date limite
                             </FormLabel>
                             <Popover>
