@@ -2,7 +2,8 @@ import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Form, FormControl, FormDescription, FormField, FormItem, FormLabel} from "@/components/ui/form";
 import {RadioGroup, RadioGroupItem} from "@/components/ui/radio-group";
-import {BookOpen, Calendar, Clock} from "lucide-react";
+import {BookOpen, Calendar, Clock, Target} from "lucide-react";
+import {TbBell} from "react-icons/tb";
 import {Input} from "@/components/ui/input";
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
 import {Button} from "@/components/ui/button";
@@ -11,8 +12,9 @@ import {format} from "date-fns";
 import {fr} from "date-fns/locale";
 import {Calendar as CalendarComponent} from "@/components/ui/calendar";
 import {DialogFooter} from "@/components/ui/dialog";
-import {mutate} from "swr";
-import * as z from "zod";
+import z from "zod";
+import {ChallengeFormSchema} from "@/utils/zod";
+import {useChallenges} from "@/hooks/useChallenges";
 
 type Props = {
     user: {
@@ -23,42 +25,21 @@ type Props = {
 
 const CreateChallengeForm = ({user, setIsDialogOpen}: Props) => {
 
-    const challengeFormSchema = z.object({
-        type: z.enum(["BOOKS", "PAGES", "TIME"]),
-        target: z.number().min(1, "La cible doit être d'au moins 1"),
-        deadline: z.date().min(new Date(), "La date limite doit être dans le futur"),
-    });
+    const {createChallenge} = useChallenges(user.id);
 
-    type ChallengeFormValues = z.infer<typeof challengeFormSchema>;
+    type ChallengeFormValues = z.infer<typeof ChallengeFormSchema>;
 
     const handleCreateChallenge = async (data: ChallengeFormValues) => {
         try {
-            const response = await fetch('/api/challenges', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    userId: user.id,
-                    type: data.type,
-                    target: data.target,
-                    deadline: data.deadline,
-                }),
-            });
-
-            if (!response.ok) {
-                throw new Error('Erreur lors de la création du challenge');
-            }
-
+            await createChallenge(data);
             setIsDialogOpen(false);
-            await mutate(`/api/user/${user.id}`);
         } catch (error) {
             console.error('Erreur:', error);
         }
     };
 
     const form = useForm<ChallengeFormValues>({
-        resolver: zodResolver(challengeFormSchema),
+        resolver: zodResolver(ChallengeFormSchema),
         defaultValues: {
             type: "BOOKS",
             target: 10,
@@ -125,7 +106,10 @@ const CreateChallengeForm = ({user, setIsDialogOpen}: Props) => {
                     name="target"
                     render={({field}) => (
                         <FormItem>
-                            <FormLabel>Objectif</FormLabel>
+                            <FormLabel className="flex items-center">
+                                <Target className="w-4 h-4 mr-1"/>
+                                Objectif
+                            </FormLabel>
                             <FormControl>
                                 <Input
                                     type="number"
@@ -148,7 +132,10 @@ const CreateChallengeForm = ({user, setIsDialogOpen}: Props) => {
                     name="deadline"
                     render={({field}) => (
                         <FormItem className="flex flex-col">
-                            <FormLabel>Date limite</FormLabel>
+                            <FormLabel className="flex items-center">
+                                <TbBell className="w-4 h-4 mr-1" />
+                                Date limite
+                            </FormLabel>
                             <Popover>
                                 <PopoverTrigger asChild>
                                     <FormControl>
@@ -173,7 +160,10 @@ const CreateChallengeForm = ({user, setIsDialogOpen}: Props) => {
                                         mode="single"
                                         selected={field.value}
                                         onSelect={field.onChange}
-                                        disabled={[{before: new Date()}]}
+                                        disabled={[{
+                                            before: new Date(),
+                                            to: new Date()
+                                        }]} // Désactive aujourd'hui et les jours précédents
                                         classNames={{
                                             nav_button_previous: "absolute left-1 hover:bg-red-500/50",
                                             nav_button_next: "absolute right-1 hover:bg-green-500/50",
