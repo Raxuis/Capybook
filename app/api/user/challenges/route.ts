@@ -63,7 +63,7 @@ const DeleteSchema = z.object({
 
 
 export const DELETE = createZodRoute().body(DeleteSchema).handler(async (_, context) => {
-    const {challengeId, userId} = context.params;
+    const {challengeId, userId} = context.body;
 
     console.log("challengeId:", challengeId);
 

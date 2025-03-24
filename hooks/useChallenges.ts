@@ -35,7 +35,7 @@ export function useChallenges(userId?: string) {
     const deleteChallenge = useCallback(async (challengeId: string) => {
         try {
             await api.delete(`/user/challenges`, {
-                params: {
+                data: {
                     userId,
                     challengeId,
                 },
