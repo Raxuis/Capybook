@@ -5,13 +5,13 @@ import {ChallengeFormSchema} from "@/utils/zod";
 import z from "zod";
 
 // A union of challenge types + user id
-const bodySchema = z.object({
+const PostSchema = z.object({
     ...ChallengeFormSchema.shape,
     userId: z.string(),
     deadline: z.preprocess((val) => new Date(val as string), z.date()),
 });
 
-export const POST = createZodRoute().body(bodySchema).handler(async (_, context) => {
+export const POST = createZodRoute().body(PostSchema).handler(async (_, context) => {
     const {
         type,
         userId,
@@ -51,7 +51,47 @@ export const POST = createZodRoute().body(bodySchema).handler(async (_, context)
             deadline,
         }
     })
-    const { id, ...challengeWithoutId } = newChallenge;
+    const {id, ...challengeWithoutId} = newChallenge;
 
     return NextResponse.json({challenge: challengeWithoutId}, {status: 201});
+});
+
+const DeleteSchema = z.object({
+    challengeId: z.string(),
+    userId: z.string(),
+})
+
+
+export const DELETE = createZodRoute().body(DeleteSchema).handler(async (_, context) => {
+    const {challengeId, userId} = context.params;
+
+    console.log("challengeId:", challengeId);
+
+    if (!challengeId) {
+        return NextResponse.json({error: 'No challengeId provided'}, {status: 400});
+    }
+
+    if (!userId) {
+        return NextResponse.json({error: 'No userId provided'}, {status: 400});
+    }
+
+    const challenge = await prisma.readingGoal.findUnique({
+        where: {id: challengeId},
+    });
+
+    if (!challenge) {
+        return NextResponse.json({error: 'Challenge not found'}, {status: 404});
+    }
+
+    if (challenge.userId !== userId) {
+        return NextResponse.json({error: 'User does not own this challenge'}, {status: 403});
+    }
+
+    await prisma.readingGoal.delete({
+        where: {
+            id: challengeId,
+        },
+    });
+
+    return NextResponse.json({success: true}, {status: 200});
 });

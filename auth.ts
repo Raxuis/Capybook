@@ -22,7 +22,10 @@ export const {handlers, signIn, signOut, auth} = NextAuth({
             authorize: async (credentials) => {
                 try {
                     const {email, password} = await SignInSchema.parseAsync(credentials);
-                    const user = await prisma.user.findUnique({where: {email}});
+                    const user = await prisma.user.findUnique({
+                        where: {email},
+                        select: {id: true, email: true, name: true, username: true, password: true}
+                    });
 
                     if (!user || !user.password) throw new Error("Invalid credentials");
 
@@ -43,7 +46,7 @@ export const {handlers, signIn, signOut, auth} = NextAuth({
                 session.user = {
                     id: token.sub as string,
                     email: token.email as string,
-                    name: token.name as string,
+                    username: token.username as string,
                     emailVerified: null
                 };
             }
@@ -53,7 +56,7 @@ export const {handlers, signIn, signOut, auth} = NextAuth({
             if (user) {
                 token.id = user.id;
                 token.email = user.email;
-                token.name = user.name;
+                token.username = user.username || "No name";
             }
             return token;
         },

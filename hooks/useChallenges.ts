@@ -2,6 +2,7 @@ import axios from "axios";
 import {useCallback} from "react";
 import z from "zod";
 import {ChallengeFormSchema} from "@/utils/zod";
+import {useUser} from "@/hooks/useUser";
 
 const api = axios.create({
     baseURL: "/api",
@@ -11,7 +12,7 @@ const api = axios.create({
 });
 
 export function useChallenges(userId?: string) {
-    // const {user, isLoading: isUserLoading, refreshUser} = useUser(userId);
+    const {refreshUser} = useUser(userId);
 
     const createChallenge = useCallback(async (challengeData: z.infer<typeof ChallengeFormSchema>) => {
         console.log("Création du challenge:", challengeData);
@@ -19,17 +20,36 @@ export function useChallenges(userId?: string) {
         if (!userId) return;
 
         try {
-            return await api.post("/user/challenges", {
+            const response = await api.post("/user/challenges", {
                 userId,
                 ...challengeData,
             });
+            await refreshUser();
+            return response;
         } catch (error) {
             console.error("Erreur:", error);
             throw new Error("Erreur lors de la création du challenge");
         }
     }, [userId]);
 
+    const deleteChallenge = useCallback(async (challengeId: string) => {
+        try {
+            await api.delete(`/user/challenges`, {
+                params: {
+                    userId,
+                    challengeId,
+                },
+            });
+            await refreshUser();
+            return true;
+        } catch (error) {
+            console.error("Erreur:", error);
+            throw new Error("Erreur lors de la suppression du challenge");
+        }
+    }, []);
+
     return {
         createChallenge,
+        deleteChallenge,
     };
 }
