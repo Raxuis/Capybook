@@ -4,14 +4,13 @@ import {z} from "zod";
 import {createZodRoute} from "next-zod-route";
 
 const bodySchema = z.object({
-    userId: z.string(),
     bookId: z.string(),
     pageCount: z.number(),
 });
 
 export const PUT = createZodRoute().body(bodySchema).handler(async (_, context) => {
     try {
-        const {userId, bookId, pageCount} = context.body;
+        const {bookId, pageCount} = context.body;
 
         const updatedBook = await prisma.book.update({
             where: {id: bookId},

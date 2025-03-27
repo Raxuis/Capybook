@@ -186,8 +186,7 @@ export function useBooks(bookName?: string | null, userId?: string) {
     const updateBookPageCount = useCallback(async (bookId: string, pageCount: number) => {
         if (!userId) return;
         try {
-            await api.put("/user/book/page-count", {
-                userId,
+            await api.put("/book/page-count", {
                 bookId,
                 pageCount
             });
