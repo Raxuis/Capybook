@@ -17,7 +17,7 @@ const UserWishlistSchema = z.object({
 
 export const POST = createZodRoute()
     .body(UserWishlistSchema)
-    .handler(async (request, context) => {
+    .handler(async (_, context) => {
         try {
             const {userId, book} = context.body;
 
@@ -78,7 +78,7 @@ export const POST = createZodRoute()
 
 export const DELETE = createZodRoute()
     .body(UserWishlistSchema)
-    .handler(async (request, context) => {
+    .handler(async (_, context) => {
         try {
             const {userId, book} = context.body;
 
