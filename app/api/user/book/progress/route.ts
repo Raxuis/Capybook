@@ -46,14 +46,19 @@ export const PUT = createZodRoute().body(bodySchema).handler(async (_, context) 
         return NextResponse.json({error: 'User doesn\'t have this book yet.'}, {status: 400})
     }
 
+    const isCurrentBookVerification = userBook.progressType === 'percentage' && progress !== 100 && progress !== 0
+        || userBook.progressType === "page" && progress !== book.numberOfPages && progress !== 0;
+
+    const isBookFinishedVerification = userBook.progressType === "page" && progress === book.numberOfPages || userBook.progressType === "percentage" && progress === 100;
+
     const newBook = await prisma.userBook.update({
         where: {
-            userId_bookId: { userId, bookId }
+            userId_bookId: {userId, bookId}
         },
         data: {
             progress,
-            isCurrentBook: progress !== 100 && progress !== 0,
-            finishedAt: progress === 100 ? new Date() : null,
+            isCurrentBook: isCurrentBookVerification,
+            finishedAt: isBookFinishedVerification ? new Date() : null,
         }
     });
 
@@ -64,13 +69,13 @@ export const PUT = createZodRoute().body(bodySchema).handler(async (_, context) 
 
     if (progress === 100) {
         const userReadingGoals = await prisma.readingGoal.findMany({
-            where: { userId: userId }
+            where: {userId: userId}
         });
 
         await Promise.all(userReadingGoals.map(async (goal) => {
             if (goal.type === 'BOOKS') {
                 await prisma.readingGoal.update({
-                    where: { id: goal.id },
+                    where: {id: goal.id},
                     data: {
                         progress: goal.target === goal.progress + 1 ? goal.target : goal.progress + 1,
                     }
