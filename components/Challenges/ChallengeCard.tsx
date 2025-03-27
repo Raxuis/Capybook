@@ -99,7 +99,7 @@ const ChallengeCard = memo(({challenge, isPast = false, userId}: ChallengeCardPr
                         Créé le {format(new Date(challenge.createdAt), 'dd/MM/yyyy')}
                     </div>
                     {!isPast && (
-                        <Button variant="outline" size="sm">
+                        <Button variant="outline" size="sm" className="bg-gradient-to-br from-amber-50 to-orange-50 border-orange-10">
                             Mettre à jour
                         </Button>
                     )}

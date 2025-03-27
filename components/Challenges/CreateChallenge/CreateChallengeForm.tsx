@@ -182,7 +182,7 @@ const CreateChallengeForm = ({user, setIsDialogOpen}: Props) => {
                 />
 
                 <DialogFooter>
-                    <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
+                    <Button type="button" variant="destructive" onClick={() => setIsDialogOpen(false)}>
                         Annuler
                     </Button>
                     <Button type="submit">Créer le challenge</Button>
