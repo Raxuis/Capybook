@@ -17,7 +17,7 @@ const UserBookSchema = z.object({
 
 export const POST = createZodRoute()
     .body(UserBookSchema)
-    .handler(async (request, context) => {
+    .handler(async (_, context) => {
         try {
             const {userId, book} = context.body;
 
@@ -75,7 +75,7 @@ export const POST = createZodRoute()
 
 export const DELETE = createZodRoute()
     .body(UserBookSchema)
-    .handler(async (request, context) => {
+    .handler(async (_, context) => {
         try {
             const {userId, book} = context.body;
 

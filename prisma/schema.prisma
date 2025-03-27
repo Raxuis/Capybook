@@ -31,6 +31,7 @@ model User {
   UserBook         UserBook[]
   BookReview       BookReview[]
   UserBookWishlist UserBookWishlist[]
+  ReadingGoal      ReadingGoal[]
 }
 
 model Account {
@@ -84,6 +85,8 @@ model UserBook {
   finishedAt    DateTime?
   User          User      @relation(fields: [userId], references: [id])
   Book          Book      @relation(fields: [bookId], references: [id])
+
+  @@unique([userId, bookId])
 }
 
 model UserBookWishlist {
@@ -122,4 +125,25 @@ model BookReview {
   Book      Book     @relation(fields: [bookId], references: [id])
 
   @@unique([userId, bookId])
+}
+
+model ReadingGoal {
+  id          String    @id @default(cuid())
+  userId      String
+  target      Int // Nombre de livres ou pages à lire
+  type        GoalType // "BOOKS" ou "PAGES"
+  deadline    DateTime // Date limite pour l’objectif
+  progress    Int       @default(0) // Avancement de l’utilisateur
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  completedAt DateTime?
+  User        User      @relation(fields: [userId], references: [id])
+
+  @@unique([userId, deadline]) // Un seul objectif par utilisateur par période
+}
+
+enum GoalType {
+  BOOKS
+  PAGES
+  TIME
 }

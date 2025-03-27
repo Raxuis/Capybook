@@ -52,21 +52,18 @@ export const PUT = createZodRoute().body(bodySchema).handler(async (_, context) 
         return NextResponse.json({error: 'User doesn\'t have this book yet.'}, {status: 400})
     }
 
-    const newBook = await prisma.userBook.updateMany({
+    const updatedUserBook = await prisma.userBook.update({
         where: {
-            userId: userId,
-            bookId: bookId,
+            userId_bookId: {userId, bookId},
         },
         data: {
             progressType,
         }
     });
 
-    console.log(newBook);
-
-    if (!newBook) {
+    if (!updatedUserBook) {
         return NextResponse.json({error: 'An error occurred while retrieving book.'}, {status: 500})
     }
 
-    return NextResponse.json({data: newBook}, {status: 200})
+    return NextResponse.json({data: updatedUserBook}, {status: 200})
 });

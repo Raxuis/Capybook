@@ -24,6 +24,7 @@ export const GET = createZodRoute()
                 username: true,
                 name: true,
                 image: true,
+                ReadingGoal: true,
                 UserBook: {
                     include: {
                         Book: true

@@ -26,6 +26,11 @@ export function Dock() {
                         tooltip="Votre bibliothèque"
                         link="/book-shelf"
                     />
+                    <AppIcon imgSrc={"/challenges.png"}
+                             withoutBackground={true}
+                             tooltip="Challenges"
+                             link="/challenges"
+                    />
                     <AppIcon
                         imgSrc={"/book-store.png"}
                         tooltip="La librairie"

@@ -1,4 +1,4 @@
-import {coerce, object, string} from "zod"
+import z, {coerce, object, string, number, date} from "zod"
 
 export const SignInSchema = object({
     email: string({required_error: "L'email est nécessaire"})
@@ -36,3 +36,9 @@ export const PageNumberSchema = object({
     pageNumber: coerce.number()
         .min(1, {message: "Le nombre de page est nécessaire"})
 })
+
+export const ChallengeFormSchema = object({
+    type: z.enum(["BOOKS", "PAGES", "TIME"]),
+    target: number().min(1, "La cible doit être d'au moins 1"),
+    deadline: date().min(new Date(), "La date limite doit être dans le futur"),
+});

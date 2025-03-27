@@ -1,5 +1,5 @@
 import {fetcher} from "@/utils/fetcher";
-import useSWR, {mutate} from "swr";
+import useSWR from "swr";
 import {useDebounce} from "@uidotdev/usehooks";
 import {useUser} from "@/hooks/useUser";
 import axios from "axios";
@@ -19,7 +19,7 @@ const api = axios.create({
 
 export function useBooks(bookName?: string | null, userId?: string) {
     const debouncedBookName = useDebounce(bookName, 500);
-    const {user, isLoading: isUserLoading} = useUser(userId);
+    const {user, isLoading: isUserLoading, refreshUser} = useUser(userId);
 
     const shouldFetch = Boolean(debouncedBookName);
 
@@ -78,9 +78,6 @@ export function useBooks(bookName?: string | null, userId?: string) {
     const isCurrentBook = useCallback((bookKey: string) => bookSets.currentBookKeys.has(bookKey), [bookSets.currentBookKeys]);
     const isBookFinished = useCallback((bookKey: string) => bookSets.finishedBookKeys.has(bookKey), [bookSets.finishedBookKeys]);
 
-    const mutateUser = useCallback(async () => {
-        if (userId) await mutate(`/api/user/${userId}`);
-    }, [userId]);
 
     const getBookNumberOfPages = useCallback(async (bookKey: string): Promise<number | null> => {
         try {
@@ -127,11 +124,11 @@ export function useBooks(bookName?: string | null, userId?: string) {
                     }
                 });
             }
-            await mutateUser();
+            await refreshUser();
         } catch (error) {
             console.error("Erreur lors de la modification de la bibliothèque:", error);
         }
-    }, [userId, isInLibrary, isInWishlist, mutateUser, getBookNumberOfPages]);
+    }, [userId, isInLibrary, isInWishlist, refreshUser, getBookNumberOfPages]);
 
     const toggleWishlist = useCallback(async (book: Book) => {
         if (!userId) return;
@@ -144,11 +141,11 @@ export function useBooks(bookName?: string | null, userId?: string) {
                 }
                 await api.post("/user/wishlist", {userId, book});
             }
-            await mutateUser();
+            await refreshUser();
         } catch (error) {
             console.error("Erreur lors de la modification de la wishlist:", error);
         }
-    }, [userId, isInWishlist, isInLibrary, mutateUser]);
+    }, [userId, isInWishlist, isInLibrary, refreshUser]);
 
     const toggleCurrentBook = useCallback(async (book: Book | MoreInfoBook) => {
         if (!userId) return;
@@ -161,11 +158,11 @@ export function useBooks(bookName?: string | null, userId?: string) {
                     isCurrentBook: !currentBook.isCurrentBook
                 });
             }
-            await mutateUser();
+            await refreshUser();
         } catch (error) {
             console.error("Erreur lors de la modification du livre actuel:", error);
         }
-    }, [userId, user, mutateUser]);
+    }, [userId, user, refreshUser]);
 
     const updateBookProgress = useCallback(async (bookKey: string, progress: number) => {
         if (!userId) return;
@@ -177,14 +174,14 @@ export function useBooks(bookName?: string | null, userId?: string) {
                     bookId: userBook.Book.id,
                     progress
                 });
-                await mutateUser();
+                await refreshUser();
             } else {
                 console.log("No user book found");
             }
         } catch (error) {
             console.error("Erreur lors de la mise à jour de la progression:", error);
         }
-    }, [userId, user, mutateUser]);
+    }, [userId, user, refreshUser]);
 
     const updateBookPageCount = useCallback(async (bookId: string, pageCount: number) => {
         if (!userId) return;
@@ -194,11 +191,11 @@ export function useBooks(bookName?: string | null, userId?: string) {
                 bookId,
                 pageCount
             });
-            await mutateUser();
+            await refreshUser();
         } catch (error) {
             console.error("Erreur lors de la mise à jour du nombre de pages:", error);
         }
-    }, [userId, mutateUser]);
+    }, [userId, refreshUser]);
 
     const updateBookProgressType = useCallback(async (bookKey: string, progressType: 'page' | 'percentage') => {
         if (!userId) return;
@@ -210,14 +207,14 @@ export function useBooks(bookName?: string | null, userId?: string) {
                     bookId: userBook.Book.id,
                     progressType
                 });
-                await mutateUser();
+                await refreshUser();
             } else {
                 console.log("No user book found");
             }
         } catch (error) {
             console.error("Erreur lors de la mise à jour du type de progression:", error);
         }
-    }, [userId, user, mutateUser]);
+    }, [userId, user, refreshUser]);
 
     const books = useMemo(() => data?.docs || [], [data]);
 
