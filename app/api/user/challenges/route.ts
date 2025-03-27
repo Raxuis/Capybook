@@ -19,22 +19,6 @@ export const POST = createZodRoute().body(PostSchema).handler(async (_, context)
         deadline
     } = context.body;
 
-    if (!type) {
-        return NextResponse.json({error: 'Type is required'}, {status: 400});
-    }
-
-    if (!target) {
-        return NextResponse.json({error: 'Target is required'}, {status: 400});
-    }
-
-    if (!deadline) {
-        return NextResponse.json({error: 'Deadline is required'}, {status: 400});
-    }
-
-    if (!userId) {
-        return NextResponse.json({error: 'User id is required'}, {status: 400});
-    }
-
     const user = await prisma.user.findUnique({
         where: {id: userId}
     })
@@ -64,16 +48,6 @@ const DeleteSchema = z.object({
 
 export const DELETE = createZodRoute().body(DeleteSchema).handler(async (_, context) => {
     const {challengeId, userId} = context.body;
-
-    console.log("challengeId:", challengeId);
-
-    if (!challengeId) {
-        return NextResponse.json({error: 'No challengeId provided'}, {status: 400});
-    }
-
-    if (!userId) {
-        return NextResponse.json({error: 'No userId provided'}, {status: 400});
-    }
 
     const challenge = await prisma.readingGoal.findUnique({
         where: {id: challengeId},

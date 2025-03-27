@@ -12,18 +12,6 @@ const bodySchema = z.object({
 export const PUT = createZodRoute().body(bodySchema).handler(async (_, context) => {
     const {bookId, userId, progress} = context.body;
 
-    if (!bookId) {
-        return NextResponse.json({error: 'Book id is required'}, {status: 400});
-    }
-
-    if (!userId) {
-        return NextResponse.json({error: "User id is required"}, {status: 400});
-    }
-
-    if (progress === undefined || progress === null) {
-        return NextResponse.json({error: 'Progress is required'}, {status: 400});
-    }
-
     const book = await prisma.book.findUnique({
         where: {
             id: bookId,

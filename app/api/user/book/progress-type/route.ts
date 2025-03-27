@@ -12,27 +12,12 @@ const bodySchema = z.object({
 export const PUT = createZodRoute().body(bodySchema).handler(async (_, context) => {
     const {bookId, userId, progressType} = context.body;
 
-    console.log(bookId, userId, progressType);
-
-    if (!bookId) {
-        return NextResponse.json({error: 'Book id is required'}, {status: 400});
-    }
-
-    if (!userId) {
-        return NextResponse.json({error: "User id is required"}, {status: 400});
-    }
-
-    if (!progressType) {
-        return NextResponse.json({error: 'Progress type is required'}, {status: 400});
-    }
-
     const book = await prisma.book.findUnique({
         where: {
             id: bookId,
         }
     })
 
-    console.log(book);
 
     if (!book) {
         return NextResponse.json({error: "No book with the corresponding id."}, {status: 404})
@@ -46,7 +31,6 @@ export const PUT = createZodRoute().body(bodySchema).handler(async (_, context) 
         }
     });
 
-    console.log(userBook);
 
     if (!userBook) {
         return NextResponse.json({error: 'User doesn\'t have this book yet.'}, {status: 400})

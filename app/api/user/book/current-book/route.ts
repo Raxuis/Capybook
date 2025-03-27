@@ -12,19 +12,6 @@ const bodySchema = z.object({
 export const PUT = createZodRoute().body(bodySchema).handler(async (_, context) => {
     const {bookId, userId, isCurrentBook} = context.body;
 
-    if (!bookId) {
-        return NextResponse.json({error: "Book id is required"}, {status: 400});
-    }
-
-    if (!userId) {
-        return NextResponse.json({error: "User id is required"}, {status: 400});
-    }
-
-    if (isCurrentBook === undefined) {
-        return NextResponse.json({error: "Progress is required"}, {status: 400});
-    }
-
-    // Vérifie si le livre existe
     const book = await prisma.book.findUnique({
         where: {id: bookId},
     });
@@ -33,7 +20,6 @@ export const PUT = createZodRoute().body(bodySchema).handler(async (_, context) 
         return NextResponse.json({error: "No book with the corresponding id."}, {status: 404});
     }
 
-    // Vérifie si l'utilisateur possède déjà ce livre
     const userBook = await prisma.userBook.findFirst({
         where: {bookId, userId},
     });
@@ -54,7 +40,7 @@ export const PUT = createZodRoute().body(bodySchema).handler(async (_, context) 
             data: {isCurrentBook: false},
         });
     }
-    
+
     const updatedBook = await prisma.userBook.update({
         where: {id: userBook.id},
         data: {isCurrentBook},
