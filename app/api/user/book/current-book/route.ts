@@ -9,7 +9,7 @@ const bodySchema = z.object({
     isCurrentBook: z.boolean(),
 });
 
-export const PUT = createZodRoute().body(bodySchema).handler(async (request, context) => {
+export const PUT = createZodRoute().body(bodySchema).handler(async (_, context) => {
     const {bookId, userId, isCurrentBook} = context.body;
 
     if (!bookId) {
