@@ -15,8 +15,6 @@ export function useChallenges(userId?: string) {
     const {refreshUser} = useUser(userId);
 
     const createChallenge = useCallback(async (challengeData: z.infer<typeof ChallengeFormSchema>) => {
-        console.log("Création du challenge:", challengeData);
-        console.log("userId:", userId);
         if (!userId) return;
 
         try {

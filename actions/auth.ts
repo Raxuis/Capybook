@@ -45,14 +45,6 @@ export async function login(formData: unknown) {
     try {
         const {email, password} = SignInSchema.parse(formData);
 
-        if (!email) {
-            return {error: "Email obligatoire"};
-        }
-
-        if (!password) {
-            return {error: "Le mot de passe est requis"};
-        }
-
         const response = await signIn("credentials", {
             email,
             password,

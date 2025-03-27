@@ -9,12 +9,8 @@ const paramsSchema = z.object({
 
 export const GET = createZodRoute()
     .params(paramsSchema)
-    .handler(async (request, context) => {
+    .handler(async (_, context) => {
         const {id} = context.params;
-
-        if (!id) {
-            return NextResponse.json({error: 'No id provided'}, {status: 400});
-        }
 
         const user = await prisma.user.findUnique({
             where: {id},

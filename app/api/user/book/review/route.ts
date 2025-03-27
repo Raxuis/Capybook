@@ -13,22 +13,6 @@ const bodySchema = z.object({
 export const POST = createZodRoute().body(bodySchema).handler(async (_, context) => {
     const {bookKey, userId, rating, feedback} = context.body;
 
-    if (!bookKey) {
-        return NextResponse.json({error: 'Book key is required'}, {status: 400});
-    }
-
-    if (!userId) {
-        return NextResponse.json({error: "User id is required"}, {status: 400});
-    }
-
-    if (rating === undefined || rating === null || rating < 1 || rating > 5) {
-        return NextResponse.json({error: 'Progress is required'}, {status: 400});
-    }
-
-    if (!feedback) {
-        return NextResponse.json({error: 'Feedback is required'}, {status: 400});
-    }
-
     const book = await prisma.book.findUnique({
         where: {
             key: bookKey,
