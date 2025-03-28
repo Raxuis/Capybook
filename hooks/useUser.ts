@@ -1,25 +1,13 @@
 import {fetcher} from "@/utils/fetcher";
 import {Prisma} from "@prisma/client";
-import {useMemo} from "react";
+import {useCallback} from "react";
 import useSWR from "swr";
 
 export type UserWithRelations = Prisma.UserGetPayload<{
     include: {
-        UserBook: {
-            include: {
-                Book: true
-            }
-        },
-        UserBookWishlist: {
-            include: {
-                Book: true
-            }
-        },
-        BookReview: {
-            include: {
-                Book: true
-            }
-        },
+        UserBook: { include: { Book: true } },
+        UserBookWishlist: { include: { Book: true } },
+        BookReview: { include: { Book: true } },
         ReadingGoal: true
     }
 }>;
@@ -32,9 +20,7 @@ const SWR_CONFIG = {
 };
 
 export function useUser(userId?: string) {
-    const swrKey = useMemo(() =>
-            userId ? `/api/user/${userId}` : null,
-        [userId]);
+    const swrKey = userId ? `/api/user/${userId}` : null;
 
     const {data, error, isLoading, isValidating, mutate} = useSWR<UserWithRelations>(
         swrKey,
@@ -42,15 +28,15 @@ export function useUser(userId?: string) {
         SWR_CONFIG
     );
 
-    const refreshUser = useMemo(() => async () => {
+    const refreshUser = useCallback(async () => {
         if (swrKey) await mutate();
     }, [mutate, swrKey]);
 
-    return useMemo(() => ({
+    return {
         user: data,
         isLoading,
         isValidating,
         isError: Boolean(error),
         refreshUser
-    }), [data, error, isLoading, isValidating, refreshUser]);
+    };
 }
