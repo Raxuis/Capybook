@@ -15,15 +15,14 @@ import {DialogFooter} from "@/components/ui/dialog";
 import z from "zod";
 import {ChallengeFormSchema} from "@/utils/zod";
 import {useChallenges} from "@/hooks/useChallenges";
+import {memo} from "react";
 
 type Props = {
-    user: {
-        id: string;
-    };
+    user: { id: string; };
     setIsDialogOpen: (value: boolean) => void;
 }
 
-const CreateChallengeForm = ({user, setIsDialogOpen}: Props) => {
+const CreateChallengeForm = memo(({user, setIsDialogOpen}: Props) => {
 
     const {createChallenge} = useChallenges(user.id);
 
@@ -190,6 +189,6 @@ const CreateChallengeForm = ({user, setIsDialogOpen}: Props) => {
             </form>
         </Form>
     );
-};
+});
 
 export default CreateChallengeForm;
