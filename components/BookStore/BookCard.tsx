@@ -8,7 +8,7 @@ import Image from "next/image";
 import {Button} from "@/components/ui/button";
 import {formatList} from "@/utils/formatList";
 import {useToast} from "@/hooks/use-toast";
-import {useCallback, useMemo, useState} from "react";
+import {memo, useCallback, useMemo, useState} from "react";
 import {useReviewModalStore} from "@/store/reviewModalStore";
 import {Book, MoreInfoBook} from "@/types";
 
@@ -21,12 +21,12 @@ type BookCardProps = {
 
 type ClickType = "library" | "wishlist" | "review";
 
-export default function BookCard({
-                                     book,
-                                     className,
-                                     debouncedBookName,
-                                     userId,
-                                 }: BookCardProps) {
+const BookCard = memo(({
+                           book,
+                           className,
+                           debouncedBookName,
+                           userId,
+                       }: BookCardProps) => {
     const {
         toggleLibrary,
         toggleWishlist,
@@ -287,4 +287,5 @@ export default function BookCard({
             </div>
         </div>
     );
-}
+})
+export default BookCard;

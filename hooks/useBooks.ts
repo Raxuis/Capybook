@@ -5,17 +5,11 @@ import {useUser} from "@/hooks/useUser";
 import axios from "axios";
 import {useMemo, useCallback} from "react";
 import {Book, MoreInfoBook} from "@/types";
+import { api } from "@/utils/api";
 
 type OpenLibraryResponse = {
     docs: Book[];
 };
-
-const api = axios.create({
-    baseURL: "/api",
-    headers: {
-        "Content-Type": "application/json",
-    },
-});
 
 export function useBooks(bookName?: string | null, userId?: string) {
     const debouncedBookName = useDebounce(bookName, 500);
