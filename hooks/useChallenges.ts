@@ -1,5 +1,5 @@
 import axios from "axios";
-import {useCallback} from "react";
+import {useCallback, useMemo} from "react";
 import z from "zod";
 import {ChallengeFormSchema} from "@/utils/zod";
 import {useUser} from "@/hooks/useUser";
@@ -12,7 +12,7 @@ const api = axios.create({
 });
 
 export function useChallenges(userId?: string) {
-    const {refreshUser} = useUser(userId);
+    const {user, refreshUser} = useUser(userId);
 
     const createChallenge = useCallback(async (challengeData: z.infer<typeof ChallengeFormSchema>) => {
         if (!userId) return;
@@ -28,9 +28,11 @@ export function useChallenges(userId?: string) {
             console.error("Erreur:", error);
             throw new Error("Erreur lors de la création du challenge");
         }
-    }, [userId]);
+    }, [userId, refreshUser]);
 
     const deleteChallenge = useCallback(async (challengeId: string) => {
+        if (!userId) return;
+
         try {
             await api.delete(`/user/challenges`, {
                 data: {
@@ -44,10 +46,20 @@ export function useChallenges(userId?: string) {
             console.error("Erreur:", error);
             throw new Error("Erreur lors de la suppression du challenge");
         }
-    }, []);
+    }, [userId, refreshUser]);
+
+    const currentChallenges = useMemo(() => {
+        return user?.ReadingGoal?.filter(goal => new Date(goal.deadline) >= new Date()) || [];
+    }, [user]);
+
+    const pastChallenges = useMemo(() => {
+        return user?.ReadingGoal?.filter(goal => new Date(goal.deadline) < new Date()) || [];
+    }, [user]);
 
     return {
         createChallenge,
         deleteChallenge,
+        currentChallenges,
+        pastChallenges,
     };
 }
