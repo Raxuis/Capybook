@@ -1,8 +1,10 @@
 import DashboardBadge from "@/components/Dashboard/DashboardBadge";
 import {Heart, Library, Star} from "lucide-react";
-import {UserWithRelations} from "@/hooks/useUser";
+import {useUser} from "@/hooks/useUser";
 
-const DashboardStats = ({user}: { user: UserWithRelations }) => {
+const DashboardStats = () => {
+    const {user} = useUser();
+    if (!user) return null;
     return (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <DashboardBadge

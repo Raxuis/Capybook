@@ -1,6 +1,6 @@
 'use client';
 
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {useUser} from "@/hooks/useUser";
 import {Loader2, AlertCircle} from "lucide-react";
 import BookModal from "@/components/Dashboard/Modals/BookModal";
@@ -11,17 +11,20 @@ import {fetchMoreBookInfos} from "@/actions/book";
 import {MoreInfoBook, Book as BookType} from "@/types";
 import {DashboardLayout} from "@/components/Layout";
 
-interface DashboardContentProps {
-    userId?: string;
-}
-
-export default function DashboardContent({userId}: DashboardContentProps) {
-    const {user, isError, isValidating, isLoading} = useUser(userId);
+export default function DashboardContent() {
+    const {user, isError, isValidating, isLoading} = useUser();
     const [selectedBook, setSelectedBook] = useState<MoreInfoBook | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isLoadingBookDetails, setIsLoadingBookDetails] = useState(false);
 
-    if ((isLoading || isValidating) && !user) {
+    useEffect(() => {
+        console.log("User data:", user);
+        console.log("Is loading:", isLoading);
+        console.log("Is error:", isError);
+        console.log("Is validating:", isValidating);
+    }, [user, isError, isLoading, isValidating]);
+
+    if (!user && (isLoading || isValidating)) {
         return (
             <div className="flex flex-col items-center justify-center min-h-screen p-4">
                 <Loader2 className="h-8 w-8 animate-spin text-primary mb-2"/>
@@ -79,21 +82,17 @@ export default function DashboardContent({userId}: DashboardContentProps) {
     return (
         <DashboardLayout>
 
-            <DashboardHeader user={user}/>
+            <DashboardHeader/>
 
-            <DashboardStats user={user}/>
+            <DashboardStats/>
 
 
-            <DashboardTabs
-                user={user}
-                openBookModal={openBookModal}
-            />
+            <DashboardTabs openBookModal={openBookModal}/>
 
             <BookModal
                 book={selectedBook}
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
-                userId={userId}
                 isLoading={isLoadingBookDetails}
             />
         </DashboardLayout>

@@ -13,14 +13,12 @@ const DeleteChallengeDialog = memo(({
                                         showDialog,
                                         setShowDialog,
                                         challengeId,
-                                        userId,
                                     }: {
     showDialog: boolean;
     setShowDialog: (value: boolean) => void;
     challengeId: string;
-    userId?: string;
 }) => {
-    const {deleteChallenge} = useChallenges(userId);
+    const {deleteChallenge} = useChallenges();
     const handleDeleteChallenge = async () => {
         try {
             await deleteChallenge(challengeId);

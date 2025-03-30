@@ -6,20 +6,19 @@ import {Button} from "@/components/ui/button";
 import {Badge} from "@/components/ui/badge";
 import ProgressTracker from "@/components/Dashboard/Progress/ProgressTracker";
 import {formatList} from "@/utils/formatList";
-import {UserWithRelations} from "@/hooks/useUser";
 import {Book as BookType} from "@/types";
 import NoPageNumber from "@/components/Dashboard/Progress/NoPageNumber";
 import {PageNumberModal} from "@/components/Dashboard/Progress/EnterPageNumber";
+import {useUser} from "@/hooks/useUser";
 
 type Props = {
-    user: UserWithRelations;
     openBookModal: (book: BookType) => void;
 }
 
-const DashboardTabs = ({
-                           user,
-                           openBookModal
-                       }: Props) => {
+const DashboardTabs = ({openBookModal}: Props) => {
+
+    const {user} = useUser();
+    if (!user) return null;
 
     const booksStatus = useMemo(() => {
         return {
