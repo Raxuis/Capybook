@@ -1,16 +1,16 @@
-import { UserWithRelations } from "@/hooks/useUser";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart, BookOpen, Target } from "lucide-react";
+import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
+import {BarChart, BookOpen, Target} from "lucide-react";
 import React, {JSX, useMemo} from "react";
-import { useChallenges } from "@/hooks/useChallenges";
+import {useChallenges} from "@/hooks/useChallenges";
+import {useUser} from "@/hooks/useUser";
 
 type Props = {
-    user: UserWithRelations;
     type: "booksRead" | "challengesCompleted" | "inProgress";
 };
 
-const ChallengeHeaderInfo = ({ user, type }: Props) => {
-    const { currentChallenges } = useChallenges(user.id);
+const ChallengeHeaderInfo = ({type}: Props) => {
+    const {user} = useUser();
+    const {currentChallenges} = useChallenges();
 
     // 📌 Optimisation : Utilisation d'une fonction simple
     const getCardClassName = () => {
@@ -26,19 +26,19 @@ const ChallengeHeaderInfo = ({ user, type }: Props) => {
         const titles: Record<string, JSX.Element> = {
             booksRead: (
                 <CardTitle className="flex items-center text-indigo-700">
-                    <BookOpen className="h-5 w-5 mr-2" />
+                    <BookOpen className="h-5 w-5 mr-2"/>
                     Livres lus
                 </CardTitle>
             ),
             challengesCompleted: (
                 <CardTitle className="flex items-center text-emerald-700">
-                    <BarChart className="h-5 w-5 mr-2" />
+                    <BarChart className="h-5 w-5 mr-2"/>
                     Challenges terminés
                 </CardTitle>
             ),
             inProgress: (
                 <CardTitle className="flex items-center text-amber-700">
-                    <Target className="h-5 w-5 mr-2" />
+                    <Target className="h-5 w-5 mr-2"/>
                     En cours
                 </CardTitle>
             ),
@@ -55,14 +55,20 @@ const ChallengeHeaderInfo = ({ user, type }: Props) => {
     const getCardContent = () => {
         const contents: Record<string, JSX.Element> = {
             booksRead: (
-                <p className="text-3xl font-bold text-indigo-700">
-                    {user.UserBook?.filter(book => book.finishedAt).length || 0}
-                </p>
+                user && user.UserBook && (
+                    <p className="text-3xl font-bold text-indigo-700">
+                        {user.UserBook?.filter(book => book.finishedAt).length || 0}
+                    </p>
+                ) || <p className="text-3xl font-bold text-indigo-700">0</p>
             ),
             challengesCompleted: (
-                <p className="text-3xl font-bold text-emerald-700">
-                    {user.ReadingGoal?.filter(goal => goal.progress >= goal.target).length || 0}
-                </p>
+                user && user.ReadingGoal && (
+                    <p className="text-3xl font-bold text-emerald-700">
+                        {user.ReadingGoal?.filter(goal => goal.progress >= goal.target).length || 0}
+                    </p>
+                ) || (
+                    <p className="text-3xl font-bold text-emerald-700">0</p>
+                )
             ),
             inProgress: (
                 <p className="text-3xl font-bold text-amber-700">

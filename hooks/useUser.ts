@@ -2,6 +2,7 @@ import {fetcher} from "@/utils/fetcher";
 import {Prisma} from "@prisma/client";
 import {useCallback} from "react";
 import useSWR from "swr";
+import {useUserStore} from "@/store/useUserStore";
 
 export type UserWithRelations = Prisma.UserGetPayload<{
     include: {
@@ -19,7 +20,8 @@ const SWR_CONFIG = {
     keepPreviousData: true
 };
 
-export function useUser(userId?: string) {
+export function useUser() {
+    const userId = useUserStore((state) => state.userId);
     const swrKey = userId ? `/api/user/${userId}` : null;
 
     const {data, error, isLoading, isValidating, mutate} = useSWR<UserWithRelations>(
@@ -37,6 +39,6 @@ export function useUser(userId?: string) {
         isLoading,
         isValidating,
         isError: Boolean(error),
-        refreshUser
+        refreshUser,
     };
 }

@@ -1,15 +1,14 @@
 "use client";
 
-import {memo, useState} from "react";
-import {useUser} from "@/hooks/useUser";
+import {memo} from "react";
 import {AlertCircle, Loader2} from "lucide-react";
 import {DashboardLayout} from "@/components/Layout";
 import ChallengeHeader from "@/components/Challenges/ChallengeHeader/ChallengeHeader";
 import ChallengeTabs from "@/components/Challenges/ChallengeTabs/ChallengeTabs";
+import {useUser} from "@/hooks/useUser";
 
-const ChallengesContent = memo(({userId}: { userId?: string }) => {
-    const {user, isError, isValidating, isLoading} = useUser(userId);
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
+const ChallengesContent = memo(() => {
+    const {user, isError, isLoading, isValidating} = useUser();
 
     if ((isLoading || isValidating) && !user) {
         return (
@@ -39,15 +38,8 @@ const ChallengesContent = memo(({userId}: { userId?: string }) => {
 
     return (
         <DashboardLayout>
-            <ChallengeHeader
-                user={user}
-                isDialogOpen={isDialogOpen}
-                setIsDialogOpen={setIsDialogOpen}
-            />
-            <ChallengeTabs
-                userId={userId}
-                setIsDialogOpen={setIsDialogOpen}
-            />
+            <ChallengeHeader/>
+            <ChallengeTabs/>
         </DashboardLayout>
     );
 });

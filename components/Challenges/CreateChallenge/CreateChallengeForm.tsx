@@ -16,15 +16,15 @@ import z from "zod";
 import {ChallengeFormSchema} from "@/utils/zod";
 import {useChallenges} from "@/hooks/useChallenges";
 import {memo} from "react";
+import {useChallengeCrudModalStore} from "@/store/challengeCrudModalStore";
+import {useUser} from "@/hooks/useUser";
 
-type Props = {
-    user: { id: string; };
-    setIsDialogOpen: (value: boolean) => void;
-}
+const CreateChallengeForm = memo(() => {
+    const {setDialogOpen} = useChallengeCrudModalStore();
+    const {user} = useUser();
+    if (!user) return null;
 
-const CreateChallengeForm = memo(({user, setIsDialogOpen}: Props) => {
-
-    const {createChallenge} = useChallenges(user.id);
+    const {createChallenge} = useChallenges();
 
     type ChallengeFormValues = z.infer<typeof ChallengeFormSchema>;
 
@@ -35,7 +35,7 @@ const CreateChallengeForm = memo(({user, setIsDialogOpen}: Props) => {
             if (!response || response && response.status !== 201) {
                 throw new Error("Erreur lors de la création du challenge");
             }
-            setIsDialogOpen(false);
+            setDialogOpen(false);
             form.reset();
         } catch (error) {
             console.error('Erreur:', error);
@@ -181,7 +181,7 @@ const CreateChallengeForm = memo(({user, setIsDialogOpen}: Props) => {
                 />
 
                 <DialogFooter>
-                    <Button type="button" variant="destructive" onClick={() => setIsDialogOpen(false)}>
+                    <Button type="button" variant="destructive" onClick={() => setDialogOpen(false)}>
                         Annuler
                     </Button>
                     <Button type="submit">Créer le challenge</Button>

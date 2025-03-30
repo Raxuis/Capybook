@@ -1,8 +1,11 @@
-import {UserWithRelations} from "@/hooks/useUser";
 import {Avatar, AvatarFallback} from "@/components/ui/avatar";
-import {useMemo} from "react";
+import {memo, useMemo} from "react";
+import {useUser} from "@/hooks/useUser";
 
-const DashboardHeader = ({user}: { user: UserWithRelations }) => {
+const DashboardHeader = memo(() => {
+    const {user} = useUser();
+
+    if (!user) return null;
     const userInitials = useMemo(() => {
         return user.username.slice(0, 2).toUpperCase();
     }, [user.username]);
@@ -18,6 +21,6 @@ const DashboardHeader = ({user}: { user: UserWithRelations }) => {
             </div>
         </div>
     );
-};
+});
 
 export default DashboardHeader;

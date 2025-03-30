@@ -3,16 +3,16 @@ import {BookOpen, Calendar, Plus, Trophy} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import ChallengeCard from "@/components/Challenges/ChallengeCard";
 import {useChallenges} from "@/hooks/useChallenges";
-import {Dispatch, SetStateAction, useState} from "react";
+import {useState} from "react";
+import {useChallengeCrudModalStore} from "@/store/challengeCrudModalStore";
+import {useUser} from "@/hooks/useUser";
 
-type Props = {
-    userId?: string;
-    setIsDialogOpen: Dispatch<SetStateAction<boolean>>;
-}
-
-const ChallengeTabs = ({userId, setIsDialogOpen}: Props) => {
-    const {currentChallenges, pastChallenges} = useChallenges(userId);
+const ChallengeTabs = () => {
+    const {currentChallenges, pastChallenges} = useChallenges();
+    const {setDialogOpen} = useChallengeCrudModalStore();
     const [activeTab, setActiveTab] = useState("current");
+    const {user} = useUser();
+
     return (
         <Tabs value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="mb-4">
@@ -35,7 +35,7 @@ const ChallengeTabs = ({userId, setIsDialogOpen}: Props) => {
                         <p className="text-muted-foreground max-w-md mb-4">
                             Créez votre premier challenge de lecture pour commencer à suivre votre progression.
                         </p>
-                        <Button onClick={() => setIsDialogOpen(true)}>
+                        <Button onClick={() => setDialogOpen(true)}>
                             <Plus className="h-4 w-4 mr-2"/>
                             Créer un challenge
                         </Button>
@@ -46,7 +46,7 @@ const ChallengeTabs = ({userId, setIsDialogOpen}: Props) => {
                             <ChallengeCard
                                 key={challenge.id}
                                 challenge={challenge}
-                                userId={userId}
+                                userId={user?.id}
                             />
                         ))}
                     </div>
