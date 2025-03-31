@@ -61,7 +61,7 @@ export default function AboutPage() {
                                 alt="Bibliothèque"
                                 width={600}
                                 height={400}
-                                className="rounded-3xl shadow-xl relative z-10"
+                                className="rounded-3xl shadow-xl relative z-0"
                             />
                         </div>
                     </div>
