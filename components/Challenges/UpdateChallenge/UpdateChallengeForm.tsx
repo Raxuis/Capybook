@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import {useState} from 'react';
 import {useForm} from 'react-hook-form';
 import * as z from 'zod';
 import {format} from 'date-fns';
@@ -6,7 +6,7 @@ import {fr} from 'date-fns/locale';
 import {Calendar as CalendarIcon, Clock, Book, FileText} from 'lucide-react';
 
 import {Button} from '@/components/ui/button';
-import {Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage} from '@/components/ui/form';
+import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from '@/components/ui/form';
 import {Input} from '@/components/ui/input';
 import {Calendar} from '@/components/ui/calendar';
 import {Popover, PopoverContent, PopoverTrigger} from '@/components/ui/popover';
@@ -145,7 +145,7 @@ const UpdateChallengeForm = ({onSubmit, initialData, onCancel}: Props) => {
                                 {watchType === 'TIME' && 'Minutes de lecture effectuées'}
                             </FormLabel>
                             <FormControl>
-                                <Input type="number" {...field} min={0}/>
+                                <Input type="number" {...field} min={0} max={watchTarget}/>
                             </FormControl>
                             <FormMessage/>
                         </FormItem>
