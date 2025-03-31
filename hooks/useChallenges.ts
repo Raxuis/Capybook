@@ -1,13 +1,13 @@
 import {useCallback} from "react";
 import z from "zod";
-import {ChallengeFormSchema} from "@/utils/zod";
+import {CreateChallengeSchema} from "@/utils/zod";
 import {useUser} from "@/hooks/useUser";
 import {api} from "@/utils/api";
 
 export function useChallenges() {
     const {user, refreshUser} = useUser();
 
-    const createChallenge = useCallback(async (challengeData: z.infer<typeof ChallengeFormSchema>) => {
+    const createChallenge = useCallback(async (challengeData: z.infer<typeof CreateChallengeSchema>) => {
         if (!user?.id) return;
 
         try {
@@ -17,6 +17,19 @@ export function useChallenges() {
         } catch (error) {
             console.error("Erreur:", error);
             throw new Error("Erreur lors de la création du challenge");
+        }
+    }, [user, refreshUser]);
+
+    const updateChallenge = useCallback(async (challengeId: string, challengeData: z.infer<typeof CreateChallengeSchema>) => {
+        if (!user?.id) return;
+
+        try {
+            const res = await api.put(`/user/challenges/${challengeId}`, {userId: user.id, ...challengeData});
+            await refreshUser();
+            return res;
+        } catch (error) {
+            console.error("Erreur:", error);
+            throw new Error("Erreur lors de la mise à jour du challenge");
         }
     }, [user, refreshUser]);
 
@@ -39,6 +52,7 @@ export function useChallenges() {
 
     return {
         createChallenge,
+        updateChallenge,
         deleteChallenge,
         currentChallenges,
         pastChallenges,

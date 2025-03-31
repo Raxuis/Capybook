@@ -15,7 +15,7 @@ import {cn} from '@/lib/utils';
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useToast} from "@/hooks/use-toast";
 import {ModalData} from "@/store/challengeCrudModalStore";
-import {UpdateChallengeFormSchema} from "@/utils/zod";
+import {UpdateChallengeSchema} from "@/utils/zod";
 
 type Props = {
     onSubmit: (data: any) => Promise<void>;
@@ -27,8 +27,8 @@ const UpdateChallengeForm = ({onSubmit, initialData, onCancel}: Props) => {
     const {toast} = useToast();
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const form = useForm<z.infer<typeof UpdateChallengeFormSchema>>({
-        resolver: zodResolver(UpdateChallengeFormSchema),
+    const form = useForm<z.infer<typeof UpdateChallengeSchema>>({
+        resolver: zodResolver(UpdateChallengeSchema),
         defaultValues: {
             type: initialData?.type || 'BOOKS',
             target: initialData?.target || 0,
@@ -43,7 +43,7 @@ const UpdateChallengeForm = ({onSubmit, initialData, onCancel}: Props) => {
 
     const percentage = watchTarget > 0 ? Math.min(100, (watchProgress / watchTarget) * 100) : 0;
 
-    const handleFormSubmit = async (values: z.infer<typeof UpdateChallengeFormSchema>) => {
+    const handleFormSubmit = async (values: z.infer<typeof UpdateChallengeSchema>) => {
         setIsSubmitting(true);
         try {
             await onSubmit(values);

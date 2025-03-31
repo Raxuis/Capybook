@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {memo} from 'react';
 import {useChallengeCrudModalStore} from "@/store/challengeCrudModalStore";
 import {
     Dialog,
@@ -11,8 +11,12 @@ import {
 import {Button} from "@/components/ui/button";
 import UpdateChallengeForm from './UpdateChallengeForm';
 import {useToast} from "@/hooks/use-toast";
+import z from "zod";
+import {UpdateChallengeSchema} from "@/utils/zod";
+import {useChallenges} from "@/hooks/useChallenges";
 
-const UpdateChallengeDialog = () => {
+const UpdateChallengeDialog = memo(() => {
+    const {updateChallenge} = useChallenges();
     const {
         isDialogOpen,
         modalType,
@@ -24,33 +28,41 @@ const UpdateChallengeDialog = () => {
 
     const {toast} = useToast();
 
-    const handleSubmit = async (formData: any) => {
-        try {
-            // Convertir en format ISO pour la base de données
-            const dataToSubmit = {
-                ...formData,
-                deadline: formData.deadline.toISOString(),
-                id: modalData?.id,
-                userId: modalData?.userId
-            };
-
-            // Appel API pour mettre à jour le challenge
-            const response = await fetch(`/api/reading-goals/${modalData?.id}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(dataToSubmit),
+    const handleSubmit = async (formData: z.infer<typeof UpdateChallengeSchema>) => {
+        if (!modalData) {
+            toast({
+                title: 'Erreur',
+                description: 'Aucune donnée de challenge fournie.',
+                variant: 'destructive',
             });
+            return;
+        }
+        try {
+            const response = await updateChallenge(modalData.id, formData);
 
-            if (!response.ok) {
-                throw new Error('Erreur lors de la mise à jour du challenge');
+            if (response) {
+                if (response.status !== 200) {
+                    toast({
+                        title: 'Erreur',
+                        description: 'Impossible de mettre à jour le challenge.',
+                        variant: 'destructive',
+                    });
+                    throw new Error('Erreur lors de la mise à jour du challenge');
+                }
+                closeDialog();
+                toast({
+                    title: 'Succès',
+                    description: 'Challenge mis à jour avec succès.',
+                    variant: 'default',
+                });
             }
-
-            closeDialog();
-            return await response.json();
         } catch (error) {
             console.error('Error updating challenge:', error);
+            toast({
+                title: 'Erreur',
+                description: 'Une erreur est survenue lors de la mise à jour du challenge.',
+                variant: 'destructive',
+            });
             throw error;
         }
     };
@@ -87,6 +99,6 @@ const UpdateChallengeDialog = () => {
             </DialogContent>
         </Dialog>
     );
-};
+});
 
 export default UpdateChallengeDialog;

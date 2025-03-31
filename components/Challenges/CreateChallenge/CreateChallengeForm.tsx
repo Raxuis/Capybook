@@ -13,7 +13,7 @@ import {fr} from "date-fns/locale";
 import {Calendar as CalendarComponent} from "@/components/ui/calendar";
 import {DialogFooter} from "@/components/ui/dialog";
 import z from "zod";
-import {ChallengeFormSchema} from "@/utils/zod";
+import {CreateChallengeSchema} from "@/utils/zod";
 import {useChallenges} from "@/hooks/useChallenges";
 import {memo} from "react";
 import {useChallengeCrudModalStore} from "@/store/challengeCrudModalStore";
@@ -26,7 +26,7 @@ const CreateChallengeForm = memo(() => {
 
     const {createChallenge} = useChallenges();
 
-    type ChallengeFormValues = z.infer<typeof ChallengeFormSchema>;
+    type ChallengeFormValues = z.infer<typeof CreateChallengeSchema>;
 
     const handleCreateChallenge = async (data: ChallengeFormValues) => {
         try {
@@ -42,7 +42,7 @@ const CreateChallengeForm = memo(() => {
     };
 
     const form = useForm<ChallengeFormValues>({
-        resolver: zodResolver(ChallengeFormSchema),
+        resolver: zodResolver(CreateChallengeSchema),
         defaultValues: {
             type: "BOOKS",
             target: 10,
