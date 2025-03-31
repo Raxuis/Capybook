@@ -2,8 +2,15 @@ import {create} from 'zustand';
 
 type CrudModalType = 'create' | 'update' | 'delete' | 'view' | null;
 
-interface ModalData {
-    [key: string]: any;
+export interface ModalData {
+    id: string;
+    type: "BOOKS" | "PAGES" | "TIME";
+    progress: number;
+    target: number;
+    deadline: Date;
+    createdAt: Date;
+    isPast?: boolean;
+    userId?: string;
 }
 
 interface ChallengeModalStore {

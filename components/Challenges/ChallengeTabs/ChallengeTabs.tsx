@@ -46,7 +46,6 @@ const ChallengeTabs = () => {
                             <ChallengeCard
                                 key={challenge.id}
                                 challenge={challenge}
-                                userId={user?.id}
                             />
                         ))}
                     </div>

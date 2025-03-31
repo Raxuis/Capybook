@@ -11,7 +11,6 @@ import {Button} from "@/components/ui/button";
 import {Plus} from "lucide-react";
 import CreateChallengeForm from "@/components/Challenges/CreateChallenge/CreateChallengeForm";
 import {useChallengeCrudModalStore} from "@/store/challengeCrudModalStore";
-import {useUser} from "@/hooks/useUser";
 
 const CreateChallengeDialog = memo(() => {
     const {
@@ -20,7 +19,6 @@ const CreateChallengeDialog = memo(() => {
         openCreateDialog,
         setDialogOpen
     } = useChallengeCrudModalStore();
-    const {user} = useUser();
 
     const shouldShowDialog = isDialogOpen && modalType === 'create';
 

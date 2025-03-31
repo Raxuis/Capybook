@@ -31,7 +31,6 @@ const CreateChallengeForm = memo(() => {
     const handleCreateChallenge = async (data: ChallengeFormValues) => {
         try {
             const response = await createChallenge(data);
-            console.log(response);
             if (!response || response && response.status !== 201) {
                 throw new Error("Erreur lors de la création du challenge");
             }

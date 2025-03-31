@@ -42,3 +42,18 @@ export const ChallengeFormSchema = object({
     target: number().min(1, "La cible doit être d'au moins 1"),
     deadline: date().min(new Date(), "La date limite doit être dans le futur"),
 });
+
+export const UpdateChallengeFormSchema = object({
+    type: z.enum(['BOOKS', 'PAGES', 'TIME'], {
+        required_error: 'Veuillez sélectionner un type de challenge',
+    }),
+    target: coerce.number().positive({
+        message: 'La cible doit être un nombre positif',
+    }),
+    progress: coerce.number().min(0, {
+        message: 'La progression ne peut pas être négative',
+    }),
+    deadline: date({
+        required_error: 'Veuillez sélectionner une date limite',
+    }),
+})

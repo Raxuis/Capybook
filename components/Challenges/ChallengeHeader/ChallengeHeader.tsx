@@ -2,6 +2,7 @@ import React, {memo} from 'react';
 import CreateChallengeDialog from "@/components/Challenges/CreateChallenge/CreateChallengeDialog";
 import {UserWithRelations} from "@/hooks/useUser";
 import ChallengeHeaderInfo from "@/components/Challenges/ChallengeHeader/ChallengeHeaderInfo";
+import UpdateChallengeDialog from "@/components/Challenges/UpdateChallenge/UpdateChallengeDialog";
 
 type Props = {
     user: UserWithRelations;
@@ -21,6 +22,7 @@ const ChallengeHeader = memo(() => {
                 <ChallengeHeaderInfo type="challengesCompleted"/>
                 <ChallengeHeaderInfo type="inProgress"/>
             </div>
+            <UpdateChallengeDialog/>
         </>
     );
 });
