@@ -255,7 +255,7 @@ const UpdateChallengeForm = ({onSubmit, initialData, onCancel}: Props) => {
                                         {watchProgress} / {watchTarget} livres lus
                                     </div>
                                     <div className="text-xs text-slate-500">
-                                        {100 - Math.round((watchProgress / watchTarget) * 100)}% restant
+                                        {watchTarget - watchProgress} livres restants
                                     </div>
                                 </div>
                             </div>
