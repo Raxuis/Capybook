@@ -13,7 +13,7 @@ type OpenLibraryResponse = {
 
 export function useBooks(bookName?: string | null, userId?: string) {
     const debouncedBookName = useDebounce(bookName, 500);
-    const {user, isLoading: isUserLoading, refreshUser} = useUser(userId);
+    const {user, isLoading: isUserLoading, refreshUser} = useUser();
 
     const shouldFetch = Boolean(debouncedBookName);
 

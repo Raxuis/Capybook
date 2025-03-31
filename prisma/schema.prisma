@@ -131,7 +131,7 @@ model ReadingGoal {
   id          String    @id @default(cuid())
   userId      String
   target      Int // Nombre de livres ou pages à lire
-  type        GoalType // "BOOKS" ou "PAGES"
+  type        GoalType // "BOOKS" ou "PAGES" ou "TIME"
   deadline    DateTime // Date limite pour l’objectif
   progress    Int       @default(0) // Avancement de l’utilisateur
   createdAt   DateTime  @default(now())

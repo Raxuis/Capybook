@@ -13,29 +13,28 @@ import {fr} from "date-fns/locale";
 import {Calendar as CalendarComponent} from "@/components/ui/calendar";
 import {DialogFooter} from "@/components/ui/dialog";
 import z from "zod";
-import {ChallengeFormSchema} from "@/utils/zod";
+import {CreateChallengeSchema} from "@/utils/zod";
 import {useChallenges} from "@/hooks/useChallenges";
 import {memo} from "react";
+import {useChallengeCrudModalStore} from "@/store/challengeCrudModalStore";
+import {useUser} from "@/hooks/useUser";
 
-type Props = {
-    user: { id: string; };
-    setIsDialogOpen: (value: boolean) => void;
-}
+const CreateChallengeForm = memo(() => {
+    const {setDialogOpen} = useChallengeCrudModalStore();
+    const {user} = useUser();
+    if (!user) return null;
 
-const CreateChallengeForm = memo(({user, setIsDialogOpen}: Props) => {
+    const {createChallenge} = useChallenges();
 
-    const {createChallenge} = useChallenges(user.id);
-
-    type ChallengeFormValues = z.infer<typeof ChallengeFormSchema>;
+    type ChallengeFormValues = z.infer<typeof CreateChallengeSchema>;
 
     const handleCreateChallenge = async (data: ChallengeFormValues) => {
         try {
             const response = await createChallenge(data);
-            console.log(response);
             if (!response || response && response.status !== 201) {
                 throw new Error("Erreur lors de la création du challenge");
             }
-            setIsDialogOpen(false);
+            setDialogOpen(false);
             form.reset();
         } catch (error) {
             console.error('Erreur:', error);
@@ -43,7 +42,7 @@ const CreateChallengeForm = memo(({user, setIsDialogOpen}: Props) => {
     };
 
     const form = useForm<ChallengeFormValues>({
-        resolver: zodResolver(ChallengeFormSchema),
+        resolver: zodResolver(CreateChallengeSchema),
         defaultValues: {
             type: "BOOKS",
             target: 10,
@@ -181,7 +180,7 @@ const CreateChallengeForm = memo(({user, setIsDialogOpen}: Props) => {
                 />
 
                 <DialogFooter>
-                    <Button type="button" variant="destructive" onClick={() => setIsDialogOpen(false)}>
+                    <Button type="button" variant="destructive" onClick={() => setDialogOpen(false)}>
                         Annuler
                     </Button>
                     <Button type="submit">Créer le challenge</Button>

@@ -7,6 +7,7 @@ import {Button} from "@/components/ui/button";
 import {GoalType} from "@prisma/client";
 import {memo, useCallback, useState} from "react";
 import DeleteChallengeDialog from "@/components/Challenges/DeleteChallenge/DeleteChallengeDialog";
+import {useChallengeCrudModalStore} from "@/store/challengeCrudModalStore";
 
 type Challenge = {
     id: string;
@@ -20,10 +21,17 @@ type Challenge = {
 interface ChallengeCardProps {
     challenge: Challenge;
     isPast?: boolean;
-    userId?: string;
 }
 
-const ChallengeCard = memo(({challenge, isPast = false, userId}: ChallengeCardProps) => {
+const ChallengeCard = memo(({challenge, isPast = false}: ChallengeCardProps) => {
+    const {
+        isDialogOpen,
+        modalType,
+        openUpdateDialog,
+        setDialogOpen
+    } = useChallengeCrudModalStore();
+
+    console.log(challenge);
     const progress = Math.min(100, Math.round((challenge.progress / challenge.target) * 100));
     const isCompleted = challenge.progress >= challenge.target;
 
@@ -99,7 +107,11 @@ const ChallengeCard = memo(({challenge, isPast = false, userId}: ChallengeCardPr
                         Créé le {format(new Date(challenge.createdAt), 'dd/MM/yyyy')}
                     </div>
                     {!isPast && (
-                        <Button variant="outline" size="sm" className="bg-gradient-to-br from-amber-50 to-orange-50 border-orange-10">
+                        <Button variant="outline" size="sm" onClick={() => {
+                            openUpdateDialog(challenge);
+                            setDialogOpen(true);
+                        }}
+                                className="bg-gradient-to-br from-amber-50 to-orange-50 border-orange-10">
                             Mettre à jour
                         </Button>
                     )}
@@ -109,7 +121,6 @@ const ChallengeCard = memo(({challenge, isPast = false, userId}: ChallengeCardPr
                 showDialog={showDialog}
                 setShowDialog={setShowDialog}
                 challengeId={challenge.id}
-                userId={userId}
             />
 
         </>

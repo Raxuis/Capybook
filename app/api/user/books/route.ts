@@ -72,7 +72,6 @@ export const POST = createZodRoute()
         }
     });
 
-
 export const DELETE = createZodRoute()
     .body(UserBookSchema)
     .handler(async (_, context) => {

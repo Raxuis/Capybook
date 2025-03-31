@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {memo} from 'react';
 import {
     Dialog,
     DialogContent,
@@ -10,22 +10,26 @@ import {
 import {Button} from "@/components/ui/button";
 import {Plus} from "lucide-react";
 import CreateChallengeForm from "@/components/Challenges/CreateChallenge/CreateChallengeForm";
+import {useChallengeCrudModalStore} from "@/store/challengeCrudModalStore";
 
-type Props = {
-    isDialogOpen: boolean;
-    setIsDialogOpen: (isOpen: boolean) => void;
-    user: {
-        id: string;
-    };
-}
+const CreateChallengeDialog = memo(() => {
+    const {
+        isDialogOpen,
+        modalType,
+        openCreateDialog,
+        setDialogOpen
+    } = useChallengeCrudModalStore();
 
-const CreateChallengeDialog = ({isDialogOpen, setIsDialogOpen, user}: Props) => {
+    const shouldShowDialog = isDialogOpen && modalType === 'create';
+
     return (
-        <Dialog open={isDialogOpen}
-                onOpenChange={setIsDialogOpen}
+        <Dialog
+            open={shouldShowDialog}
+            onOpenChange={setDialogOpen}
         >
             <DialogTrigger asChild>
                 <Button
+                    onClick={() => openCreateDialog()}
                     className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 max-sm:w-full max-sm:mt-2">
                     <Plus className="h-4 w-4 mr-2"/>
                     Nouveau challenge
@@ -40,13 +44,10 @@ const CreateChallengeDialog = ({isDialogOpen, setIsDialogOpen, user}: Props) => 
                         Définissez votre objectif de lecture et suivez votre progression.
                     </DialogDescription>
                 </DialogHeader>
-                <CreateChallengeForm
-                    user={user}
-                    setIsDialogOpen={setIsDialogOpen}
-                />
+                <CreateChallengeForm/>
             </DialogContent>
         </Dialog>
     );
-};
+});
 
 export default CreateChallengeDialog;
