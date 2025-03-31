@@ -255,7 +255,7 @@ const UpdateChallengeForm = ({onSubmit, initialData, onCancel}: Props) => {
                                         {watchProgress} / {watchTarget} livres lus
                                     </div>
                                     <div className="text-xs text-slate-500">
-                                        {100 - Math.round((watchProgress / watchTarget) * 100)}% restant
+                                        {watchTarget - watchProgress} livres restants
                                     </div>
                                 </div>
                             </div>
@@ -265,10 +265,8 @@ const UpdateChallengeForm = ({onSubmit, initialData, onCancel}: Props) => {
                             <div className="flex flex-col items-center">
                                 <div
                                     className="relative w-36 h-48 bg-white rounded-md shadow-md overflow-hidden flex items-center justify-center">
-                                    {/* Paper texture background */}
                                     <div className="absolute inset-0 bg-gradient-to-br from-white to-slate-50"></div>
 
-                                    {/* Lines on the page */}
                                     <div
                                         className="absolute inset-0 flex flex-col justify-start pt-5 space-y-3 px-3 z-10">
                                         {Array.from({length: 8}).map((_, i) => (
@@ -280,7 +278,6 @@ const UpdateChallengeForm = ({onSubmit, initialData, onCancel}: Props) => {
                                         ))}
                                     </div>
 
-                                    {/* Page fold corner */}
                                     <div className="absolute top-0 right-0 w-8 h-8">
                                         <div
                                             className="absolute top-0 right-0 w-8 h-8 bg-white shadow-md transform rotate-45 translate-x-4 -translate-y-4"
@@ -290,12 +287,10 @@ const UpdateChallengeForm = ({onSubmit, initialData, onCancel}: Props) => {
                                         ></div>
                                     </div>
 
-                                    {/* Progress fill */}
                                     <div
                                         className="absolute bottom-0 left-0 right-0 bg-gradient-to-tr from-indigo-600 to-purple-500 z-0 transition-all duration-500 ease-out"
                                         style={{height: `${percentage}%`}}
                                     >
-                                        {/* Animated wave effect at the top of fill */}
                                         <div className="absolute -top-3 left-0 right-0 h-4 opacity-30">
                                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"
                                                  preserveAspectRatio="none" className="w-full h-full">
@@ -320,7 +315,6 @@ const UpdateChallengeForm = ({onSubmit, initialData, onCancel}: Props) => {
                                         </div>
                                     </div>
 
-                                    {/* Page number */}
                                     <div className="absolute bottom-3 right-3 flex items-center z-20">
                                         <div
                                             className={`px-2 py-1 rounded text-xs font-mono ${
@@ -335,7 +329,7 @@ const UpdateChallengeForm = ({onSubmit, initialData, onCancel}: Props) => {
 
                                 <div className="mt-3 text-center">
                                     <div className="text-sm font-medium">
-                                        {percentage.toFixed(0)}% lu
+                                        {watchProgress} / {watchTarget} pages lues
                                     </div>
                                     <div className="text-xs text-slate-500 mt-1">
                                         {watchTarget - watchProgress} pages restantes
@@ -346,92 +340,65 @@ const UpdateChallengeForm = ({onSubmit, initialData, onCancel}: Props) => {
 
                         {watchType === 'TIME' && (
                             <div className="flex flex-col items-center">
-                                <div className="relative w-32 h-32">
-                                    {/* Outer circle - clock face */}
-                                    <div
-                                        className="absolute inset-0 rounded-full border-4 border-slate-200 bg-white shadow-inner"></div>
+                                <div className="relative w-40 h-40">
+                                    <div className="absolute inset-0 rounded-full bg-white shadow-md border border-slate-200"></div>
 
-                                    {/* Clock markers */}
-                                    {Array.from({length: 12}).map((_, i) => (
-                                        <div
-                                            key={i}
-                                            className="absolute w-1 h-2 bg-slate-400"
-                                            style={{
-                                                top: '50%',
-                                                left: '50%',
-                                                transformOrigin: '0 0',
-                                                transform: `rotate(${i * 30}deg) translate(-50%, -50%) translate(16px, 0)`
-                                            }}
-                                        ></div>
-                                    ))}
-
-                                    {/* Progress circle */}
                                     <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100">
                                         <circle
                                             cx="50"
                                             cy="50"
-                                            r="43"
+                                            r="45"
                                             fill="none"
                                             stroke="#f1f5f9"
-                                            strokeWidth="8"
+                                            strokeWidth="6"
                                         />
+
                                         <circle
                                             cx="50"
                                             cy="50"
-                                            r="43"
+                                            r="45"
                                             fill="none"
-                                            stroke="url(#gradient)"
-                                            strokeWidth="8"
+                                            stroke="url(#clockGradient)"
+                                            strokeWidth="6"
                                             strokeLinecap="round"
-                                            strokeDasharray={`${2 * Math.PI * 43 * percentage / 100} ${2 * Math.PI * 43}`}
+                                            strokeDasharray={`${2 * Math.PI * 45 * percentage / 100} ${2 * Math.PI * 45}`}
                                             transform="rotate(-90, 50, 50)"
+                                            className="transition-all duration-700 ease-in-out"
                                         />
                                         <defs>
-                                            <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                                                <stop offset="0%" stopColor="#6366f1"/>
-                                                <stop offset="100%" stopColor="#a855f7"/>
+                                            <linearGradient id="clockGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                                <stop offset="0%" stopColor="#4f46e5" />
+                                                <stop offset="100%" stopColor="#7c3aed" />
                                             </linearGradient>
                                         </defs>
                                     </svg>
 
-                                    {/* Clock hands */}
                                     <div className="absolute inset-0 flex items-center justify-center">
                                         <div className="relative w-full h-full">
-                                            {/* Hour hand (based on percentage) */}
                                             <div
-                                                className="absolute top-1/2 left-1/2 w-1 h-12 bg-purple-700 rounded-full shadow-sm"
+                                                className="absolute top-1/2 left-1/2 w-1.5 h-14 bg-gradient-to-t from-indigo-800 to-indigo-600 rounded-full shadow-md transition-transform duration-500"
                                                 style={{
                                                     transformOrigin: 'bottom center',
                                                     transform: `translate(-50%, -100%) rotate(${(percentage / 100) * 360}deg)`
                                                 }}
                                             ></div>
 
-                                            {/* Minute hand (decorative, slightly ahead of hour hand) */}
                                             <div
-                                                className="absolute top-1/2 left-1/2 w-0.5 h-14 bg-indigo-500 rounded-full shadow-sm"
+                                                className="absolute top-1/2 left-1/2 w-1 h-18 bg-gradient-to-t from-purple-700 to-purple-500 rounded-full shadow-md transition-transform duration-500"
                                                 style={{
                                                     transformOrigin: 'bottom center',
-                                                    transform: `translate(-50%, -100%) rotate(${(percentage / 100) * 360 + 20}deg)`
+                                                    transform: `translate(-50%, -100%) rotate(${(percentage / 100) * 360 + 30}deg)`
                                                 }}
                                             ></div>
 
-                                            {/* Center dot */}
-                                            <div
-                                                className="absolute top-1/2 left-1/2 w-3 h-3 bg-slate-800 rounded-full transform -translate-x-1/2 -translate-y-1/2"></div>
-                                        </div>
-                                    </div>
-
-                                    {/* Time display */}
-                                    <div className="absolute bottom-9 left-0 right-0 flex justify-center">
-                                        <div className="px-3 py-1 bg-white rounded-full shadow-sm text-xs font-medium">
-                                            {watchProgress} / {watchTarget}
+                                            <div className="absolute top-1/2 left-1/2 w-4 h-4 bg-gradient-to-br from-slate-800 to-slate-600 rounded-full transform -translate-x-1/2 -translate-y-1/2 shadow-md border border-slate-700"></div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div className="mt-3 text-center">
+                                <div className="mt-4 text-center">
                                     <div className="text-sm font-medium">
-                                        {percentage.toFixed(0)}% du temps
+                                        {watchProgress} / {watchTarget} minutes lues
                                     </div>
                                     <div className="text-xs text-slate-500 mt-1">
                                         {watchTarget - watchProgress} minutes restantes
