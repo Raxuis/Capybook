@@ -43,6 +43,7 @@ export const POST = createZodRoute().body(PostSchema).handler(async (_, context)
 const PutBody = BaseUpdateChallengeSchema.extend({
     challengeId: z.string(),
     userId: z.string(),
+    deadline: z.preprocess((val) => new Date(val as string), z.date())
 }).refine((data) => data.progress <= data.target, {
     message: "La progression ne peut pas dépasser la cible",
     path: ["progress"],
@@ -54,6 +55,7 @@ export const PUT = createZodRoute().body(PutBody).handler(async (_, context) => 
         challengeId,
         type,
         target,
+        progress,
         deadline,
         userId
     } = context.body;
@@ -76,6 +78,7 @@ export const PUT = createZodRoute().body(PutBody).handler(async (_, context) => 
             type,
             target,
             deadline,
+            progress,
         }
     });
 

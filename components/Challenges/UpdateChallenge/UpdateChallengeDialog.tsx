@@ -37,6 +37,7 @@ const UpdateChallengeDialog = memo(() => {
             });
             return;
         }
+        console.log('Form data:', formData);
         try {
             const response = await updateChallenge(modalData.id, formData);
 
@@ -49,6 +50,7 @@ const UpdateChallengeDialog = memo(() => {
                     });
                     throw new Error('Erreur lors de la mise à jour du challenge');
                 }
+                console.log('Challenge updated successfully:', response);
                 closeDialog();
                 toast({
                     title: 'Succès',
