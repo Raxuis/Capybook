@@ -420,7 +420,7 @@ const UpdateChallengeForm = ({onSubmit, initialData, onCancel}: Props) => {
                 </div>
 
                 <div className="flex justify-end space-x-2">
-                    <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting}>
+                    <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting} className="hover:bg-black/10 transition-colors">
                         Annuler
                     </Button>
                     <Button
