@@ -6,9 +6,7 @@ import {
     DialogDescription,
     DialogHeader,
     DialogTitle,
-    DialogTrigger
 } from '@/components/ui/dialog';
-import {Button} from "@/components/ui/button";
 import UpdateChallengeForm from './UpdateChallengeForm';
 import {useToast} from "@/hooks/use-toast";
 import z from "zod";
@@ -20,13 +18,10 @@ const UpdateChallengeDialog = memo(() => {
     const {
         isDialogOpen,
         modalType,
-        openUpdateDialog,
         closeDialog,
         setDialogOpen,
         modalData
     } = useChallengeCrudModalStore();
-
-    console.log(modalData)
 
     const {toast} = useToast();
 
@@ -39,7 +34,7 @@ const UpdateChallengeDialog = memo(() => {
             });
             return;
         }
-        console.log('Form data:', formData);
+
         try {
             const response = await updateChallenge(modalData.id, formData);
 

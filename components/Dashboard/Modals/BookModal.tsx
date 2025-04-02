@@ -13,7 +13,7 @@ import {Book as BookIcon, Heart, Trash2, BookOpen, Globe, Loader2, BookMarked, B
 import Image from "next/image";
 import {useBooks} from "@/hooks/useBooks";
 import {formatList} from "@/utils/formatList";
-import React, {useMemo, useState} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import {Skeleton} from "@/components/ui/skeleton";
 import {motion} from "motion/react";
 import {MoreInfoBook} from "@/types";
@@ -43,6 +43,11 @@ const BookModal = ({
         toggleWishlist,
         toggleCurrentBook
     } = useBooks(undefined, user?.id);
+
+    useEffect(() => {
+        console.log("Book:", book);
+        console.log("isLoading:", isLoading);
+    }, [book, isLoading]);
 
 
     const bookStatus = useMemo(() => {
@@ -128,44 +133,35 @@ const BookModal = ({
                     className="sm:max-w-md md:max-w-lg lg:max-w-xl"
                 >
                     <DialogHeader>
-                        {isLoading ? (
-                            <>
-                                <Skeleton className="h-7 w-3/4 mb-2"/>
-                                <DialogTitle className="sr-only">
-                                    Chargement...
-                                </DialogTitle>
+                        <DialogTitle
+                            className="text-xl font-bold pr-8">{book?.title || "Détails du livre"}</DialogTitle>
+                        {
+                            isLoading ? (
                                 <Skeleton className="h-4 w-full mb-1"/>
-                                <Skeleton className="h-4 w-2/3"/>
-                                <DialogDescription className="sr-only">
-                                    Chargement...
+                            ) : book?.description ? (
+                                <DialogDescription>
+                                    <span className="text-sm text-gray-500">{book.description}</span>
                                 </DialogDescription>
-                            </>
-                        ) : (
-                            <>
-                                <DialogTitle
-                                    className="text-xl font-bold pr-8">{book?.title || "Détails du livre"}</DialogTitle>
-                                {book?.description && (
-                                    <DialogDescription className="max-h-32 overflow-y-auto text-muted-foreground">
-                                        <span>{book.description}</span>
-                                    </DialogDescription>
-                                )}
-                            </>
-                        )}
+                            ) : (
+                                <DialogDescription>
+                                    <span className="text-sm text-gray-500">Aucune description disponible</span>
+                                </DialogDescription>
+                            )
+                        }
                     </DialogHeader>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         {/* Image/Couverture */}
                         <div
                             className="aspect-[2/3] relative bg-gray-100 rounded-md overflow-hidden max-h-96 mx-auto w-full sm:max-w-[200px]">
-                            {isLoading ? (
-                                <Skeleton className="w-full h-full"/>
-                            ) : book?.cover ? (
+                            {book?.cover ? (
                                 <Image
                                     src={book.cover}
                                     alt={book.title}
                                     fill
                                     className="object-cover"
                                     sizes="(max-width: 768px) 100vw, 200px"
+                                    loading="lazy"
                                 />
                             ) : (
                                 <div className="w-full h-full flex items-center justify-center">
@@ -176,12 +172,7 @@ const BookModal = ({
 
                         <div className="md:col-span-2 space-y-4">
                             {/* Auteurs */}
-                            {isLoading ? (
-                                <div>
-                                    <Skeleton className="h-4 w-24 mb-2"/>
-                                    <Skeleton className="h-5 w-3/4"/>
-                                </div>
-                            ) : book?.authors && book.authors.length > 0 && (
+                            {book?.authors && book.authors.length > 0 && (
                                 <div>
                                     <h3 className="text-sm font-medium text-gray-500 mb-1">Auteur(s)</h3>
                                     <p>{formatList(book.authors)}</p>
@@ -189,12 +180,7 @@ const BookModal = ({
                             )}
 
                             {/* Nombre de pages */}
-                            {isLoading ? (
-                                <div>
-                                    <Skeleton className="h-4 w-24 mb-2"/>
-                                    <Skeleton className="h-5 w-20"/>
-                                </div>
-                            ) : book?.numberOfPages && (
+                            {book?.numberOfPages && (
                                 <div>
                                     <h3 className="text-sm font-medium text-gray-500 mb-1 flex items-center">
                                         <FileText className="h-4 w-4 mr-1"/>
@@ -205,38 +191,29 @@ const BookModal = ({
                             )}
 
                             {/* Genres/Sujets */}
-                            {isLoading ? (
-                                <div>
-                                    <Skeleton className="h-4 w-24 mb-2"/>
-                                    <div className="flex flex-wrap gap-1 mt-1">
-                                        <Skeleton className="h-6 w-16 rounded-full"/>
-                                        <Skeleton className="h-6 w-20 rounded-full"/>
-                                        <Skeleton className="h-6 w-24 rounded-full"/>
+                            {
+                                isLoading ? (
+                                    <Skeleton className="h-4 w-full mb-1"/>
+                                ) : book?.subjects && book.subjects.length === 0 ? (
+                                    <p className="text-sm text-gray-500">Aucun genre disponible</p>
+                                ) : book?.subjects && book.subjects.length > 0 ? (
+                                    <div>
+                                        <h3 className="text-sm font-medium text-gray-500 mb-1 flex items-center">
+                                            <Globe className="h-4 w-4 mr-1"/>
+                                            Genres(s)
+                                        </h3>
+                                        <div className="flex flex-wrap gap-1 mt-1">
+                                            {book.subjects.slice(0, 5).map((subject, idx) => (
+                                                <Badge key={idx} variant="secondary" className="text-xs max-w-24">
+                                                    {subject.length > 10 ? subject.substring(0, 10) + '...' : subject}
+                                                </Badge>
+                                            ))}
+                                        </div>
                                     </div>
-                                </div>
-                            ) : book?.subjects && book.subjects.length > 0 && (
-                                <div>
-                                    <h3 className="text-sm font-medium text-gray-500 mb-1 flex items-center">
-                                        <Globe className="h-4 w-4 mr-1"/>
-                                        Genres(s)
-                                    </h3>
-                                    <div className="flex flex-wrap gap-1 mt-1">
-                                        {book.subjects.slice(0, 5).map((subject, idx) => (
-                                            <Badge key={idx} variant="secondary" className="text-xs max-w-24">
-                                                {subject.length > 10 ? subject.substring(0, 10) + '...' : subject}
-                                            </Badge>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
+                                ) : null}
 
                             {/* Statut */}
-                            {isLoading ? (
-                                <div>
-                                    <Skeleton className="h-4 w-24 mb-2"/>
-                                    <Skeleton className="h-6 w-40 rounded-full"/>
-                                </div>
-                            ) : (
+                            {(
                                 <div className="grid grid-cols-1 sm:grid-cols-2">
                                     <div className="space-y-2">
                                         <h3 className="text-sm font-medium text-gray-500">Statut du livre</h3>
@@ -299,104 +276,95 @@ const BookModal = ({
                     </div>
 
                     <DialogFooter className="flex flex-col sm:flex-row flex-wrap mt-4 sm:justify-start">
-                        {isLoading ? (
-                            <>
-                                <Skeleton className="h-10 w-full sm:w-40 rounded-md"/>
-                                <Skeleton className="h-10 w-full sm:w-40 rounded-md"/>
-                            </>
-                        ) : (
-                            <>
-                                {(inLibrary && !isCurrentBookInstance && !isBookFinishedInstance) && (
-                                    <Button
-                                        variant="outline"
-                                        className="w-full sm:w-auto hover:bg-indigo-200 border-indigo-300 text-indigo-700"
-                                        onClick={handleToggleCurrentBook}
-                                        disabled={loadingLibrary || loadingWishlist || loadingCurrentBook}
-                                    >
-                                        {loadingCurrentBook ? (
-                                            <Loader2 className="h-4 w-4 animate-spin mr-2"/>
-                                        ) : (
-                                            <BookMarked className="h-4 w-4 mr-2"/>
-                                        )}
-                                        Marquer comme en lecture
-                                    </Button>
+                        {(inLibrary && !isCurrentBookInstance && !isBookFinishedInstance) && (
+                            <Button
+                                variant="outline"
+                                className="w-full sm:w-auto hover:bg-indigo-200 border-indigo-300 text-indigo-700"
+                                onClick={handleToggleCurrentBook}
+                                disabled={loadingLibrary || loadingWishlist || loadingCurrentBook}
+                            >
+                                {loadingCurrentBook ? (
+                                    <Loader2 className="h-4 w-4 animate-spin mr-2"/>
+                                ) : (
+                                    <BookMarked className="h-4 w-4 mr-2"/>
                                 )}
-                                {inLibrary && isCurrentBookInstance && (
-                                    <Button
-                                        variant="outline"
-                                        className="w-full sm:w-auto hover:bg-gray-200 border-gray-300"
-                                        onClick={handleToggleCurrentBook}
-                                        disabled={loadingLibrary || loadingWishlist || loadingCurrentBook}
-                                    >
-                                        {loadingCurrentBook ? (
-                                            <Loader2 className="h-4 w-4 animate-spin mr-2"/>
-                                        ) : (
-                                            <BookCopy className="h-4 w-4 mr-2"/>
-                                        )}
-                                        Marquer comme non commencé
-                                    </Button>
+                                Marquer comme en lecture
+                            </Button>
+                        )}
+                        {inLibrary && isCurrentBookInstance && (
+                            <Button
+                                variant="outline"
+                                className="w-full sm:w-auto hover:bg-gray-200 border-gray-300"
+                                onClick={handleToggleCurrentBook}
+                                disabled={loadingLibrary || loadingWishlist || loadingCurrentBook}
+                            >
+                                {loadingCurrentBook ? (
+                                    <Loader2 className="h-4 w-4 animate-spin mr-2"/>
+                                ) : (
+                                    <BookCopy className="h-4 w-4 mr-2"/>
                                 )}
-                                {inLibrary && (
-                                    <Button
-                                        variant="destructive"
-                                        className="w-full sm:w-auto"
-                                        onClick={handleToggleLibrary}
-                                        disabled={loadingLibrary || loadingWishlist || loadingCurrentBook}
-                                    >
-                                        {loadingLibrary ? (
-                                            <Loader2 className="h-4 w-4 animate-spin mr-2"/>
-                                        ) : (
-                                            <Trash2 className="h-4 w-4 mr-2"/>
-                                        )}
-                                        Retirer de ma bibliothèque
-                                    </Button>
+                                Marquer comme non commencé
+                            </Button>
+                        )}
+                        {inLibrary && (
+                            <Button
+                                variant="destructive"
+                                className="w-full sm:w-auto"
+                                onClick={handleToggleLibrary}
+                                disabled={loadingLibrary || loadingWishlist || loadingCurrentBook}
+                            >
+                                {loadingLibrary ? (
+                                    <Loader2 className="h-4 w-4 animate-spin mr-2"/>
+                                ) : (
+                                    <Trash2 className="h-4 w-4 mr-2"/>
                                 )}
-                                {inWishlist && (
-                                    <Button
-                                        variant="destructive"
-                                        className="w-full sm:w-auto"
-                                        onClick={handleToggleWishlist}
-                                        disabled={loadingLibrary || loadingWishlist || loadingCurrentBook}
-                                    >
-                                        {loadingWishlist ? (
-                                            <Loader2 className="h-4 w-4 animate-spin mr-2"/>
-                                        ) : (
-                                            <Trash2 className="h-4 w-4 mr-2"/>
-                                        )}
-                                        Retirer de ma wishlist
-                                    </Button>
+                                Retirer de ma bibliothèque
+                            </Button>
+                        )}
+                        {inWishlist && (
+                            <Button
+                                variant="destructive"
+                                className="w-full sm:w-auto"
+                                onClick={handleToggleWishlist}
+                                disabled={loadingLibrary || loadingWishlist || loadingCurrentBook}
+                            >
+                                {loadingWishlist ? (
+                                    <Loader2 className="h-4 w-4 animate-spin mr-2"/>
+                                ) : (
+                                    <Trash2 className="h-4 w-4 mr-2"/>
                                 )}
-                                {!inLibrary && !inWishlist && (
-                                    <Button
-                                        variant="outline"
-                                        className="w-full sm:w-auto hover:bg-green-300"
-                                        onClick={handleToggleLibrary}
-                                        disabled={loadingLibrary || loadingWishlist || loadingCurrentBook}
-                                    >
-                                        {loadingLibrary ? (
-                                            <Loader2 className="h-4 w-4 animate-spin mr-2"/>
-                                        ) : (
-                                            <BookIcon className="h-4 w-4 mr-2"/>
-                                        )}
-                                        Ajouter à ma bibliothèque
-                                    </Button>
+                                Retirer de ma wishlist
+                            </Button>
+                        )}
+                        {!inLibrary && !inWishlist && (
+                            <Button
+                                variant="outline"
+                                className="w-full sm:w-auto hover:bg-green-300"
+                                onClick={handleToggleLibrary}
+                                disabled={loadingLibrary || loadingWishlist || loadingCurrentBook}
+                            >
+                                {loadingLibrary ? (
+                                    <Loader2 className="h-4 w-4 animate-spin mr-2"/>
+                                ) : (
+                                    <BookIcon className="h-4 w-4 mr-2"/>
                                 )}
-                                {!inWishlist && !inLibrary && (
-                                    <Button
-                                        variant="outline"
-                                        className="w-full sm:w-auto hover:bg-amber-300"
-                                        onClick={handleToggleWishlist}
-                                        disabled={loadingLibrary || loadingWishlist || loadingCurrentBook}
-                                    >
-                                        {loadingWishlist ? (
-                                            <Loader2 className="h-4 w-4 animate-spin mr-2"/>
-                                        ) : (
-                                            <Heart className="h-4 w-4 mr-2"/>
-                                        )}
-                                        Ajouter à ma wishlist
-                                    </Button>
+                                Ajouter à ma bibliothèque
+                            </Button>
+                        )}
+                        {!inWishlist && !inLibrary && (
+                            <Button
+                                variant="outline"
+                                className="w-full sm:w-auto hover:bg-amber-300"
+                                onClick={handleToggleWishlist}
+                                disabled={loadingLibrary || loadingWishlist || loadingCurrentBook}
+                            >
+                                {loadingWishlist ? (
+                                    <Loader2 className="h-4 w-4 animate-spin mr-2"/>
+                                ) : (
+                                    <Heart className="h-4 w-4 mr-2"/>
                                 )}
-                            </>
+                                Ajouter à ma wishlist
+                            </Button>
                         )}
                     </DialogFooter>
                 </DialogContent>
