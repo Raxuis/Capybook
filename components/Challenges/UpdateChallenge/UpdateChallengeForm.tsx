@@ -16,6 +16,7 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {useToast} from "@/hooks/use-toast";
 import {ModalData} from "@/store/challengeCrudModalStore";
 import {UpdateChallengeSchema} from "@/utils/zod";
+import {useUser} from "@/hooks/useUser";
 
 type Props = {
     onSubmit: (data: any) => Promise<void>;
@@ -25,6 +26,8 @@ type Props = {
 
 const UpdateChallengeForm = ({onSubmit, initialData, onCancel}: Props) => {
     const {toast} = useToast();
+    const {user} = useUser();
+    if (!user) return null;
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const form = useForm<z.infer<typeof UpdateChallengeSchema>>({
@@ -183,7 +186,15 @@ const UpdateChallengeForm = ({onSubmit, initialData, onCancel}: Props) => {
                                         mode="single"
                                         selected={field.value}
                                         onSelect={field.onChange}
-                                        disabled={(date) => date < new Date()}
+                                        disabled={[
+                                            { before: new Date(), to: new Date() }, // Désactive aujourd’hui et les jours précédents
+                                            ...user.ReadingGoal.map(goal => {
+                                                if (goal.id !== initialData?.id) {
+                                                    return new Date(goal.deadline);
+                                                }
+                                                return [];
+                                            }) // Désactive les autres deadlines sans le challenge actuel
+                                        ]}
                                         initialFocus
                                     />
                                 </PopoverContent>
