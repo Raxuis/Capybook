@@ -89,7 +89,10 @@ const ChallengeCard = memo(({
                             <span>Progression: {challenge.progress}/{challenge.target}</span>
                             <span className="font-medium">{progress}%</span>
                         </div>
-                        <Progress value={progress} className="h-2"/>
+                        <Progress value={progress} className="h-2 transition-all duration-500 ease-in-out"
+                                  indicatorColor={
+                                      isCompleted ? 'bg-[#22c55e]' : 'bg-[#673ab7]'
+                                  }/>
                     </div>
                 </CardContent>
                 <CardFooter className="flex justify-between pt-2">
