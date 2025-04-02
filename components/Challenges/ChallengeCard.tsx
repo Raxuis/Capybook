@@ -8,30 +8,22 @@ import {GoalType} from "@prisma/client";
 import {memo, useCallback, useState} from "react";
 import DeleteChallengeDialog from "@/components/Challenges/DeleteChallenge/DeleteChallengeDialog";
 import {useChallengeCrudModalStore} from "@/store/challengeCrudModalStore";
+import {Challenge} from "@/types";
+import {cn} from "@/lib/utils";
 
-type Challenge = {
-    id: string;
-    type: GoalType;
-    progress: number;
-    target: number;
-    deadline: Date;
-    createdAt: Date;
-};
-
-interface ChallengeCardProps {
+type Props = {
     challenge: Challenge;
     isPast?: boolean;
 }
 
-const ChallengeCard = memo(({challenge, isPast = false}: ChallengeCardProps) => {
+const ChallengeCard = memo(({
+                                challenge, isPast
+                            }: Props) => {
     const {
-        isDialogOpen,
-        modalType,
         openUpdateDialog,
         setDialogOpen
     } = useChallengeCrudModalStore();
 
-    console.log(challenge);
     const progress = Math.min(100, Math.round((challenge.progress / challenge.target) * 100));
     const isCompleted = challenge.progress >= challenge.target;
 
@@ -67,14 +59,17 @@ const ChallengeCard = memo(({challenge, isPast = false}: ChallengeCardProps) => 
     return (
         <>
             <Card className={`overflow-hidden relative group ${isCompleted ? 'border-green-500' : ''}`}>
-                <div className={`h-1 ${isCompleted ? 'bg-green-500' : 'bg-primary'}`}></div>
+                <div className={cn(
+                    "h-1.5",
+                    isCompleted ? "bg-green-500" :
+                        isPast ? "bg-red-500" :
+                            "bg-blue-500"
+                )}></div>
 
                 <div
-                    onClick={
-                        () => {
-                            setShowDialog(true);
-                        }
-                    }
+                    onClick={() => {
+                        setShowDialog(true);
+                    }}
                     className="absolute top-4 right-4 group-hover:opacity-100 opacity-0 transition-opacity duration-200 cursor-pointer">
                     <Trash2 className="size-4 text-destructive"/>
                 </div>
@@ -99,7 +94,10 @@ const ChallengeCard = memo(({challenge, isPast = false}: ChallengeCardProps) => 
                             <span>Progression: {challenge.progress}/{challenge.target}</span>
                             <span className="font-medium">{progress}%</span>
                         </div>
-                        <Progress value={progress} className="h-2"/>
+                        <Progress value={progress} className="h-2 transition-all duration-500 ease-in-out"
+                                  indicatorColor={
+                                      isCompleted ? 'bg-green-500' : (isPast ? 'bg-red-500' : 'bg-blue-500')
+                                  }/>
                     </div>
                 </CardContent>
                 <CardFooter className="flex justify-between pt-2">

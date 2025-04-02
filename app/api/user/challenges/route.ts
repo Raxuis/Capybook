@@ -79,6 +79,7 @@ export const PUT = createZodRoute().body(PutBody).handler(async (_, context) => 
             target,
             deadline,
             progress,
+            completedAt: progress >= target ? new Date() : null,
         }
     });
 

@@ -1,6 +1,6 @@
 'use client';
 
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import {useUser} from "@/hooks/useUser";
 import {Loader2, AlertCircle} from "lucide-react";
 import BookModal from "@/components/Dashboard/Modals/BookModal";
@@ -16,13 +16,6 @@ export default function DashboardContent() {
     const [selectedBook, setSelectedBook] = useState<MoreInfoBook | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isLoadingBookDetails, setIsLoadingBookDetails] = useState(false);
-
-    useEffect(() => {
-        console.log("User data:", user);
-        console.log("Is loading:", isLoading);
-        console.log("Is error:", isError);
-        console.log("Is validating:", isValidating);
-    }, [user, isError, isLoading, isValidating]);
 
     if (!user && (isLoading || isValidating)) {
         return (
@@ -50,33 +43,31 @@ export default function DashboardContent() {
         </div>
     );
 
-    const openBookModal = async (book: BookType) => {
+    const openBookModal = (book: BookType) => {
         setIsModalOpen(true);
-        setSelectedBook(null);
+        setSelectedBook({
+            ...book,
+            description: "Chargement...",
+            subjects: [],
+        });
+
         setIsLoadingBookDetails(true);
 
-        try {
-            const bookInfos = await fetchMoreBookInfos(book.key);
+        fetchMoreBookInfos(book.key)
+            .then((bookInfos) => {
+                if (!bookInfos || bookInfos.error) {
+                    console.warn("Aucune information trouvée pour ce livre.");
+                    return;
+                }
 
-            if (!bookInfos || bookInfos.error) {
-                console.warn("Aucune information trouvée pour ce livre.");
-                setIsLoadingBookDetails(false);
-                return;
-            }
-
-            const bookForModal: MoreInfoBook = {
-                ...book,
-                description: bookInfos.description?.value || "Aucune description disponible",
-                subjects: bookInfos.subjects || [],
-            };
-
-
-            setSelectedBook(bookForModal);
-        } catch (error) {
-            console.error("Erreur lors du chargement du livre :", error);
-        } finally {
-            setIsLoadingBookDetails(false);
-        }
+                setSelectedBook((prev) => ({
+                    ...prev!,
+                    description: bookInfos.description?.value || "Aucune description disponible",
+                    subjects: bookInfos.subjects || [],
+                }));
+            })
+            .catch((error) => console.error("Erreur lors du chargement du livre :", error))
+            .finally(() => setIsLoadingBookDetails(false));
     };
 
     return (

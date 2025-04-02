@@ -23,10 +23,6 @@ export function useChallenges() {
     const updateChallenge = useCallback(async (challengeId: string, challengeData: z.infer<typeof CreateChallengeSchema>) => {
         if (!user?.id) return;
 
-        console.log("Updating challenge with ID:", challengeId, "and data:", challengeData);
-        console.log("User ID:", user.id);
-        console.log("Challenge id:", challengeId);
-
         try {
             const res = await api.put(`/user/challenges`, {
                 userId: user.id,
@@ -55,8 +51,8 @@ export function useChallenges() {
         }
     }, [user, refreshUser]);
 
-    const currentChallenges = user?.ReadingGoal?.filter(goal => new Date(goal.deadline) >= new Date()) || [];
-    const pastChallenges = user?.ReadingGoal?.filter(goal => new Date(goal.deadline) < new Date()) || [];
+    const currentChallenges = user?.ReadingGoal?.filter(goal => new Date(goal.deadline) >= new Date() && !goal.completedAt) || [];
+    const pastChallenges = user?.ReadingGoal?.filter(goal => new Date(goal.deadline) < new Date() || goal.completedAt) || [];
 
     return {
         createChallenge,

@@ -28,8 +28,6 @@ const DashboardTabs = ({openBookModal}: Props) => {
         }
     }, [user.UserBook, user.UserBookWishlist, user.BookReview]);
 
-    console.log(user.UserBook);
-
     return (
         <div className="relative">
             <Tabs defaultValue={booksStatus.hasBooks ? "library" : booksStatus.hasWishlist ? "wishlist" : "library"}

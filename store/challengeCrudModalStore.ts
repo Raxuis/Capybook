@@ -9,8 +9,8 @@ export interface ModalData {
     target: number;
     deadline: Date;
     createdAt: Date;
-    isPast?: boolean;
     userId?: string;
+    completedAt: Date | null;
 }
 
 interface ChallengeModalStore {

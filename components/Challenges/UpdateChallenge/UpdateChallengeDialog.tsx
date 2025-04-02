@@ -6,9 +6,7 @@ import {
     DialogDescription,
     DialogHeader,
     DialogTitle,
-    DialogTrigger
 } from '@/components/ui/dialog';
-import {Button} from "@/components/ui/button";
 import UpdateChallengeForm from './UpdateChallengeForm';
 import {useToast} from "@/hooks/use-toast";
 import z from "zod";
@@ -20,7 +18,6 @@ const UpdateChallengeDialog = memo(() => {
     const {
         isDialogOpen,
         modalType,
-        openUpdateDialog,
         closeDialog,
         setDialogOpen,
         modalData
@@ -37,7 +34,7 @@ const UpdateChallengeDialog = memo(() => {
             });
             return;
         }
-        console.log('Form data:', formData);
+
         try {
             const response = await updateChallenge(modalData.id, formData);
 
@@ -74,13 +71,6 @@ const UpdateChallengeDialog = memo(() => {
             open={isDialogOpen && modalType === 'update' && modalData !== null}
             onOpenChange={setDialogOpen}
         >
-            <DialogTrigger asChild>
-                <Button
-                    onClick={() => modalData && openUpdateDialog(modalData)}
-                    className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 max-sm:w-full max-sm:mt-2">
-                    Mettre à jour le challenge
-                </Button>
-            </DialogTrigger>
             <DialogContent className="sm:max-w-[500px]">
                 <DialogHeader>
                     <DialogTitle>

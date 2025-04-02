@@ -3,15 +3,13 @@ import {BookOpen, Calendar, Plus, Trophy} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import ChallengeCard from "@/components/Challenges/ChallengeCard";
 import {useChallenges} from "@/hooks/useChallenges";
-import {useState} from "react";
+import {useMemo, useState} from "react";
 import {useChallengeCrudModalStore} from "@/store/challengeCrudModalStore";
-import {useUser} from "@/hooks/useUser";
 
 const ChallengeTabs = () => {
     const {currentChallenges, pastChallenges} = useChallenges();
     const {setDialogOpen} = useChallengeCrudModalStore();
     const [activeTab, setActiveTab] = useState("current");
-    const {user} = useUser();
 
     return (
         <Tabs value={activeTab} onValueChange={setActiveTab}>

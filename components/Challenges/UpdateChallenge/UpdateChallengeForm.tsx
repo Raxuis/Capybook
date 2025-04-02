@@ -255,7 +255,19 @@ const UpdateChallengeForm = ({onSubmit, initialData, onCancel}: Props) => {
                                         {watchProgress} / {watchTarget} livres lus
                                     </div>
                                     <div className="text-xs text-slate-500">
-                                        {watchTarget - watchProgress} livres restants
+                                        {
+                                            watchTarget - watchProgress > 0 ? (
+                                                <span>{watchTarget - watchProgress} livre
+                                                    {
+                                                        watchTarget - watchProgress > 1 ? 's' : ''
+                                                    } restant{
+                                                        watchTarget - watchProgress > 1 ? 's' : ''
+                                                    }
+                                                </span>
+                                            ) : (
+                                                <span className="text-green-500">Challenge terminé !</span>
+                                            )
+                                        }
                                     </div>
                                 </div>
                             </div>
@@ -288,7 +300,10 @@ const UpdateChallengeForm = ({onSubmit, initialData, onCancel}: Props) => {
                                     </div>
 
                                     <div
-                                        className="absolute bottom-0 left-0 right-0 bg-gradient-to-tr from-indigo-600 to-purple-500 z-0 transition-all duration-500 ease-out"
+                                        className={cn(
+                                            "absolute bottom-0 left-0 right-0 bg-gradient-to-tr z-0 transition-all duration-500 ease-out",
+                                            watchProgress >= watchTarget ? "from-green-500 to-green-600" : "from-indigo-500 to-purple-600"
+                                        )}
                                         style={{height: `${percentage}%`}}
                                     >
                                         <div className="absolute -top-3 left-0 right-0 h-4 opacity-30">
@@ -317,9 +332,7 @@ const UpdateChallengeForm = ({onSubmit, initialData, onCancel}: Props) => {
 
                                     <div className="absolute bottom-3 right-3 flex items-center z-20">
                                         <div
-                                            className={`px-2 py-1 rounded text-xs font-mono ${
-                                                percentage > 50 ? 'text-white bg-purple-600/50' : 'text-slate-700 bg-white/70'
-                                            }`}
+                                            className="px-2 py-1 rounded text-xs font-mono bg-white text-slate-800 shadow-md"
                                         >
                                             <span className="font-bold">{watchProgress}</span>
                                             <span className="opacity-70"> / {watchTarget}</span>
@@ -332,7 +345,19 @@ const UpdateChallengeForm = ({onSubmit, initialData, onCancel}: Props) => {
                                         {watchProgress} / {watchTarget} pages lues
                                     </div>
                                     <div className="text-xs text-slate-500 mt-1">
-                                        {watchTarget - watchProgress} pages restantes
+                                        {
+                                            watchTarget - watchProgress > 0 ? (
+                                                <span>{watchTarget - watchProgress} page
+                                                    {
+                                                        watchTarget - watchProgress > 1 ? 's' : ''
+                                                    }restante{
+                                                        watchTarget - watchProgress > 1 ? 's' : ''
+                                                    }
+                                                </span>
+                                            ) : (
+                                                <span className="text-green-500">Challenge terminé !</span>
+                                            )
+                                        }
                                     </div>
                                 </div>
                             </div>
@@ -341,7 +366,8 @@ const UpdateChallengeForm = ({onSubmit, initialData, onCancel}: Props) => {
                         {watchType === 'TIME' && (
                             <div className="flex flex-col items-center">
                                 <div className="relative w-40 h-40">
-                                    <div className="absolute inset-0 rounded-full bg-white shadow-md border border-slate-200"></div>
+                                    <div
+                                        className="absolute inset-0 rounded-full bg-white shadow-md border border-slate-200"></div>
 
                                     <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100">
                                         <circle
@@ -358,17 +384,22 @@ const UpdateChallengeForm = ({onSubmit, initialData, onCancel}: Props) => {
                                             cy="50"
                                             r="45"
                                             fill="none"
-                                            stroke="url(#clockGradient)"
+                                            stroke={watchProgress >= watchTarget ? "url(#completedGradient)" : "url(#clockGradient)"}
                                             strokeWidth="6"
                                             strokeLinecap="round"
                                             strokeDasharray={`${2 * Math.PI * 45 * percentage / 100} ${2 * Math.PI * 45}`}
                                             transform="rotate(-90, 50, 50)"
                                             className="transition-all duration-700 ease-in-out"
                                         />
+
                                         <defs>
                                             <linearGradient id="clockGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                                                <stop offset="0%" stopColor="#4f46e5" />
-                                                <stop offset="100%" stopColor="#7c3aed" />
+                                                <stop offset="0%" stopColor="#4f46e5"/>
+                                                <stop offset="100%" stopColor="#7c3aed"/>
+                                            </linearGradient>
+                                            <linearGradient id="completedGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                                <stop offset="0%" stopColor="#22c55e"/>  {/* as green-500 */}
+                                                <stop offset="100%" stopColor="#16a34a"/> {/* as green-600 */}
                                             </linearGradient>
                                         </defs>
                                     </svg>
@@ -376,7 +407,10 @@ const UpdateChallengeForm = ({onSubmit, initialData, onCancel}: Props) => {
                                     <div className="absolute inset-0 flex items-center justify-center">
                                         <div className="relative w-full h-full">
                                             <div
-                                                className="absolute top-1/2 left-1/2 w-1.5 h-14 bg-gradient-to-t from-indigo-800 to-indigo-600 rounded-full shadow-md transition-transform duration-500"
+                                                className={cn(
+                                                    "absolute top-1/2 left-1/2 w-1.5 h-14 bg-gradient-to-t rounded-full shadow-md transition-transform duration-500",
+                                                    watchProgress >= watchTarget ? 'from-green-500 to-green-600' : 'from-indigo-500 to-purple-600',
+                                                )}
                                                 style={{
                                                     transformOrigin: 'bottom center',
                                                     transform: `translate(-50%, -100%) rotate(${(percentage / 100) * 360}deg)`
@@ -384,24 +418,48 @@ const UpdateChallengeForm = ({onSubmit, initialData, onCancel}: Props) => {
                                             ></div>
 
                                             <div
-                                                className="absolute top-1/2 left-1/2 w-1 h-18 bg-gradient-to-t from-purple-700 to-purple-500 rounded-full shadow-md transition-transform duration-500"
+                                                className={cn(
+                                                    "absolute top-1/2 left-1/2 w-1 h-18 bg-gradient-to-t rounded-full shadow-md transition-transform duration-500",
+                                                    watchProgress >= watchTarget ? 'from-green-500 to-green-600' : 'from-indigo-500 to-purple-600',
+                                                )}
                                                 style={{
                                                     transformOrigin: 'bottom center',
                                                     transform: `translate(-50%, -100%) rotate(${(percentage / 100) * 360 + 30}deg)`
                                                 }}
                                             ></div>
 
-                                            <div className="absolute top-1/2 left-1/2 w-4 h-4 bg-gradient-to-br from-slate-800 to-slate-600 rounded-full transform -translate-x-1/2 -translate-y-1/2 shadow-md border border-slate-700"></div>
+                                            <div
+                                                className="absolute top-1/2 left-1/2 w-4 h-4 bg-gradient-to-br from-slate-800 to-slate-600 rounded-full transform -translate-x-1/2 -translate-y-1/2 shadow-md border border-slate-700"></div>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div className="mt-4 text-center">
                                     <div className="text-sm font-medium">
-                                        {watchProgress} / {watchTarget} minutes lues
+                                        {
+                                            watchProgress > 0 ? (
+                                                <span>{watchProgress} / {watchTarget} minute
+                                                    {
+                                                        watchProgress > 1 ? 's' : ''
+                                                    } lue{
+                                                        watchProgress > 1 ? 's' : ''
+                                                    }</span>
+                                            ) : (
+                                                <span>Aucune minute lue</span>
+                                            )
+                                        }
                                     </div>
                                     <div className="text-xs text-slate-500 mt-1">
-                                        {watchTarget - watchProgress} minutes restantes
+                                        {
+                                            watchTarget - watchProgress > 0 ? (
+                                                <span>{watchTarget - watchProgress} minute
+                                                    {
+                                                        watchTarget - watchProgress > 1 ? 's' : ''
+                                                    } restantes</span>
+                                            ) : (
+                                                <span className="text-green-500">Challenge terminé !</span>
+                                            )
+                                        }
                                     </div>
                                 </div>
                             </div>
@@ -409,7 +467,10 @@ const UpdateChallengeForm = ({onSubmit, initialData, onCancel}: Props) => {
 
                         <div className="w-full bg-slate-200 rounded-full h-2 mt-4">
                             <div
-                                className="bg-gradient-to-r from-indigo-500 to-purple-600 h-2 rounded-full"
+                                className={cn(
+                                    "bg-gradient-to-r h-2 rounded-full",
+                                    watchProgress >= watchTarget ? "from-green-500 to-green-600" : "from-indigo-500 to-purple-600"
+                                )}
                                 style={{width: `${percentage}%`}}
                             ></div>
                         </div>
@@ -420,7 +481,8 @@ const UpdateChallengeForm = ({onSubmit, initialData, onCancel}: Props) => {
                 </div>
 
                 <div className="flex justify-end space-x-2">
-                    <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting} className="hover:bg-black/10 transition-colors">
+                    <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting}
+                            className="hover:bg-black/10 transition-colors">
                         Annuler
                     </Button>
                     <Button
