@@ -9,6 +9,7 @@ import {memo, useCallback, useState} from "react";
 import DeleteChallengeDialog from "@/components/Challenges/DeleteChallenge/DeleteChallengeDialog";
 import {useChallengeCrudModalStore} from "@/store/challengeCrudModalStore";
 import {Challenge} from "@/types";
+import {cn} from "@/lib/utils";
 
 type Props = {
     challenge: Challenge;
@@ -23,7 +24,6 @@ const ChallengeCard = memo(({
         setDialogOpen
     } = useChallengeCrudModalStore();
 
-    console.log(challenge);
     const progress = Math.min(100, Math.round((challenge.progress / challenge.target) * 100));
     const isCompleted = challenge.progress >= challenge.target;
 
@@ -59,7 +59,12 @@ const ChallengeCard = memo(({
     return (
         <>
             <Card className={`overflow-hidden relative group ${isCompleted ? 'border-green-500' : ''}`}>
-                <div className={`h-1 ${isCompleted ? 'bg-green-500' : 'bg-primary'}`}></div>
+                <div className={cn(
+                    "h-1.5",
+                    isCompleted ? "bg-green-500" :
+                        isPast ? "bg-red-500" :
+                            "bg-blue-500"
+                )}></div>
 
                 <div
                     onClick={() => {
@@ -91,7 +96,7 @@ const ChallengeCard = memo(({
                         </div>
                         <Progress value={progress} className="h-2 transition-all duration-500 ease-in-out"
                                   indicatorColor={
-                                      isCompleted ? 'bg-[#22c55e]' : 'bg-[#673ab7]'
+                                      isCompleted ? 'bg-green-500' : (isPast ? 'bg-red-500' : 'bg-blue-500')
                                   }/>
                     </div>
                 </CardContent>
