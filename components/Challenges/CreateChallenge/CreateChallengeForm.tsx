@@ -159,10 +159,10 @@ const CreateChallengeForm = memo(() => {
                                         mode="single"
                                         selected={field.value}
                                         onSelect={field.onChange}
-                                        disabled={[{
-                                            before: new Date(),
-                                            to: new Date()
-                                        }]} // Désactive aujourd'hui et les jours précédents
+                                        disabled={[
+                                            { before: new Date(), to: new Date() }, // Désactive aujourd’hui et les jours précédents
+                                            ...user.ReadingGoal.map(goal => new Date(goal.deadline)) // Désactive les autres deadlines
+                                        ]}
                                         classNames={{
                                             nav_button_previous: "absolute left-1 hover:bg-red-500/50",
                                             nav_button_next: "absolute right-1 hover:bg-green-500/50",
