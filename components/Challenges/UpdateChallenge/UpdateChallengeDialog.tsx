@@ -26,6 +26,8 @@ const UpdateChallengeDialog = memo(() => {
         modalData
     } = useChallengeCrudModalStore();
 
+    console.log(modalData)
+
     const {toast} = useToast();
 
     const handleSubmit = async (formData: z.infer<typeof UpdateChallengeSchema>) => {
@@ -74,13 +76,6 @@ const UpdateChallengeDialog = memo(() => {
             open={isDialogOpen && modalType === 'update' && modalData !== null}
             onOpenChange={setDialogOpen}
         >
-            <DialogTrigger asChild>
-                <Button
-                    onClick={() => modalData && openUpdateDialog(modalData)}
-                    className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 max-sm:w-full max-sm:mt-2">
-                    Mettre à jour le challenge
-                </Button>
-            </DialogTrigger>
             <DialogContent className="sm:max-w-[500px]">
                 <DialogHeader>
                     <DialogTitle>

@@ -1,3 +1,5 @@
+import {GoalType} from "@prisma/client";
+
 export type SearchType = 'general' | 'isbn';
 
 export type OpenLibraryISBNBook = {
@@ -33,3 +35,14 @@ export type Book = {
     isbn?: string[];
     numberOfPages?: number;
 };
+
+
+export type Challenge = {
+    id: string;
+    type: GoalType;
+    progress: number;
+    target: number;
+    deadline: Date;
+    createdAt: Date;
+    completedAt: Date | null;
+}

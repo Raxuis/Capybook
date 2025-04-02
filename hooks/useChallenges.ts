@@ -23,10 +23,6 @@ export function useChallenges() {
     const updateChallenge = useCallback(async (challengeId: string, challengeData: z.infer<typeof CreateChallengeSchema>) => {
         if (!user?.id) return;
 
-        console.log("Updating challenge with ID:", challengeId, "and data:", challengeData);
-        console.log("User ID:", user.id);
-        console.log("Challenge id:", challengeId);
-
         try {
             const res = await api.put(`/user/challenges`, {
                 userId: user.id,
