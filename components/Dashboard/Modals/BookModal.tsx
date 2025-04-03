@@ -12,7 +12,7 @@ import {Badge} from "@/components/ui/badge";
 import {Book as BookIcon, Heart, Trash2, BookOpen, Globe, Loader2, BookMarked, BookCopy, FileText} from "lucide-react";
 import Image from "next/image";
 import {useBooks} from "@/hooks/useBooks";
-import {formatList} from "@/utils/formatList";
+import {formatList} from "@/utils/format";
 import React, {useMemo, useState} from "react";
 import {Skeleton} from "@/components/ui/skeleton";
 import {motion} from "motion/react";
