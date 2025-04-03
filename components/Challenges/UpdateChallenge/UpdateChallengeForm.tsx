@@ -189,7 +189,7 @@ const UpdateChallengeForm = ({onSubmit, initialData, onCancel}: Props) => {
                                         disabled={[
                                             { before: new Date(), to: new Date() }, // Désactive aujourd’hui et les jours précédents
                                             ...user.ReadingGoal.map(goal => {
-                                                if (goal.id !== initialData?.id) {
+                                                if (goal.id !== initialData?.id && !goal.completedAt) {
                                                     return new Date(goal.deadline);
                                                 }
                                                 return [];
