@@ -5,7 +5,7 @@ import useSWR from "swr";
 import {formatUsername} from "@/utils/format";
 import {fetcher} from "@/utils/fetcher";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
-import {Book, Star, PenTool, Calendar, Award, User, ChevronRight, Eye} from "lucide-react";
+import {Book, Star, PenTool, Calendar, Award, User, ChevronRight, Eye, ChartBarIcon} from "lucide-react";
 
 type ProfileData = {
     user: {
@@ -192,17 +192,18 @@ const ProfileContent = ({username}: { username: string }) => {
             {/* Content Section */}
             <div className="bg-white rounded-xl shadow-md overflow-hidden">
                 <Tabs defaultValue="overview" value={activeTab} onValueChange={setActiveTab} className="w-full">
-                    <div className="border-b overflow-x-auto">
-                        <TabsList className="flex bg-transparent p-0 w-full">
+                    <div className="border-b overflow-x-auto scrollbar-hide">
+                        <TabsList className="flex bg-transparent p-0 w-full min-w-max">
                             <TabsTrigger
                                 value="overview"
-                                className="flex-1 py-3 sm:py-4 px-3 sm:px-6 border-b-2 border-transparent data-[state=active]:border-blue-600 rounded-none data-[state=active]:bg-transparent data-[state=active]:shadow-none whitespace-nowrap"
+                                className="flex-1 min-w-[100px] py-3 sm:py-4 px-2 sm:px-6 border-b-2 border-transparent data-[state=active]:border-blue-600 rounded-none data-[state=active]:bg-transparent data-[state=active]:shadow-none whitespace-nowrap text-xs sm:text-sm"
                             >
-                                Vue d'ensemble
+                                <span className="hidden sm:inline">Vue d'ensemble</span>
+                                <span className="sm:hidden">Aperçu</span>
                             </TabsTrigger>
                             <TabsTrigger
                                 value="badges"
-                                className="flex-1 py-3 sm:py-4 px-3 sm:px-6 border-b-2 border-transparent data-[state=active]:border-blue-600 rounded-none data-[state=active]:bg-transparent data-[state=active]:shadow-none whitespace-nowrap"
+                                className="flex-1 min-w-[80px] py-3 sm:py-4 px-2 sm:px-6 border-b-2 border-transparent data-[state=active]:border-blue-600 rounded-none data-[state=active]:bg-transparent data-[state=active]:shadow-none whitespace-nowrap text-xs sm:text-sm"
                             >
                                 Badges
                             </TabsTrigger>
@@ -210,13 +211,13 @@ const ProfileContent = ({username}: { username: string }) => {
                                 <>
                                     <TabsTrigger
                                         value="books"
-                                        className="flex-1 py-3 sm:py-4 px-3 sm:px-6 border-b-2 border-transparent data-[state=active]:border-blue-600 rounded-none data-[state=active]:bg-transparent data-[state=active]:shadow-none whitespace-nowrap"
+                                        className="flex-1 min-w-[80px] py-3 sm:py-4 px-2 sm:px-6 border-b-2 border-transparent data-[state=active]:border-blue-600 rounded-none data-[state=active]:bg-transparent data-[state=active]:shadow-none whitespace-nowrap text-xs sm:text-sm"
                                     >
                                         Livres
                                     </TabsTrigger>
                                     <TabsTrigger
                                         value="reviews"
-                                        className="flex-1 py-3 sm:py-4 px-3 sm:px-6 border-b-2 border-transparent data-[state=active]:border-blue-600 rounded-none data-[state=active]:bg-transparent data-[state=active]:shadow-none whitespace-nowrap"
+                                        className="flex-1 min-w-[80px] py-3 sm:py-4 px-2 sm:px-6 border-b-2 border-transparent data-[state=active]:border-blue-600 rounded-none data-[state=active]:bg-transparent data-[state=active]:shadow-none whitespace-nowrap text-xs sm:text-sm"
                                     >
                                         Avis
                                     </TabsTrigger>
@@ -226,6 +227,25 @@ const ProfileContent = ({username}: { username: string }) => {
                     </div>
 
                     <TabsContent value="overview" className="p-4 sm:p-6">
+                        <div
+                            className="flex justify-between items-center mb-4 border-b pb-2">
+                            <h2 className="text-lg sm:text-xl font-semibold flex items-center mb-2 sm:mb-0">
+                                <span className="bg-blue-100 p-1 rounded-md mr-2 flex-shrink-0">
+                                    <ChartBarIcon size={18} className="text-blue-700"/>
+                                </span>
+                                <span className="truncate">Vos statistiques</span>
+                            </h2>
+                            <button
+                                onClick={() => {
+                                    router.push('/book-shelf');
+                                }}
+                                className="text-xs sm:text-sm bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg transition-colors flex items-center shadow-sm whitespace-nowrap"
+                            >
+                                <span className="hidden sm:inline">Tableau de bord</span>
+                                <span className="sm:hidden">Dashboard</span>
+                                <ChevronRight size={14} className="ml-1"/>
+                            </button>
+                        </div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8">
                             <div
                                 className="bg-gradient-to-br from-blue-50 to-blue-100 p-4 sm:p-6 rounded-xl shadow-sm flex items-center">
