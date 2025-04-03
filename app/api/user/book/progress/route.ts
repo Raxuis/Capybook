@@ -35,9 +35,9 @@ export const PUT = createZodRoute().body(bodySchema).handler(async (_, context) 
     }
 
     const isCurrentBookVerification = userBook.progressType === 'percentage' && progress !== 100 && progress !== 0
-        || userBook.progressType === "page" && progress !== book.numberOfPages && progress !== 0;
+        || userBook.progressType === "numberOfPages" && progress !== book.numberOfPages && progress !== 0;
 
-    const isBookFinishedVerification = userBook.progressType === "page" && progress === book.numberOfPages || userBook.progressType === "percentage" && progress === 100;
+    const isBookFinishedVerification = userBook.progressType === "numberOfPages" && progress === book.numberOfPages || userBook.progressType === "percentage" && progress === 100;
 
     const newBook = await prisma.userBook.update({
         where: {
@@ -50,6 +50,7 @@ export const PUT = createZodRoute().body(bodySchema).handler(async (_, context) 
         }
     });
 
+    console.log('newBook', newBook);
 
     if (!newBook) {
         return NextResponse.json({error: 'An error occurred while retrieving book.'}, {status: 500})

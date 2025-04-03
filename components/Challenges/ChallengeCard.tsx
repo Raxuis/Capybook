@@ -1,7 +1,7 @@
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
 import {format} from "date-fns";
 import {fr} from "date-fns/locale";
-import {BookOpen, Calendar, Clock, Trash2, Trophy} from "lucide-react";
+import {BookOpen, Clock, FileText, Trash2, Trophy} from "lucide-react";
 import {Progress} from "@/components/ui/progress";
 import {Button} from "@/components/ui/button";
 import {GoalType} from "@prisma/client";
@@ -35,7 +35,7 @@ const ChallengeCard = memo(({
             case 'BOOKS':
                 return <BookOpen className="h-6 w-6 text-indigo-500"/>;
             case 'PAGES':
-                return <Calendar className="h-6 w-6 text-emerald-500"/>;
+                return <FileText className="h-6 w-6 text-emerald-500"/>;
             case 'TIME':
                 return <Clock className="h-6 w-6 text-amber-500"/>;
             default:
