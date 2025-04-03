@@ -148,7 +148,7 @@ const DashboardTabs = ({openBookModal}: Props) => {
                                         </div>
                                         <div className="flex items-center">
                                             <Badge
-                                                className="text-xs bg-rose-100 hover:bg-rose-200 cursor-default text-rose-700 rounded-full">
+                                                className="text-xs text-center bg-rose-100 hover:bg-rose-200 cursor-default text-rose-700 rounded-full">
                                                 Souhaité depuis
                                                 le {new Date(wishlistItem.createdAt).toLocaleDateString()}
                                             </Badge>
