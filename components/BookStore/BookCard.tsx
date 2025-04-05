@@ -6,7 +6,7 @@ import {FcLikePlaceholder, FcLike, FcComments} from "react-icons/fc";
 import SimplifiedTooltip from "@/components/SimplifiedTooltip";
 import Image from "next/image";
 import {Button} from "@/components/ui/button";
-import {formatList} from "@/utils/formatList";
+import {formatList} from "@/utils/format";
 import {useToast} from "@/hooks/use-toast";
 import {memo, useCallback, useMemo, useState} from "react";
 import {useReviewModalStore} from "@/store/reviewModalStore";

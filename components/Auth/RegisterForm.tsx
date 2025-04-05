@@ -14,7 +14,7 @@ import {useToast} from "@/hooks/use-toast";
 import {LoaderCircleIcon} from "lucide-react";
 import {useState} from "react";
 import {useRouter} from "nextjs-toploader/app";
-import {signUp} from "@/actions/auth";
+import {signUp} from "@/actions/auth/auth";
 
 export default function RegisterForm() {
     const {toast} = useToast();
