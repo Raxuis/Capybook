@@ -1,11 +1,11 @@
 "use client";
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useRouter} from "nextjs-toploader/app";
 import useSWR from "swr";
 import {formatUsername} from "@/utils/format";
 import {fetcher} from "@/utils/fetcher";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
-import {Book, Star, PenTool, Calendar, Award, User, ChevronRight, Eye, ChartBarIcon} from "lucide-react";
+import {Book, Star, PenTool, Calendar, Award, User, ChevronRight, Eye, ChartBarIcon, Loader2} from "lucide-react";
 
 type ProfileData = {
     user: {
@@ -72,21 +72,20 @@ const ProfileContent = ({username}: { username: string }) => {
         }
     );
 
-    // Redirect if username is empty
-    React.useEffect(() => {
+    useEffect(() => {
         if (!username) {
             router.push('/404');
         }
     }, [username, router]);
 
-    // State for "show more" functionality
     const [showAllBooks, setShowAllBooks] = useState(false);
     const [showAllReviews, setShowAllReviews] = useState(false);
 
     if (isLoading) {
         return (
-            <div className="flex items-center justify-center h-64">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+            <div className="flex flex-col items-center justify-center min-h-screen p-4">
+                <Loader2 className="h-8 w-8 animate-spin text-primary mb-2"/>
+                <p className="text-muted-foreground">Chargement des données...</p>
             </div>
         );
     }
