@@ -5,7 +5,8 @@ import {useUser} from "@/hooks/useUser";
 import axios from "axios";
 import {useMemo, useCallback} from "react";
 import {Book, MoreInfoBook} from "@/types";
-import { api } from "@/utils/api";
+import {api} from "@/utils/api";
+import {SWR_CONFIG} from "@/constants/SWR";
 
 type OpenLibraryResponse = {
     docs: Book[];
@@ -24,10 +25,7 @@ export function useBooks(bookName?: string | null, userId?: string) {
     const {data, error, isLoading} = useSWR<OpenLibraryResponse>(
         apiUrl,
         fetcher,
-        {
-            revalidateOnFocus: false,
-            dedupingInterval: 60000, // 1 minute
-        }
+        SWR_CONFIG
     );
 
 

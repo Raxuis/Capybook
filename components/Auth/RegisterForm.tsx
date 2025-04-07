@@ -15,6 +15,7 @@ import {LoaderCircleIcon} from "lucide-react";
 import {useState} from "react";
 import {useRouter} from "nextjs-toploader/app";
 import {signUp} from "@/actions/auth/auth";
+import ColorPicker from "@/components/ui/color-picker";
 
 export default function RegisterForm() {
     const {toast} = useToast();
@@ -26,7 +27,8 @@ export default function RegisterForm() {
         defaultValues: {
             username: "",
             email: "",
-            password: ""
+            password: "",
+            favoriteColor: "#3b82f6"
         },
     });
 
@@ -100,6 +102,22 @@ export default function RegisterForm() {
             <CardContent>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                        <FormField
+                            control={form.control}
+                            name="favoriteColor"
+                            render={({field}) => (
+                                <FormItem className="flex flex-col">
+                                    <FormLabel>Couleur préférée</FormLabel>
+                                    <FormControl>
+                                        <ColorPicker
+                                            color={field.value || "#3b82f6"}
+                                            onChange={(color) => field.onChange(color)}
+                                            className="w-full hover:bg-transparent"
+                                        />
+                                    </FormControl>
+                                    <FormMessage/>
+                                </FormItem>
+                            )}/>
                         <FormField
                             control={form.control}
                             name="username"

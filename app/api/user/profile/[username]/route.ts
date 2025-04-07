@@ -36,11 +36,10 @@ interface ReviewData {
 
 interface ResponseData {
     user: {
-        id: string;
         username: string;
         name: string | null;
-        image: string | null;
         createdAt: Date;
+        favoriteColor: string;
     };
     isOwner: boolean;
     stats: {
@@ -58,6 +57,7 @@ interface ResponseData {
     detailedData?: {
         books: BookData[];
         reviews: ReviewData[];
+        userId: string;
     };
 }
 
@@ -79,6 +79,7 @@ export const GET = createZodRoute()
                     name: true,
                     image: true,
                     createdAt: true,
+                    favoriteColor: true,
                     UserBook: {
                         select: {
                             id: true,
@@ -151,10 +152,9 @@ export const GET = createZodRoute()
 
             const responseData: ResponseData = {
                 user: {
-                    id: user.id,
                     username: user.username,
+                    favoriteColor: user.favoriteColor,
                     name: user.name,
-                    image: user.image,
                     createdAt: user.createdAt
                 },
                 isOwner,
@@ -168,7 +168,8 @@ export const GET = createZodRoute()
             if (isOwner) {
                 responseData['detailedData'] = {
                     books: user.UserBook,
-                    reviews: user.BookReview
+                    reviews: user.BookReview,
+                    userId: user.id
                 };
             }
 
