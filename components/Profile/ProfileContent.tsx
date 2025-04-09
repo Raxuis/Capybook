@@ -1,7 +1,7 @@
 "use client";
 import React, {useEffect, useState} from 'react';
 import {useRouter} from "nextjs-toploader/app";
-import useSWR, {mutate} from "swr";
+import useSWR from "swr";
 import {formatUsername} from "@/utils/format";
 import {fetcher} from "@/utils/fetcher";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
@@ -61,9 +61,10 @@ const ProfileContent = ({username}: { username: string }) => {
     const [activeTab, setActiveTab] = useState("overview");
     const [isModalOpen, setModalOpen] = useState(false);
     const usernameParamFormatted = username ? formatUsername(username) : null;
+    const profileUrl = usernameParamFormatted ? `/api/user/profile/${usernameParamFormatted}` : null;
 
     const {data, error, isLoading, mutate} = useSWR<ProfileData>(
-        usernameParamFormatted ? `/api/user/profile/${usernameParamFormatted}` : null,
+        profileUrl,
         fetcher,
         {
             ...SWR_CONFIG,
@@ -82,10 +83,16 @@ const ProfileContent = ({username}: { username: string }) => {
     const [showAllReviews, setShowAllReviews] = useState(false);
 
     const handleModalClose = async (isOpen: boolean) => {
-        setModalOpen(isOpen);
         if (!isOpen) {
-            await mutate();
+            try {
+                setTimeout(async () => {
+                    await mutate();
+                }, 200);
+            } catch (error) {
+                console.error("Erreur lors de la revalidation:", error);
+            }
         }
+        setModalOpen(isOpen);
     };
 
     if (isLoading) {

@@ -58,7 +58,6 @@ function EditProfileModal({
     }, [user, form]);
 
     const onSubmit = async (values: z.infer<typeof EditProfileSchema>) => {
-        console.log('values', values);
         if (values) {
             try {
                 const response = await axios.put(`/api/user/${user.id}`, {
@@ -76,21 +75,22 @@ function EditProfileModal({
                         }
                     });
 
-                    onOpenChange(false);
-
                     toast({
                         title: "Succès",
                         variant: "success",
                         description: "Votre profil a été mis à jour avec succès",
                     });
 
-                    router.push(`/profile/@${response.data.username}`);
-                    router.refresh();
-
                     form.reset({
                         username: values.username,
                         favoriteColor: values.favoriteColor,
                     });
+
+                    onOpenChange(false);
+
+                    setTimeout(() => {
+                        router.push(`/profile/@${response.data.username}`);
+                    }, 100);
                 }
             } catch (error) {
                 // Gérer les erreurs axios ici
