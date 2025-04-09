@@ -25,7 +25,7 @@ export function PageNumberModal({userId}: { userId: string }) {
     const form = useForm<z.infer<typeof PageNumberSchema>>({
         resolver: zodResolver(PageNumberSchema),
         defaultValues: {
-            pageNumber: undefined,
+            pageNumber: 0,
         },
     });
 

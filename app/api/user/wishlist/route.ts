@@ -48,8 +48,13 @@ export const POST = createZodRoute()
                 });
             }
 
-            const existingWishlistEntry = await prisma.userBookWishlist.findFirst({
-                where: {userId, bookId: newBook.id}
+            const existingWishlistEntry = await prisma.userBookWishlist.findUnique({
+                where: {
+                    userId_bookId: {
+                        userId,
+                        bookId: newBook.id
+                    }
+                }
             });
 
             if (existingWishlistEntry) {

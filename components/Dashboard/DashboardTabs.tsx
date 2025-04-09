@@ -5,7 +5,7 @@ import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
 import {Badge} from "@/components/ui/badge";
 import ProgressTracker from "@/components/Dashboard/Progress/ProgressTracker";
-import {formatList} from "@/utils/formatList";
+import {formatList} from "@/utils/format";
 import {Book as BookType} from "@/types";
 import NoPageNumber from "@/components/Dashboard/Progress/NoPageNumber";
 import {PageNumberModal} from "@/components/Dashboard/Progress/EnterPageNumber";
@@ -148,7 +148,7 @@ const DashboardTabs = ({openBookModal}: Props) => {
                                         </div>
                                         <div className="flex items-center">
                                             <Badge
-                                                className="text-xs bg-rose-100 hover:bg-rose-200 cursor-default text-rose-700 rounded-full">
+                                                className="text-xs text-center bg-rose-100 hover:bg-rose-200 cursor-default text-rose-700 rounded-full">
                                                 Souhaité depuis
                                                 le {new Date(wishlistItem.createdAt).toLocaleDateString()}
                                             </Badge>

@@ -3,7 +3,7 @@ import {BookOpen, Calendar, Plus, Trophy} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import ChallengeCard from "@/components/Challenges/ChallengeCard";
 import {useChallenges} from "@/hooks/useChallenges";
-import {useMemo, useState} from "react";
+import {useState} from "react";
 import {useChallengeCrudModalStore} from "@/store/challengeCrudModalStore";
 
 const ChallengeTabs = () => {

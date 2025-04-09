@@ -6,8 +6,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SignInSchema } from "@/utils/zod";
-import { login } from "@/actions/auth";
-import { useAuth } from "@/hooks/useAuth";
+import { login } from "@/actions/auth/auth";
 import { LoaderCircleIcon } from "lucide-react";
 import {
     Form,
@@ -27,7 +26,6 @@ export default function LoginForm() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const router = useRouter();
-    const { setAuthenticated } = useAuth();
 
     const form = useForm<z.infer<typeof SignInSchema>>({
         resolver: zodResolver(SignInSchema),
@@ -46,8 +44,8 @@ export default function LoginForm() {
         if (response?.error) {
             setErrorMessage(response.error);
         } else {
-            setAuthenticated(true);
             router.push("/book-shelf");
+            router.refresh();
         }
 
         setIsSubmitting(false);

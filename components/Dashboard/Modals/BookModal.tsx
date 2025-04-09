@@ -12,8 +12,8 @@ import {Badge} from "@/components/ui/badge";
 import {Book as BookIcon, Heart, Trash2, BookOpen, Globe, Loader2, BookMarked, BookCopy, FileText} from "lucide-react";
 import Image from "next/image";
 import {useBooks} from "@/hooks/useBooks";
-import {formatList} from "@/utils/formatList";
-import React, {useEffect, useMemo, useState} from "react";
+import {formatList} from "@/utils/format";
+import React, {useMemo, useState} from "react";
 import {Skeleton} from "@/components/ui/skeleton";
 import {motion} from "motion/react";
 import {MoreInfoBook} from "@/types";
@@ -43,11 +43,6 @@ const BookModal = ({
         toggleWishlist,
         toggleCurrentBook
     } = useBooks(undefined, user?.id);
-
-    useEffect(() => {
-        console.log("Book:", book);
-        console.log("isLoading:", isLoading);
-    }, [book, isLoading]);
 
 
     const bookStatus = useMemo(() => {
@@ -137,7 +132,12 @@ const BookModal = ({
                             className="text-xl font-bold pr-8">{book?.title || "Détails du livre"}</DialogTitle>
                         {
                             isLoading ? (
-                                <Skeleton className="h-4 w-full mb-1"/>
+                                <>
+                                    <Skeleton className="h-4 w-full mb-1"/>
+                                    <DialogDescription className="sr-only">
+                                        Chargement...
+                                    </DialogDescription>
+                                </>
                             ) : book?.description ? (
                                 <DialogDescription>
                                     <span className="text-sm text-gray-500">{book.description}</span>
@@ -370,7 +370,8 @@ const BookModal = ({
                 </DialogContent>
             </Dialog>
         </motion.div>
-    );
+    )
+        ;
 };
 
 export default BookModal;
