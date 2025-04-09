@@ -6,7 +6,7 @@ import {ZodError} from "zod";
 import {SignInSchema} from "@/utils/zod";
 import bcrypt from "bcryptjs";
 
-export const {handlers, signIn, signOut, auth} = NextAuth({
+export const {handlers, signIn, auth} = NextAuth({
     adapter: PrismaAdapter(prisma),
     secret: process.env.AUTH_SECRET,
     session: {
@@ -58,7 +58,11 @@ export const {handlers, signIn, signOut, auth} = NextAuth({
             }
             return session;
         },
-        async jwt({token, user}) {
+        async jwt({token, user, trigger, session}) {
+            if (trigger === "update" && session) {
+                return {...token, ...session.user};
+            }
+
             if (user) {
                 token.id = user.id as string;
                 token.email = user.email as string;

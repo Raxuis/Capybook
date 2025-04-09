@@ -1,7 +1,7 @@
 "use client";
 import React, {useEffect, useState} from 'react';
 import {useRouter} from "nextjs-toploader/app";
-import useSWR from "swr";
+import useSWR, {mutate} from "swr";
 import {formatUsername} from "@/utils/format";
 import {fetcher} from "@/utils/fetcher";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
@@ -62,10 +62,14 @@ const ProfileContent = ({username}: { username: string }) => {
     const [isModalOpen, setModalOpen] = useState(false);
     const usernameParamFormatted = username ? formatUsername(username) : null;
 
-    const {data, error, isLoading} = useSWR<ProfileData>(
+    const {data, error, isLoading, mutate} = useSWR<ProfileData>(
         usernameParamFormatted ? `/api/user/profile/${usernameParamFormatted}` : null,
         fetcher,
-        SWR_CONFIG
+        {
+            ...SWR_CONFIG,
+            revalidateOnFocus: true,
+            revalidateOnMount: true,
+        }
     );
 
     useEffect(() => {
@@ -76,6 +80,13 @@ const ProfileContent = ({username}: { username: string }) => {
 
     const [showAllBooks, setShowAllBooks] = useState(false);
     const [showAllReviews, setShowAllReviews] = useState(false);
+
+    const handleModalClose = async (isOpen: boolean) => {
+        setModalOpen(isOpen);
+        if (!isOpen) {
+            await mutate();
+        }
+    };
 
     if (isLoading) {
         return (
@@ -144,9 +155,9 @@ const ProfileContent = ({username}: { username: string }) => {
                                 className={`w-24 h-24 sm:w-28 md:w-32 sm:h-28 md:h-32 rounded-full border-4 border-white shadow-lg ${avatarGradient} flex items-center justify-center`}
                                 style={avatarGradientStyle}
                             >
-                                    <span className="text-3xl font-bold text-white">
-                                        {(user.name || user.username)[0].toUpperCase()}
-                                    </span>
+                <span className="text-3xl font-bold text-white">
+                  {(user.name || user.username)[0].toUpperCase()}
+                </span>
                             </div>
                             {badges && badges.length > 0 && (
                                 <div
@@ -160,14 +171,14 @@ const ProfileContent = ({username}: { username: string }) => {
                             <h1 className="text-2xl md:text-3xl font-bold">{user.name || user.username}</h1>
                             <div
                                 className="flex flex-wrap items-center justify-center sm:justify-start gap-4 mt-2 text-gray-600">
+                <span className="flex items-center text-sm">
+                  <User size={16} className="mr-1"/>
+                  @{user.username}
+                </span>
                                 <span className="flex items-center text-sm">
-                                    <User size={16} className="mr-1"/>
-                                    @{user.username}
-                                </span>
-                                <span className="flex items-center text-sm">
-                                    <Calendar size={16} className="mr-1"/>
-                                    Membre depuis {memberSince}
-                                </span>
+                  <Calendar size={16} className="mr-1"/>
+                  Membre depuis {memberSince}
+                </span>
                             </div>
                         </div>
                         {isOwner && (
@@ -226,9 +237,9 @@ const ProfileContent = ({username}: { username: string }) => {
                         <div
                             className="flex justify-between items-center mb-4 border-b pb-2">
                             <h2 className="text-lg sm:text-xl font-semibold flex items-center mb-2 sm:mb-0">
-                                <span className="bg-blue-100 p-1 rounded-md mr-2 flex-shrink-0">
-                                    <ChartBarIcon size={18} className="text-blue-700"/>
-                                </span>
+                <span className="bg-blue-100 p-1 rounded-md mr-2 flex-shrink-0">
+                  <ChartBarIcon size={18} className="text-blue-700"/>
+                </span>
                                 <span className="truncate">Vos statistiques</span>
                             </h2>
                             <button
@@ -345,13 +356,13 @@ const ProfileContent = ({username}: { username: string }) => {
                                                 {bookData.finishedAt ? (
                                                     <span
                                                         className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                                        Lu le {new Date(bookData.finishedAt).toLocaleDateString('fr-FR')}
-                                                    </span>
+                            Lu le {new Date(bookData.finishedAt).toLocaleDateString('fr-FR')}
+                          </span>
                                                 ) : (
                                                     <span
                                                         className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                                                        En cours
-                                                    </span>
+                            En cours
+                          </span>
                                                 )}
                                             </div>
                                         </div>
@@ -457,8 +468,8 @@ const ProfileContent = ({username}: { username: string }) => {
                                         <h2 className="text-lg sm:text-xl font-semibold mb-4 border-b pb-2">
                                             {category}
                                             <span className="text-sm text-gray-500 font-normal ml-2">
-                                                ({categoryBadges?.length || 0})
-                                            </span>
+                        ({categoryBadges?.length || 0})
+                      </span>
                                         </h2>
                                         <div
                                             className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4">
@@ -514,13 +525,13 @@ const ProfileContent = ({username}: { username: string }) => {
                                                     {bookData.finishedAt ? (
                                                         <span
                                                             className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                                            Lu le {new Date(bookData.finishedAt).toLocaleDateString('fr-FR')}
-                                                        </span>
+                              Lu le {new Date(bookData.finishedAt).toLocaleDateString('fr-FR')}
+                            </span>
                                                     ) : (
                                                         <span
                                                             className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                                                            En cours
-                                                        </span>
+                              En cours
+                            </span>
                                                     )}
                                                 </div>
                                             </div>
@@ -581,13 +592,15 @@ const ProfileContent = ({username}: { username: string }) => {
             </div>
             {/* Edit Profile Modal */}
             {isOwner && detailedData && (
-                <EditProfileModal isOpen={isModalOpen} onOpenChange={setModalOpen} user={
-                    {
+                <EditProfileModal
+                    isOpen={isModalOpen}
+                    onOpenChange={handleModalClose}
+                    user={{
                         id: detailedData.userId,
                         username: user.username,
                         favoriteColor: user.favoriteColor,
-                    }
-                }/>
+                    }}
+                />
             )}
         </div>
     );

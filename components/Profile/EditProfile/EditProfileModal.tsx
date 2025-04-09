@@ -19,7 +19,8 @@ import z from "zod";
 import {EditProfileSchema} from "@/utils/zod";
 import {zodResolver} from "@hookform/resolvers/zod";
 import axios from "axios";
-import {useUser} from "@/hooks/useUser";
+import {useSession} from "next-auth/react";
+import {useEffect} from "react";
 
 type Props = {
     isOpen: boolean;
@@ -36,9 +37,11 @@ function EditProfileModal({
                               onOpenChange,
                               user
                           }: Props) {
+    const {data: session, update: updateSession} = useSession();
     const {toast} = useToast();
-    const {refreshUser} = useUser();
     const router = useRouter();
+
+
     const form = useForm<z.infer<typeof EditProfileSchema>>({
         resolver: zodResolver(EditProfileSchema),
         defaultValues: {
@@ -46,6 +49,13 @@ function EditProfileModal({
             favoriteColor: user.favoriteColor || "#3b82f6",
         },
     });
+
+    useEffect(() => {
+        form.reset({
+            username: user.username || "",
+            favoriteColor: user.favoriteColor || "#3b82f6",
+        });
+    }, [user, form]);
 
     const onSubmit = async (values: z.infer<typeof EditProfileSchema>) => {
         console.log('values', values);
@@ -56,42 +66,43 @@ function EditProfileModal({
                     favoriteColor: values.favoriteColor,
                 });
 
-                // En cas de succès
                 if (response.status === 200) {
-                    // D'abord mettre à jour les données
-                    await refreshUser();
+                    await updateSession({
+                        ...session,
+                        user: {
+                            ...session?.user,
+                            username: values.username,
+                            favoriteColor: values.favoriteColor
+                        }
+                    });
 
-                    // Ensuite fermer la modal
                     onOpenChange(false);
 
-                    // Afficher notification de succès
                     toast({
                         title: "Succès",
                         variant: "success",
                         description: "Votre profil a été mis à jour avec succès",
                     });
 
-                    // Rediriger
-                    if (response.data && response.data.username) {
-                        router.push(`/profile/@${response.data.username}`);
-                    }
+                    router.push(`/profile/@${response.data.username}`);
+                    router.refresh();
 
-                    form.reset();
+                    form.reset({
+                        username: values.username,
+                        favoriteColor: values.favoriteColor,
+                    });
                 }
             } catch (error) {
                 // Gérer les erreurs axios ici
                 if (axios.isAxiosError(error)) {
                     const responseData = error.response?.data;
 
-                    // Vérifier le message d'erreur spécifique
                     if (error.response?.status === 400 && responseData?.error === "Username already taken") {
-                        // Important : ne pas fermer la modal ici pour que l'utilisateur voie l'erreur
                         form.setError("username", {
                             type: "manual",
                             message: "Ce nom d'utilisateur existe déjà",
                         });
                     } else {
-                        // Autres erreurs 400 ou autres codes d'erreur
                         toast({
                             variant: "destructive",
                             title: "Erreur",
@@ -118,8 +129,8 @@ function EditProfileModal({
                     <DialogTitle className="border-b border-border px-6 py-4 text-base">
                         Modifier votre profil {" "}
                         <span className="text-primary font-semibold">
-                            @{user.username}
-                        </span>
+              @{user.username}
+            </span>
                     </DialogTitle>
                 </DialogHeader>
                 <DialogDescription className="sr-only">
