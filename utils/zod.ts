@@ -65,3 +65,12 @@ export const UpdateChallengeSchema = BaseUpdateChallengeSchema.refine((data) => 
     message: "La progression ne peut pas dépasser la cible",
     path: ["progress"],
 });
+
+export const EditProfileSchema = object({
+    username: string({required_error: "Le pseudo est nécessaire"})
+        .min(1, "Le pseudo est nécessaire")
+        .max(15, "Le pseudo ne peut pas dépasser 15 caractères")
+        .regex(/^[a-zA-Z0-9-]+$/, "Le pseudo ne peut contenir que des lettres, des chiffres et des tirets"),
+    favoriteColor: string({required_error: "La couleur préférée est nécessaire"})
+        .regex(/^#[0-9A-F]{6}$/i, "La couleur préférée doit être en hexadécimal"),
+})

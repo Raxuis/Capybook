@@ -579,7 +579,16 @@ const ProfileContent = ({username}: { username: string }) => {
                     )}
                 </Tabs>
             </div>
-            <EditProfileModal isOpen={isModalOpen} onOpenChange={setModalOpen} user={user}/>
+            {/* Edit Profile Modal */}
+            {isOwner && detailedData && (
+                <EditProfileModal isOpen={isModalOpen} onOpenChange={setModalOpen} user={
+                    {
+                        id: detailedData.userId,
+                        username: user.username,
+                        favoriteColor: user.favoriteColor,
+                    }
+                }/>
+            )}
         </div>
     );
 };

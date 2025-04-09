@@ -41,7 +41,7 @@ export function useUser() {
     }, [userId]);
 
     const refreshUser = useCallback(async () => {
-        if (swrKey) await mutate();
+        await mutate();
     }, [mutate, swrKey]);
 
     return {
