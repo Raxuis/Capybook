@@ -181,16 +181,28 @@ export default function ClientHeader({user: initialUser}: ClientHeaderProps) {
                             )}
                             {
                                 currentUsername ? (
-                                    <motion.button
-                                        onClick={handleSignOut}
-                                        className="text-sm font-medium hover:text-primary transition-colors"
-                                        whileHover={{scale: 1.1, color: "var(--primary)"}}
-                                        initial={{opacity: 0, x: -20}}
-                                        animate={{opacity: 1, x: 0}}
-                                        transition={{duration: 0.3, delay: headerElementsLength * 0.1}}
-                                    >
-                                        Déconnexion
-                                    </motion.button>
+                                    <>
+                                        <motion.button
+                                            onClick={handleSignOut}
+                                            className="text-sm font-medium hover:text-primary transition-colors"
+                                            whileHover={{scale: 1.1, color: "var(--primary)"}}
+                                            initial={{opacity: 0, x: -20}}
+                                            animate={{opacity: 1, x: 0}}
+                                            transition={{duration: 0.3, delay: headerElementsLength * 0.1}}
+                                        >
+                                            Déconnexion
+                                        </motion.button>
+                                        <motion.a
+                                            href={`/profile/@${currentUsername}`}
+                                            className="text-sm font-medium hover:text-primary transition-colors text-center"
+                                            whileHover={{scale: 1.1, color: "var(--primary)"}}
+                                            initial={{opacity: 0, x: -20}}
+                                            animate={{opacity: 1, x: 0}}
+                                            transition={{duration: 0.3, delay: headerElementsLength * 0.1}}
+                                        >
+                                            Mon profil
+                                        </motion.a>
+                                    </>
                                 ) : (
                                     <motion.a
                                         href="/login"

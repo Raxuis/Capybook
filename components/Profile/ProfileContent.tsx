@@ -187,7 +187,7 @@ const ProfileContent = ({username}: { username: string }) => {
                             </div>
                         </div>
                         {isOwner && (
-                            <div className="ml-auto mt-4 sm:mt-0 text-center sm:text-left">
+                            <div className="max-sm:w-full sm:ml-auto mt-4 sm:mt-0 text-center sm:text-left">
                                 <button
                                     className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-colors shadow-md flex items-center mx-auto sm:mx-0"
                                     onClick={() => setModalOpen(true)}
@@ -202,20 +202,20 @@ const ProfileContent = ({username}: { username: string }) => {
             </div>
 
             {/* Content Section */}
-            <div className="bg-white rounded-xl shadow-md overflow-hidden">
+            <div className="bg-white rounded-xl shadow-md overflow-hidden mb-32">
                 <Tabs defaultValue="overview" value={activeTab} onValueChange={setActiveTab} className="w-full">
-                    <div className="border-b overflow-x-auto scrollbar-hide">
+                    <div className="border-b overflow-hidden scrollbar-hide">
                         <TabsList className="flex bg-transparent p-0 w-full min-w-max">
                             <TabsTrigger
                                 value="overview"
-                                className="flex-1 min-w-[100px] py-3 sm:py-4 px-2 sm:px-6 border-b-2 border-transparent data-[state=active]:border-blue-600 rounded-none data-[state=active]:bg-transparent data-[state=active]:shadow-none whitespace-nowrap text-xs sm:text-sm"
+                                className="flex-1 min-w-[100px] py-3 sm:py-4 px-2 sm:px-6 rounded-none data-[state=active]:bg-transparent data-[state=active]:shadow-none whitespace-nowrap text-xs sm:text-sm"
                             >
                                 <span className="hidden sm:inline">Vue d'ensemble</span>
                                 <span className="sm:hidden">Aperçu</span>
                             </TabsTrigger>
                             <TabsTrigger
                                 value="badges"
-                                className="flex-1 min-w-[80px] py-3 sm:py-4 px-2 sm:px-6 border-b-2 border-transparent data-[state=active]:border-blue-600 rounded-none data-[state=active]:bg-transparent data-[state=active]:shadow-none whitespace-nowrap text-xs sm:text-sm"
+                                className="flex-1 min-w-[80px] py-3 sm:py-4 px-2 sm:px-6 rounded-none data-[state=active]:bg-transparent data-[state=active]:shadow-none whitespace-nowrap text-xs sm:text-sm"
                             >
                                 Badges
                             </TabsTrigger>
@@ -223,13 +223,13 @@ const ProfileContent = ({username}: { username: string }) => {
                                 <>
                                     <TabsTrigger
                                         value="books"
-                                        className="flex-1 min-w-[80px] py-3 sm:py-4 px-2 sm:px-6 border-b-2 border-transparent data-[state=active]:border-blue-600 rounded-none data-[state=active]:bg-transparent data-[state=active]:shadow-none whitespace-nowrap text-xs sm:text-sm"
+                                        className="flex-1 min-w-[80px] py-3 sm:py-4 px-2 sm:px-6 rounded-none data-[state=active]:bg-transparent data-[state=active]:shadow-none whitespace-nowrap text-xs sm:text-sm"
                                     >
                                         Livres
                                     </TabsTrigger>
                                     <TabsTrigger
                                         value="reviews"
-                                        className="flex-1 min-w-[80px] py-3 sm:py-4 px-2 sm:px-6 border-b-2 border-transparent data-[state=active]:border-blue-600 rounded-none data-[state=active]:bg-transparent data-[state=active]:shadow-none whitespace-nowrap text-xs sm:text-sm"
+                                        className="flex-1 min-w-[80px] py-3 sm:py-4 px-2 sm:px-6 rounded-none data-[state=active]:bg-transparent data-[state=active]:shadow-none whitespace-nowrap text-xs sm:text-sm"
                                     >
                                         Avis
                                     </TabsTrigger>
@@ -298,11 +298,11 @@ const ProfileContent = ({username}: { username: string }) => {
                         {badges && badges.length > 0 && (
                             <div className="mb-6">
                                 <h2 className="text-lg sm:text-xl font-semibold mb-4 border-b pb-2">Badges récents</h2>
-                                <div className="flex flex-wrap gap-3 sm:gap-4">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
                                     {badges.slice(0, 4).map(badge => (
                                         <div
                                             key={badge.id}
-                                            className="group flex flex-col items-center bg-white border border-gray-200 rounded-lg p-3 sm:p-4 shadow-sm hover:shadow-md transition-all w-20 sm:w-28"
+                                            className="group flex flex-col items-center bg-white border border-gray-200 rounded-lg p-3 sm:p-4 shadow-sm hover:shadow-md transition-all w-full"
                                             title={badge.description}
                                         >
                                             <div className="text-2xl sm:text-3xl mb-2">{badge.icon || '🏆'}</div>
