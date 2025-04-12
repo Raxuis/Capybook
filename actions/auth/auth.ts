@@ -7,7 +7,7 @@ import {saltAndHashPassword} from "@/utils/password";
 
 export async function signUp(formData: unknown) {
     try {
-        const {username, email, password} = SignUpSchema.parse(formData);
+        const {username, email, password, favoriteColor} = SignUpSchema.parse(formData);
 
         const existingUser = await prisma.user.findFirst({
             where: {email},
@@ -32,6 +32,7 @@ export async function signUp(formData: unknown) {
                 email,
                 username,
                 password: hashedPassword,
+                favoriteColor,
             },
         });
 

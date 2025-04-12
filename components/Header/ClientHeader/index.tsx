@@ -1,28 +1,31 @@
 "use client";
 
-import { BookOpen, Menu, X } from "lucide-react";
-import { AnimatePresence, motion } from "motion/react";
-import { useState, useEffect } from "react";
-import { navigation } from "@/constants";
-import { cn } from "@/lib/utils";
-import { Link } from "next-view-transitions";
-import { usePathname } from 'next/navigation';
-import { useRouter } from "next/navigation";
-import { User } from "@prisma/client";
-import { signOut } from 'next-auth/react';
+import {BookOpen, Menu, X} from "lucide-react";
+import {AnimatePresence, motion} from "motion/react";
+import {useState, useEffect} from "react";
+import {navigation} from "@/constants";
+import {cn} from "@/lib/utils";
+import {Link} from "next-view-transitions";
+import {usePathname} from 'next/navigation';
+import {useRouter} from "next/navigation";
+import {User} from "@prisma/client";
+import {signOut, useSession} from 'next-auth/react';
 
 interface ClientHeaderProps {
     user: User | null;
 }
 
-export default function ClientHeader({ user }: ClientHeaderProps) {
+export default function ClientHeader({user: initialUser}: ClientHeaderProps) {
+    const {data: session} = useSession();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
-    const { navigation: headerElements } = navigation;
+    const {navigation: headerElements} = navigation;
     const pathname = usePathname();
     let headerElementsLength = 0;
 
     const router = useRouter();
+
+    const currentUsername = session?.user?.username || initialUser?.username;
 
     const handleNavigation = (link: string) => {
         setIsMenuOpen(false);
@@ -54,7 +57,7 @@ export default function ClientHeader({ user }: ClientHeaderProps) {
     };
 
     const handleSignOut = async () => {
-        await signOut({ redirectTo: '/login' });
+        await signOut({redirectTo: '/login'});
     };
 
     return (
@@ -107,7 +110,7 @@ export default function ClientHeader({ user }: ClientHeaderProps) {
                             : null
                     )}
                     {
-                        user?.username ? (
+                        currentUsername ? (
                             <>
                                 <motion.button
                                     onClick={handleSignOut}
@@ -120,7 +123,7 @@ export default function ClientHeader({ user }: ClientHeaderProps) {
                                     Déconnexion
                                 </motion.button>
                                 <motion.a
-                                    href={`/profile/@${user?.username}`}
+                                    href={`/profile/@${currentUsername}`}
                                     className="text-sm font-medium hover:text-primary transition-colors"
                                     whileHover={{scale: 1.1, color: "var(--primary)"}}
                                     initial={{opacity: 0, x: -20}}
@@ -177,7 +180,7 @@ export default function ClientHeader({ user }: ClientHeaderProps) {
                                     : null
                             )}
                             {
-                                user ? (
+                                currentUsername ? (
                                     <motion.button
                                         onClick={handleSignOut}
                                         className="text-sm font-medium hover:text-primary transition-colors"

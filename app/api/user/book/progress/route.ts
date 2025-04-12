@@ -50,7 +50,6 @@ export const PUT = createZodRoute().body(bodySchema).handler(async (_, context) 
         }
     });
 
-    console.log('newBook', newBook);
 
     if (!newBook) {
         return NextResponse.json({error: 'An error occurred while retrieving book.'}, {status: 500})

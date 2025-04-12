@@ -22,6 +22,7 @@ model User {
   password      String? // Keeping for credentials-based login
   emailVerified DateTime?
   image         String?
+  favoriteColor String    @default("#3b82f6")
   accounts      Account[]
   sessions      Session[]
 

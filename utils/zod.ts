@@ -13,7 +13,8 @@ export const SignInSchema = object({
 export const SignUpSchema = object({
     username: string({required_error: "Le pseudo est nécessaire"})
         .min(1, "Le pseudo est nécessaire")
-        .max(15, "Le pseudo ne peut pas accéder 15 caractères"),
+        .max(15, "Le pseudo ne peut pas dépasser 15 caractères")
+        .regex(/^[a-zA-Z0-9-]+$/, "Le pseudo ne peut contenir que des lettres, des chiffres et des tirets"),
     email: string({required_error: "L'email est nécessaire"})
         .min(1, "L'email est nécessaire")
         .email("Email invalide"),
@@ -21,6 +22,8 @@ export const SignUpSchema = object({
         .min(1, "Le mot de passe est nécessaire")
         .min(8, "Le mot de passe doit être d'au moins de 8 caractères")
         .max(32, "Le mot de passe ne peut pas accéder 32 caractères"),
+    favoriteColor: string({required_error: "La couleur préférée est nécessaire"})
+        .regex(/^#[0-9A-F]{6}$/i, "La couleur préférée doit être en hexadécimal"),
 })
 
 export const ReviewBookSchema = object({
@@ -62,3 +65,12 @@ export const UpdateChallengeSchema = BaseUpdateChallengeSchema.refine((data) => 
     message: "La progression ne peut pas dépasser la cible",
     path: ["progress"],
 });
+
+export const EditProfileSchema = object({
+    username: string({required_error: "Le pseudo est nécessaire"})
+        .min(1, "Le pseudo est nécessaire")
+        .max(15, "Le pseudo ne peut pas dépasser 15 caractères")
+        .regex(/^[a-zA-Z0-9-]+$/, "Le pseudo ne peut contenir que des lettres, des chiffres et des tirets"),
+    favoriteColor: string({required_error: "La couleur préférée est nécessaire"})
+        .regex(/^#[0-9A-F]{6}$/i, "La couleur préférée doit être en hexadécimal"),
+})

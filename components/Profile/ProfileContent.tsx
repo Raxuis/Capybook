@@ -6,14 +6,16 @@ import {formatUsername} from "@/utils/format";
 import {fetcher} from "@/utils/fetcher";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {Book, Star, PenTool, Calendar, Award, User, ChevronRight, Eye, ChartBarIcon, Loader2} from "lucide-react";
+import EditProfileModal from "@/components/Profile/EditProfile/EditProfileModal";
+import {SWR_CONFIG} from "@/constants/SWR";
+import {generateGradientClasses} from "@/utils/color";
 
 type ProfileData = {
     user: {
-        id: string;
         username: string;
         name: string | null;
-        image: string | null;
         createdAt: string;
+        favoriteColor: string;
     };
     isOwner: boolean;
     stats?: {
@@ -29,6 +31,7 @@ type ProfileData = {
         earnedAt: string;
     }>;
     detailedData?: {
+        userId: string;
         books: Array<{
             id: string;
             finishedAt: string | null;
@@ -56,19 +59,17 @@ type ProfileData = {
 const ProfileContent = ({username}: { username: string }) => {
     const router = useRouter();
     const [activeTab, setActiveTab] = useState("overview");
+    const [isModalOpen, setModalOpen] = useState(false);
     const usernameParamFormatted = username ? formatUsername(username) : null;
+    const profileUrl = usernameParamFormatted ? `/api/user/profile/${usernameParamFormatted}` : null;
 
-    const {data, error, isLoading} = useSWR<ProfileData>(
-        usernameParamFormatted ? `/api/user/profile/${usernameParamFormatted}` : null,
+    const {data, error, isLoading, mutate} = useSWR<ProfileData>(
+        profileUrl,
         fetcher,
         {
-            revalidateOnFocus: false,
-            onError: (err) => {
-                console.error('Error fetching profile:', err);
-                if (err.status === 404) {
-                    router.push('/404');
-                }
-            }
+            ...SWR_CONFIG,
+            revalidateOnFocus: true,
+            revalidateOnMount: true,
         }
     );
 
@@ -80,6 +81,19 @@ const ProfileContent = ({username}: { username: string }) => {
 
     const [showAllBooks, setShowAllBooks] = useState(false);
     const [showAllReviews, setShowAllReviews] = useState(false);
+
+    const handleModalClose = async (isOpen: boolean) => {
+        if (!isOpen) {
+            try {
+                setTimeout(async () => {
+                    await mutate();
+                }, 200);
+            } catch (error) {
+                console.error("Erreur lors de la revalidation:", error);
+            }
+        }
+        setModalOpen(isOpen);
+    };
 
     if (isLoading) {
         return (
@@ -131,28 +145,25 @@ const ProfileContent = ({username}: { username: string }) => {
         ? detailedData?.reviews || []
         : previewReviews;
 
+    const {headerGradient, headerGradientStyle, avatarGradient, avatarGradientStyle} =
+        generateGradientClasses(user.favoriteColor);
+
     return (
         <div className="container mx-auto px-4 sm:px-6 max-w-5xl">
             {/* Header Card */}
             <div className="bg-white rounded-xl shadow-md overflow-hidden mb-6">
-                <div className="bg-gradient-to-r from-blue-500 to-purple-600 h-20 sm:h-32"></div>
+                <div className={`${headerGradient} h-20 sm:h-32`} style={headerGradientStyle}></div>
                 <div className="relative px-4 sm:px-6 pb-6">
                     <div className="flex flex-col sm:flex-row sm:items-end -mt-12 sm:-mt-16 mb-4">
                         <div className="relative self-center sm:self-auto">
-                            {user.image ? (
-                                <img
-                                    src={user.image}
-                                    alt={`${user.username}'s profile`}
-                                    className="w-24 h-24 sm:w-28 md:w-32 sm:h-28 md:h-32 rounded-full border-4 border-white shadow-lg object-cover"
-                                />
-                            ) : (
-                                <div
-                                    className="w-24 h-24 sm:w-28 md:w-32 sm:h-28 md:h-32 rounded-full border-4 border-white shadow-lg bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center">
-                                    <span className="text-3xl font-bold text-white">
-                                        {(user.name || user.username)[0].toUpperCase()}
-                                    </span>
-                                </div>
-                            )}
+                            <div
+                                className={`w-24 h-24 sm:w-28 md:w-32 sm:h-28 md:h-32 rounded-full border-4 border-white shadow-lg ${avatarGradient} flex items-center justify-center`}
+                                style={avatarGradientStyle}
+                            >
+                <span className="text-3xl font-bold text-white">
+                  {(user.name || user.username)[0].toUpperCase()}
+                </span>
+                            </div>
                             {badges && badges.length > 0 && (
                                 <div
                                     className="absolute -bottom-2 -right-2 bg-yellow-400 text-xs text-yellow-900 font-semibold rounded-full w-8 h-8 flex items-center justify-center border-2 border-white"
@@ -165,20 +176,22 @@ const ProfileContent = ({username}: { username: string }) => {
                             <h1 className="text-2xl md:text-3xl font-bold">{user.name || user.username}</h1>
                             <div
                                 className="flex flex-wrap items-center justify-center sm:justify-start gap-4 mt-2 text-gray-600">
+                <span className="flex items-center text-sm">
+                  <User size={16} className="mr-1"/>
+                  @{user.username}
+                </span>
                                 <span className="flex items-center text-sm">
-                                    <User size={16} className="mr-1"/>
-                                    @{user.username}
-                                </span>
-                                <span className="flex items-center text-sm">
-                                    <Calendar size={16} className="mr-1"/>
-                                    Membre depuis {memberSince}
-                                </span>
+                  <Calendar size={16} className="mr-1"/>
+                  Membre depuis {memberSince}
+                </span>
                             </div>
                         </div>
                         {isOwner && (
                             <div className="ml-auto mt-4 sm:mt-0 text-center sm:text-left">
                                 <button
-                                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-colors shadow-md flex items-center mx-auto sm:mx-0">
+                                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-colors shadow-md flex items-center mx-auto sm:mx-0"
+                                    onClick={() => setModalOpen(true)}
+                                >
                                     <PenTool size={16} className="mr-2"/>
                                     Modifier le profil
                                 </button>
@@ -229,9 +242,9 @@ const ProfileContent = ({username}: { username: string }) => {
                         <div
                             className="flex justify-between items-center mb-4 border-b pb-2">
                             <h2 className="text-lg sm:text-xl font-semibold flex items-center mb-2 sm:mb-0">
-                                <span className="bg-blue-100 p-1 rounded-md mr-2 flex-shrink-0">
-                                    <ChartBarIcon size={18} className="text-blue-700"/>
-                                </span>
+                <span className="bg-blue-100 p-1 rounded-md mr-2 flex-shrink-0">
+                  <ChartBarIcon size={18} className="text-blue-700"/>
+                </span>
                                 <span className="truncate">Vos statistiques</span>
                             </h2>
                             <button
@@ -348,13 +361,13 @@ const ProfileContent = ({username}: { username: string }) => {
                                                 {bookData.finishedAt ? (
                                                     <span
                                                         className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                                        Lu le {new Date(bookData.finishedAt).toLocaleDateString('fr-FR')}
-                                                    </span>
+                            Lu le {new Date(bookData.finishedAt).toLocaleDateString('fr-FR')}
+                          </span>
                                                 ) : (
                                                     <span
                                                         className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                                                        En cours
-                                                    </span>
+                            En cours
+                          </span>
                                                 )}
                                             </div>
                                         </div>
@@ -460,8 +473,8 @@ const ProfileContent = ({username}: { username: string }) => {
                                         <h2 className="text-lg sm:text-xl font-semibold mb-4 border-b pb-2">
                                             {category}
                                             <span className="text-sm text-gray-500 font-normal ml-2">
-                                                ({categoryBadges?.length || 0})
-                                            </span>
+                        ({categoryBadges?.length || 0})
+                      </span>
                                         </h2>
                                         <div
                                             className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4">
@@ -517,13 +530,13 @@ const ProfileContent = ({username}: { username: string }) => {
                                                     {bookData.finishedAt ? (
                                                         <span
                                                             className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                                            Lu le {new Date(bookData.finishedAt).toLocaleDateString('fr-FR')}
-                                                        </span>
+                              Lu le {new Date(bookData.finishedAt).toLocaleDateString('fr-FR')}
+                            </span>
                                                     ) : (
                                                         <span
                                                             className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                                                            En cours
-                                                        </span>
+                              En cours
+                            </span>
                                                     )}
                                                 </div>
                                             </div>
@@ -582,6 +595,18 @@ const ProfileContent = ({username}: { username: string }) => {
                     )}
                 </Tabs>
             </div>
+            {/* Edit Profile Modal */}
+            {isOwner && detailedData && (
+                <EditProfileModal
+                    isOpen={isModalOpen}
+                    onOpenChange={handleModalClose}
+                    user={{
+                        id: detailedData.userId,
+                        username: user.username,
+                        favoriteColor: user.favoriteColor,
+                    }}
+                />
+            )}
         </div>
     );
 };
