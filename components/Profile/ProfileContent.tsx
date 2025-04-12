@@ -145,8 +145,6 @@ const ProfileContent = ({username}: { username: string }) => {
         ? detailedData?.reviews || []
         : previewReviews;
 
-    console.log(user.favoriteColor)
-
     const {headerGradient, headerGradientStyle, avatarGradient, avatarGradientStyle} =
         generateGradientClasses(user.favoriteColor);
 
