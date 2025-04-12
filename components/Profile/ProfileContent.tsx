@@ -2,7 +2,7 @@
 import React, {useEffect, useState} from 'react';
 import {useRouter} from "nextjs-toploader/app";
 import useSWR from "swr";
-import {formatUsername} from "@/utils/format";
+import {formatBadgeCategory, formatUsername} from "@/utils/format";
 import {fetcher} from "@/utils/fetcher";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {Book, Star, PenTool, Calendar, Award, User, ChevronRight, Eye, ChartBarIcon, Loader2} from "lucide-react";
@@ -302,7 +302,7 @@ const ProfileContent = ({username}: { username: string }) => {
                                     {badges.slice(0, 4).map(badge => (
                                         <div
                                             key={badge.id}
-                                            className="group flex flex-col items-center bg-white border border-gray-200 rounded-lg p-3 sm:p-4 shadow-sm hover:shadow-md transition-all w-20 sm:w-24"
+                                            className="group flex flex-col items-center bg-white border border-gray-200 rounded-lg p-3 sm:p-4 shadow-sm hover:shadow-md transition-all w-20 sm:w-28"
                                             title={badge.description}
                                         >
                                             <div className="text-2xl sm:text-3xl mb-2">{badge.icon || '🏆'}</div>
@@ -471,7 +471,7 @@ const ProfileContent = ({username}: { username: string }) => {
                                 {Object.entries(badgesByCategory || {}).map(([category, categoryBadges]) => (
                                     <div key={category} className="mb-8">
                                         <h2 className="text-lg sm:text-xl font-semibold mb-4 border-b pb-2">
-                                            {category}
+                                            {formatBadgeCategory(category)}
                                             <span className="text-sm text-gray-500 font-normal ml-2">
                         ({categoryBadges?.length || 0})
                       </span>

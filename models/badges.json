@@ -1,0 +1,58 @@
+[
+  {
+    "name": "Premier Pas Littéraire",
+    "description": "Félicitations ! Tu as terminé ton premier livre.",
+    "category": "BOOKS_READ",
+    "requirement": 1,
+    "icon": "🏁"
+  },
+  {
+    "name": "Trio de Savoirs",
+    "description": "Tu as exploré trois mondes littéraires différents.",
+    "category": "BOOKS_READ",
+    "requirement": 3,
+    "icon": "3️⃣"
+  },
+  {
+    "name": "Marathonien de la Lecture",
+    "description": "Dix livres terminés ! Ta bibliothèque personnelle s'agrandit.",
+    "category": "BOOKS_READ",
+    "requirement": 10,
+    "icon": "🏃"
+  },
+  {
+    "name": "Défi Relevé",
+    "description": "Tu as accompli ton premier objectif de lecture. Continue sur cette lancée !",
+    "category": "GOALS_COMPLETED",
+    "requirement": 1,
+    "icon": "🥇"
+  },
+  {
+    "name": "Triple Accomplissement",
+    "description": "Trois objectifs atteints ! Tu as prouvé ta détermination.",
+    "category": "GOALS_COMPLETED",
+    "requirement": 3,
+    "icon": "🥉"
+  },
+  {
+    "name": "Dévoreur de Pages",
+    "description": "Tu as lu plus de 1000 pages. Les mots sont tes alliés.",
+    "category": "PAGES_READ",
+    "requirement": 1000,
+    "icon": "🍽️"
+  },
+  {
+    "name": "Critique Littéraire",
+    "description": "Ta première critique partagée. Ton avis compte !",
+    "category": "REVIEWS_WRITTEN",
+    "requirement": 1,
+    "icon": "💭"
+  },
+  {
+    "name": "Flamme de Lecture",
+    "description": "Tu as lu 7 jours d'affilée. Le feu de la passion brûle en toi !",
+    "category": "READING_STREAK",
+    "requirement": 7,
+    "icon": "🔥"
+  }
+]
