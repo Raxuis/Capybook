@@ -2,6 +2,7 @@ import {z} from "zod";
 import {createZodRoute} from "next-zod-route";
 import {NextResponse} from 'next/server';
 import prisma from "@/utils/prisma";
+import {checkAndAssignBadges} from "@/utils/badges";
 
 const bodySchema = z.object({
     bookId: z.string(),
@@ -21,7 +22,6 @@ export const PUT = createZodRoute().body(bodySchema).handler(async (_, context) 
     if (!book) {
         return NextResponse.json({error: "No book with the corresponding id."}, {status: 404})
     }
-
 
     const userBook = await prisma.userBook.findFirst({
         where: {
@@ -50,13 +50,11 @@ export const PUT = createZodRoute().body(bodySchema).handler(async (_, context) 
         }
     });
 
-    console.log('newBook', newBook);
-
     if (!newBook) {
         return NextResponse.json({error: 'An error occurred while retrieving book.'}, {status: 500})
     }
 
-    if (progress === 100) {
+    if (isBookFinishedVerification) {
         const userReadingGoals = await prisma.readingGoal.findMany({
             where: {userId: userId}
         });
@@ -67,12 +65,18 @@ export const PUT = createZodRoute().body(bodySchema).handler(async (_, context) 
                     where: {id: goal.id},
                     data: {
                         progress: goal.target === goal.progress + 1 ? goal.target : goal.progress + 1,
+                        completedAt: goal.target === goal.progress + 1 ? new Date() : goal.completedAt,
                     }
                 });
             }
         }));
+
+        await checkAndAssignBadges(userId);
+
+        console.log('finished new book :', newBook)
     }
 
+    console.log('not finished new book :', newBook)
 
     return NextResponse.json({data: newBook}, {status: 200})
 });

@@ -2,6 +2,7 @@ import {z} from "zod";
 import {createZodRoute} from "next-zod-route";
 import {NextResponse} from 'next/server';
 import prisma from "@/utils/prisma";
+import {checkAndAssignBadges} from "@/utils/badges";
 
 const bodySchema = z.object({
     bookKey: z.string(),
@@ -22,7 +23,6 @@ export const POST = createZodRoute().body(bodySchema).handler(async (_, context)
     if (!book) {
         return NextResponse.json({error: "No book with the corresponding key."}, {status: 404})
     }
-
 
     const userBook = await prisma.userBook.findFirst({
         where: {
@@ -51,11 +51,16 @@ export const POST = createZodRoute().body(bodySchema).handler(async (_, context)
         },
     });
 
-
     if (!newBookReview) {
         return NextResponse.json({error: 'An error occurred while retrieving book.'}, {status: 500})
     }
 
+    const newBadgesCount = await checkAndAssignBadges(userId);
 
-    return NextResponse.json({data: newBookReview}, {status: 200})
+    return NextResponse.json({
+        data: newBookReview,
+        badges: {
+            newBadgesCount: newBadgesCount || 0
+        }
+    }, {status: 200})
 });

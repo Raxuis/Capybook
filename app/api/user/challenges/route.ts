@@ -3,6 +3,7 @@ import {NextResponse} from 'next/server';
 import prisma from "@/utils/prisma";
 import {CreateChallengeSchema, BaseUpdateChallengeSchema} from "@/utils/zod";
 import z from "zod";
+import {checkAndAssignBadges} from "@/utils/badges";
 
 // A union of challenge types + user id
 const PostSchema = z.object({
@@ -49,7 +50,6 @@ const PutBody = BaseUpdateChallengeSchema.extend({
     path: ["progress"],
 });
 
-
 export const PUT = createZodRoute().body(PutBody).handler(async (_, context) => {
     const {
         challengeId,
@@ -72,6 +72,9 @@ export const PUT = createZodRoute().body(PutBody).handler(async (_, context) => 
         return NextResponse.json({error: 'User does not own this challenge'}, {status: 403});
     }
 
+    const wasCompleted = challenge.completedAt !== null;
+    const willBeCompleted = progress >= target;
+
     const updatedChallenge = await prisma.readingGoal.update({
         where: {id: challengeId},
         data: {
@@ -79,18 +82,31 @@ export const PUT = createZodRoute().body(PutBody).handler(async (_, context) => 
             target,
             deadline,
             progress,
-            completedAt: progress >= target ? new Date() : null,
+            completedAt: willBeCompleted ? new Date() : null,
         }
     });
 
-    return NextResponse.json({challenge: updatedChallenge}, {status: 200});
+    if (!updatedChallenge) {
+        return NextResponse.json({error: 'Error while updating challenge'}, {status: 500});
+    }
+
+    // Si le challenge vient d'être complété, vérifier les badges
+    let newBadgesCount = 0;
+    if (willBeCompleted && !wasCompleted) {
+        newBadgesCount = await checkAndAssignBadges(userId) ?? 0;
+    }
+
+    return NextResponse.json({
+        challenge: updatedChallenge,
+        badgesAwarded: newBadgesCount > 0,
+        newBadgesCount
+    }, {status: 200});
 })
 
 const DeleteSchema = z.object({
     challengeId: z.string(),
     userId: z.string(),
 })
-
 
 export const DELETE = createZodRoute().body(DeleteSchema).handler(async (_, context) => {
     const {challengeId, userId} = context.body;

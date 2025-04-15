@@ -49,7 +49,8 @@ interface ResponseData {
     badges: Array<{
         id: string;
         name: string;
-        description: string;
+        publicDescription: string;
+        ownerDescription: string;
         icon: string | null;
         category: BadgeCategory;
         earnedAt: Date;
@@ -116,7 +117,8 @@ export const GET = createZodRoute()
                                 select: {
                                     id: true,
                                     name: true,
-                                    description: true,
+                                    ownerDescription: true,
+                                    publicDescription: true,
                                     icon: true,
                                     category: true
                                 }
@@ -144,7 +146,8 @@ export const GET = createZodRoute()
             const badges = user.UserBadge.map(userBadge => ({
                 id: userBadge.Badge.id,
                 name: userBadge.Badge.name,
-                description: userBadge.Badge.description,
+                ownerDescription: userBadge.Badge.ownerDescription,
+                publicDescription: userBadge.Badge.publicDescription,
                 icon: userBadge.Badge.icon,
                 category: userBadge.Badge.category,
                 earnedAt: userBadge.earnedAt

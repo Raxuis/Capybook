@@ -2,7 +2,7 @@
 import React, {useEffect, useState} from 'react';
 import {useRouter} from "nextjs-toploader/app";
 import useSWR from "swr";
-import {formatUsername} from "@/utils/format";
+import {formatBadgeCategory, formatUsername} from "@/utils/format";
 import {fetcher} from "@/utils/fetcher";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {Book, Star, PenTool, Calendar, Award, User, ChevronRight, Eye, ChartBarIcon, Loader2} from "lucide-react";
@@ -25,7 +25,8 @@ type ProfileData = {
     badges?: Array<{
         id: string;
         name: string;
-        description: string;
+        publicDescription: string;
+        ownerDescription: string;
         icon: string;
         category: string;
         earnedAt: string;
@@ -145,8 +146,6 @@ const ProfileContent = ({username}: { username: string }) => {
         ? detailedData?.reviews || []
         : previewReviews;
 
-    console.log(user.favoriteColor)
-
     const {headerGradient, headerGradientStyle, avatarGradient, avatarGradientStyle} =
         generateGradientClasses(user.favoriteColor);
 
@@ -189,7 +188,7 @@ const ProfileContent = ({username}: { username: string }) => {
                             </div>
                         </div>
                         {isOwner && (
-                            <div className="ml-auto mt-4 sm:mt-0 text-center sm:text-left">
+                            <div className="max-sm:w-full sm:ml-auto mt-4 sm:mt-0 text-center sm:text-left">
                                 <button
                                     className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-colors shadow-md flex items-center mx-auto sm:mx-0"
                                     onClick={() => setModalOpen(true)}
@@ -204,20 +203,20 @@ const ProfileContent = ({username}: { username: string }) => {
             </div>
 
             {/* Content Section */}
-            <div className="bg-white rounded-xl shadow-md overflow-hidden">
+            <div className="bg-white rounded-xl shadow-md overflow-hidden mb-32">
                 <Tabs defaultValue="overview" value={activeTab} onValueChange={setActiveTab} className="w-full">
-                    <div className="border-b overflow-x-auto scrollbar-hide">
+                    <div className="border-b overflow-hidden scrollbar-hide">
                         <TabsList className="flex bg-transparent p-0 w-full min-w-max">
                             <TabsTrigger
                                 value="overview"
-                                className="flex-1 min-w-[100px] py-3 sm:py-4 px-2 sm:px-6 border-b-2 border-transparent data-[state=active]:border-blue-600 rounded-none data-[state=active]:bg-transparent data-[state=active]:shadow-none whitespace-nowrap text-xs sm:text-sm"
+                                className="flex-1 min-w-[100px] py-3 sm:py-4 px-2 sm:px-6 rounded-none data-[state=active]:bg-transparent data-[state=active]:shadow-none whitespace-nowrap text-xs sm:text-sm"
                             >
                                 <span className="hidden sm:inline">Vue d'ensemble</span>
                                 <span className="sm:hidden">Aperçu</span>
                             </TabsTrigger>
                             <TabsTrigger
                                 value="badges"
-                                className="flex-1 min-w-[80px] py-3 sm:py-4 px-2 sm:px-6 border-b-2 border-transparent data-[state=active]:border-blue-600 rounded-none data-[state=active]:bg-transparent data-[state=active]:shadow-none whitespace-nowrap text-xs sm:text-sm"
+                                className="flex-1 min-w-[80px] py-3 sm:py-4 px-2 sm:px-6 rounded-none data-[state=active]:bg-transparent data-[state=active]:shadow-none whitespace-nowrap text-xs sm:text-sm"
                             >
                                 Badges
                             </TabsTrigger>
@@ -225,13 +224,13 @@ const ProfileContent = ({username}: { username: string }) => {
                                 <>
                                     <TabsTrigger
                                         value="books"
-                                        className="flex-1 min-w-[80px] py-3 sm:py-4 px-2 sm:px-6 border-b-2 border-transparent data-[state=active]:border-blue-600 rounded-none data-[state=active]:bg-transparent data-[state=active]:shadow-none whitespace-nowrap text-xs sm:text-sm"
+                                        className="flex-1 min-w-[80px] py-3 sm:py-4 px-2 sm:px-6 rounded-none data-[state=active]:bg-transparent data-[state=active]:shadow-none whitespace-nowrap text-xs sm:text-sm"
                                     >
                                         Livres
                                     </TabsTrigger>
                                     <TabsTrigger
                                         value="reviews"
-                                        className="flex-1 min-w-[80px] py-3 sm:py-4 px-2 sm:px-6 border-b-2 border-transparent data-[state=active]:border-blue-600 rounded-none data-[state=active]:bg-transparent data-[state=active]:shadow-none whitespace-nowrap text-xs sm:text-sm"
+                                        className="flex-1 min-w-[80px] py-3 sm:py-4 px-2 sm:px-6 rounded-none data-[state=active]:bg-transparent data-[state=active]:shadow-none whitespace-nowrap text-xs sm:text-sm"
                                     >
                                         Avis
                                     </TabsTrigger>
@@ -300,12 +299,16 @@ const ProfileContent = ({username}: { username: string }) => {
                         {badges && badges.length > 0 && (
                             <div className="mb-6">
                                 <h2 className="text-lg sm:text-xl font-semibold mb-4 border-b pb-2">Badges récents</h2>
-                                <div className="flex flex-wrap gap-3 sm:gap-4">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
                                     {badges.slice(0, 4).map(badge => (
                                         <div
                                             key={badge.id}
-                                            className="group flex flex-col items-center bg-white border border-gray-200 rounded-lg p-3 sm:p-4 shadow-sm hover:shadow-md transition-all w-20 sm:w-24"
-                                            title={badge.description}
+                                            className="group flex flex-col items-center bg-white border border-gray-200 rounded-lg p-3 sm:p-4 shadow-sm hover:shadow-md transition-all w-full cursor-default"
+                                            title={
+                                                isOwner ?
+                                                    badge.ownerDescription
+                                                    : badge.publicDescription
+                                            }
                                         >
                                             <div className="text-2xl sm:text-3xl mb-2">{badge.icon || '🏆'}</div>
                                             <div
@@ -473,7 +476,7 @@ const ProfileContent = ({username}: { username: string }) => {
                                 {Object.entries(badgesByCategory || {}).map(([category, categoryBadges]) => (
                                     <div key={category} className="mb-8">
                                         <h2 className="text-lg sm:text-xl font-semibold mb-4 border-b pb-2">
-                                            {category}
+                                            {formatBadgeCategory(category)}
                                             <span className="text-sm text-gray-500 font-normal ml-2">
                         ({categoryBadges?.length || 0})
                       </span>
@@ -490,7 +493,11 @@ const ProfileContent = ({username}: { username: string }) => {
                                                     <div
                                                         className="text-xs sm:text-sm font-medium text-center">{badge.name}</div>
                                                     <div
-                                                        className="text-xs text-gray-500 mt-2 text-center line-clamp-2">{badge.description}</div>
+                                                        className="text-xs text-gray-500 mt-2 text-center line-clamp-2">
+                                                        {
+
+                                                        }
+                                                    </div>
                                                     <div className="text-xs text-blue-600 mt-2 sm:mt-3">
                                                         Obtenu le {new Date(badge.earnedAt).toLocaleDateString('fr-FR')}
                                                     </div>
@@ -532,13 +539,13 @@ const ProfileContent = ({username}: { username: string }) => {
                                                     {bookData.finishedAt ? (
                                                         <span
                                                             className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                              Lu le {new Date(bookData.finishedAt).toLocaleDateString('fr-FR')}
-                            </span>
+                                                            Lu le {new Date(bookData.finishedAt).toLocaleDateString('fr-FR')}
+                                                        </span>
                                                     ) : (
                                                         <span
                                                             className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                              En cours
-                            </span>
+                                                            En cours
+                                                        </span>
                                                     )}
                                                 </div>
                                             </div>

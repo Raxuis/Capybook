@@ -6,7 +6,8 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "seed-badges": "node prisma/seed-badges.js"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.7.4",
