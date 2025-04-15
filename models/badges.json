@@ -1,58 +1,98 @@
 [
   {
     "name": "Premier Pas Littéraire",
-    "description": "Félicitations ! Tu as terminé ton premier livre.",
+    "ownerDescription": "Félicitations ! Tu as terminé ton premier livre.",
+    "publicDescription": "Un premier livre terminé, et une grande aventure littéraire commence !",
     "category": "BOOKS_READ",
     "requirement": 1,
     "icon": "🏁"
   },
   {
     "name": "Trio de Savoirs",
-    "description": "Tu as exploré trois mondes littéraires différents.",
+    "ownerDescription": "Tu as exploré trois mondes littéraires différents.",
+    "publicDescription": "Trois livres lus, trois univers explorés. Le voyage ne fait que commencer.",
     "category": "BOOKS_READ",
     "requirement": 3,
     "icon": "3️⃣"
   },
   {
     "name": "Marathonien de la Lecture",
-    "description": "Dix livres terminés ! Ta bibliothèque personnelle s'agrandit.",
+    "ownerDescription": "Dix livres terminés ! Ta bibliothèque personnelle s'agrandit.",
+    "publicDescription": "Dix livres parcourus avec passion. Une endurance digne des plus grands lecteurs !",
     "category": "BOOKS_READ",
     "requirement": 10,
     "icon": "🏃"
   },
   {
     "name": "Défi Relevé",
-    "description": "Tu as accompli ton premier objectif de lecture. Continue sur cette lancée !",
+    "ownerDescription": "Tu as accompli ton premier objectif de lecture. Continue sur cette lancée !",
+    "publicDescription": "Premier objectif atteint : la lecture devient une mission accomplie.",
     "category": "GOALS_COMPLETED",
     "requirement": 1,
     "icon": "🥇"
   },
   {
     "name": "Triple Accomplissement",
-    "description": "Trois objectifs atteints ! Tu as prouvé ta détermination.",
+    "ownerDescription": "Trois objectifs atteints ! Tu as prouvé ta détermination.",
+    "publicDescription": "Trois objectifs de lecture validés avec brio. Une belle démonstration de détermination.",
     "category": "GOALS_COMPLETED",
     "requirement": 3,
     "icon": "🥉"
   },
   {
     "name": "Dévoreur de Pages",
-    "description": "Tu as lu plus de 1000 pages. Les mots sont tes alliés.",
+    "ownerDescription": "Tu as lu plus de 1000 pages. Les mots sont tes alliés.",
+    "publicDescription": "Plus de 1000 pages dévorées ! La lecture n’a plus de secret pour cet utilisateur.",
     "category": "PAGES_READ",
     "requirement": 1000,
     "icon": "🍽️"
   },
   {
     "name": "Critique Littéraire",
-    "description": "Ta première critique partagée. Ton avis compte !",
+    "ownerDescription": "Ta première critique partagée. Ton avis compte !",
+    "publicDescription": "Première critique publiée : la voix de ce lecteur rejoint le monde littéraire.",
     "category": "REVIEWS_WRITTEN",
     "requirement": 1,
     "icon": "💭"
   },
   {
     "name": "Flamme de Lecture",
-    "description": "Tu as lu 7 jours d'affilée. Le feu de la passion brûle en toi !",
+    "ownerDescription": "Tu as lu 7 jours d'affilée. Le feu de la passion brûle en toi !",
+    "publicDescription": "7 jours consécutifs de lecture. Une flamme qui brûle de passion.",
     "category": "READING_STREAK",
     "requirement": 7,
     "icon": "🔥"
+  },
+  {
+    "name": "Collectionneur de Genres",
+    "ownerDescription": "Tu as lu des livres de 5 genres différents. Belle diversité !",
+    "publicDescription": "Cinq genres explorés avec curiosité. Un véritable aventurier littéraire !",
+    "category": "GENRE_EXPLORER",
+    "requirement": 5,
+    "icon": "🎭"
+  },
+  {
+    "name": "Objectif Ultime",
+    "ownerDescription": "Tu as terminé 10 objectifs de lecture. Impressionnant !",
+    "publicDescription": "Dix défis littéraires remportés. Un lecteur au sommet de sa discipline.",
+    "category": "GOALS_COMPLETED",
+    "requirement": 10,
+    "icon": "🏆"
+  },
+  {
+    "name": "Plume d’Or",
+    "ownerDescription": "Tu as écrit 5 critiques. Tu partages vraiment ta passion !",
+    "publicDescription": "Cinq critiques partagées avec soin. Une plume affûtée et inspirée.",
+    "category": "REVIEWS_WRITTEN",
+    "requirement": 5,
+    "icon": "🖋️"
+  },
+  {
+    "name": "Streak Master",
+    "ownerDescription": "Tu as lu pendant 30 jours sans interruption. Une véritable discipline !",
+    "publicDescription": "30 jours de lecture sans interruption. Une légende de la constance !",
+    "category": "READING_STREAK",
+    "requirement": 30,
+    "icon": "📅"
   }
 ]

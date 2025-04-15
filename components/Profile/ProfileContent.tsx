@@ -25,7 +25,8 @@ type ProfileData = {
     badges?: Array<{
         id: string;
         name: string;
-        description: string;
+        publicDescription: string;
+        ownerDescription: string;
         icon: string;
         category: string;
         earnedAt: string;
@@ -302,8 +303,12 @@ const ProfileContent = ({username}: { username: string }) => {
                                     {badges.slice(0, 4).map(badge => (
                                         <div
                                             key={badge.id}
-                                            className="group flex flex-col items-center bg-white border border-gray-200 rounded-lg p-3 sm:p-4 shadow-sm hover:shadow-md transition-all w-full"
-                                            title={badge.description}
+                                            className="group flex flex-col items-center bg-white border border-gray-200 rounded-lg p-3 sm:p-4 shadow-sm hover:shadow-md transition-all w-full cursor-default"
+                                            title={
+                                                isOwner ?
+                                                    badge.ownerDescription
+                                                    : badge.publicDescription
+                                            }
                                         >
                                             <div className="text-2xl sm:text-3xl mb-2">{badge.icon || '🏆'}</div>
                                             <div
@@ -488,7 +493,11 @@ const ProfileContent = ({username}: { username: string }) => {
                                                     <div
                                                         className="text-xs sm:text-sm font-medium text-center">{badge.name}</div>
                                                     <div
-                                                        className="text-xs text-gray-500 mt-2 text-center line-clamp-2">{badge.description}</div>
+                                                        className="text-xs text-gray-500 mt-2 text-center line-clamp-2">
+                                                        {
+
+                                                        }
+                                                    </div>
                                                     <div className="text-xs text-blue-600 mt-2 sm:mt-3">
                                                         Obtenu le {new Date(badge.earnedAt).toLocaleDateString('fr-FR')}
                                                     </div>
@@ -530,13 +539,13 @@ const ProfileContent = ({username}: { username: string }) => {
                                                     {bookData.finishedAt ? (
                                                         <span
                                                             className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                              Lu le {new Date(bookData.finishedAt).toLocaleDateString('fr-FR')}
-                            </span>
+                                                            Lu le {new Date(bookData.finishedAt).toLocaleDateString('fr-FR')}
+                                                        </span>
                                                     ) : (
                                                         <span
                                                             className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                              En cours
-                            </span>
+                                                            En cours
+                                                        </span>
                                                     )}
                                                 </div>
                                             </div>
