@@ -15,13 +15,11 @@ export const POST = createZodRoute().body(bodySchema).handler(async (_, context)
     const {bookKey, userId, rating, feedback} = context.body;
 
     const book = await prisma.book.findUnique({
-        where: {
-            key: bookKey,
-        }
-    })
+        where: {key: bookKey}
+    });
 
     if (!book) {
-        return NextResponse.json({error: "No book with the corresponding key."}, {status: 404})
+        return NextResponse.json({error: "No book with the corresponding key."}, {status: 404});
     }
 
     const userBook = await prisma.userBook.findFirst({
@@ -32,7 +30,7 @@ export const POST = createZodRoute().body(bodySchema).handler(async (_, context)
     });
 
     if (!userBook) {
-        return NextResponse.json({error: 'User doesn\'t have this book yet.'}, {status: 400})
+        return NextResponse.json({error: 'User doesn\'t have this book yet.'}, {status: 400});
     }
 
     const newBookReview = await prisma.bookReview.upsert({
@@ -52,15 +50,16 @@ export const POST = createZodRoute().body(bodySchema).handler(async (_, context)
     });
 
     if (!newBookReview) {
-        return NextResponse.json({error: 'An error occurred while retrieving book.'}, {status: 500})
+        return NextResponse.json({error: 'An error occurred while saving review.'}, {status: 500});
     }
 
-    const newBadgesCount = await checkAndAssignBadges(userId);
+    const newBadges = await checkAndAssignBadges(userId);
 
     return NextResponse.json({
         data: newBookReview,
         badges: {
-            newBadgesCount: newBadgesCount || 0
+            newBadgesCount: newBadges.length,
+            newBadges: newBadges,
         }
-    }, {status: 200})
+    }, {status: 200});
 });

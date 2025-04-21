@@ -12,29 +12,25 @@ export async function checkAndAssignBadges(userId: string) {
             },
             ReadingGoal: true,
             BookReview: true,
-            UserBadge: {
-                include: {Badge: true}
-            }
+            UserBadge: true
         }
     });
 
-    if (!user) return;
+    if (!user) return [];
 
     const allBadges = await prisma.badge.findMany();
-
     const userBadgeIds = user.UserBadge.map(ub => ub.badgeId);
 
-    // Calculer les statistiques pertinentes pour les badges
     const booksReadCount = user.UserBook.filter(ub => ub.finishedAt !== null).length;
     const pagesReadCount = user.UserBook.filter(ub => ub.finishedAt !== null)
         .reduce((total, ub) => total + (ub.Book.numberOfPages || 0), 0);
     const goalsCompletedCount = user.ReadingGoal.filter(rg => rg.completedAt !== null).length;
     const reviewsWrittenCount = user.BookReview.length;
 
-    const badgesToAssign = [];
+    const badgesToAssign: { userId: string, badgeId: string }[] = [];
+    const newlyAwardedBadges: typeof allBadges = [];
 
     for (const badge of allBadges) {
-        // Si l'utilisateur a déjà ce badge, passer au suivant
         if (userBadgeIds.includes(badge.id)) continue;
 
         let qualifies = false;
@@ -52,14 +48,11 @@ export async function checkAndAssignBadges(userId: string) {
             case "REVIEWS_WRITTEN":
                 qualifies = reviewsWrittenCount >= badge.requirement;
                 break;
-            //👆 Je pourrai ajouter d'autres catégories de badges ici
         }
 
         if (qualifies) {
-            badgesToAssign.push({
-                userId: userId,
-                badgeId: badge.id
-            });
+            badgesToAssign.push({userId, badgeId: badge.id});
+            newlyAwardedBadges.push(badge);
         }
     }
 
@@ -68,9 +61,7 @@ export async function checkAndAssignBadges(userId: string) {
             data: badgesToAssign,
             skipDuplicates: true,
         });
-
-        return badgesToAssign.length;
     }
 
-    return 0;
+    return newlyAwardedBadges;
 }

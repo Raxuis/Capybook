@@ -4,6 +4,7 @@ import prisma from "@/utils/prisma";
 import {CreateChallengeSchema, BaseUpdateChallengeSchema} from "@/utils/zod";
 import z from "zod";
 import {checkAndAssignBadges} from "@/utils/badges";
+import {Badge} from "@prisma/client";
 
 // A union of challenge types + user id
 const PostSchema = z.object({
@@ -91,15 +92,15 @@ export const PUT = createZodRoute().body(PutBody).handler(async (_, context) => 
     }
 
     // Si le challenge vient d'être complété, vérifier les badges
-    let newBadgesCount = 0;
+    let newBadges: Badge[] = [];
     if (willBeCompleted && !wasCompleted) {
-        newBadgesCount = await checkAndAssignBadges(userId) ?? 0;
+        newBadges = await checkAndAssignBadges(userId);
     }
 
     return NextResponse.json({
         challenge: updatedChallenge,
-        badgesAwarded: newBadgesCount > 0,
-        newBadgesCount
+        badgesAwarded: newBadges.length > 0,
+        newBadges
     }, {status: 200});
 })
 
