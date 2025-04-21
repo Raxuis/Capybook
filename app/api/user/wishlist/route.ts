@@ -82,10 +82,14 @@ export const POST = createZodRoute()
     });
 
 export const DELETE = createZodRoute()
-    .body(UserWishlistSchema)
-    .handler(async (_, context) => {
+    .handler(async (request, _) => {
         try {
-            const {userId, book} = context.body;
+            const data = await request.json();
+            const {error} = UserWishlistSchema.safeParse(data);
+            if (error) {
+                return NextResponse.json({error: error.errors}, {status: 400});
+            }
+            const {userId, book} = data;
 
             const user = await prisma.user.findUnique({
                 where: {id: userId}

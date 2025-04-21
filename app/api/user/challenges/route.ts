@@ -4,6 +4,7 @@ import prisma from "@/utils/prisma";
 import {CreateChallengeSchema, BaseUpdateChallengeSchema} from "@/utils/zod";
 import z from "zod";
 import {checkAndAssignBadges} from "@/utils/badges";
+import {Badge} from "@prisma/client";
 
 // A union of challenge types + user id
 const PostSchema = z.object({
@@ -91,25 +92,32 @@ export const PUT = createZodRoute().body(PutBody).handler(async (_, context) => 
     }
 
     // Si le challenge vient d'être complété, vérifier les badges
-    let newBadgesCount = 0;
+    let newBadges: Badge[] = [];
     if (willBeCompleted && !wasCompleted) {
-        newBadgesCount = await checkAndAssignBadges(userId) ?? 0;
+        newBadges = await checkAndAssignBadges(userId);
     }
 
     return NextResponse.json({
         challenge: updatedChallenge,
-        badgesAwarded: newBadgesCount > 0,
-        newBadgesCount
+        badgesAwarded: newBadges.length > 0,
+        newBadges
     }, {status: 200});
 })
 
 const DeleteSchema = z.object({
     challengeId: z.string(),
-    userId: z.string(),
+    userId: z.string()
 })
 
-export const DELETE = createZodRoute().body(DeleteSchema).handler(async (_, context) => {
-    const {challengeId, userId} = context.body;
+export const DELETE = createZodRoute().handler(async (request, _) => {
+    const data = await request.json();
+    const {error} = DeleteSchema.safeParse(data);
+
+    if (error) {
+        return NextResponse.json({error: error.errors}, {status: 400});
+    }
+
+    const {challengeId, userId} = data;
 
     const challenge = await prisma.readingGoal.findUnique({
         where: {id: challengeId},

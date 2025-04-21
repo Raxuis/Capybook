@@ -7,6 +7,7 @@ import {Input} from '@/components/ui/input';
 import {GiRead} from "react-icons/gi";
 import {useBooks} from "@/hooks/useBooks";
 import {Book} from "@/types";
+import {useBadgeQueue} from "@/Context/BadgeQueueContext";
 
 interface Props {
     book: Book;
@@ -22,6 +23,7 @@ const ProgressTracker = ({book, userId, initialProgress = 0}: Props) => {
     const inputRef = useRef<HTMLInputElement>(null);
 
     const {updateBookProgress} = useBooks(null, userId);
+    const {addBadges} = useBadgeQueue();
 
     const usePages = book.numberOfPages && book.numberOfPages > 0;
     const maxValue = usePages ? book.numberOfPages : 100;
@@ -59,8 +61,14 @@ const ProgressTracker = ({book, userId, initialProgress = 0}: Props) => {
     const saveProgress = async () => {
         setIsSaving(true);
         try {
-            await updateBookProgress(book.key, progress);
+            const response = await updateBookProgress(book.key, progress);
             setIsDirty(false);
+            if (response?.status === 200 && response.data) {
+                console.log("Progression mise à jour avec succès:", response.data);
+                if (response.data.badges.newBadgesCount > 0) {
+                    addBadges(response.data.badges.newBadges);
+                }
+            }
         } catch (error) {
             console.error("Erreur lors de la mise à jour de la progression:", error);
         } finally {
