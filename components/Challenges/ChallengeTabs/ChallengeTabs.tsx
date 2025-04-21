@@ -8,7 +8,9 @@ import {useChallengeCrudModalStore} from "@/store/challengeCrudModalStore";
 
 const ChallengeTabs = () => {
     const {currentChallenges, pastChallenges} = useChallenges();
-    const {setDialogOpen} = useChallengeCrudModalStore();
+    const {
+        openCreateDialog,
+    } = useChallengeCrudModalStore();
     const [activeTab, setActiveTab] = useState("current");
 
     return (
@@ -33,7 +35,7 @@ const ChallengeTabs = () => {
                         <p className="text-muted-foreground max-w-md mb-4">
                             Créez votre premier challenge de lecture pour commencer à suivre votre progression.
                         </p>
-                        <Button onClick={() => setDialogOpen(true)}>
+                        <Button onClick={() => openCreateDialog()}>
                             <Plus className="h-4 w-4 mr-2"/>
                             Créer un challenge
                         </Button>

@@ -142,8 +142,6 @@ model ReadingGoal {
   updatedAt   DateTime  @updatedAt
   completedAt DateTime?
   User        User      @relation(fields: [userId], references: [id])
-
-  @@unique([userId, deadline]) // Un seul objectif par utilisateur par période
 }
 
 model Badge {
