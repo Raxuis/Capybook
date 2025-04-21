@@ -79,7 +79,9 @@ const DashboardTabs = ({openBookModal}: Props) => {
                         </span>
                                             </div>
                                             {
-                                                userBook.progress === 100 && (
+                                                (
+                                                    userBook.progressType === "percentage" && userBook.progress === 100
+                                                    || userBook.progressType === "numberOfPages" && userBook.progress === userBook.Book.numberOfPages) && (
                                                     <Badge
                                                         variant="outline"
                                                         className="bg-secondary/10 text-secondary cursor-pointer hover:bg-secondary/20 transition-colors"

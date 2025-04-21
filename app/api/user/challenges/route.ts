@@ -106,11 +106,18 @@ export const PUT = createZodRoute().body(PutBody).handler(async (_, context) => 
 
 const DeleteSchema = z.object({
     challengeId: z.string(),
-    userId: z.string(),
+    userId: z.string()
 })
 
-export const DELETE = createZodRoute().body(DeleteSchema).handler(async (_, context) => {
-    const {challengeId, userId} = context.body;
+export const DELETE = createZodRoute().handler(async (request, context) => {
+    const data = await request.json();
+    const {error} = DeleteSchema.safeParse(data);
+
+    if (error) {
+        return NextResponse.json({error: error.errors}, {status: 400});
+    }
+
+    const {challengeId, userId} = data;
 
     const challenge = await prisma.readingGoal.findUnique({
         where: {id: challengeId},

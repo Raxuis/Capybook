@@ -92,9 +92,16 @@ export function useBooks(bookName?: string | null, userId?: string) {
         if (!userId) return;
         try {
             if (isInLibrary(book.key)) {
-                await api.delete("/user/books", {data: {userId, book}});
+                console.log(book)
+                console.log(userId)
+                await api.delete("/user/books", {
+                    data: {
+                        userId, book
+                    }
+                });
             } else {
                 if (isInWishlist(book.key)) {
+                    console.log(book)
                     await api.delete("/user/wishlist", {data: {userId, book}});
                 }
 
@@ -161,12 +168,13 @@ export function useBooks(bookName?: string | null, userId?: string) {
         try {
             const userBook = user?.UserBook.find((ub) => ub.Book.key === bookKey);
             if (userBook) {
-                await api.put("/user/book/progress", {
+                const response = await api.put("/user/book/progress", {
                     userId,
                     bookId: userBook.Book.id,
                     progress
                 });
                 await refreshUser();
+                return response;
             } else {
                 console.log("No user book found");
             }

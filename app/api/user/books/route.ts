@@ -73,10 +73,14 @@ export const POST = createZodRoute()
     });
 
 export const DELETE = createZodRoute()
-    .body(UserBookSchema)
-    .handler(async (_, context) => {
+    .handler(async (request, context) => {
         try {
-            const {userId, book} = context.body;
+            const data = await request.json();
+            const {error} = UserBookSchema.safeParse(data);
+            if (error) {
+                return NextResponse.json({error: error.errors}, {status: 400});
+            }
+            const {userId, book} = data;
 
             const user = await prisma.user.findUnique({
                 where: {id: userId}
