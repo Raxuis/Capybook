@@ -12,6 +12,7 @@ import {useToast} from "@/hooks/use-toast";
 import z from "zod";
 import {UpdateChallengeSchema} from "@/utils/zod";
 import {useChallenges} from "@/hooks/useChallenges";
+import {useBadgeQueue} from "@/Context/BadgeQueueContext";
 
 const UpdateChallengeDialog = memo(() => {
     const {updateChallenge} = useChallenges();
@@ -22,6 +23,8 @@ const UpdateChallengeDialog = memo(() => {
         setDialogOpen,
         modalData
     } = useChallengeCrudModalStore();
+
+    const {addBadges} = useBadgeQueue();
 
     const {toast} = useToast();
 
@@ -47,7 +50,9 @@ const UpdateChallengeDialog = memo(() => {
                     });
                     throw new Error('Erreur lors de la mise à jour du challenge');
                 }
-                console.log('Challenge updated successfully:', response);
+                if (response.data && response.data.badges.newBadgesCount > 0) {
+                    addBadges(response.data.badges.newBadges);
+                }
                 closeDialog();
                 toast({
                     title: 'Succès',

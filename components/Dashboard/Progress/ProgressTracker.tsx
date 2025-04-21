@@ -64,7 +64,6 @@ const ProgressTracker = ({book, userId, initialProgress = 0}: Props) => {
             const response = await updateBookProgress(book.key, progress);
             setIsDirty(false);
             if (response?.status === 200 && response.data) {
-                console.log("Progression mise à jour avec succès:", response.data);
                 if (response.data.badges.newBadgesCount > 0) {
                     addBadges(response.data.badges.newBadges);
                 }
