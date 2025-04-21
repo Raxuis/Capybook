@@ -92,8 +92,6 @@ export function useBooks(bookName?: string | null, userId?: string) {
         if (!userId) return;
         try {
             if (isInLibrary(book.key)) {
-                console.log(book)
-                console.log(userId)
                 await api.delete("/user/books", {
                     data: {
                         userId, book
@@ -101,7 +99,6 @@ export function useBooks(bookName?: string | null, userId?: string) {
                 });
             } else {
                 if (isInWishlist(book.key)) {
-                    console.log(book)
                     await api.delete("/user/wishlist", {data: {userId, book}});
                 }
 
