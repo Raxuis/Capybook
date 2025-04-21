@@ -74,10 +74,6 @@ export const PUT = createZodRoute().body(bodySchema).handler(async (_, context) 
         }));
 
         newBadges = await checkAndAssignBadges(userId) || [];
-
-        console.log('finished new book :', newBook);
-    } else {
-        console.log('not finished new book :', newBook);
     }
 
     return NextResponse.json({

@@ -109,7 +109,7 @@ const DeleteSchema = z.object({
     userId: z.string()
 })
 
-export const DELETE = createZodRoute().handler(async (request, context) => {
+export const DELETE = createZodRoute().handler(async (request, _) => {
     const data = await request.json();
     const {error} = DeleteSchema.safeParse(data);
 

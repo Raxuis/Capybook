@@ -111,26 +111,6 @@ export default function BadgeNotification({
                         <p className="mt-1 text-xs text-muted-foreground">
                             {badge.ownerDescription}
                         </p>
-
-                        {/* Boutons d'action */}
-                        <div className="mt-3 flex space-x-2">
-                            <Button
-                                onClick={handleClose}
-                                variant="destructive"
-                                className="flex-1 flex justify-center items-center duration-300"
-                            >
-                                <XCircle className="h-3 w-3 mr-1"/>
-                                Ignorer
-                            </Button>
-                            <Button
-                                onClick={handleClose}
-                                variant="outline"
-                                className="flex-1 flex justify-center items-center hover:bg-primary/10 hover:text-foreground hover:border-primary"
-                            >
-                                <CheckCircle className="h-3 w-3 mr-1"/>
-                                Génial !
-                            </Button>
-                        </div>
                     </div>
                 </div>
 
