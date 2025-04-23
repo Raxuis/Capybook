@@ -111,7 +111,7 @@ export default function RegisterForm() {
                                     <FormControl>
                                         <ColorPicker
                                             color={field.value || "#3b82f6"}
-                                            onChange={(color) => field.onChange(color)}
+                                            action={(color) => field.onChange(color)}
                                             className="w-full hover:bg-transparent"
                                         />
                                     </FormControl>
