@@ -8,7 +8,6 @@ import BookCard from "@/components/BookStore/BookCard";
 import {Search} from "lucide-react";
 import {Skeleton} from "@/components/ui/skeleton";
 import {Link} from "next-view-transitions";
-import ReviewBookModal from "@/components/BookStore/Modals/ReviewBookModal";
 
 interface BookStoreProps {
     userId: string | null;
@@ -97,7 +96,6 @@ const BookStore = ({userId}: BookStoreProps) => {
                     </p>
                 </div>
             )}
-            <ReviewBookModal userId={userId}/>
         </div>
     );
 };
