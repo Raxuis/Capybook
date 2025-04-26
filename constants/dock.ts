@@ -29,10 +29,10 @@ export const dockRoutes: DockRoute[] = [
     },
     {
         index: 3,
-        imageSrc: "/comments.png",
+        imageSrc: "/reviews.png",
         tooltip: "Avis",
         withoutBackground: true,
-        link: "/comments"
+        link: "/reviews"
     },
     {
         index: 4,
