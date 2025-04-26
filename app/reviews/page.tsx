@@ -24,12 +24,7 @@ export default function ReviewsPage({searchParams}: Props) {
                 </div>
 
                 <Suspense
-                    fallback={
-                        <div className="animate-pulse">
-                            <ReviewsListLoading/>
-                        </div>
-                    }
-                >
+                    fallback={<ReviewsListLoading/>}>
                     <ReviewList page={currentPage}/>
                 </Suspense>
             </div>
