@@ -29,6 +29,22 @@ export const POST = createZodRoute().body(PostSchema).handler(async (_, context)
         return NextResponse.json({error: 'User does not exist'}, {status: 400});
     }
 
+    const existingGoal = await prisma.readingGoal.findFirst({
+        where: {
+            userId,
+            type,
+            deadline,
+            completedAt: null,
+        },
+    });
+
+    if (existingGoal) {
+        return NextResponse.json(
+            {error: "You already have an active goal of this type for this deadline."},
+            {status: 409}
+        );
+    }
+
     const newChallenge = await prisma.readingGoal.create({
         data: {
             userId: user.id,
@@ -96,6 +112,8 @@ export const PUT = createZodRoute().body(PutBody).handler(async (_, context) => 
     if (willBeCompleted && !wasCompleted) {
         newBadges = await checkAndAssignBadges(userId);
     }
+
+    console.log("New badges:", newBadges);
 
     return NextResponse.json({
         challenge: updatedChallenge,

@@ -41,9 +41,13 @@ export const PageNumberSchema = object({
 })
 
 export const CreateChallengeSchema = object({
-    type: z.enum(["BOOKS", "PAGES", "TIME"]),
+    type: z.enum(["BOOKS", "PAGES", "TIME"], {
+        required_error: 'Veuillez sélectionner un type de challenge',
+    }),
     target: number().min(1, "La cible doit être d'au moins 1"),
-    deadline: date().min(new Date(), "La date limite doit être dans le futur"),
+    deadline: date({
+        required_error: 'Veuillez sélectionner une date limite',
+    }).min(new Date(), "La date limite doit être dans le futur"),
 });
 
 export const BaseUpdateChallengeSchema = z.object({

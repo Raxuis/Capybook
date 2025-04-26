@@ -10,31 +10,23 @@ export function useChallenges() {
     const createChallenge = useCallback(async (challengeData: z.infer<typeof CreateChallengeSchema>) => {
         if (!user?.id) return;
 
-        try {
-            const res = await api.post("/user/challenges", {userId: user.id, ...challengeData});
-            await refreshUser();
-            return res;
-        } catch (error) {
-            console.error("Erreur:", error);
-            throw new Error("Erreur lors de la création du challenge");
-        }
+        const res = await api.post("/user/challenges", {userId: user.id, ...challengeData});
+        console.log("Challenge created:", res);
+        await refreshUser();
+        return res;
     }, [user, refreshUser]);
 
     const updateChallenge = useCallback(async (challengeId: string, challengeData: z.infer<typeof CreateChallengeSchema>) => {
         if (!user?.id) return;
 
-        try {
-            const res = await api.put(`/user/challenges`, {
-                userId: user.id,
-                challengeId,
-                ...challengeData
-            });
-            await refreshUser();
-            return res;
-        } catch (error) {
-            console.error("Erreur:", error);
-            throw new Error("Erreur lors de la mise à jour du challenge");
-        }
+        const res = await api.put(`/user/challenges`, {
+            userId: user.id,
+            challengeId,
+            ...challengeData
+        });
+        console.log("Challenge updated:", res);
+        await refreshUser();
+        return res;
     }, [user, refreshUser]);
 
     const deleteChallenge = useCallback(async (challengeId: string) => {

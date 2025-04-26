@@ -10,6 +10,7 @@ import DashboardTabs from "@/components/Dashboard/DashboardTabs";
 import {fetchMoreBookInfos} from "@/actions/book";
 import {MoreInfoBook, Book as BookType} from "@/types";
 import {DashboardLayout} from "@/components/Layout";
+import ReviewBookModal from "@/components/BookStore/Modals/ReviewBookModal";
 
 export default function DashboardContent() {
     const {user, isError, isValidating, isLoading} = useUser();
@@ -86,6 +87,8 @@ export default function DashboardContent() {
                 onClose={() => setIsModalOpen(false)}
                 isLoading={isLoadingBookDetails}
             />
+
+            <ReviewBookModal userId={user.id}/>
         </DashboardLayout>
     );
 }

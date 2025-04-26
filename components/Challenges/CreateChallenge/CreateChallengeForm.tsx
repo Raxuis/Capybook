@@ -1,6 +1,6 @@
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {Form, FormControl, FormDescription, FormField, FormItem, FormLabel} from "@/components/ui/form";
+import {Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {RadioGroup, RadioGroupItem} from "@/components/ui/radio-group";
 import {BookOpen, Calendar, Clock, Target} from "lucide-react";
 import {TbBell} from "react-icons/tb";
@@ -18,10 +18,13 @@ import {useChallenges} from "@/hooks/useChallenges";
 import {memo} from "react";
 import {useChallengeCrudModalStore} from "@/store/challengeCrudModalStore";
 import {useUser} from "@/hooks/useUser";
+import {useToast} from "@/hooks/use-toast";
+import axios from "axios";
 
 const CreateChallengeForm = memo(() => {
     const {setDialogOpen} = useChallengeCrudModalStore();
     const {user} = useUser();
+    const {toast} = useToast()
     if (!user) return null;
 
     const {createChallenge} = useChallenges();
@@ -31,13 +34,33 @@ const CreateChallengeForm = memo(() => {
     const handleCreateChallenge = async (data: ChallengeFormValues) => {
         try {
             const response = await createChallenge(data);
-            if (!response || response && response.status !== 201) {
-                throw new Error("Erreur lors de la création du challenge");
+            toast({
+                title: 'Succès',
+                description: "Challenge créé avec succès.",
+            })
+            if (response) {
+                toast({
+                    title: 'Succès',
+                    description: "Challenge créé avec succès.",
+                })
             }
+        } catch (error) {
+            if (axios.isAxiosError(error) && error?.response?.status === 409) {
+                toast({
+                    title: 'Erreur',
+                    description: "Vous avez déjà un challenge en cours pour cette date avec ce type d'objectif.",
+                    variant: 'destructive',
+                })
+                return
+            }
+            toast({
+                title: 'Erreur',
+                description: "Erreur lors de la création du challenge.",
+                variant: 'destructive',
+            })
+        } finally {
             setDialogOpen(false);
             form.reset();
-        } catch (error) {
-            console.error('Erreur:', error);
         }
     };
 
@@ -160,8 +183,13 @@ const CreateChallengeForm = memo(() => {
                                         selected={field.value}
                                         onSelect={field.onChange}
                                         disabled={[
-                                            { before: new Date(), to: new Date() }, // Désactive aujourd’hui et les jours précédents
-                                            ...user.ReadingGoal.map(goal => !goal.completedAt && new Date(goal.deadline)) // Désactive les autres deadlines
+                                            {before: new Date(), to: new Date()}, // Désactive aujourd’hui et les jours précédents
+                                            ...user.ReadingGoal
+                                                .filter(
+                                                    goal => !goal.completedAt
+                                                        && goal.type === form.watch("type"))
+                                                .map(goal => new Date(goal.deadline))
+                                            // Désactive les dates de deadline des autres challenges possédant le même type
                                         ]}
                                         classNames={{
                                             nav_button_previous: "absolute left-1 hover:bg-red-500/50",
@@ -175,6 +203,7 @@ const CreateChallengeForm = memo(() => {
                             <FormDescription>
                                 Date limite pour atteindre votre objectif
                             </FormDescription>
+                            <FormMessage/>
                         </FormItem>
                     )}
                 />

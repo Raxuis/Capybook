@@ -79,11 +79,11 @@ const trimColorString = (color: string, maxLength: number = 20): string => {
 
 export function ColorPicker({
                                 color,
-                                onChange,
+                                action,
                                 className,
                             }: {
     color: string
-    onChange: (color: string) => void
+    action: (color: string) => void
     className?: string
 }) {
     const [hsl, setHsl] = useState<[number, number, number]>([0, 0, 0])
@@ -108,7 +108,7 @@ export function ColorPicker({
         }
 
         setHsl([h, s, l])
-        onChange(hslToHex(h, s, l))
+        action(hslToHex(h, s, l))
     }
 
     const handleHueChange = (hue: number) => {

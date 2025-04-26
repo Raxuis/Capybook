@@ -2,6 +2,7 @@ import Image, {type StaticImageData} from "next/image";
 import {cn} from "@/lib/utils";
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip";
 import {Link} from "next-view-transitions";
+import {dockRoutes} from "@/constants/dock";
 
 export function Dock() {
     return (
@@ -10,33 +11,17 @@ export function Dock() {
                 <div
                     className="pointer-events-none absolute right-0 bottom-0 left-0 z-10 h-[72px] max-w-full rounded-3xl border border-gray-200/60 bg-gray-200/60 shadow-sm dark:border-gray-600/60 dark:bg-gray-800/60"/>
                 <div className="flex items-end overflow-x-auto rounded-3xl pl-2">
-                    <AppIcon imgSrc={"/home.png"}
-                             withoutBackground={true}
-                             tooltip="Accueil"
-                             link="/"
-                    />
-                    <AppIcon
-                        imgSrc={"/about.png"}
-                        tooltip="À propos"
-                        link="/about"
-                        withoutBackground={true}
-                    />
-                    <AppIcon
-                        imgSrc={"/book-shelf.png"}
-                        tooltip="Votre bibliothèque"
-                        link="/book-shelf"
-                    />
-                    <AppIcon imgSrc={"/challenges.png"}
-                             withoutBackground={true}
-                             tooltip="Challenges"
-                             link="/challenges"
-                    />
-                    <AppIcon
-                        imgSrc={"/book-store.png"}
-                        tooltip="La librairie"
-                        link="/book-store"
-                        withoutBackground={true}
-                    />
+                    {
+                        dockRoutes.map((route) => (
+                            <AppIcon
+                                key={route.index}
+                                imageSrc={route.imageSrc}
+                                tooltip={route.tooltip}
+                                link={route.link}
+                                withoutBackground={route.withoutBackground}
+                            />
+                        ))
+                    }
                 </div>
             </div>
         </div>
@@ -46,12 +31,12 @@ export function Dock() {
 export default Dock;
 
 function AppIcon({
-                     imgSrc,
+                     imageSrc,
                      withoutBackground,
                      tooltip,
                      link
                  }: Readonly<{
-    imgSrc: string | StaticImageData;
+    imageSrc: string | StaticImageData;
     withoutBackground?: boolean;
     tooltip: string;
     link: string;
@@ -75,7 +60,7 @@ function AppIcon({
                                         withoutBackground ? "object-contain" : "object-cover",
                                     )}
                                     height={256}
-                                    src={imgSrc}
+                                    src={imageSrc}
                                     width={256}
                                 />
                             </div>
