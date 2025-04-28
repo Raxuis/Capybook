@@ -53,7 +53,7 @@ export default function AboutPage() {
                                 }
                             </div>
                         </div>
-                        <div className="relative">
+                        <div className="relative flex justify-center items-center">
                             <Image
                                 src={history.image}
                                 alt="Bibliothèque"
