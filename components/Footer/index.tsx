@@ -1,83 +1,72 @@
 import React from 'react';
-import {motion} from "motion/react";
-import {BookOpen} from "lucide-react";
+import {footer} from "@/constants/footer";
+import Image from "next/image";
 
 const Footer = () => {
-    return (
-        <motion.footer
-            className="py-12 bg-muted"
-            initial={{opacity: 0}}
-            animate={{opacity: 1}}
-            transition={{duration: 0.8, delay: 0.5}}
-        >
-            <div className="container mx-auto px-4">
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-                    <motion.div
-                        className="space-y-4"
-                        initial={{opacity: 0, y: 20}}
-                        animate={{opacity: 1, y: 0}}
-                        transition={{delay: 0.1, duration: 0.6}}
-                    >
-                        <div className="flex items-center gap-2">
-                            <BookOpen className="h-6 w-6 text-primary"/>
-                            <span className="text-lg font-bold">LivreTrack</span>
-                        </div>
-                        <p className="text-sm text-muted-foreground">
-                            Transformez votre expérience de lecture avec notre application de suivi et
-                            d&#39;analyse.
-                        </p>
-                    </motion.div>
+    const currentYear = new Date().getFullYear();
 
-                    {[
-                        {
-                            title: "Produit",
-                            links: ["Fonctionnalités", "Témoignages", "Tarifs", "FAQ"]
-                        },
-                        {
-                            title: "Entreprise",
-                            links: ["À propos", "Blog", "Carrières", "Presse"]
-                        },
-                        {
-                            title: "Ressources",
-                            links: ["Support", "Tutoriels", "Documentation", "Contact"]
-                        }
-                    ].map((category, index) => (
-                        <motion.div
-                            key={category.title}
-                            className="space-y-4"
-                            initial={{opacity: 0, y: 20}}
-                            animate={{opacity: 1, y: 0}}
-                            transition={{delay: 0.1 * (index + 1), duration: 0.6}}
-                        >
-                            <h4 className="font-semibold">{category.title}</h4>
-                            <ul className="space-y-2">
-                                {category.links.map((link) => (
-                                    <motion.li key={link} whileHover={{x: 5}}>
-                                        <a
-                                            href="#"
-                                            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                                        >
-                                            {link}
-                                        </a>
-                                    </motion.li>
-                                ))}
-                            </ul>
-                        </motion.div>
-                    ))}
+    return (
+        <footer className="py-16 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
+            <div className="container mx-auto px-4">
+                <div className="flex flex-col md:flex-row justify-between items-start mb-12">
+                    {/* Section LivreTrack à gauche */}
+                    <div className="mb-8 md:mb-0 max-w-md">
+                        <div className="flex items-center gap-2 mb-4">
+                            <Image
+                                src={footer.iconUrl}
+                                className="h-10 w-10 text-primary"
+                                width="42"
+                                height="42"
+                                alt={footer.title}
+                            />
+                            <span className="text-2xl font-bold tracking-tight">{footer.title}</span>
+                        </div>
+                        <p className="text-md text-slate-600 dark:text-slate-300">
+                            {footer.description}
+                        </p>
+                    </div>
+
+                    {/* Section liens à droite */}
+                    <div className="grid grid-cols-2 gap-x-8 gap-y-6">
+                        {footer.socialLinks.map((item, index) => (
+                            <a
+                                key={index}
+                                href={item.href}
+                                className="flex items-center group transition-all duration-300"
+                                target={item.external ? "_blank" : "_self"}
+                            >
+                                <div
+                                    className="p-2 rounded-full bg-white dark:bg-slate-800 shadow-sm group-hover:shadow-md mr-2 transition-all duration-300 group-hover:scale-110 group-hover:text-primary">
+                                    {item.icon}
+                                </div>
+                                <span
+                                    className="text-sm font-medium text-slate-700 dark:text-slate-200 group-hover:text-primary transition-colors duration-300">
+                                    {item.label}
+                                </span>
+                            </a>
+                        ))}
+                    </div>
                 </div>
 
-                <motion.div
-                    className="mt-12 pt-8 border-t flex flex-col sm:flex-row justify-between items-center"
-                    initial={{opacity: 0}}
-                    animate={{opacity: 1}}
-                    transition={{delay: 0.5, duration: 0.8}}
-                >
-                    <p className="text-sm text-muted-foreground">
-                        © {new Date().getFullYear()} LivreTrack. Tous droits réservés.
+                <div
+                    className="pt-8 border-t border-slate-200 dark:border-slate-700 flex flex-col md:flex-row justify-between items-center">
+                    <p className="text-sm text-slate-500 dark:text-slate-400 mb-4 md:mb-0">
+                        © {currentYear} LivreTrack. Tous droits réservés.
                     </p>
-                </motion.div>
+                    <div className="flex space-x-6">
+                        {["Twitter", "LinkedIn", "Instagram"].map((social) => (
+                            <a
+                                key={social}
+                                href="#"
+                                className="text-sm text-slate-500 hover:text-primary transition-colors duration-300"
+                            >
+                                {social}
+                            </a>
+                        ))}
+                    </div>
+                </div>
             </div>
-        </motion.footer>
+        </footer>
     );
 };
 
