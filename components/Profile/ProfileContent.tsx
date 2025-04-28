@@ -299,11 +299,11 @@ const ProfileContent = ({username}: { username: string }) => {
                         {badges && badges.length > 0 && (
                             <div className="mb-6">
                                 <h2 className="text-lg sm:text-xl font-semibold mb-4 border-b pb-2">Badges récents</h2>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+                                <div className="grid grid-cols-4 gap-3 sm:gap-4">
                                     {badges.slice(0, 4).map(badge => (
                                         <div
                                             key={badge.id}
-                                            className="group flex flex-col items-center bg-white border border-gray-200 rounded-lg p-3 sm:p-4 shadow-sm hover:shadow-md transition-all w-full cursor-default"
+                                            className="col-span-4 sm:col-span-2 md:col-span-1 group flex flex-col items-center bg-white border border-gray-200 rounded-lg p-3 sm:p-4 shadow-sm hover:shadow-md transition-all w-full cursor-default"
                                             title={
                                                 isOwner ?
                                                     badge.ownerDescription
@@ -325,7 +325,7 @@ const ProfileContent = ({username}: { username: string }) => {
                                     {badges.length > 4 && (
                                         <button
                                             onClick={() => setActiveTab("badges")}
-                                            className="flex flex-col items-center justify-center bg-gray-50 border border-gray-200 rounded-lg p-3 sm:p-4 w-20 sm:w-24 hover:bg-gray-100 transition-colors"
+                                            className="col-span-4 flex flex-col items-center justify-center bg-gray-50 border border-gray-200 rounded-lg p-3 sm:p-4 hover:bg-gray-100 transition-colors"
                                         >
                                             <span className="text-2xl sm:text-3xl mb-2">+{badges.length - 4}</span>
                                             <span className="text-xs text-gray-500">Voir tous</span>
