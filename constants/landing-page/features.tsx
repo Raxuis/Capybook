@@ -25,7 +25,7 @@ const features = [
             "Objectifs personnalisables",
             "Rappels de lecture",
         ],
-        image: "https://images.unsplash.com/photo-1553729459-efe14ef6055d?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+        image: "/landing-page/progress.webp",
     },
     {
         key: "stats",
@@ -38,7 +38,7 @@ const features = [
             "Analyse par genre et auteur",
             "Comparaison avec vos objectifs",
         ],
-        image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+        image: "/landing-page/stats.webp",
     },
     {
         key: "favorites",
@@ -51,7 +51,7 @@ const features = [
             "Partage de recommandations",
             "Notes et critiques privées",
         ],
-        image: "https://images.unsplash.com/photo-1507842217343-583bb7270b66?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+        image: "/landing-page/favorites.webp",
     },
 ];
 
