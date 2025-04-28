@@ -22,20 +22,8 @@ const Hero = () => {
     return (
         <section ref={heroRef}
                  className="relative py-20 overflow-hidden bg-gradient-to-br from-primary/10 to-background">
-            <motion.div
-                className="absolute inset-0 z-0"
-                style={{
-                    backgroundImage: "radial-gradient(circle at 30% 50%, rgba(var(--primary-rgb), 0.08) 0%, transparent 70%)",
-                    backgroundSize: "100% 100%"
-                }}
-                animate={{
-                    backgroundPosition: heroInView ? "0% 0%" : "100% 100%"
-                }}
-                transition={{duration: 20, repeat: Infinity, repeatType: "reverse"}}
-            />
-
             <div className="container mx-auto px-4 relative z-10">
-                <div className="grid md:grid-cols-2 gap-12 items-center">
+                <div className="grid md:grid-cols-2 md:gap-12 items-center">
                     <motion.div
                         className="space-y-6"
                         style={{y: heroTextY}}
@@ -58,7 +46,7 @@ const Hero = () => {
                             votre expérience de lecture.
                         </motion.p>
                         <motion.div
-                            className="flex flex-col sm:flex-row gap-4 pt-4"
+                            className="flex gap-4 pt-4"
                             variants={animations.staggerChildren}
                         >
                             <motion.div variants={animations.fadeInUp} whileHover={{scale: 1.05}}
@@ -96,11 +84,11 @@ const Hero = () => {
                             transition={{type: "spring", stiffness: 200}}
                         >
                             <Image
-                                src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80"
+                                src="/landing-page/book.webp"
                                 alt="LivreTrack App Mockup"
                                 width={300}
-                                height={600}
-                                className="object-contain rounded-3xl shadow-2xl border-8 border-white dark:border-gray-800"
+                                height={900}
+                                className="object-contain rounded-3xl shadow-2xl border-8 border-white dark:border-gray-800 size-full"
                                 priority
                             />
                         </motion.div>
