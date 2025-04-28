@@ -46,7 +46,7 @@ const Hero = () => {
                             votre expérience de lecture.
                         </motion.p>
                         <motion.div
-                            className="flex flex-col sm:flex-row gap-4 pt-4"
+                            className="flex gap-4 pt-4"
                             variants={animations.staggerChildren}
                         >
                             <motion.div variants={animations.fadeInUp} whileHover={{scale: 1.05}}
@@ -72,7 +72,7 @@ const Hero = () => {
                     </motion.div>
 
                     <motion.div
-                        className="relative h-[500px] flex items-center"
+                        className="relative h-[500px] flex items-center justify-center"
                         style={{y: heroImgY}}
                         initial={{opacity: 0, x: 100}}
                         animate={heroInView ? {opacity: 1, x: 0} : {opacity: 0, x: 100}}
