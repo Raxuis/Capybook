@@ -23,7 +23,7 @@ const Hero = () => {
         <section ref={heroRef}
                  className="relative py-20 overflow-hidden bg-gradient-to-br from-primary/10 to-background">
             <div className="container mx-auto px-4 relative z-10">
-                <div className="grid md:grid-cols-2 gap-12 items-center">
+                <div className="grid md:grid-cols-2 md:gap-12 items-center">
                     <motion.div
                         className="space-y-6"
                         style={{y: heroTextY}}
@@ -72,7 +72,7 @@ const Hero = () => {
                     </motion.div>
 
                     <motion.div
-                        className="relative h-[500px] flex items-center justify-center"
+                        className="relative h-[500px] flex items-center"
                         style={{y: heroImgY}}
                         initial={{opacity: 0, x: 100}}
                         animate={heroInView ? {opacity: 1, x: 0} : {opacity: 0, x: 100}}

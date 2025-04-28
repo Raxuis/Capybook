@@ -34,7 +34,7 @@ const Features = () => {
                         animate={featuresInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
                         transition={{ duration: 0.6, delay: 0.2 }}
                     >
-                        <TabsList className="grid grid-cols-2 md:grid-cols-4 w-full max-w-2xl h-12">
+                        <TabsList className="grid grid-cols-2 md:grid-cols-4 w-full max-w-2xl h-full bg-muted p-2">
                             {features.map(({ key }) => (
                                 <motion.div key={key} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="flex justify-center items-center">
                                     <TabsTrigger value={key}>{key === "add" ? "Ajouter" : key === "track" ? "Progression" : key === "stats" ? "Statistiques" : "Favoris"}</TabsTrigger>
@@ -65,7 +65,7 @@ const Features = () => {
                                                         ))}
                                                     </motion.ul>
                                                 </div>
-                                                <motion.div className="bg-muted rounded-2xl p-6 aspect-square flex items-center justify-center w-1/2 justify-self-end" animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }} variants={animations.cardHover} initial="rest" whileHover="hover">
+                                                <motion.div className="bg-muted rounded-2xl p-6 aspect-square flex items-center justify-center w-1/2 md:justify-self-end" animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }} variants={animations.cardHover} initial="rest" whileHover="hover">
                                                     <Image src={image} alt={title} width={400} height={400} className="rounded-xl object-cover size-full" />
                                                 </motion.div>
                                             </div>
