@@ -10,6 +10,7 @@ import {usePathname} from 'next/navigation';
 import {useRouter} from "next/navigation";
 import {User} from "@prisma/client";
 import {signOut, useSession} from 'next-auth/react';
+import Image from "next/image";
 
 interface ClientHeaderProps {
     user: User | null;
@@ -78,7 +79,13 @@ export default function ClientHeader({user: initialUser}: ClientHeaderProps) {
                     transition={{type: "spring", stiffness: 300}}
                 >
                     <Link href="/" className="flex items-center gap-2">
-                        <BookOpen className="h-8 w-8 text-primary"/>
+                        <Image
+                            src="/icon.png"
+                            className="h-10 w-10 text-primary"
+                            width="42"
+                            height="42"
+                            alt="LivreTrack Logo"
+                        />
                         <span className="text-xl font-bold">LivreTrack</span>
                     </Link>
                 </motion.div>

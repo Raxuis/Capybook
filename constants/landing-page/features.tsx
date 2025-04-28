@@ -5,14 +5,14 @@ const features = [
         key: "add",
         title: "Ajoutez vos livres en un instant",
         description:
-            "Scannez le code-barres ou recherchez par titre pour ajouter instantanément n'importe quel livre à votre bibliothèque personnelle.",
+            "Recherchez et ajoutez vos livres en quelques clics grâce à notre base de données étendue.",
         icon: <BookOpen className="h-8 w-8 text-primary"/>,
         points: [
-            "Scan de code-barres rapide",
-            "Recherche par titre ou auteur",
-            "Importation depuis d'autres plateformes",
+            "Recherche par ISBN",
+            "Recherche par Titre",
+            "Recherche par Auteur",
         ],
-        image: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+        image: "/landing-page/search.webp",
     },
     {
         key: "track",

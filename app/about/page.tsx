@@ -54,14 +54,12 @@ export default function AboutPage() {
                             </div>
                         </div>
                         <div className="relative">
-                            <div
-                                className="absolute inset-0 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-3xl transform rotate-3"></div>
                             <Image
                                 src={history.image}
                                 alt="Bibliothèque"
                                 width={600}
                                 height={400}
-                                className="rounded-3xl shadow-xl relative z-0"
+                                className="rounded-3xl shadow-lg relative z-0"
                             />
                         </div>
                     </div>

@@ -45,7 +45,7 @@ const team = [
 ]
 
 const history = {
-    image: "/history.avif",
+    image: "/about-icon.png",
     title: "Notre Histoire",
     description: "Fondée en 2025, LivreTrack est née d'une passion partagée pour la lecture et la technologie. " +
         "Plus précisément de Raphaël, qui lisait des livres mais n'arrivait jamais à les finir, soit car il oubliait où il en était ou par manque de temps.",

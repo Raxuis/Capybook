@@ -3,7 +3,7 @@ import { AnimatePresence, motion, useInView } from "motion/react";
 import { animations } from "@/constants";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Image from "next/image";
-import { features } from "@/constants/features";
+import { features } from "@/constants/landing-page/features";
 
 const Features = () => {
     const [currentTab, setCurrentTab] = useState("add");
@@ -66,7 +66,7 @@ const Features = () => {
                                                     </motion.ul>
                                                 </div>
                                                 <motion.div className="bg-muted rounded-2xl p-6 aspect-square flex items-center justify-center w-1/2 justify-self-end" animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }} variants={animations.cardHover} initial="rest" whileHover="hover">
-                                                    <Image src={image} alt={title} width={400} height={400} className="rounded-xl object-cover" />
+                                                    <Image src={image} alt={title} width={400} height={400} className="rounded-xl object-cover size-full" />
                                                 </motion.div>
                                             </div>
                                         </TabsContent>
