@@ -61,9 +61,9 @@ const ChallengeCard = memo(({
             <Card className={`overflow-hidden relative group ${isCompleted ? 'border-green-500' : ''}`}>
                 <div className={cn(
                     "h-1.5",
-                    isCompleted ? "bg-green-500" :
-                        isPast ? "bg-red-500" :
-                            "bg-blue-500"
+                    isCompleted ? "bg-green-300" :
+                        isPast ? "bg-red-300" :
+                            "bg-blue-300"
                 )}></div>
 
                 <div

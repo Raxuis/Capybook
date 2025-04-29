@@ -47,7 +47,7 @@ const LibraryCard = ({userBook, userId, openBookModal}: LibraryCardProps) => {
                                 <Button
                                     variant="ghost"
                                     size="icon"
-                                    className="h-8 w-8 p-0 pt-0.5 hover:bg-transparent"
+                                    className="h-8 w-8 p-0 pt-0.5"
                                     onClick={handleReviewClick}
                                 >
                                     <Star className="h-4 w-4 text-amber-500"/>
@@ -63,7 +63,7 @@ const LibraryCard = ({userBook, userId, openBookModal}: LibraryCardProps) => {
                     <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8 p-0 pt-0.5 hover:bg-transparent"
+                        className="h-8 w-8 p-0 pt-0.5"
                         onClick={() => openBookModal(userBook.Book as BookType)}
                     >
                         <Info className="h-4 w-4"/>

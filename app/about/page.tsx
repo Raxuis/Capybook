@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import {motion} from "motion/react";
 import {
     Accordion,
     AccordionContent,
@@ -105,8 +106,12 @@ export default function AboutPage() {
                     <div className="flex justify-center">
                         <div className="text-center group">
                             <div className="relative mb-8 inline-block">
-                                <div
-                                    className="relative p-1 rounded-full bg-gradient-to-r from-primary via-secondary to-accent">
+                                <motion.div
+                                    initial={{ scale: 1 }}
+                                    whileHover={{ scale: 1.03 }}
+                                    whileTap={{ scale: 1 }}
+                                    transition={{ type: "spring", stiffness: 300 }}
+                                    className="relative p-1 rounded-full bg-gradient-to-r from-[#673ab7] via-[#4caf50] to-[#00bcd4]">
                                     <div className="relative rounded-full overflow-hidden w-[280px] h-[280px]">
                                         <Image
                                             src={team[0].image}
@@ -116,7 +121,7 @@ export default function AboutPage() {
                                             className="rounded-full"
                                         />
                                     </div>
-                                </div>
+                                </motion.div>
                             </div>
                             <h3 className="text-2xl font-semibold mb-2">
                                 {team[0].firstName + " " + team[0].lastName}

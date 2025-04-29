@@ -168,7 +168,7 @@ const UpdateChallengeForm = ({onSubmit, initialData, onCancel}: Props) => {
                                         <Button
                                             variant={"outline"}
                                             className={cn(
-                                                "w-full pl-3 text-left font-normal hover:bg-transparent",
+                                                "w-full pl-3 text-left font-normal",
                                                 !field.value && "text-muted-foreground"
                                             )}
                                         >
