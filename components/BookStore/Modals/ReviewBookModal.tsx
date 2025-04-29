@@ -17,6 +17,7 @@ import axios from "axios";
 import {mutate} from "swr";
 import {useToast} from "@/hooks/use-toast";
 import {zodResolver} from "@hookform/resolvers/zod";
+import {useBadgeQueue} from "@/Context/BadgeQueueContext";
 
 export default function ReviewBookModal(
     {userId}: { userId: string | null }
@@ -28,6 +29,7 @@ export default function ReviewBookModal(
     } = useReviewModalStore();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [hoverRating, setHoverRating] = useState<number | null>(null);
+    const {addBadges} = useBadgeQueue();
 
     const form = useForm<z.infer<typeof ReviewBookSchema>>({
         resolver: zodResolver(ReviewBookSchema),
@@ -58,7 +60,7 @@ export default function ReviewBookModal(
                 return;
             }
             try {
-                await axios.post("/api/user/book/review", {
+                const response = await axios.post("/api/user/book/review", {
                     userId,
                     bookKey: book.key,
                     rating: parseInt(values.rating),
@@ -69,6 +71,9 @@ export default function ReviewBookModal(
                     title: "Succès",
                     description: "Votre avis a été enregistré avec succès",
                 });
+                if (response.data.badges.newBadgesCount > 0) {
+                    addBadges(response.data.badges.newBadges);
+                }
             } catch (error) {
                 console.error("Erreur lors de l'ajout de la review:", error);
                 toast({
