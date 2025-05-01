@@ -61,7 +61,7 @@ const Testimonials = () => {
                         className="text-xl text-muted-foreground max-w-2xl mx-auto"
                         variants={animations.fadeInUp}
                     >
-                        Découvrez comment LivreTrack a transformé les habitudes de lecture de nos utilisateurs
+                        Découvrez comment Capybook a transformé les habitudes de lecture de nos utilisateurs
                         et utilisatrices.
                     </motion.p>
                 </motion.div>

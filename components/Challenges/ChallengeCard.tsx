@@ -61,16 +61,16 @@ const ChallengeCard = memo(({
             <Card className={`overflow-hidden relative group ${isCompleted ? 'border-green-500' : ''}`}>
                 <div className={cn(
                     "h-1.5",
-                    isCompleted ? "bg-green-500" :
-                        isPast ? "bg-red-500" :
-                            "bg-blue-500"
+                    isCompleted ? "bg-green-300" :
+                        isPast ? "bg-red-300" :
+                            "bg-blue-300"
                 )}></div>
 
                 <div
                     onClick={() => {
                         setShowDialog(true);
                     }}
-                    className="absolute top-4 right-4 group-hover:opacity-100 opacity-0 transition-opacity duration-200 cursor-pointer">
+                    className={cn(isPast ? "hidden" : "absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200")}>
                     <Trash2 className="size-4 text-destructive"/>
                 </div>
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -116,7 +116,7 @@ const ChallengeCard = memo(({
                 </CardFooter>
             </Card>
             <DeleteChallengeDialog
-                showDialog={showDialog}
+                showDialog={showDialog && !isPast}
                 setShowDialog={setShowDialog}
                 challengeId={challenge.id}
             />

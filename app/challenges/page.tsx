@@ -3,7 +3,7 @@ import ClientHydration from "@/hydratation/ClientHydratation";
 import ChallengesContent from "@/components/Challenges/ChallengesContent";
 
 export const metadata = {
-    title: "Livre Track Challenges",
+    title: "Capybook Challenges",
     description: "Mes challenges de lecture",
 };
 

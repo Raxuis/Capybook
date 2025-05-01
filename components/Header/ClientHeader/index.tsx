@@ -1,15 +1,14 @@
 "use client";
 
-import {BookOpen, Menu, X} from "lucide-react";
+import {Menu, X} from "lucide-react";
 import {AnimatePresence, motion} from "motion/react";
 import {useState, useEffect} from "react";
 import {navigation} from "@/constants";
 import {cn} from "@/lib/utils";
 import {Link} from "next-view-transitions";
-import {usePathname} from 'next/navigation';
-import {useRouter} from "next/navigation";
+import {usePathname, useRouter} from "next/navigation";
 import {User} from "@prisma/client";
-import {signOut, useSession} from 'next-auth/react';
+import {signOut, useSession} from "next-auth/react";
 import Image from "next/image";
 
 interface ClientHeaderProps {
@@ -22,8 +21,6 @@ export default function ClientHeader({user: initialUser}: ClientHeaderProps) {
     const [scrolled, setScrolled] = useState(false);
     const {navigation: headerElements} = navigation;
     const pathname = usePathname();
-    let headerElementsLength = 0;
-
     const router = useRouter();
 
     const currentUsername = session?.user?.username || initialUser?.username;
@@ -37,28 +34,80 @@ export default function ClientHeader({user: initialUser}: ClientHeaderProps) {
 
     useEffect(() => {
         const handleScroll = () => {
-            const offset = window.scrollY;
-            if (offset > 50) {
-                setScrolled(true);
-            } else {
-                setScrolled(false);
-            }
+            setScrolled(window.scrollY > 50);
         };
 
-        window.addEventListener('scroll', handleScroll);
+        window.addEventListener("scroll", handleScroll);
         handleScroll();
-
-        return () => {
-            window.removeEventListener('scroll', handleScroll);
-        };
+        return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
-    const toggleMenu = () => {
-        setIsMenuOpen(!isMenuOpen);
-    };
+    const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
     const handleSignOut = async () => {
-        await signOut({redirectTo: '/login'});
+        await signOut({redirectTo: "/login"});
+    };
+
+    const renderNavButtons = () => {
+        const currentNav = headerElements.find((el) => el.url === pathname);
+        const links = currentNav?.links || [];
+        const transitionBase = {duration: 0.3};
+
+        return (
+            <>
+                {links.map((item, index) => (
+                    <motion.button
+                        key={item.link}
+                        onClick={() => handleNavigation(item.link)}
+                        className="text-sm font-medium hover:text-primary transition-colors"
+                        whileHover={{scale: 1.05}}
+                        initial={{opacity: 0, x: -20}}
+                        animate={{opacity: 1, x: 0}}
+                        transition={{...transitionBase, delay: index * 0.1}}
+                    >
+                        {item.label}
+                    </motion.button>
+                ))}
+                {currentUsername ? (
+                    <>
+                        <motion.button
+                            onClick={handleSignOut}
+                            className="text-sm font-medium hover:text-primary transition-colors"
+                            whileHover={{scale: 1.05}}
+                            initial={{opacity: 0, x: -20}}
+                            animate={{opacity: 1, x: 0}}
+                            transition={{...transitionBase, delay: links.length * 0.1}}
+                        >
+                            Déconnexion
+                        </motion.button>
+                        <motion.button
+                            onClick={() => {
+                                setIsMenuOpen(false);
+                                router.push(`/profile/@${currentUsername}`);
+                            }}
+                            className="text-sm font-medium hover:text-primary transition-colors text-center"
+                            whileHover={{scale: 1.05}}
+                            initial={{opacity: 0, x: -20}}
+                            animate={{opacity: 1, x: 0}}
+                            transition={{...transitionBase, delay: links.length * 0.1}}
+                        >
+                            Mon profil
+                        </motion.button>
+                    </>
+                ) : (
+                    <motion.a
+                        href="/login"
+                        className="text-sm font-medium hover:text-primary transition-colors"
+                        whileHover={{scale: 1.05}}
+                        initial={{opacity: 0, x: -20}}
+                        animate={{opacity: 1, x: 0}}
+                        transition={{...transitionBase, delay: links.length * 0.1}}
+                    >
+                        Se connecter
+                    </motion.a>
+                )}
+            </>
+        );
     };
 
     return (
@@ -74,19 +123,16 @@ export default function ClientHeader({user: initialUser}: ClientHeaderProps) {
             )}
         >
             <div className="container mx-auto px-4 flex justify-between items-center">
-                <motion.div
-                    whileHover={{scale: 1.05}}
-                    transition={{type: "spring", stiffness: 300}}
-                >
+                <motion.div whileHover={{scale: 1.05}} transition={{type: "spring", stiffness: 300}}>
                     <Link href="/" className="flex items-center gap-2">
                         <Image
                             src="/icon.png"
                             className="h-10 w-10 text-primary"
                             width="42"
                             height="42"
-                            alt="LivreTrack Logo"
+                            alt="Capybook Logo"
                         />
-                        <span className="text-xl font-bold">LivreTrack</span>
+                        <span className="text-xl font-bold">Capybook</span>
                     </Link>
                 </motion.div>
 
@@ -99,62 +145,8 @@ export default function ClientHeader({user: initialUser}: ClientHeaderProps) {
                 </button>
 
                 <nav className="hidden md:flex items-center gap-6">
-                    {headerElements.map((headerElement) =>
-                        headerElement.url === pathname
-                            ? headerElement.links.map((item, index) => (
-                                <motion.button
-                                    key={item.link}
-                                    onClick={() => handleNavigation(item.link)}
-                                    className="text-sm font-medium hover:text-primary transition-colors"
-                                    whileHover={{scale: 1.1, color: "var(--primary)"}}
-                                    initial={{opacity: 0, y: -20}}
-                                    animate={{opacity: 1, y: 0}}
-                                    transition={{duration: 0.3, delay: index * 0.1}}
-                                >
-                                    {item.label}
-                                </motion.button>
-                            ))
-                            : null
-                    )}
-                    {
-                        currentUsername ? (
-                            <>
-                                <motion.button
-                                    onClick={handleSignOut}
-                                    className="text-sm font-medium hover:text-primary transition-colors"
-                                    whileHover={{scale: 1.1, color: "var(--primary)"}}
-                                    initial={{opacity: 0, x: -20}}
-                                    animate={{opacity: 1, x: 0}}
-                                    transition={{duration: 0.3, delay: headerElementsLength * 0.1}}
-                                >
-                                    Déconnexion
-                                </motion.button>
-                                <motion.a
-                                    href={`/profile/@${currentUsername}`}
-                                    className="text-sm font-medium hover:text-primary transition-colors"
-                                    whileHover={{scale: 1.1, color: "var(--primary)"}}
-                                    initial={{opacity: 0, x: -20}}
-                                    animate={{opacity: 1, x: 0}}
-                                    transition={{duration: 0.3, delay: headerElementsLength * 0.1}}
-                                >
-                                    Mon profil
-                                </motion.a>
-                            </>
-                        ) : (
-                            <motion.a
-                                href="/login"
-                                className="text-sm font-medium hover:text-primary transition-colors"
-                                whileHover={{scale: 1.1, color: "var(--primary)"}}
-                                initial={{opacity: 0, y: -20}}
-                                animate={{opacity: 1, y: 0}}
-                                transition={{duration: 0.3, delay: headerElementsLength * 0.1}}
-                            >
-                                Se connecter
-                            </motion.a>
-                        )
-                    }
+                    {renderNavButtons()}
                 </nav>
-
             </div>
 
             <AnimatePresence>
@@ -166,69 +158,7 @@ export default function ClientHeader({user: initialUser}: ClientHeaderProps) {
                         transition={{duration: 0.2, ease: "easeOut"}}
                         className="md:hidden absolute w-full bg-background border-b py-4 px-4 shadow-lg origin-top"
                     >
-                        <nav className="flex flex-col gap-4">
-                            {headerElements.map((headerElement) =>
-                                headerElement.url === pathname
-                                    ? headerElement.links.map((item, index) => {
-                                        headerElementsLength = headerElement.links.length;
-                                        return (
-                                            <motion.button
-                                                key={item.link}
-                                                onClick={() => handleNavigation(item.link)}
-                                                className="text-sm font-medium hover:text-primary transition-colors"
-                                                initial={{opacity: 0, x: -20}}
-                                                animate={{opacity: 1, x: 0}}
-                                                transition={{duration: 0.3, delay: index * 0.1}}
-                                            >
-                                                {item.label}
-                                            </motion.button>
-                                        )
-                                    })
-                                    : null
-                            )}
-                            {
-                                currentUsername ? (
-                                    <>
-                                        <motion.button
-                                            onClick={handleSignOut}
-                                            className="text-sm font-medium hover:text-primary transition-colors"
-                                            whileHover={{scale: 1.1, color: "var(--primary)"}}
-                                            initial={{opacity: 0, x: -20}}
-                                            animate={{opacity: 1, x: 0}}
-                                            transition={{duration: 0.3, delay: headerElementsLength * 0.1}}
-                                        >
-                                            Déconnexion
-                                        </motion.button>
-                                        <motion.button
-                                            onClick={
-                                                () => {
-                                                    setIsMenuOpen(false);
-                                                    router.push(`/profile/@${currentUsername}`);
-                                                }
-                                            }
-                                            className="text-sm font-medium hover:text-primary transition-colors text-center"
-                                            whileHover={{scale: 1.1, color: "var(--primary)"}}
-                                            initial={{opacity: 0, x: -20}}
-                                            animate={{opacity: 1, x: 0}}
-                                            transition={{duration: 0.3, delay: headerElementsLength * 0.1}}
-                                        >
-                                            Mon profil
-                                        </motion.button>
-                                    </>
-                                ) : (
-                                    <motion.a
-                                        href="/login"
-                                        className="text-sm font-medium hover:text-primary transition-colors"
-                                        whileHover={{scale: 1.1, color: "var(--primary)"}}
-                                        initial={{opacity: 0, x: -20}}
-                                        animate={{opacity: 1, x: 0}}
-                                        transition={{duration: 0.3, delay: headerElementsLength * 0.1}}
-                                    >
-                                        Se connecter
-                                    </motion.a>
-                                )
-                            }
-                        </nav>
+                        <nav className="flex flex-col gap-4 text-center">{renderNavButtons()}</nav>
                     </motion.div>
                 )}
             </AnimatePresence>

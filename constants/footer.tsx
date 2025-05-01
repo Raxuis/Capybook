@@ -14,7 +14,7 @@ type Footer = {
 }
 
 export const footer: Footer = {
-    title: "LivreTrack",
+    title: "Capybook",
     description: "Transformez votre expérience de lecture avec notre application de suivi et d'analyse littéraire.",
     iconUrl: "/icon.png",
     socialLinks: [
@@ -23,7 +23,7 @@ export const footer: Footer = {
         {
             icon: <Github className="h-5 w-5"/>,
             label: "Open Source",
-            href: "https://github.com/Raxuis/LivreTrack",
+            href: "https://github.com/Raxuis/Capybook",
             external: true
         },
         {icon: <BookOpen className="h-5 w-5"/>, label: "Blog", href: "/blog"}

@@ -3,6 +3,7 @@ import {BookOpen, BookMarked, BarChart2, Heart} from "lucide-react";
 const features = [
     {
         key: "add",
+        label: "Ajouter",
         title: "Ajoutez vos livres en un instant",
         description:
             "Recherchez et ajoutez vos livres en quelques clics grâce à notre base de données étendue.",
@@ -16,6 +17,7 @@ const features = [
     },
     {
         key: "track",
+        label: "Progression",
         title: "Suivez votre progression",
         description:
             "Marquez votre progression en pages ou en pourcentage et définissez des objectifs de lecture quotidiens ou hebdomadaires.",
@@ -29,6 +31,7 @@ const features = [
     },
     {
         key: "stats",
+        label: "Statistiques",
         title: "Analysez vos statistiques",
         description:
             "Visualisez vos habitudes de lecture avec des graphiques détaillés et découvrez vos genres préférés.",
@@ -42,6 +45,7 @@ const features = [
     },
     {
         key: "favorites",
+        label: "Favoris",
         title: "Gérez vos favoris",
         description:
             "Organisez votre bibliothèque avec des collections personnalisées et partagez vos recommandations avec vos amis.",

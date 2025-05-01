@@ -24,7 +24,7 @@ export function Pagination({currentPage, totalPages, basePath}: PaginationProps)
         <nav className="flex items-center justify-center space-x-2">
             {currentPage > 1 && (
                 <Link href={`${basePath}?page=${currentPage - 1}`}>
-                    <Button variant="outline" size="icon" className="hover:bg-transparent">
+                    <Button variant="outline" size="icon">
                         <ChevronLeft className="h-4 w-4"/>
                         <span className="sr-only">Page précédente</span>
                     </Button>
@@ -34,7 +34,7 @@ export function Pagination({currentPage, totalPages, basePath}: PaginationProps)
             {visiblePages[0] > 1 && (
                 <>
                     <Link href={`${basePath}?page=1`}>
-                        <Button variant="outline" size="sm" className="hover:bg-transparent">
+                        <Button variant="outline" size="sm">
                             1
                         </Button>
                     </Link>
@@ -49,8 +49,7 @@ export function Pagination({currentPage, totalPages, basePath}: PaginationProps)
                         size="sm"
                         className={cn(
                             "min-w-[2.5rem]",
-                            page === currentPage && "pointer-events-none",
-                            page !== currentPage && "hover:bg-transparent"
+                            page === currentPage && "pointer-events-none"
                         )}
                     >
                         {page}
@@ -64,7 +63,7 @@ export function Pagination({currentPage, totalPages, basePath}: PaginationProps)
                         <span className="px-2">...</span>
                     )}
                     <Link href={`${basePath}?page=${totalPages}`}>
-                        <Button variant="outline" size="sm" className="hover:bg-transparent">
+                        <Button variant="outline" size="sm">
                             {totalPages}
                         </Button>
                     </Link>
@@ -73,7 +72,7 @@ export function Pagination({currentPage, totalPages, basePath}: PaginationProps)
 
             {currentPage < totalPages && (
                 <Link href={`${basePath}?page=${currentPage + 1}`}>
-                    <Button variant="outline" size="icon" className="hover:bg-transparent">
+                    <Button variant="outline" size="icon">
                         <ChevronRight className="h-4 w-4"/>
                         <span className="sr-only">Page suivante</span>
                     </Button>

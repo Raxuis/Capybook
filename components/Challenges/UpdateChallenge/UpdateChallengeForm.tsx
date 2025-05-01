@@ -168,7 +168,7 @@ const UpdateChallengeForm = ({onSubmit, initialData, onCancel}: Props) => {
                                         <Button
                                             variant={"outline"}
                                             className={cn(
-                                                "w-full pl-3 text-left font-normal hover:bg-transparent",
+                                                "w-full pl-3 text-left font-normal",
                                                 !field.value && "text-muted-foreground"
                                             )}
                                         >
@@ -498,7 +498,6 @@ const UpdateChallengeForm = ({onSubmit, initialData, onCancel}: Props) => {
                     </Button>
                     <Button
                         type="submit"
-                        className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700"
                         disabled={isSubmitting}
                     >
                         {isSubmitting ? 'Mise à jour...' : 'Mettre à jour'}

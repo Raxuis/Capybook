@@ -23,7 +23,7 @@ const Features = () => {
                         Fonctionnalités Clés
                     </motion.h2>
                     <motion.p className="text-xl text-muted-foreground max-w-2xl mx-auto" variants={animations.fadeInUp}>
-                        Découvrez comment LivreTrack transforme votre expérience de lecture avec ces fonctionnalités essentielles.
+                        Découvrez comment Capybook transforme votre expérience de lecture avec ces fonctionnalités essentielles.
                     </motion.p>
                 </motion.div>
 
@@ -35,9 +35,11 @@ const Features = () => {
                         transition={{ duration: 0.6, delay: 0.2 }}
                     >
                         <TabsList className="grid grid-cols-2 md:grid-cols-4 w-full max-w-2xl h-full bg-muted p-2">
-                            {features.map(({ key }) => (
+                            {features.map(({ key, label }) => (
                                 <motion.div key={key} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="flex justify-center items-center">
-                                    <TabsTrigger value={key}>{key === "add" ? "Ajouter" : key === "track" ? "Progression" : key === "stats" ? "Statistiques" : "Favoris"}</TabsTrigger>
+                                    <TabsTrigger value={key}>
+                                        {label}
+                                    </TabsTrigger>
                                 </motion.div>
                             ))}
                         </TabsList>

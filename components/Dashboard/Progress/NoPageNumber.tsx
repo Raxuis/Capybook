@@ -47,13 +47,13 @@ const NoPageNumber = ({userId, bookId, bookKey}: { userId: string, bookId: strin
                             <div className={cn(buttonVariants({
                                 size: "sm",
                                 variant: "outline",
-                            }), "flex justify-between hover:bg-transparent transition-colors")}>
+                            }), "flex justify-between transition-colors")}>
                                 Êtes-vous sûr ?
                                 <div className="flex space-x-2">
                                     <Button
                                         variant="ghost"
                                         size="sm"
-                                        className="hover:bg-transparent text-gray-500 hover:text-blue-500 transition-colors"
+                                        className="text-gray-500 hover:text-blue-500 transition-colors"
                                         onClick={handleUpdate}
                                     >
                                         <Check className="w-5 h-5"/>
@@ -61,7 +61,7 @@ const NoPageNumber = ({userId, bookId, bookKey}: { userId: string, bookId: strin
                                     <Button
                                         variant="ghost"
                                         size="sm"
-                                        className="hover:bg-transparent text-gray-500 hover:text-red-500 transition-colors"
+                                        className="text-gray-500 hover:text-red-500 transition-colors"
                                         onClick={() => setIsSelectingUpdate(false)}
                                     >
                                         <X className="w-5 h-5"/>

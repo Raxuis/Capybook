@@ -21,7 +21,7 @@ const ReviewCard = ({ review, openBookModal }: ReviewCardProps) => {
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8 p-0 pt-0.5 hover:bg-transparent"
+            className="h-8 w-8 p-0 pt-0.5"
             onClick={() => openBookModal(review.Book as BookType)}
           >
             <Info className="h-4 w-4" />

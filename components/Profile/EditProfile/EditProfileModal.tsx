@@ -150,7 +150,7 @@ function EditProfileModal({
                                             <ColorPicker
                                                 color={field.value || "#3b82f6"}
                                                 action={(color) => field.onChange(color)}
-                                                className="w-full hover:bg-transparent"
+                                                className="w-full"
                                             />
                                         </FormControl>
                                         <FormMessage/>
@@ -173,7 +173,7 @@ function EditProfileModal({
                         </div>
                         <DialogFooter className="border-t border-border px-6 py-4">
                             <DialogClose asChild>
-                                <Button type="button" variant="destructive">
+                                <Button type="button" variant="outline" className="hover:bg-black/10 transition-colors">
                                     Annuler
                                 </Button>
                             </DialogClose>

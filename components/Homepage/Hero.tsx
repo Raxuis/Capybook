@@ -41,17 +41,17 @@ const Hero = () => {
                             className="text-xl text-muted-foreground"
                             variants={animations.fadeInUp}
                         >
-                            Suivez votre progression facilement avec LivreTrack, l&#39;application qui
+                            Suivez votre progression facilement avec Capybook, l&#39;application qui
                             transforme
                             votre expérience de lecture.
                         </motion.p>
                         <motion.div
-                            className="flex gap-4 pt-4"
+                            className="flex gap-4 pt-4 max-md:w-full max-md:justify-center"
                             variants={animations.staggerChildren}
                         >
                             <motion.div variants={animations.fadeInUp} whileHover={{scale: 1.05}}
                                         whileTap={{scale: 0.95}}>
-                                <Button size="lg" className="gap-2 bg-secondary hover:bg-secondary/90" asChild>
+                                <Button size="lg" className="bg-secondary hover:bg-secondary/90 max-md:py-3 max-md:px-4" asChild>
                                     <Link href="/book-shelf">
                                         Commencer l&#39;aventure
                                     </Link>
@@ -60,7 +60,7 @@ const Hero = () => {
                             <motion.div variants={animations.fadeInUp} whileHover={{scale: 1.05}}
                                         whileTap={{scale: 0.95}}>
                                 <Button size="lg" variant="outline"
-                                        className="hover:bg-primary/10 hover:text-foreground hover:border-primary"
+                                        className="hover:bg-primary/10 hover:text-foreground hover:border-primary max-md:py-3 max-md:px-4"
                                         asChild>
                                     <Link href="/about">
                                         En savoir plus
@@ -85,7 +85,7 @@ const Hero = () => {
                         >
                             <Image
                                 src="/landing-page/book.webp"
-                                alt="LivreTrack App Mockup"
+                                alt="Capybook App Mockup"
                                 width={300}
                                 height={900}
                                 className="object-contain rounded-3xl shadow-2xl border-8 border-white dark:border-gray-800 size-full"
