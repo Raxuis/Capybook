@@ -41,7 +41,7 @@ const Hero = () => {
                             className="text-xl text-muted-foreground"
                             variants={animations.fadeInUp}
                         >
-                            Suivez votre progression facilement avec LivreTrack, l&#39;application qui
+                            Suivez votre progression facilement avec Capybook, l&#39;application qui
                             transforme
                             votre expérience de lecture.
                         </motion.p>
@@ -85,7 +85,7 @@ const Hero = () => {
                         >
                             <Image
                                 src="/landing-page/book.webp"
-                                alt="LivreTrack App Mockup"
+                                alt="Capybook App Mockup"
                                 width={300}
                                 height={900}
                                 className="object-contain rounded-3xl shadow-2xl border-8 border-white dark:border-gray-800 size-full"

@@ -130,9 +130,9 @@ export default function ClientHeader({user: initialUser}: ClientHeaderProps) {
                             className="h-10 w-10 text-primary"
                             width="42"
                             height="42"
-                            alt="LivreTrack Logo"
+                            alt="Capybook Logo"
                         />
-                        <span className="text-xl font-bold">LivreTrack</span>
+                        <span className="text-xl font-bold">Capybook</span>
                     </Link>
                 </motion.div>
 

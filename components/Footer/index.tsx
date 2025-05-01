@@ -9,7 +9,7 @@ const Footer = () => {
         <footer className="pt-16 pb-32 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
             <div className="container mx-auto px-4">
                 <div className="flex flex-col md:flex-row justify-between items-start mb-12">
-                    {/* Section LivreTrack à gauche */}
+                    {/* Section Capybook à gauche */}
                     <div className="mb-8 md:mb-0 max-w-md">
                         <div className="flex items-center gap-2 mb-4">
                             <Image
@@ -51,7 +51,7 @@ const Footer = () => {
                 <div
                     className="pt-8 border-t border-slate-200 dark:border-slate-700 flex flex-col md:flex-row justify-between items-center">
                     <p className="text-sm text-slate-500 dark:text-slate-400 mb-4 md:mb-0">
-                        © {currentYear} LivreTrack. Tous droits réservés.
+                        © {currentYear} Capybook. Tous droits réservés.
                     </p>
                     <div className="flex space-x-6">
                         {["Twitter", "LinkedIn", "Instagram"].map((social) => (

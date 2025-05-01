@@ -5,8 +5,8 @@ import DashboardContent from '@/components/Dashboard/DashboardContent';
 import ClientHydration from "@/hydratation/ClientHydratation";
 
 export const metadata: Metadata = {
-    title: "Livre Track Dashboard",
-    description: "Le tableau de bord de Livre Track",
+    title: "Capybook Dashboard",
+    description: "Le tableau de bord de Capybook",
 };
 
 export default async function BookShelf() {

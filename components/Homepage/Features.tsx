@@ -23,7 +23,7 @@ const Features = () => {
                         Fonctionnalités Clés
                     </motion.h2>
                     <motion.p className="text-xl text-muted-foreground max-w-2xl mx-auto" variants={animations.fadeInUp}>
-                        Découvrez comment LivreTrack transforme votre expérience de lecture avec ces fonctionnalités essentielles.
+                        Découvrez comment Capybook transforme votre expérience de lecture avec ces fonctionnalités essentielles.
                     </motion.p>
                 </motion.div>
 

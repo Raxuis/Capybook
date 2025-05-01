@@ -55,7 +55,7 @@ export default function LoginForm() {
         <Card className="p-4 max-w-xl mx-auto w-full mt-20">
             <div className="flex flex-col items-center gap-2">
                 <div className="flex size-11 shrink-0 items-center justify-center rounded-full border" aria-hidden="true">
-                    <Image src="/icon.png" alt="Livre Track Icon" width={100} height={100} className="p-1"/>
+                    <Image src="/icon.png" alt="Capybook Icon" width={100} height={100} className="p-1"/>
                 </div>
                 <CardHeader>
                     <CardTitle className="sm:text-center">De retour ?</CardTitle>

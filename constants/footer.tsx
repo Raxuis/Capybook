@@ -14,7 +14,7 @@ type Footer = {
 }
 
 export const footer: Footer = {
-    title: "LivreTrack",
+    title: "Capybook",
     description: "Transformez votre expérience de lecture avec notre application de suivi et d'analyse littéraire.",
     iconUrl: "/icon.png",
     socialLinks: [

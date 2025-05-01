@@ -25,7 +25,7 @@ const manrope = Manrope({
 
 });
 export const metadata: Metadata = {
-    title: "Livre Track 📕",
+    title: "CapyBook 📕🦫",
     description: "La façon la plus simple de suivre votre progression en lecture.",
 };
 

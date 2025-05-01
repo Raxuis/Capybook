@@ -84,13 +84,13 @@ export default function RegisterForm() {
                     className="flex size-11 shrink-0 items-center justify-center rounded-full border"
                     aria-hidden="true"
                 >
-                    <Image src="/icon.png" alt="livre track icon" width={100} height={100} className="p-1"/>
+                    <Image src="/icon.png" alt="Capybook icon" width={100} height={100} className="p-1"/>
                 </div>
                 <CardHeader>
                     <CardTitle className="sm:text-center">
                         Créer un compte sur {" "}
                         <span className="font-extrabold underline">
-                            Livre Track
+                            Capybook
                         </span>
                     </CardTitle>
                     <CardDescription className="sm:text-center">

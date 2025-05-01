@@ -21,7 +21,7 @@ const services = [
 const faqs = [
     {
         question: "Comment fonctionne le suivi de lecture ?",
-        answer: "LivreTrack vous permet de suivre votre progression en pourcentage. Vous pouvez définir des objectifs quotidiens ou hebdomadaires et visualiser vos statistiques de lecture en temps réel.",
+        answer: "Capybook vous permet de suivre votre progression en pourcentage. Vous pouvez définir des objectifs quotidiens ou hebdomadaires et visualiser vos statistiques de lecture en temps réel.",
     },
     {
         question: "Mes données sont-elles sécurisées ?",
@@ -40,14 +40,14 @@ const team = [
         lastName: "Raclot",
         role: "CEO",
         status: "Junior Full Stack Developer",
-        description: " Passionné par la technologie et la lecture, Raphaël a créé LivreTrack pour révolutionner la façon dont nous suivons et apprécions nos lectures."
+        description: " Passionné par la technologie et la lecture, Raphaël a créé Capybook pour révolutionner la façon dont nous suivons et apprécions nos lectures."
     }
 ]
 
 const history = {
     image: "/about-icon.png",
     title: "Notre Histoire",
-    description: "Fondée en 2025, LivreTrack est née d'une passion partagée pour la lecture et la technologie. " +
+    description: "Fondée en 2025, Capybook est née d'une passion partagée pour la lecture et la technologie. " +
         "Plus précisément de Raphaël, qui lisait des livres mais n'arrivait jamais à les finir, soit car il oubliait où il en était ou par manque de temps.",
     listIcon: <CheckCircle className="h-6 w-6 text-primary mt-1"/>,
     list: [

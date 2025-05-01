@@ -19,7 +19,7 @@ export default function AboutPage() {
                 <div className="container mx-auto px-4">
                     <div className="max-w-3xl mx-auto text-center">
                         <h1 className="text-4xl md:text-5xl font-bold mb-6">
-                            À propos de LivreTrack
+                            À propos de Capybook
                         </h1>
                         <p className="text-xl text-muted-foreground">
                             Nous transformons la façon dont les lecteurs suivent et apprécient leurs lectures, un livre
