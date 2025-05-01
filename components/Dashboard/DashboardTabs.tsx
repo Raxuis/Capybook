@@ -50,7 +50,7 @@ const DashboardTabs = ({openBookModal}: Props) => {
 
                 <TabsContent value="library" className="space-y-4">
                     {booksStatus.hasBooks ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
                             {user.UserBook.map(userBook => (
                                 <LibraryCard
                                     key={userBook.id}
@@ -72,7 +72,7 @@ const DashboardTabs = ({openBookModal}: Props) => {
 
                 <TabsContent value="wishlist" className="space-y-4">
                     {booksStatus.hasWishlist ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
                             {user.UserBookWishlist.map(wishlistItem => (
                                 <WishlistCard
                                     key={wishlistItem.id}

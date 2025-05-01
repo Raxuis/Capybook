@@ -173,7 +173,7 @@ function EditProfileModal({
                         </div>
                         <DialogFooter className="border-t border-border px-6 py-4">
                             <DialogClose asChild>
-                                <Button type="button" variant="destructive">
+                                <Button type="button" variant="outline" className="hover:bg-black/10 transition-colors">
                                     Annuler
                                 </Button>
                             </DialogClose>

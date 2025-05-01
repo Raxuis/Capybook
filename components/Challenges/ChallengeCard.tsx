@@ -70,7 +70,7 @@ const ChallengeCard = memo(({
                     onClick={() => {
                         setShowDialog(true);
                     }}
-                    className="absolute top-4 right-4 group-hover:opacity-100 opacity-0 transition-opacity duration-200 cursor-pointer">
+                    className={cn(isPast ? "hidden" : "absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200")}>
                     <Trash2 className="size-4 text-destructive"/>
                 </div>
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -116,7 +116,7 @@ const ChallengeCard = memo(({
                 </CardFooter>
             </Card>
             <DeleteChallengeDialog
-                showDialog={showDialog}
+                showDialog={showDialog && !isPast}
                 setShowDialog={setShowDialog}
                 challengeId={challenge.id}
             />

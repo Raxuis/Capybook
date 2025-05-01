@@ -9,6 +9,8 @@ import {Book, Star, PenTool, Calendar, Award, User, ChevronRight, Eye, ChartBarI
 import EditProfileModal from "@/components/Profile/EditProfile/EditProfileModal";
 import {SWR_CONFIG} from "@/constants/SWR";
 import {generateGradientClasses} from "@/utils/color";
+import {Button, buttonVariants} from "@/components/ui/button";
+import {cn} from "@/lib/utils";
 
 type ProfileData = {
     user: {
@@ -189,13 +191,16 @@ const ProfileContent = ({username}: { username: string }) => {
                         </div>
                         {isOwner && (
                             <div className="max-sm:w-full sm:ml-auto mt-4 sm:mt-0 text-center sm:text-left">
-                                <button
-                                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-colors shadow-md flex items-center mx-auto sm:mx-0"
+                                <Button
+                                    className={cn(buttonVariants({
+                                        variant: "default",
+                                        size: "sm",
+                                    }), "px-4 py-2 rounded-md transition-colors shadow-md flex items-center mx-auto sm:mx-0")}
                                     onClick={() => setModalOpen(true)}
                                 >
                                     <PenTool size={16} className="mr-2"/>
                                     Modifier le profil
-                                </button>
+                                </Button>
                             </div>
                         )}
                     </div>
@@ -248,16 +253,19 @@ const ProfileContent = ({username}: { username: string }) => {
                 </span>
                                 <span className="truncate">Vos statistiques</span>
                             </h2>
-                            <button
+                            <Button
                                 onClick={() => {
                                     router.push('/book-shelf');
                                 }}
-                                className="text-xs sm:text-sm bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg transition-colors flex items-center shadow-sm whitespace-nowrap"
+                                className={cn(buttonVariants({
+                                    variant: "default",
+                                    size: "sm",
+                                }), "text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg transition-colors flex items-center shadow-sm whitespace-nowrap")}
                             >
                                 <span className="hidden sm:inline">Tableau de bord</span>
                                 <span className="sm:hidden">Dashboard</span>
                                 <ChevronRight size={14} className="ml-1"/>
-                            </button>
+                            </Button>
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8">
                             <div
