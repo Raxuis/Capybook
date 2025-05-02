@@ -11,18 +11,17 @@ import {useBadgeQueue} from "@/Context/BadgeQueueContext";
 
 interface Props {
     book: Book;
-    userId: string;
     initialProgress?: number;
 }
 
-const ProgressTracker = ({book, userId, initialProgress = 0}: Props) => {
+const ProgressTracker = ({book, initialProgress = 0}: Props) => {
     const [progress, setProgress] = useState(initialProgress);
     const [isSaving, setIsSaving] = useState(false);
     const [isDirty, setIsDirty] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null);
 
-    const {updateBookProgress} = useBooks(null, userId);
+    const {updateBookProgress} = useBooks(null);
     const {addBadges} = useBadgeQueue();
 
     const usePages = book.numberOfPages && book.numberOfPages > 0;

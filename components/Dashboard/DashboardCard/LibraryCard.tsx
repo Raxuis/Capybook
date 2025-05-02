@@ -11,11 +11,10 @@ import {useCallback, useMemo} from "react";
 
 type LibraryCardProps = {
     userBook: any;
-    userId: string;
     openBookModal: (book: BookType) => void;
 };
 
-const LibraryCard = ({userBook, userId, openBookModal}: LibraryCardProps) => {
+const LibraryCard = ({userBook, openBookModal}: LibraryCardProps) => {
     const {setBookToReview} = useReviewModalStore();
     const {user} = useUser();
 
@@ -97,11 +96,9 @@ const LibraryCard = ({userBook, userId, openBookModal}: LibraryCardProps) => {
                         <ProgressTracker
                             book={userBook.Book as BookType}
                             initialProgress={userBook.progress || 0}
-                            userId={userId}
                         />
                     ) : (
                         <NoPageNumber
-                            userId={userId}
                             bookId={userBook.Book.id}
                             bookKey={userBook.Book.key}
                         />
