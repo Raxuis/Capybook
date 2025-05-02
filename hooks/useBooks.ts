@@ -12,7 +12,7 @@ type OpenLibraryResponse = {
     docs: Book[];
 };
 
-export function useBooks(bookName?: string | null, userId?: string) {
+export function useBooks(bookName?: string | null) {
     const debouncedBookName = useDebounce(bookName, 500);
     const {user, isLoading: isUserLoading, refreshUser} = useUser();
 
@@ -89,17 +89,17 @@ export function useBooks(bookName?: string | null, userId?: string) {
     }, []);
 
     const toggleLibrary = useCallback(async (book: Book | MoreInfoBook) => {
-        if (!userId) return;
+        if (!user?.id) return;
         try {
             if (isInLibrary(book.key)) {
                 await api.delete("/user/books", {
                     data: {
-                        userId, book
+                        userId: user.id, book
                     }
                 });
             } else {
                 if (isInWishlist(book.key)) {
-                    await api.delete("/user/wishlist", {data: {userId, book}});
+                    await api.delete("/user/wishlist", {data: {userId: user.id, book}});
                 }
 
                 let number_of_pages = null;
@@ -113,7 +113,7 @@ export function useBooks(bookName?: string | null, userId?: string) {
                 }
 
                 await api.post("/user/books", {
-                    userId,
+                    userId: user.id,
                     book: {
                         ...book,
                         number_of_pages
@@ -124,32 +124,32 @@ export function useBooks(bookName?: string | null, userId?: string) {
         } catch (error) {
             console.error("Erreur lors de la modification de la bibliothèque:", error);
         }
-    }, [userId, isInLibrary, isInWishlist, refreshUser, getBookNumberOfPages]);
+    }, [user, isInLibrary, isInWishlist, refreshUser, getBookNumberOfPages]);
 
     const toggleWishlist = useCallback(async (book: Book) => {
-        if (!userId) return;
+        if (!user?.id) return;
         try {
             if (isInWishlist(book.key)) {
-                await api.delete("/user/wishlist", {data: {userId, book}});
+                await api.delete("/user/wishlist", {data: {userId: user.id, book}});
             } else {
                 if (isInLibrary(book.key)) {
-                    await api.delete("/user/books", {data: {userId, book}});
+                    await api.delete("/user/books", {data: {userId: user.id, book}});
                 }
-                await api.post("/user/wishlist", {userId, book});
+                await api.post("/user/wishlist", {userId: user.id, book});
             }
             await refreshUser();
         } catch (error) {
             console.error("Erreur lors de la modification de la wishlist:", error);
         }
-    }, [userId, isInWishlist, isInLibrary, refreshUser]);
+    }, [user, isInWishlist, isInLibrary, refreshUser]);
 
     const toggleCurrentBook = useCallback(async (book: Book | MoreInfoBook) => {
-        if (!userId) return;
+        if (!user?.id) return;
         try {
             const currentBook = user?.UserBook.find((ub) => ub.Book.key === book.key);
             if (currentBook && book) {
                 await api.put("/user/book/current-book", {
-                    userId,
+                    userId: user.id,
                     bookId: book.id,
                     isCurrentBook: !currentBook.isCurrentBook
                 });
@@ -158,15 +158,15 @@ export function useBooks(bookName?: string | null, userId?: string) {
         } catch (error) {
             console.error("Erreur lors de la modification du livre actuel:", error);
         }
-    }, [userId, user, refreshUser]);
+    }, [user, refreshUser]);
 
     const updateBookProgress = useCallback(async (bookKey: string, progress: number) => {
-        if (!userId) return;
+        if (!user?.id) return;
         try {
             const userBook = user?.UserBook.find((ub) => ub.Book.key === bookKey);
             if (userBook) {
                 const response = await api.put("/user/book/progress", {
-                    userId,
+                    userId: user.id,
                     bookId: userBook.Book.id,
                     progress
                 });
@@ -178,10 +178,10 @@ export function useBooks(bookName?: string | null, userId?: string) {
         } catch (error) {
             console.error("Erreur lors de la mise à jour de la progression:", error);
         }
-    }, [userId, user, refreshUser]);
+    }, [user, refreshUser]);
 
     const updateBookPageCount = useCallback(async (bookId: string, pageCount: number) => {
-        if (!userId) return;
+        if (!user?.id) return;
         try {
             await api.put("/book/page-count", {
                 bookId,
@@ -191,15 +191,15 @@ export function useBooks(bookName?: string | null, userId?: string) {
         } catch (error) {
             console.error("Erreur lors de la mise à jour du nombre de pages:", error);
         }
-    }, [userId, refreshUser]);
+    }, [user, refreshUser]);
 
     const updateBookProgressType = useCallback(async (bookKey: string, progressType: 'page' | 'percentage') => {
-        if (!userId) return;
+        if (!user?.id) return;
         try {
             const userBook = user?.UserBook.find((ub) => ub.Book.key === bookKey);
             if (userBook) {
                 await api.put("/user/book/progress-type", {
-                    userId,
+                    userId: user.id,
                     bookId: userBook.Book.id,
                     progressType
                 });
@@ -210,7 +210,7 @@ export function useBooks(bookName?: string | null, userId?: string) {
         } catch (error) {
             console.error("Erreur lors de la mise à jour du type de progression:", error);
         }
-    }, [userId, user, refreshUser]);
+    }, [user, refreshUser]);
 
     const books = useMemo(() => data?.docs || [], [data]);
 
