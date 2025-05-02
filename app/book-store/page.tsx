@@ -1,9 +1,19 @@
+import React from 'react';
+import type {Metadata} from "next";
 import {auth} from "@/auth";
+import ClientHydration from "@/hydratation/ClientHydratation";
 import BookStore from "@/components/BookStore/BookStore";
 
-export default async function BookStoreWrapper() {
-    const session = await auth();
-    const userId = session?.user?.id || null;
+export const metadata: Metadata = {
+    title: "Capybook Librairie",
+    description: "La librairie de Capybook",
+};
 
-    return <BookStore userId={userId} />;
+export default async function BookShelf() {
+    const session = await auth();
+    return (
+        <ClientHydration userId={session?.user?.id}>
+            <BookStore/>
+        </ClientHydration>
+    );
 }

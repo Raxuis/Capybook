@@ -9,18 +9,14 @@ import {Search} from "lucide-react";
 import {Skeleton} from "@/components/ui/skeleton";
 import {Link} from "next-view-transitions";
 
-interface BookStoreProps {
-    userId: string | null;
-}
-
-const BookStore = ({userId}: BookStoreProps) => {
+const BookStore = () => {
     const [search, setSearch] = useQueryState("search", {defaultValue: ""});
     const debouncedSearch = useDebounce(search, 500);
     const {
         books,
         isError,
         isLoading,
-    } = useBooks(debouncedSearch, userId ?? undefined);
+    } = useBooks(debouncedSearch);
     const [searchFocused, setSearchFocused] = useState<boolean>(false);
 
     return (
@@ -69,7 +65,6 @@ const BookStore = ({userId}: BookStoreProps) => {
                             key={book.key}
                             book={book}
                             debouncedBookName={debouncedSearch || ""}
-                            userId={userId}
                         />
                     ))}
                 </div>

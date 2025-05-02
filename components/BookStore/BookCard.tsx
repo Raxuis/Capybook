@@ -16,7 +16,6 @@ type BookCardProps = {
     book: Book;
     className?: string;
     debouncedBookName: string | null;
-    userId: string | null;
 };
 
 type ClickType = "library" | "wishlist" | "review";
@@ -25,15 +24,15 @@ const BookCard = memo(({
                            book,
                            className,
                            debouncedBookName,
-                           userId,
                        }: BookCardProps) => {
     const {
         toggleLibrary,
         toggleWishlist,
         isInLibrary,
         isInWishlist,
+        isBookFinished,
         isReviewed
-    } = useBooks(debouncedBookName, userId ?? undefined);
+    } = useBooks(debouncedBookName);
 
     const {setBookToReview} = useReviewModalStore();
 
@@ -43,6 +42,8 @@ const BookCard = memo(({
     const bookIsInLibrary = useMemo(() => isInLibrary(book.key), [book.key, isInLibrary]);
     const bookIsInWishlist = useMemo(() => isInWishlist(book.key), [book.key, isInWishlist]);
     const bookIsReviewed = useMemo(() => isReviewed(book.key), [book.key, isReviewed]);
+    const bookIsFinished = useMemo(() => isBookFinished(book.key), [book, isBookFinished]);
+
 
     const formattedAuthors = useMemo(() => {
         return book.author_name ? formatList(book.author_name.slice(0, 1)) : "Auteur inconnu";
@@ -237,7 +238,7 @@ const BookCard = memo(({
 
 
                     {
-                        (bookIsInLibrary && !bookIsReviewed) && (
+                        (bookIsInLibrary && !bookIsReviewed && bookIsFinished) && (
                             <SimplifiedTooltip
                                 tooltipContent={"Ajouter un avis"}
                                 asChild>
