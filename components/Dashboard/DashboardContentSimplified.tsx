@@ -4,7 +4,6 @@ import {useState} from "react";
 import {useUser} from "@/hooks/useUser";
 import {Loader2, AlertCircle} from "lucide-react";
 import BookModal from "@/components/Dashboard/Modals/BookModal";
-import DashboardHeader from "@/components/Dashboard/DashboardHeader";
 import DashboardStats from "@/components/Dashboard/DashboardStats";
 import DashboardTabs from "@/components/Dashboard/DashboardTabs";
 import {fetchMoreBookInfos} from "@/actions/book";
@@ -12,7 +11,7 @@ import {MoreInfoBook, Book as BookType} from "@/types";
 import {DashboardLayout} from "@/components/Layout";
 import ReviewBookModal from "@/components/BookStore/Modals/ReviewBookModal";
 
-export default function DashboardContent() {
+export default function DashboardContentSimplified() {
     const {user, isError, isValidating, isLoading} = useUser();
     const [selectedBook, setSelectedBook] = useState<MoreInfoBook | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -73,8 +72,6 @@ export default function DashboardContent() {
 
     return (
         <DashboardLayout>
-
-            <DashboardHeader/>
 
             <DashboardStats/>
 

@@ -1,18 +1,48 @@
 "use server";
 
 import prisma from "@/utils/prisma";
-import {currentUser} from "@/actions/auth/current-user";
+import { currentUser } from "@/actions/auth/current-user";
 
-export async function getReadingProgress() {
+export async function getAllDashboardStats() {
     const user = await currentUser();
-    if (!user) return [];
+    if (!user) return null;
 
+    const [
+        readingProgress,
+        genreAnalysis,
+        authorAnalysis,
+        goalsComparison,
+        readingDayStats,
+        totalReadStats,
+        readingStreakStats
+    ] = await Promise.all([
+        getReadingProgress(user.id),
+        getGenreAnalysis(user.id),
+        getAuthorAnalysis(user.id),
+        getGoalsComparison(user.id),
+        getReadingDayStats(user.id),
+        getTotalReadStats(user.id),
+        getReadingStreakStats(user.id)
+    ]);
+
+    return {
+        readingProgress,
+        genreAnalysis,
+        authorAnalysis,
+        goalsComparison,
+        readingDayStats,
+        totalReadStats,
+        readingStreakStats
+    };
+}
+
+async function getReadingProgress(userId: string) {
     const last30Days = new Date();
     last30Days.setDate(last30Days.getDate() - 30);
 
     const progress = await prisma.readingProgress.findMany({
         where: {
-            userId: user.id,
+            userId: userId,
             date: {
                 gte: last30Days
             }
@@ -29,13 +59,10 @@ export async function getReadingProgress() {
     }));
 }
 
-export async function getGenreAnalysis() {
-    const user = await currentUser();
-    if (!user) return [];
-
+async function getGenreAnalysis(userId: string) {
     const userBooks = await prisma.userBook.findMany({
         where: {
-            userId: user.id,
+            userId: userId,
             finishedAt: {not: null}
         },
         select: {
@@ -67,13 +94,10 @@ export async function getGenreAnalysis() {
         .sort((a, b) => b.count - a.count);
 }
 
-export async function getAuthorAnalysis() {
-    const user = await currentUser();
-    if (!user) return [];
-
+async function getAuthorAnalysis(userId: string) {
     const userBooks = await prisma.userBook.findMany({
         where: {
-            userId: user.id,
+            userId: userId,
             finishedAt: {not: null}
         },
         include: {
@@ -95,17 +119,14 @@ export async function getAuthorAnalysis() {
         .slice(0, 10);
 }
 
-export async function getGoalsComparison() {
-    const user = await currentUser();
-    if (!user) return null;
-
+async function getGoalsComparison(userId: string) {
     const currentYear = new Date().getFullYear();
     const startOfYear = new Date(currentYear, 0, 1);
     const endOfYear = new Date(currentYear, 11, 31, 23, 59, 59, 999);
 
     const goal = await prisma.readingGoal.findFirst({
         where: {
-            userId: user.id,
+            userId: userId,
             deadline: {
                 gte: startOfYear,
                 lte: endOfYear
@@ -118,10 +139,10 @@ export async function getGoalsComparison() {
 
     const completedBooksCount = await prisma.userBook.count({
         where: {
-            userId: user.id,
+            userId: userId,
             finishedAt: {
                 gte: startOfYear,
-                lte: new Date() // aujourd'hui
+                lte: new Date()
             }
         }
     });
@@ -135,16 +156,13 @@ export async function getGoalsComparison() {
     };
 }
 
-export async function getReadingDayStats() {
-    const user = await currentUser();
-    if (!user) return null;
-
+async function getReadingDayStats(userId: string) {
     const last30Days = new Date();
     last30Days.setDate(last30Days.getDate() - 30);
 
     const readingDays = await prisma.readingDay.findMany({
         where: {
-            userId: user.id,
+            userId: userId,
             date: {
                 gte: last30Days
             }
@@ -161,21 +179,18 @@ export async function getReadingDayStats() {
     }));
 }
 
-export async function getTotalReadStats() {
-    const user = await currentUser();
-    if (!user) return null;
-
+async function getTotalReadStats(userId: string) {
     const [totalBooks, totalPages, totalMinutes] = await Promise.all([
         prisma.userBook.count({
             where: {
-                userId: user.id,
+                userId: userId,
                 finishedAt: {not: null}
             }
         }),
 
         prisma.readingProgress.aggregate({
             where: {
-                userId: user.id
+                userId: userId
             },
             _sum: {
                 pagesRead: true
@@ -184,7 +199,7 @@ export async function getTotalReadStats() {
 
         prisma.readingDay.aggregate({
             where: {
-                userId: user.id
+                userId: userId
             },
             _sum: {
                 minutesRead: true
@@ -200,14 +215,10 @@ export async function getTotalReadStats() {
     };
 }
 
-export async function getReadingStreakStats() {
-    const user = await currentUser();
-    if (!user) return null;
-
+async function getReadingStreakStats(userId: string) {
     const readingDays = await prisma.readingDay.findMany({
         where: {
-            userId: user.id,
-            // Filtrer les jours où l'utilisateur a réellement lu (minutes > 0 ou pages > 0)
+            userId: userId,
             OR: [
                 {minutesRead: {gt: 0}},
                 {pagesRead: {gt: 0}}
@@ -256,10 +267,8 @@ export async function getReadingStreakStats() {
                 checkDate.setDate(checkDate.getDate() - 1);
                 index++;
             } else if (readingDate.getTime() < checkDate.getTime()) {
-                // Si nous avons manqué des jours, arrêtez de compter
                 break;
             } else {
-                // Passez au prochain jour de lecture
                 index++;
             }
         }
@@ -336,3 +345,14 @@ export async function getReadingStreakStats() {
         longestStreak
     };
 }
+
+// Export des fonctions individuelles pour la compatibilité
+export {
+    getReadingProgress,
+    getGenreAnalysis,
+    getAuthorAnalysis,
+    getGoalsComparison,
+    getReadingDayStats,
+    getTotalReadStats,
+    getReadingStreakStats
+};

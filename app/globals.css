@@ -28,9 +28,9 @@ body {
         --card-foreground: 24.00 19.48% 15.10%;
         --popover: 40.00 60.00% 98.04%;
         --popover-foreground: 24.00 19.48% 15.10%;
-        --primary: 23.90 49.17% 47.06%;
+        --primary: 23.90 49.17% 47.06%; /*#b36c3d*/
         --primary-foreground: 28.00 100% 97.06%;
-        --secondary: 174 34.78% 45.10%;
+        --secondary: 174 34.78% 45.10%; /*##4b9b93*/
         --secondary-foreground: 28.00 100% 97.06%;
         --muted: 30.97 60.78% 90%;
         --muted-foreground: 24 9.80% 40%;
