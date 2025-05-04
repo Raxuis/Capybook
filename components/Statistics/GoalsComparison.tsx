@@ -3,5 +3,6 @@ import { GoalsComparison as GoalsComparisonClient } from "./GoalsComparison.clie
 
 export async function GoalsComparison() {
   const data = await getGoalsComparison();
+    console.log("GoalsComparison data", data);
   return <GoalsComparisonClient data={data} />;
 }

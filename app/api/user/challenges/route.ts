@@ -4,6 +4,7 @@ import prisma from "@/utils/prisma";
 import {CreateChallengeSchema, BaseUpdateChallengeSchema} from "@/utils/zod";
 import z from "zod";
 import {checkAndAssignBadges} from "@/utils/badges";
+import {updateReadingStats} from "@/utils/readingStats";
 import {Badge} from "@prisma/client";
 
 // A union of challenge types + user id
@@ -92,6 +93,9 @@ export const PUT = createZodRoute().body(PutBody).handler(async (_, context) => 
     const wasCompleted = challenge.completedAt !== null;
     const willBeCompleted = progress >= target;
 
+    // Calculer le progrès ajouté lors de cette mise à jour
+    const progressAdded = progress - challenge.progress;
+
     const updatedChallenge = await prisma.readingGoal.update({
         where: {id: challengeId},
         data: {
@@ -107,13 +111,16 @@ export const PUT = createZodRoute().body(PutBody).handler(async (_, context) => 
         return NextResponse.json({error: 'Error while updating challenge'}, {status: 500});
     }
 
+    // Mise à jour des statistiques de lecture si le progrès a augmenté
+    if (progressAdded > 0) {
+        await updateReadingStats(userId, type, progressAdded);
+    }
+
     // Si le challenge vient d'être complété, vérifier les badges
     let newBadges: Badge[] = [];
     if (willBeCompleted && !wasCompleted) {
         newBadges = await checkAndAssignBadges(userId);
     }
-
-    console.log("New badges:", newBadges);
 
     return NextResponse.json({
         challenge: updatedChallenge,
