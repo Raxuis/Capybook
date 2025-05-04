@@ -23,7 +23,7 @@ export const dockRoutes: DockRoute[] = [
     },
     {
         index: 2,
-        imageSrc: "/book-shelf.png",
+        imageSrc: "/dock/book-shelf.png",
         tooltip: "Votre bibliothèque",
         link: "/book-shelf",
         needsAuth: true,
