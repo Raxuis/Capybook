@@ -17,7 +17,6 @@ import React, {useMemo, useState} from "react";
 import {Skeleton} from "@/components/ui/skeleton";
 import {motion} from "motion/react";
 import {MoreInfoBook} from "@/types";
-import {useUser} from "@/hooks/useUser";
 
 interface BookModalProps {
     book: MoreInfoBook | null;
@@ -32,8 +31,6 @@ const BookModal = ({
                        onClose,
                        isLoading = false,
                    }: BookModalProps) => {
-
-    const {user} = useUser();
     const {
         isBookFinished,
         isInLibrary,
@@ -42,7 +39,7 @@ const BookModal = ({
         toggleLibrary,
         toggleWishlist,
         toggleCurrentBook
-    } = useBooks(undefined, user?.id);
+    } = useBooks(undefined);
 
 
     const bookStatus = useMemo(() => {

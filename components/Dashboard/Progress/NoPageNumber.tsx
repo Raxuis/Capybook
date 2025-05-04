@@ -8,9 +8,9 @@ import {useBooks} from "@/hooks/useBooks";
 import {useState} from "react";
 import {cn} from "@/lib/utils";
 
-const NoPageNumber = ({userId, bookId, bookKey}: { userId: string, bookId: string, bookKey: string }) => {
+const NoPageNumber = ({bookId, bookKey}: {bookId: string, bookKey: string }) => {
     const {openModal} = usePageNumberModal();
-    const {updateBookProgressType} = useBooks(null, userId);
+    const {updateBookProgressType} = useBooks(null);
     const [isSelectingUpdate, setIsSelectingUpdate] = useState(false);
 
     const handleUpdate = async () => {

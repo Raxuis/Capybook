@@ -55,7 +55,6 @@ const DashboardTabs = ({openBookModal}: Props) => {
                                 <LibraryCard
                                     key={userBook.id}
                                     userBook={userBook}
-                                    userId={user.id}
                                     openBookModal={openBookModal}
                                 />
                             ))}
@@ -112,7 +111,7 @@ const DashboardTabs = ({openBookModal}: Props) => {
                     )}
                 </TabsContent>
             </Tabs>
-            <PageNumberModal userId={user.id}/>
+            <PageNumberModal/>
         </div>
     );
 };

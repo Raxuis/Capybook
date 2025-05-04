@@ -18,9 +18,9 @@ import {Form, FormControl, FormDescription, FormField, FormItem, FormLabel, Form
 import {useBooks} from "@/hooks/useBooks";
 import {PageNumberSchema} from "@/utils/zod";
 
-export function PageNumberModal({userId}: { userId: string }) {
+export function PageNumberModal() {
     const {showPageNumberModal, setShowPageNumberModal, closeModal, bookId, bookKey} = usePageNumberModal();
-    const {updateBookPageCount} = useBooks(null, userId);
+    const {updateBookPageCount} = useBooks(null);
 
     const form = useForm<z.infer<typeof PageNumberSchema>>({
         resolver: zodResolver(PageNumberSchema),
