@@ -46,7 +46,7 @@ export const dockRoutes: DockRoute[] = [
     },
     {
         index: 5,
-        imageSrc: "/book-store.png",
+        imageSrc: "/dock/book-store.png",
         tooltip: "La librairie",
         link: "/book-store",
         withoutBackground: true,
