@@ -37,7 +37,7 @@ export const dockRoutes: DockRoute[] = [
     },
     {
         index: 4,
-        imageSrc: "/dock/img.png",
+        imageSrc: "/dock/progress.png",
         tooltip: "Challenges",
         link: "/challenges",
         needsAuth: true,
@@ -47,7 +47,6 @@ export const dockRoutes: DockRoute[] = [
         imageSrc: "/dock/book-store.png",
         tooltip: "La librairie",
         link: "/book-store",
-        withoutBackground: true,
         needsAuth: true,
     }
 ]
