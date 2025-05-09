@@ -11,6 +11,7 @@ const UserBookSchema = z.object({
         author_name: z.array(z.string()).optional(),
         cover_i: z.number().optional(),
         number_of_pages: z.number().nullable().optional(),
+        genres: z.array(z.string()).optional(),
     }),
 });
 
@@ -39,10 +40,27 @@ export const POST = createZodRoute()
                         key: book.key,
                         title: book.title,
                         authors: book.author_name,
-                        cover: "https://covers.openlibrary.org/b/id/" + book.cover_i + "-M.jpg",
+                        cover: book.cover_i ? "https://covers.openlibrary.org/b/id/" + book.cover_i + "-M.jpg" : undefined,
                         numberOfPages: book.number_of_pages ?? null,
                     }
                 });
+
+                if (book.genres && book.genres.length > 0) {
+                    for (const genreName of book.genres) {
+                        const genre = await prisma.genre.upsert({
+                            where: { name: genreName },
+                            update: {},
+                            create: { name: genreName }
+                        });
+
+                        await prisma.bookGenre.create({
+                            data: {
+                                bookId: newBook.id,
+                                genreId: genre.id
+                            }
+                        });
+                    }
+                }
             }
 
             const existingUserBook = await prisma.userBook.findFirst({

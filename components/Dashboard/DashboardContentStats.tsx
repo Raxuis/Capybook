@@ -11,6 +11,8 @@ export default async function DashboardContentStats() {
         return <div>No data available</div>;
     }
 
+    console.log("Dashboard data:", data);
+
     return (
         <div className="grid grid-cols-1 gap-4">
             <ProgressCharts data={data.readingProgress}/>

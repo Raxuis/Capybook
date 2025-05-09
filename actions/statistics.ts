@@ -1,7 +1,7 @@
 "use server";
 
 import prisma from "@/utils/prisma";
-import { currentUser } from "@/actions/auth/current-user";
+import {currentUser} from "@/actions/auth/current-user";
 
 export async function getAllDashboardStats() {
     const user = await currentUser();
@@ -91,7 +91,8 @@ async function getGenreAnalysis(userId: string) {
 
     return Object.entries(genreCount)
         .map(([name, count]) => ({name, count}))
-        .sort((a, b) => b.count - a.count);
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 10); // 👈 limiter à 10 genres pour l'affichage
 }
 
 async function getAuthorAnalysis(userId: string) {
