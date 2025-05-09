@@ -24,7 +24,6 @@ export function useChallenges() {
             challengeId,
             ...challengeData
         });
-        console.log("Challenge updated:", res);
         await refreshUser();
         return res;
     }, [user, refreshUser]);

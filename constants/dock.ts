@@ -30,26 +30,23 @@ export const dockRoutes: DockRoute[] = [
     },
     {
         index: 3,
-        imageSrc: "/reviews.png",
+        imageSrc: "/dock/reviews.png",
         tooltip: "Avis",
-        withoutBackground: true,
         link: "/reviews",
         needsAuth: true,
     },
     {
         index: 4,
-        imageSrc: "/challenges.png",
+        imageSrc: "/dock/progress.png",
         tooltip: "Challenges",
-        withoutBackground: true,
         link: "/challenges",
         needsAuth: true,
     },
     {
         index: 5,
-        imageSrc: "/book-store.png",
+        imageSrc: "/dock/book-store.png",
         tooltip: "La librairie",
         link: "/book-store",
-        withoutBackground: true,
         needsAuth: true,
     }
 ]

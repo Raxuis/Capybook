@@ -122,11 +122,11 @@ const BookModal = ({
             }}>
             <Dialog open={isOpen || isAnimating} onOpenChange={(open) => !open && handleClose()}>
                 <DialogContent
-                    className="sm:max-w-md md:max-w-lg lg:max-w-xl"
+                    className="sm:max-w-md md:max-w-lg lg:max-w-xl overflow-y-auto max-h-[90vh] w-full"
                 >
-                    <DialogHeader>
+                    <DialogHeader className="space-y-2">
                         <DialogTitle
-                            className="text-xl font-bold pr-8">{book?.title || "Détails du livre"}</DialogTitle>
+                            className="text-xl font-bold break-words">{book?.title || "Détails du livre"}</DialogTitle>
                         {
                             isLoading ? (
                                 <>
@@ -136,8 +136,9 @@ const BookModal = ({
                                     </DialogDescription>
                                 </>
                             ) : book?.description ? (
-                                <DialogDescription>
-                                    <span className="text-sm text-gray-500">{book.description}</span>
+                                <DialogDescription
+                                    className="text-sm text-gray-500 break-words overflow-hidden overflow-wrap-anywhere w-3/4">
+                                    {book.description}
                                 </DialogDescription>
                             ) : (
                                 <DialogDescription>
@@ -172,7 +173,7 @@ const BookModal = ({
                             {book?.authors && book.authors.length > 0 && (
                                 <div>
                                     <h3 className="text-sm font-medium text-gray-500 mb-1">Auteur(s)</h3>
-                                    <p>{formatList(book.authors)}</p>
+                                    <p className="break-words flex-wrap">{formatList(book.authors)}</p>
                                 </div>
                             )}
 
@@ -199,9 +200,10 @@ const BookModal = ({
                                             <Globe className="h-4 w-4 mr-1"/>
                                             Genres(s)
                                         </h3>
-                                        <div className="flex flex-wrap gap-1 mt-1">
+                                        <div className="flex flex-wrap gap-1 mt-1 w-full">
                                             {book.subjects.slice(0, 5).map((subject, idx) => (
-                                                <Badge key={idx} variant="secondary" className="text-xs max-w-24">
+                                                <Badge key={idx} variant="secondary"
+                                                       className="text-xs max-w-24 truncate">
                                                     {subject.length > 10 ? subject.substring(0, 10) + '...' : subject}
                                                 </Badge>
                                             ))}
@@ -367,8 +369,7 @@ const BookModal = ({
                 </DialogContent>
             </Dialog>
         </motion.div>
-    )
-        ;
+    );
 };
 
 export default BookModal;

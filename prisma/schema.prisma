@@ -34,6 +34,8 @@ model User {
   UserBookWishlist UserBookWishlist[]
   ReadingGoal      ReadingGoal[]
   UserBadge        UserBadge[]
+  ReadingProgress  ReadingProgress[]
+  ReadingDay       ReadingDay[]
 }
 
 model Account {
@@ -115,6 +117,7 @@ model Book {
   UserBook         UserBook[]
   BookReview       BookReview[]
   UserBookWishlist UserBookWishlist[]
+  BookGenre        BookGenre[]
 }
 
 model BookReview {
@@ -183,4 +186,47 @@ enum BadgeCategory {
   READING_STREAK // Jours consécutifs de lecture
   GENRE_EXPLORER // Diversité des genres lus
   SPECIAL // Badges spéciaux ou événementiels
+}
+
+model ReadingProgress {
+  id             String     @id @default(cuid())
+  userId         String
+  readingDayId   String     @unique // Assure qu’un seul progrès par ReadingDay
+  date           DateTime
+  pagesRead      Int
+  booksCompleted Int
+  user           User       @relation(fields: [userId], references: [id])
+  readingDay     ReadingDay @relation(fields: [readingDayId], references: [id])
+}
+
+model ReadingDay {
+  id              String           @id @default(cuid())
+  userId          String
+  date            DateTime         @default(now()) @db.Date
+  minutesRead     Int              @default(0)
+  pagesRead       Int              @default(0)
+  user            User             @relation(fields: [userId], references: [id])
+  readingProgress ReadingProgress?
+
+  @@unique([userId, date])
+}
+
+model Genre {
+  id        String      @id @default(cuid())
+  name      String      @unique
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  books     BookGenre[]
+}
+
+model BookGenre {
+  id        String   @id @default(cuid())
+  bookId    String
+  genreId   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  book      Book     @relation(fields: [bookId], references: [id])
+  genre     Genre    @relation(fields: [genreId], references: [id])
+
+  @@unique([bookId, genreId])
 }

@@ -263,7 +263,11 @@ const UpdateChallengeForm = ({onSubmit, initialData, onCancel}: Props) => {
 
                                 <div className="mt-4 text-center">
                                     <div className="text-sm font-medium">
-                                        {watchProgress} / {watchTarget} livres lus
+                                        {watchProgress} / {watchTarget} livre {
+                                            watchProgress > 1 ? 's' : ''
+                                    } lu {
+                                        watchProgress > 1 ? 's' : ''
+                                    }
                                     </div>
                                     <div className="text-xs text-slate-500">
                                         {
