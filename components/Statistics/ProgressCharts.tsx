@@ -2,7 +2,15 @@
 
 import React from "react";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
-import {Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis} from "recharts";
+import {
+    Line,
+    LineChart,
+    ResponsiveContainer,
+    Tooltip,
+    XAxis,
+    YAxis,
+    Legend
+} from "recharts";
 
 interface ProgressChartsProps {
     data: Array<{
@@ -13,6 +21,7 @@ interface ProgressChartsProps {
 }
 
 export const ProgressCharts = ({data}: ProgressChartsProps) => {
+
     const formatXAxis = (date: string) => {
         return new Date(date).toLocaleDateString('fr-FR', {day: 'numeric', month: 'short'});
     };
@@ -39,9 +48,14 @@ export const ProgressCharts = ({data}: ProgressChartsProps) => {
                                     <YAxis yAxisId="left"/>
                                     <YAxis yAxisId="right" orientation="right"/>
                                     <Tooltip
-                                        formatter={(value: number, name: string) => [value, name === "pages" ? "Pages lues" : "Livres terminés"]}
+                                        formatter={(value, name) => {
+                                            if (name === "pages") return [value, "Pages lues"];
+                                            if (name === "books") return [value, "Livres terminés"];
+                                            return [value, name];
+                                        }}
                                         labelFormatter={(label) => formatXAxis(label)}
                                     />
+                                    <Legend/>
                                     <Line
                                         yAxisId="left"
                                         type="monotone"
