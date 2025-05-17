@@ -1,36 +1,31 @@
 "use client";
 
-import {Menu, X} from "lucide-react";
 import {AnimatePresence, motion} from "motion/react";
 import {useState, useEffect} from "react";
-import {navigation} from "@/constants";
 import {cn} from "@/lib/utils";
 import {Link} from "next-view-transitions";
-import {usePathname, useRouter} from "next/navigation";
+import {usePathname} from "next/navigation";
+import { useRouter } from 'nextjs-toploader/app';
 import {User} from "@prisma/client";
 import {signOut, useSession} from "next-auth/react";
 import Image from "next/image";
+import {navigation} from "@/constants";
+import {Menu, X} from "lucide-react";
 
 interface ClientHeaderProps {
     user: User | null;
+    adminHeader?: boolean;
 }
 
-export default function ClientHeader({user: initialUser}: ClientHeaderProps) {
+export default function ClientHeader({user: initialUser, adminHeader = false}: ClientHeaderProps) {
     const {data: session} = useSession();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
-    const {navigation: headerElements} = navigation;
     const pathname = usePathname();
     const router = useRouter();
 
-    const currentUsername = session?.user?.username || initialUser?.username;
-
-    const handleNavigation = (link: string) => {
-        setIsMenuOpen(false);
-        setTimeout(() => {
-            router.push(link);
-        }, 100);
-    };
+    const currentUser = session?.user || initialUser;
+    const currentUsername = currentUser?.username;
 
     useEffect(() => {
         const handleScroll = () => {
@@ -42,10 +37,61 @@ export default function ClientHeader({user: initialUser}: ClientHeaderProps) {
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
-    const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
-
     const handleSignOut = async () => {
         await signOut({redirectTo: "/login"});
+    };
+
+    if (adminHeader) {
+        return (
+            <motion.header
+                transition={{duration: 0.5, ease: "easeOut"}}
+                className={cn(
+                    "sticky top-0 z-50 transition-all duration-300",
+                    scrolled
+                        ? "bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b shadow-sm py-4"
+                        : "bg-transparent py-4"
+                )}
+            >
+                <div className="container mx-auto px-4 flex justify-between items-center">
+                    <motion.div
+                        whileHover={{scale: 1.05}}
+                        transition={{type: "spring", stiffness: 300}}
+                        className="flex items-center gap-2"
+                    >
+                        <Link href="/" className="flex items-center gap-2">
+                            <Image
+                                src="/icon.png"
+                                className="h-10 w-10 text-primary"
+                                width="42"
+                                height="42"
+                                alt="Capybook Logo"
+                            />
+                            <span className="text-xl font-bold">Capybook</span>
+                        </Link>
+                    </motion.div>
+
+                    <div className="flex items-center gap-4">
+                        <motion.button
+                            onClick={handleSignOut}
+                            className="text-sm font-medium hover:text-primary transition-colors"
+                            whileHover={{scale: 1.05}}
+                        >
+                            Déconnexion
+                        </motion.button>
+                    </div>
+                </div>
+            </motion.header>
+        );
+    }
+
+    const {navigation: headerElements} = navigation;
+    const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+
+    const handleNavigation = (link: string) => {
+        setIsMenuOpen(false);
+        setTimeout(() => {
+            router.push(link);
+        }, 100);
     };
 
     const renderNavButtons = () => {
@@ -71,16 +117,6 @@ export default function ClientHeader({user: initialUser}: ClientHeaderProps) {
                 {currentUsername ? (
                     <>
                         <motion.button
-                            onClick={handleSignOut}
-                            className="text-sm font-medium hover:text-primary transition-colors"
-                            whileHover={{scale: 1.05}}
-                            initial={{opacity: 0, x: -20}}
-                            animate={{opacity: 1, x: 0}}
-                            transition={{...transitionBase, delay: links.length * 0.1}}
-                        >
-                            Déconnexion
-                        </motion.button>
-                        <motion.button
                             onClick={() => {
                                 setIsMenuOpen(false);
                                 router.push(`/profile/@${currentUsername}`);
@@ -92,6 +128,33 @@ export default function ClientHeader({user: initialUser}: ClientHeaderProps) {
                             transition={{...transitionBase, delay: links.length * 0.1}}
                         >
                             Mon profil
+                        </motion.button>
+                        {
+                            (currentUser?.role && currentUser?.role === "ADMIN") && (
+                                <motion.button
+                                    onClick={() => {
+                                        setIsMenuOpen(false);
+                                        router.push("/admin");
+                                    }}
+                                    className="text-sm font-medium hover:text-primary transition-colors text-center"
+                                    whileHover={{scale: 1.05}}
+                                    initial={{opacity: 0, x: -20}}
+                                    animate={{opacity: 1, x: 0}}
+                                    transition={{...transitionBase, delay: links.length * 0.1}}
+                                >
+                                    Admin
+                                </motion.button>
+                            )
+                        }
+                        <motion.button
+                            onClick={handleSignOut}
+                            className="text-sm font-medium hover:text-primary transition-colors"
+                            whileHover={{scale: 1.05}}
+                            initial={{opacity: 0, x: -20}}
+                            animate={{opacity: 1, x: 0}}
+                            transition={{...transitionBase, delay: links.length * 0.1}}
+                        >
+                            Déconnexion
                         </motion.button>
                     </>
                 ) : (
