@@ -112,8 +112,6 @@ export default function ClientHeader({user: initialUser}: ClientHeaderProps) {
 
     return (
         <motion.header
-            initial={{y: -100}}
-            animate={{y: 0}}
             transition={{duration: 0.5, ease: "easeOut"}}
             className={cn(
                 "sticky top-0 z-50 transition-all duration-300",

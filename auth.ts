@@ -27,8 +27,6 @@ export const {handlers, signIn, auth} = NextAuth({
                         select: {id: true, email: true, name: true, username: true, password: true, role: true}
                     });
 
-                    console.log("User found:", user);
-
                     if (!user || !user.password) throw new Error("Invalid credentials");
 
                     const passwordMatch = await bcrypt.compare(password, user.password);
@@ -68,7 +66,6 @@ export const {handlers, signIn, auth} = NextAuth({
             }
 
             if (user) {
-                console.log("User in JWT callback:", user);
                 token.id = user.id as string;
                 token.email = user.email;
                 token.username = user.username ?? "No name";

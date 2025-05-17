@@ -31,7 +31,6 @@ export default async function middleware(req: NextRequest) {
 
     // 6. Redirect to / if the user is not an admin
     if (isAdminRoute) {
-        console.log('Admin route', user)
         if (!user) {
             return NextResponse.redirect(new URL('/login', req.nextUrl))
         }
