@@ -199,7 +199,7 @@ export function useBooks(bookName?: string | null, page: number = 1) {
                 await refreshUser();
                 return response;
             } else {
-                console.log("No user book found");
+                console.warn("No user book found");
             }
         } catch (error) {
             console.error("Erreur lors de la mise à jour de la progression:", error);
@@ -231,7 +231,7 @@ export function useBooks(bookName?: string | null, page: number = 1) {
                 });
                 await refreshUser();
             } else {
-                console.log("No user book found");
+                console.warn("No user book found");
             }
         } catch (error) {
             console.error("Erreur lors de la mise à jour du type de progression:", error);

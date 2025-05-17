@@ -29,7 +29,6 @@ export const BadgeQueueProvider = ({children}: { children: React.ReactNode }) =>
     const [currentBadge, setCurrentBadge] = useState<Badge | null>(null);
 
     const addBadges = (badges: Badge[]) => {
-        console.log("Adding badges to queue:", badges);
         setQueue(prev => [...prev, ...badges]);
     };
 

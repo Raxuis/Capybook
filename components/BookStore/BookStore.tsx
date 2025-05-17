@@ -22,7 +22,6 @@ const BookStore = () => {
     currentPage
   } = useBooks(debouncedSearch, parseInt(page));
 
-  console.log("books", books);
   const [searchFocused, setSearchFocused] = useState<boolean>(false);
 
   const handlePageChange = (newPage: number) => {

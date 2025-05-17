@@ -11,7 +11,6 @@ export function useChallenges() {
         if (!user?.id) return;
 
         const res = await api.post("/user/challenges", {userId: user.id, ...challengeData});
-        console.log("Challenge created:", res);
         await refreshUser();
         return res;
     }, [user, refreshUser]);
