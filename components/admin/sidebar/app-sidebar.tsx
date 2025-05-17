@@ -1,5 +1,3 @@
-import {Calendar, Home, Inbox, Search, Settings, Users} from "lucide-react"
-
 import {
     Sidebar,
     SidebarContent,
@@ -12,6 +10,7 @@ import {
 } from "@/components/ui/sidebar"
 
 import {tabs} from "@/components/admin/sidebar/tabs";
+import {Link} from "next-view-transitions";
 
 export function AppSidebar() {
     return (
@@ -23,11 +22,13 @@ export function AppSidebar() {
                         <SidebarMenu>
                             {tabs.map((item) => (
                                 <SidebarMenuItem key={item.title}>
-                                    <SidebarMenuButton asChild>
-                                        <a href={item.url}>
+                                    <SidebarMenuButton className="hover:bg-primary/30" asChild>
+                                        <Link href={item.url}>
                                             <item.icon/>
-                                            <span>{item.title}</span>
-                                        </a>
+                                            <span>
+                                                {item.title}
+                                            </span>
+                                        </Link>
                                     </SidebarMenuButton>
                                 </SidebarMenuItem>
                             ))}
