@@ -31,3 +31,30 @@ export async function getUniqueUser(id: string) {
     })
 }
 
+
+export async function getUsers() {
+    return await prisma.user.findMany({
+        select: {
+            id: true,
+            email: true,
+            username: true,
+            name: true,
+            image: true,
+            UserBook: {
+                include: {
+                    Book: true
+                }
+            },
+            UserBookWishlist: {
+                include: {
+                    Book: true
+                }
+            },
+            BookReview: {
+                include: {
+                    Book: true
+                }
+            }
+        }
+    })
+}

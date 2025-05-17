@@ -23,6 +23,7 @@ model User {
   emailVerified DateTime?
   image         String?
   favoriteColor String    @default("#3b82f6")
+  role          Role      @default(USER) // USER, ADMIN, MODERATOR
   accounts      Account[]
   sessions      Session[]
 
@@ -169,6 +170,12 @@ model UserBadge {
   Badge    Badge    @relation(fields: [badgeId], references: [id])
 
   @@unique([userId, badgeId]) // Un utilisateur ne peut avoir un type de badge qu'une seule fois
+}
+
+enum Role {
+  USER
+  ADMIN
+  MODERATOR
 }
 
 enum GoalType {
