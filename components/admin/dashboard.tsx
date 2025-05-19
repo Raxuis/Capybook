@@ -25,7 +25,7 @@ import {Bar, BarChart as RechartsBarChart, XAxis, YAxis, Tooltip, ResponsiveCont
 import {Separator} from "@/components/ui/separator";
 import {useToast} from "@/hooks/use-toast";
 import {AdminDashboardStats, StatsPeriod} from "@/types/admin";
-import {getAll} from "@/actions/admin";
+import {getAll} from "@/actions/admin/stats";
 
 export default function AdminDashboard({initialStats}: { initialStats: AdminDashboardStats }) {
     const {toast} = useToast();
@@ -190,7 +190,16 @@ export default function AdminDashboard({initialStats}: { initialStats: AdminDash
                             >
                                 <XAxis dataKey="name"/>
                                 <YAxis/>
-                                <Tooltip formatter={(value) => [`${value}`, ""]}/>
+                                <Tooltip
+                                    formatter={(value, name) => {
+                                        const labels = {
+                                            users: "Utilisateurs",
+                                            books: "Livres",
+                                            reviews: "Critiques"
+                                        };
+                                        return [value, labels[name as keyof typeof labels] || name];
+                                    }}
+                                />
                                 <Bar dataKey="users" name="Utilisateurs" fill="hsl(var(--primary))"/>
                                 <Bar dataKey="books" name="Livres" fill="hsl(var(--secondary))"/>
                                 <Bar dataKey="reviews" name="Critiques" fill="hsl(var(--accent))"/>
@@ -286,7 +295,14 @@ export default function AdminDashboard({initialStats}: { initialStats: AdminDash
                             >
                                 <XAxis dataKey="name"/>
                                 <YAxis/>
-                                <Tooltip formatter={(value) => [`${value} pages`, ""]}/>
+                                <Tooltip
+                                    formatter={(value, name) => {
+                                        return [
+                                            `${value} pages`,
+                                            name === "pages" ? "Pages lues" : name
+                                        ];
+                                    }}
+                                />
                                 <Bar dataKey="pages" name="Pages" fill="hsl(var(--primary))"/>
                             </RechartsBarChart>
                         </ResponsiveContainer>

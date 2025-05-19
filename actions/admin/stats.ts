@@ -21,7 +21,7 @@ import {
     StatsPeriod
 } from "@/types/admin";
 import {ReadingDay} from "@prisma/client";
-import {currentUser} from "./auth/current-user";
+import {currentUser} from "../auth/current-user";
 import prisma from "@/utils/prisma";
 
 /**
@@ -237,6 +237,7 @@ async function getReadingGoals() {
 
 /**
  * Get all badges with their users
+ * Uncomment if needed
  */
 // async function getBadges() {
 //     return await prisma.badge.findMany({
@@ -261,7 +262,7 @@ async function getReadingGoals() {
  * Get reading activity for a period
  */
 async function getReadingActivity(startDate: Date, endDate: Date) {
-    return await prisma.readingDay.findMany({
+    return prisma.readingDay.findMany({
         where: {
             date: {
                 gte: startDate,
@@ -482,51 +483,37 @@ function groupDataByInterval(data: MonthlyGrowthItem[], interval: number): Month
  */
 async function getTopGenresInPeriod(startDate: Date, endDate: Date): Promise<GenreStats[]> {
     try {
-        const booksInPeriod = await prisma.book.findMany({
-            where: {
-                createdAt: {
-                    gte: startDate,
-                    lte: endDate
-                }
-            },
-            select: {
-                id: true
-            }
-        });
-
-        const bookIds = booksInPeriod.map(book => book.id);
-
-        if (bookIds.length === 0) {
-            return [];
-        }
-
         const genreCounts = await prisma.bookGenre.groupBy({
             by: ['genreId'],
             where: {
-                bookId: {
-                    in: bookIds
-                }
+                book: {
+                    createdAt: {
+                        gte: startDate,
+                        lte: endDate,
+                    },
+                },
             },
             _count: {
-                bookId: true
-            }
+                bookId: true,
+            },
+            orderBy: {
+                _count: {
+                    bookId: 'desc',
+                },
+            },
+            take: 5
         });
 
-        const genreDetails = await prisma.genre.findMany({
+        const genres = await prisma.genre.findMany({
             where: {
-                id: {
-                    in: genreCounts.map(g => g.genreId)
-                }
-            }
+                id: { in: genreCounts.map(g => g.genreId) },
+            },
         });
 
-        return genreCounts
-            .map(g => ({
-                name: genreDetails.find(d => d.id === g.genreId)?.name || 'Unknown',
-                count: g._count.bookId
-            }))
-            .sort((a, b) => b.count - a.count)
-            .slice(0, 5);
+        return genreCounts.map(g => ({
+            name: genres.find(gen => gen.id === g.genreId)?.name || 'Unknown',
+            count: g._count.bookId,
+        }));
     } catch (error) {
         console.error("Error fetching top genres for period:", error);
         return [];

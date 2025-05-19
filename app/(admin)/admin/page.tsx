@@ -1,6 +1,6 @@
 import AdminDashboard from "@/components/admin/dashboard";
 import {redirect} from "next/navigation";
-import {getAll} from "@/actions/admin";
+import {getAll} from "@/actions/admin/stats";
 import {currentUser} from "@/actions/auth/current-user";
 
 export default async function AdminDashboardPage() {
