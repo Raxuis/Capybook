@@ -1,4 +1,4 @@
-import {User, Book, BookReview, Genre, ReadingGoal, Badge, ReadingDay} from "@prisma/client";
+import {User, Book, BookReview, Genre} from "@prisma/client";
 
 export type StatsPeriod = "week" | "month" | "year";
 
@@ -14,6 +14,9 @@ export interface StatsOverview {
     badgesAwarded: number;
     totalReadingDays: number;
     avgPagesPerDay: number;
+    goalCompletionRate: number;
+    avgMinutesPerDay: number;
+    period: StatsPeriod;
 }
 
 export interface MonthlyGrowthItem {

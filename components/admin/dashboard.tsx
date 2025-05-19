@@ -41,7 +41,6 @@ export default function AdminDashboard({initialStats}: { initialStats: AdminDash
             setIsLoading(true);
             setPeriodFilter(newPeriod);
 
-            // Appeler le server action
             const newStats = await getAll(newPeriod);
 
             if (newStats) {
@@ -266,14 +265,14 @@ export default function AdminDashboard({initialStats}: { initialStats: AdminDash
                                 <div className="flex items-center justify-between">
                                     <span className="text-sm font-medium">Taux de complétion</span>
                                     <span className="text-sm font-medium text-primary">
-                    {Math.round((stats.overview.completedGoals / stats.overview.totalReadingGoals) * 100)}%
+                    {stats.overview.goalCompletionRate}%
                   </span>
                                 </div>
                                 <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
                                     <div
                                         className="h-full bg-primary"
                                         style={{
-                                            width: `${(stats.overview.completedGoals / stats.overview.totalReadingGoals) * 100}%`,
+                                            width: `${stats.overview.goalCompletionRate}%`,
                                         }}
                                     />
                                 </div>
@@ -345,7 +344,7 @@ export default function AdminDashboard({initialStats}: { initialStats: AdminDash
                                         <span className="text-sm font-medium">Minutes/jour</span>
                                     </div>
                                     <span className="text-sm font-medium">
-                    {Math.round(stats.readingActivity.reduce((acc, day) => acc + day.minutes, 0) / 7 / 60)} heures
+                    {stats.overview.avgMinutesPerDay ? Math.round(stats.overview.avgMinutesPerDay / 60) : 0} heures
                   </span>
                                 </div>
                                 <Separator/>

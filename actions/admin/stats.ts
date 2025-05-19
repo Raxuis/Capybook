@@ -67,7 +67,6 @@ export async function getAll(period: StatsPeriod = "month"): Promise<AdminDashbo
         // Get date ranges for the selected period
         const {startDate, endDate} = getPeriodDateRange(period);
 
-        // Fetch data in parallel for better performance
         const [
             users,
             books,
@@ -83,7 +82,8 @@ export async function getAll(period: StatsPeriod = "month"): Promise<AdminDashbo
             monthlyGrowthData,
             topGenres,
             readingDays,
-            avgPagesPerDay
+            avgPagesPerDay,
+            avgMinutesPerDay
         ] = await Promise.all([
             getUsers(),
             getBooks(),
@@ -94,15 +94,22 @@ export async function getAll(period: StatsPeriod = "month"): Promise<AdminDashbo
             getNewItemsInPeriod("user", startDate, endDate),
             getNewItemsInPeriod("book", startDate, endDate),
             getNewItemsInPeriod("review", startDate, endDate),
-            getCompletedGoalsInPeriod(startDate, endDate),  // Modifié pour inclure la période
-            getBadgesAwardedInPeriod(startDate, endDate),   // Modifié pour inclure la période
-            getGrowthDataForPeriod(period),  // Modifié pour adapter à la période
-            getTopGenresInPeriod(startDate, endDate),  // Modifié pour inclure la période
-            getReadingDaysStats(startDate, endDate),  // Modifié pour inclure la période
-            calculateAvgPagesPerDay(startDate, endDate)  // Modifié pour inclure la période
+            getCompletedGoalsInPeriod(startDate, endDate),
+            getBadgesAwardedInPeriod(startDate, endDate),
+            getGrowthDataForPeriod(period),
+            getTopGenresInPeriod(startDate, endDate),
+            getReadingDaysStats(startDate, endDate),
+            calculateAvgPagesPerDay(startDate, endDate),
+            calculateAvgMinutesPerDay(startDate, endDate)
         ]);
 
-        const readingActivityData = formatReadingActivityData(readingActivity);
+        // Format and add additional metadata per period
+        const readingActivityData = formatReadingActivityData(readingActivity, period);
+
+        // Get completion rate for goals based on the period
+        const goalCompletionRate = goals.length > 0
+            ? Math.round((completedGoals / goals.length) * 100)
+            : 0;
 
         return {
             overview: {
@@ -114,9 +121,12 @@ export async function getAll(period: StatsPeriod = "month"): Promise<AdminDashbo
                 newReviewsInPeriod,
                 totalReadingGoals: goals.length,
                 completedGoals,
+                goalCompletionRate,
                 badgesAwarded,
                 totalReadingDays: readingDays.total,
                 avgPagesPerDay,
+                avgMinutesPerDay,
+                period // Store the current period for frontend reference
             },
             monthlyGrowth: monthlyGrowthData,
             topGenres,
@@ -234,29 +244,6 @@ async function getReadingGoals() {
         }
     });
 }
-
-/**
- * Get all badges with their users
- * Uncomment if needed
- */
-// async function getBadges() {
-//     return await prisma.badge.findMany({
-//         include: {
-//             UserBadge: {
-//                 include: {
-//                     User: {
-//                         select: {
-//                             id: true,
-//                             username: true,
-//                             name: true,
-//                             image: true
-//                         }
-//                     }
-//                 }
-//             }
-//         }
-//     });
-// }
 
 /**
  * Get reading activity for a period
@@ -435,10 +422,9 @@ async function getGrowthDataForPeriod(period: StatsPeriod): Promise<MonthlyGrowt
             });
         }
 
+        // Group data only for month view to avoid too many bars
         if (period === "month") {
             return groupDataByInterval(result, 5);
-        } else if (period === "week") {
-            return result;
         } else {
             return result;
         }
@@ -568,33 +554,120 @@ async function calculateAvgPagesPerDay(startDate: Date, endDate: Date): Promise<
 }
 
 /**
- * Format reading activity data by day of week
+ * Calculate average minutes read per day for a period
  */
-function formatReadingActivityData(readingDays: ReadingDay[]): ReadingActivityItem[] {
+async function calculateAvgMinutesPerDay(startDate: Date, endDate: Date): Promise<number> {
     try {
-        const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-        const days: Record<string, { pages: number; minutes: number; count: number }> = {};
-
-        dayNames.forEach(day => {
-            days[day] = {
-                pages: 0,
-                minutes: 0,
-                count: 0
-            };
+        const result = await prisma.readingDay.aggregate({
+            where: {
+                date: {
+                    gte: startDate,
+                    lte: endDate
+                }
+            },
+            _avg: {
+                minutesRead: true
+            }
         });
 
-        readingDays.forEach(day => {
-            const dayName = dayNames[new Date(day.date).getDay()];
-            days[dayName].pages += day.pagesRead;
-            days[dayName].minutes += day.minutesRead;
-            days[dayName].count += 1;
-        });
+        return Math.round(result._avg.minutesRead || 0);
+    } catch (error) {
+        console.error("Error calculating average minutes per day:", error);
+        return 0;
+    }
+}
 
-        return dayNames.map(name => ({
-            name,
-            pages: days[name].count ? Math.round(days[name].pages / days[name].count) : 0,
-            minutes: days[name].count ? Math.round(days[name].minutes / days[name].count) : 0
-        }));
+/**
+ * Format reading activity data by day of week or adapting to the period
+ */
+function formatReadingActivityData(readingDays: ReadingDay[], period: StatsPeriod): ReadingActivityItem[] {
+    try {
+        // For week view, we show daily data
+        if (period === "week") {
+            const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            const days: Record<string, { pages: number; minutes: number; count: number }> = {};
+
+            dayNames.forEach(day => {
+                days[day] = {
+                    pages: 0,
+                    minutes: 0,
+                    count: 0
+                };
+            });
+
+            readingDays.forEach(day => {
+                const dayName = dayNames[new Date(day.date).getDay()];
+                days[dayName].pages += day.pagesRead;
+                days[dayName].minutes += day.minutesRead;
+                days[dayName].count += 1;
+            });
+
+            return dayNames.map(name => ({
+                name,
+                pages: days[name].count ? Math.round(days[name].pages / days[name].count) : 0,
+                minutes: days[name].count ? Math.round(days[name].minutes / days[name].count) : 0
+            }));
+        }
+        // For month view, we group by week
+        else if (period === "month") {
+            const weeks: Record<number, { name: string; pages: number; minutes: number; count: number }> = {};
+
+            readingDays.forEach(day => {
+                const date = new Date(day.date);
+                const weekOfMonth = Math.ceil(date.getDate() / 7);
+
+                if (!weeks[weekOfMonth]) {
+                    weeks[weekOfMonth] = {
+                        name: `Sem ${weekOfMonth}`,
+                        pages: 0,
+                        minutes: 0,
+                        count: 0
+                    };
+                }
+
+                weeks[weekOfMonth].pages += day.pagesRead;
+                weeks[weekOfMonth].minutes += day.minutesRead;
+                weeks[weekOfMonth].count += 1;
+            });
+
+            return Object.values(weeks).map(week => ({
+                name: week.name,
+                pages: week.count ? Math.round(week.pages / week.count) : 0,
+                minutes: week.count ? Math.round(week.minutes / week.count) : 0
+            }));
+        }
+        // For year view, we group by month
+        else {
+            const months: Record<number, { name: string; pages: number; minutes: number; count: number }> = {};
+            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+            readingDays.forEach(day => {
+                const date = new Date(day.date);
+                const monthIndex = date.getMonth();
+
+                if (!months[monthIndex]) {
+                    months[monthIndex] = {
+                        name: monthNames[monthIndex],
+                        pages: 0,
+                        minutes: 0,
+                        count: 0
+                    };
+                }
+
+                months[monthIndex].pages += day.pagesRead;
+                months[monthIndex].minutes += day.minutesRead;
+                months[monthIndex].count += 1;
+            });
+
+            return Object.entries(months)
+                .sort(([a], [b]) => Number(a) - Number(b))
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                .map(([_, month]) => ({
+                    name: month.name,
+                    pages: month.count ? Math.round(month.pages / month.count) : 0,
+                    minutes: month.count ? Math.round(month.minutes / month.count) : 0
+                }));
+        }
     } catch (error) {
         console.error("Error formatting reading activity data:", error);
         return [];
