@@ -1,12 +1,23 @@
-import { use } from 'react'
+import {tabs} from "@/components/admin/sidebar/tabs";
+import {redirect} from "next/navigation";
 
 type Params = Promise<{ slug: string }>
 
-export default function Page(props: {
+export default async function Page(props: {
     params: Params
 }) {
-    const params = use(props.params)
-    const slug = params.slug
+    const params = await props.params;
+    const {slug} = params;
+
+    const isValidTab = tabs.some(tab => {
+        const tabSlug = tab.url.split('/').pop();
+        return tabSlug === slug;
+    });
+
+    if (!isValidTab) {
+        redirect("/admin");
+        return null;
+    }
 
     return (
         <div>

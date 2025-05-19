@@ -94,5 +94,8 @@
       "prisma",
       "sharp"
     ]
-  }
+  },
+  "trustedDependencies": [
+    "unrs-resolver"
+  ]
 }
