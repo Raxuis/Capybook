@@ -1,3 +1,5 @@
+"use server";
+
 import {
     endOfMonth,
     endOfWeek,
@@ -18,7 +20,7 @@ import {
     ReadingActivityItem,
     StatsPeriod
 } from "@/types/admin";
-import {User, Book, BookReview, Genre, ReadingGoal, Badge, ReadingDay} from "@prisma/client";
+import {ReadingDay} from "@prisma/client";
 import {currentUser} from "./auth/current-user";
 import prisma from "@/utils/prisma";
 
@@ -72,7 +74,6 @@ export async function getAll(period: StatsPeriod = "month"): Promise<AdminDashbo
             reviews,
             genres,
             goals,
-            badges,
             readingActivity,
             newUsersInPeriod,
             newBooksInPeriod,
@@ -89,17 +90,16 @@ export async function getAll(period: StatsPeriod = "month"): Promise<AdminDashbo
             getReviews(),
             getGenres(),
             getReadingGoals(),
-            getBadges(),
             getReadingActivity(startDate, endDate),
             getNewItemsInPeriod("user", startDate, endDate),
             getNewItemsInPeriod("book", startDate, endDate),
             getNewItemsInPeriod("review", startDate, endDate),
-            getCompletedGoals(),
-            getBadgesAwardedCount(),
-            getMonthlyGrowth(),
-            getTopGenres(),
-            getReadingDaysStats(),
-            calculateAvgPagesPerDay()
+            getCompletedGoalsInPeriod(startDate, endDate),  // Modifié pour inclure la période
+            getBadgesAwardedInPeriod(startDate, endDate),   // Modifié pour inclure la période
+            getGrowthDataForPeriod(period),  // Modifié pour adapter à la période
+            getTopGenresInPeriod(startDate, endDate),  // Modifié pour inclure la période
+            getReadingDaysStats(startDate, endDate),  // Modifié pour inclure la période
+            calculateAvgPagesPerDay(startDate, endDate)  // Modifié pour inclure la période
         ]);
 
         const readingActivityData = formatReadingActivityData(readingActivity);
@@ -136,7 +136,7 @@ export async function getAll(period: StatsPeriod = "month"): Promise<AdminDashbo
  * Get users with related data
  */
 async function getUsers() {
-    return await prisma.user.findMany({
+    return prisma.user.findMany({
         select: {
             id: true,
             email: true,
@@ -157,7 +157,7 @@ async function getUsers() {
  * Get books with related data
  */
 async function getBooks() {
-    return await prisma.book.findMany({
+    return prisma.book.findMany({
         select: {
             id: true,
             createdAt: true,
@@ -175,7 +175,7 @@ async function getBooks() {
  * Get reviews with related data
  */
 async function getReviews() {
-    return await prisma.bookReview.findMany({
+    return prisma.bookReview.findMany({
         include: {
             Book: {
                 select: {
@@ -201,7 +201,7 @@ async function getReviews() {
  * Get genres with related books
  */
 async function getGenres() {
-    return await prisma.genre.findMany({
+    return prisma.genre.findMany({
         include: {
             books: {
                 include: {
@@ -221,7 +221,7 @@ async function getGenres() {
  * Get reading goals
  */
 async function getReadingGoals() {
-    return await prisma.readingGoal.findMany({
+    return prisma.readingGoal.findMany({
         include: {
             User: {
                 select: {
@@ -238,24 +238,24 @@ async function getReadingGoals() {
 /**
  * Get all badges with their users
  */
-async function getBadges() {
-    return await prisma.badge.findMany({
-        include: {
-            UserBadge: {
-                include: {
-                    User: {
-                        select: {
-                            id: true,
-                            username: true,
-                            name: true,
-                            image: true
-                        }
-                    }
-                }
-            }
-        }
-    });
-}
+// async function getBadges() {
+//     return await prisma.badge.findMany({
+//         include: {
+//             UserBadge: {
+//                 include: {
+//                     User: {
+//                         select: {
+//                             id: true,
+//                             username: true,
+//                             name: true,
+//                             image: true
+//                         }
+//                     }
+//                 }
+//             }
+//         }
+//     });
+// }
 
 /**
  * Get reading activity for a period
@@ -318,14 +318,16 @@ async function getNewItemsInPeriod(
 }
 
 /**
- * Get count of completed goals
+ * Get count of completed goals in a period
  */
-async function getCompletedGoals(): Promise<number> {
+async function getCompletedGoalsInPeriod(startDate: Date, endDate: Date): Promise<number> {
     try {
         return await prisma.readingGoal.count({
             where: {
                 completedAt: {
-                    not: null
+                    not: null,
+                    gte: startDate,
+                    lte: endDate
                 }
             }
         });
@@ -336,11 +338,18 @@ async function getCompletedGoals(): Promise<number> {
 }
 
 /**
- * Get count of badges awarded to users
+ * Get count of badges awarded to users in a period
  */
-async function getBadgesAwardedCount(): Promise<number> {
+async function getBadgesAwardedInPeriod(startDate: Date, endDate: Date): Promise<number> {
     try {
-        return await prisma.userBadge.count();
+        return await prisma.userBadge.count({
+            where: {
+                earnedAt: {
+                    gte: startDate,
+                    lte: endDate
+                }
+            }
+        });
     } catch (error) {
         console.error("Error counting badges awarded:", error);
         return 0;
@@ -348,68 +357,156 @@ async function getBadgesAwardedCount(): Promise<number> {
 }
 
 /**
- * Get monthly growth data for the past 5 months
+ * Get growth data based on the selected period
  */
-async function getMonthlyGrowth(): Promise<MonthlyGrowthItem[]> {
+async function getGrowthDataForPeriod(period: StatsPeriod): Promise<MonthlyGrowthItem[]> {
     const now = new Date();
-    const months: MonthlyGrowthItem[] = [];
+    const result: MonthlyGrowthItem[] = [];
 
     try {
-        // Get data for the past 5 months
-        for (let i = 4; i >= 0; i--) {
-            const month = subMonths(now, i);
-            const startOfMonthDate = startOfMonth(month);
-            const endOfMonthDate = endOfMonth(month);
+        let intervals: number;
+        let getStartDate: (date: Date) => Date;
+        let getEndDate: (date: Date) => Date;
+        let subInterval: (date: Date, amount: number) => Date;
+        let formatLabel: (date: Date) => string;
+
+        switch (period) {
+            case "week":
+                intervals = 7;
+                getStartDate = (date) => date;
+                getEndDate = (date) => date;
+                subInterval = (date, amount) => new Date(date.getTime() - amount * 24 * 60 * 60 * 1000);
+                formatLabel = (date) => format(date, 'EEE'); // Day abbreviation
+                break;
+            case "year":
+                intervals = 12;
+                getStartDate = startOfMonth;
+                getEndDate = endOfMonth;
+                subInterval = subMonths;
+                formatLabel = (date) => format(date, 'MMM');
+                break;
+            case "month":
+            default:
+                intervals = 30;
+                getStartDate = (date) => date;
+                getEndDate = (date) => date;
+                subInterval = (date, amount) => new Date(date.getTime() - amount * 24 * 60 * 60 * 1000);
+                formatLabel = (date) => format(date, 'd');
+        }
+
+        for (let i = intervals - 1; i >= 0; i--) {
+            const currentDate = subInterval(now, i);
+            const startOfInterval = getStartDate(currentDate);
+            const endOfInterval = getEndDate(currentDate);
 
             const [users, books, reviews] = await Promise.all([
                 prisma.user.count({
                     where: {
                         createdAt: {
-                            gte: startOfMonthDate,
-                            lte: endOfMonthDate
+                            gte: startOfInterval,
+                            lte: endOfInterval
                         }
                     }
                 }),
                 prisma.book.count({
                     where: {
                         createdAt: {
-                            gte: startOfMonthDate,
-                            lte: endOfMonthDate
+                            gte: startOfInterval,
+                            lte: endOfInterval
                         }
                     }
                 }),
                 prisma.bookReview.count({
                     where: {
                         createdAt: {
-                            gte: startOfMonthDate,
-                            lte: endOfMonthDate
+                            gte: startOfInterval,
+                            lte: endOfInterval
                         }
                     }
                 })
             ]);
 
-            months.push({
-                name: format(month, 'MMM'),
+            result.push({
+                name: formatLabel(currentDate),
                 users,
                 books,
                 reviews
             });
         }
 
-        return months;
+        if (period === "month") {
+            return groupDataByInterval(result, 5);
+        } else if (period === "week") {
+            return result;
+        } else {
+            return result;
+        }
     } catch (error) {
-        console.error("Error fetching monthly growth:", error);
+        console.error(`Error fetching growth data for ${period}:`, error);
         return [];
     }
 }
 
 /**
- * Get top 5 genres by book count
+ * Helper function to group data items by interval
  */
-async function getTopGenres(): Promise<GenreStats[]> {
+function groupDataByInterval(data: MonthlyGrowthItem[], interval: number): MonthlyGrowthItem[] {
+    const result: MonthlyGrowthItem[] = [];
+
+    if (data.length <= interval) return data;
+
+    const groupCount = Math.ceil(data.length / interval);
+
+    for (let i = 0; i < groupCount; i++) {
+        const start = i * interval;
+        const end = Math.min(start + interval, data.length);
+        const group = data.slice(start, end);
+
+        if (group.length > 0) {
+            const groupItem: MonthlyGrowthItem = {
+                name: `${group[0].name}${group.length > 1 ? `-${group[group.length - 1].name}` : ''}`,
+                users: group.reduce((sum, item) => sum + item.users, 0),
+                books: group.reduce((sum, item) => sum + item.books, 0),
+                reviews: group.reduce((sum, item) => sum + item.reviews, 0)
+            };
+
+            result.push(groupItem);
+        }
+    }
+
+    return result;
+}
+
+/**
+ * Get top 5 genres by book count for a period
+ */
+async function getTopGenresInPeriod(startDate: Date, endDate: Date): Promise<GenreStats[]> {
     try {
-        const genres = await prisma.bookGenre.groupBy({
+        const booksInPeriod = await prisma.book.findMany({
+            where: {
+                createdAt: {
+                    gte: startDate,
+                    lte: endDate
+                }
+            },
+            select: {
+                id: true
+            }
+        });
+
+        const bookIds = booksInPeriod.map(book => book.id);
+
+        if (bookIds.length === 0) {
+            return [];
+        }
+
+        const genreCounts = await prisma.bookGenre.groupBy({
             by: ['genreId'],
+            where: {
+                bookId: {
+                    in: bookIds
+                }
+            },
             _count: {
                 bookId: true
             }
@@ -418,13 +515,12 @@ async function getTopGenres(): Promise<GenreStats[]> {
         const genreDetails = await prisma.genre.findMany({
             where: {
                 id: {
-                    in: genres.map(g => g.genreId)
+                    in: genreCounts.map(g => g.genreId)
                 }
             }
         });
 
-        // Map and sort genres, get top 5
-        return genres
+        return genreCounts
             .map(g => ({
                 name: genreDetails.find(d => d.id === g.genreId)?.name || 'Unknown',
                 count: g._count.bookId
@@ -432,19 +528,25 @@ async function getTopGenres(): Promise<GenreStats[]> {
             .sort((a, b) => b.count - a.count)
             .slice(0, 5);
     } catch (error) {
-        console.error("Error fetching top genres:", error);
+        console.error("Error fetching top genres for period:", error);
         return [];
     }
 }
 
 /**
- * Get reading days statistics
+ * Get reading days statistics for a period
  */
-async function getReadingDaysStats() {
+async function getReadingDaysStats(startDate: Date, endDate: Date) {
     try {
-        const totalDays = await prisma.readingDay.count();
+        const totalDays = await prisma.readingDay.count({
+            where: {
+                date: {
+                    gte: startDate,
+                    lte: endDate
+                }
+            }
+        });
 
-        // Could add more metrics here
         return {
             total: totalDays
         };
@@ -455,11 +557,17 @@ async function getReadingDaysStats() {
 }
 
 /**
- * Calculate average pages read per day
+ * Calculate average pages read per day for a period
  */
-async function calculateAvgPagesPerDay(): Promise<number> {
+async function calculateAvgPagesPerDay(startDate: Date, endDate: Date): Promise<number> {
     try {
         const result = await prisma.readingDay.aggregate({
+            where: {
+                date: {
+                    gte: startDate,
+                    lte: endDate
+                }
+            },
             _avg: {
                 pagesRead: true
             }
@@ -477,11 +585,9 @@ async function calculateAvgPagesPerDay(): Promise<number> {
  */
 function formatReadingActivityData(readingDays: ReadingDay[]): ReadingActivityItem[] {
     try {
-        // Group by day of the week and calculate average
         const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
         const days: Record<string, { pages: number; minutes: number; count: number }> = {};
 
-        // Initialize days
         dayNames.forEach(day => {
             days[day] = {
                 pages: 0,
@@ -490,7 +596,6 @@ function formatReadingActivityData(readingDays: ReadingDay[]): ReadingActivityIt
             };
         });
 
-        // Sum up data for each day
         readingDays.forEach(day => {
             const dayName = dayNames[new Date(day.date).getDay()];
             days[dayName].pages += day.pagesRead;
@@ -498,7 +603,6 @@ function formatReadingActivityData(readingDays: ReadingDay[]): ReadingActivityIt
             days[dayName].count += 1;
         });
 
-        // Calculate averages
         return dayNames.map(name => ({
             name,
             pages: days[name].count ? Math.round(days[name].pages / days[name].count) : 0,
