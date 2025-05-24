@@ -1,4 +1,4 @@
-import {Book, Users, Settings, Target, BadgePercent, Layers3} from "lucide-react"
+import {Book, Users, Target, BadgePercent, Layers3} from "lucide-react"
 
 export const tabs = [
     {
@@ -25,10 +25,5 @@ export const tabs = [
         title: "Objectifs",
         url: "/admin/goals",
         icon: Target,
-    },
-    {
-        title: "Paramètres",
-        url: "/admin/settings",
-        icon: Settings,
-    },
+    }
 ]
