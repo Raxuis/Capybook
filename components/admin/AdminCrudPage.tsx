@@ -36,8 +36,7 @@ import {
     getUsers, createUser, updateUser, deleteUser,
     getBooks, createBook, updateBook, deleteBook,
     getGenres, createGenre, updateGenre, deleteGenre,
-    getBadges, createBadge, updateBadge, deleteBadge,
-    getUserReadingGoals
+    getBadges, createBadge, updateBadge, deleteBadge, getAllReadingGoals
 } from '@/actions/admin/crud';
 import {z} from "zod";
 
@@ -270,7 +269,7 @@ const serverActions = {
     } as unknown as ServerActions<BadgeFormData, BadgeEntity>,
 
     goals: {
-        get: getUserReadingGoals,
+        get: getAllReadingGoals,
         create: null,
         update: null,
         delete: null
@@ -308,8 +307,9 @@ export default function AdminCrudPage({slug}: AdminCrudPageProps) {
 
         setLoading(true);
         try {
-            //Undefined pour l'instant, car on ne gère pas encore les utilisateurs spécifiques
-            const result = await actions.get(undefined);
+            let result: EntityData[] = [];
+            const genericAction = actions.get as () => Promise<EntityData[]>;
+            result = await genericAction();
             setData(result || []);
         } catch (error) {
             console.error('Erreur lors du chargement des données:', error);
@@ -489,8 +489,8 @@ export default function AdminCrudPage({slug}: AdminCrudPageProps) {
                             <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
                         ) : (
                             <span className="text-sm text-muted-foreground">
-                                ({data.length})
-                            </span>
+                ({data.length})
+              </span>
                         )
                     }
                 </div>
@@ -546,8 +546,8 @@ export default function AdminCrudPage({slug}: AdminCrudPageProps) {
             <div>
                 {!actions.create && (
                     <span className="text-sm text-red-500 mb-4">
-                        Action de création non disponible
-                    </span>
+            Action de création non disponible
+          </span>
                 )}
             </div>
 
