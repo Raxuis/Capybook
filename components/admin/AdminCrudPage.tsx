@@ -30,20 +30,19 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger
 } from '@/components/ui/alert-dialog';
-import {Trash2, Edit, Plus, User, Book, Tag, Award, Target} from 'lucide-react';
+import {Trash2, Edit, Plus, User, Book, Tag, Award, Target, LucideIcon} from 'lucide-react';
 import {useToast} from '@/hooks/use-toast';
 import {
     getUsers, createUser, updateUser, deleteUser,
     getBooks, createBook, updateBook, deleteBook,
     getGenres, createGenre, updateGenre, deleteGenre,
-    getBadges, createBadge, updateBadge, deleteBadge, getAllReadingGoals
+    getBadges, createBadge, updateBadge, deleteBadge,
+    getUserReadingGoals
 } from '@/actions/admin/crud';
 import {z} from "zod";
 
-// Types
 export type EntitySlug = 'users' | 'books' | 'genres' | 'badges' | 'goals';
 
-// Schemas de validation (inchangés)
 const userSchema = z.object({
     email: z.string().email('Email invalide'),
     username: z.string().min(3, 'Le nom d\'utilisateur doit contenir au moins 3 caractères'),
@@ -82,109 +81,200 @@ const goalSchema = z.object({
     userId: z.string().min(1, 'L\'utilisateur est requis')
 });
 
-// Configuration des entités
+type UserFormData = z.infer<typeof userSchema>;
+type BookFormData = z.infer<typeof bookSchema>;
+type GenreFormData = z.infer<typeof genreSchema>;
+type BadgeFormData = z.infer<typeof badgeSchema>;
+type GoalFormData = z.infer<typeof goalSchema>;
+
+interface UserEntity {
+    id: string;
+    email: string;
+    username: string;
+    image?: string | null;
+    role: string;
+    name?: string | null;
+
+    [key: string]: unknown;
+}
+
+interface BookEntity {
+    id: string;
+    key: string;
+    title: string;
+    authors: string[];
+    cover: string | null;
+    numberOfPages: number | null;
+
+    [key: string]: unknown;
+}
+
+interface GenreEntity {
+    id: string;
+    name: string;
+
+    [key: string]: unknown;
+}
+
+interface BadgeEntity {
+    id: string;
+    name: string;
+    ownerDescription: string;
+    publicDescription: string;
+    category: string;
+    requirement: number;
+    icon: string | null;
+
+    [key: string]: unknown;
+}
+
+interface GoalEntity {
+    id: string;
+    userId: string;
+    target: number;
+    type: string;
+    deadline: Date | string;
+    progress: number;
+    completedAt?: Date | null;
+
+    [key: string]: unknown;
+}
+
+type EntityData = UserEntity | BookEntity | GenreEntity | BadgeEntity | GoalEntity;
+
+type FormData = UserFormData | BookFormData | GenreFormData | BadgeFormData | GoalFormData;
+
+interface FormField {
+    name: string;
+    label: string;
+    type: 'text' | 'email' | 'password' | 'textarea' | 'select' | 'number' | 'date' | 'url' | 'color';
+    options?: string[];
+}
+
+interface EntityConfiguration<TSchema extends z.ZodType<unknown>, TEntity extends { id: string }> {
+    title: string;
+    icon: LucideIcon;
+    schema: TSchema;
+    fields: FormField[];
+    displayFields: Array<keyof TEntity>;
+}
+
+interface ServerActions<TData, TEntity> {
+    get: (() => Promise<TEntity[]>) | ((userId: string) => Promise<TEntity[]>) | null;
+    create: ((data: TData) => Promise<TEntity>) | null;
+    update: ((id: string, data: Partial<TData>) => Promise<TEntity>) | null;
+    delete: ((id: string) => Promise<void>) | null;
+}
+
 const entityConfig = {
     users: {
         title: 'Utilisateurs',
         icon: User,
         schema: userSchema,
         fields: [
-            {name: 'email', label: 'Email', type: 'email'},
-            {name: 'username', label: 'Nom d\'utilisateur', type: 'text'},
-            {name: 'password', label: 'Mot de passe', type: 'password'},
-            {name: 'favoriteColor', label: 'Couleur favorite', type: 'color'},
-            {name: 'role', label: 'Rôle', type: 'select', options: ['USER', 'ADMIN', 'MODERATOR']}
+            {name: 'email', label: 'Email', type: 'email' as const},
+            {name: 'username', label: 'Nom d\'utilisateur', type: 'text' as const},
+            {name: 'password', label: 'Mot de passe', type: 'password' as const},
+            {name: 'favoriteColor', label: 'Couleur favorite', type: 'color' as const},
+            {name: 'role', label: 'Rôle', type: 'select' as const, options: ['USER', 'ADMIN', 'MODERATOR']}
         ],
-        displayFields: ['email', 'username', 'role']
-    },
+        displayFields: ['email', 'username', 'role'] as Array<keyof UserEntity>
+    } satisfies EntityConfiguration<typeof userSchema, UserEntity>,
+
     books: {
         title: 'Livres',
         icon: Book,
         schema: bookSchema,
         fields: [
-            {name: 'key', label: 'Clé', type: 'text'},
-            {name: 'title', label: 'Titre', type: 'text'},
-            {name: 'authors', label: 'Auteurs (séparés par des virgules)', type: 'text'},
-            {name: 'cover', label: 'URL de la couverture', type: 'url'},
-            {name: 'numberOfPages', label: 'Nombre de pages', type: 'number'}
+            {name: 'key', label: 'Clé', type: 'text' as const},
+            {name: 'title', label: 'Titre', type: 'text' as const},
+            {name: 'authors', label: 'Auteurs (séparés par des virgules)', type: 'text' as const},
+            {name: 'cover', label: 'URL de la couverture', type: 'url' as const},
+            {name: 'numberOfPages', label: 'Nombre de pages', type: 'number' as const}
         ],
-        displayFields: ['title', 'authors', 'numberOfPages']
-    },
+        displayFields: ['title', 'authors', 'numberOfPages'] as Array<keyof BookEntity>
+    } satisfies EntityConfiguration<typeof bookSchema, BookEntity>,
+
     genres: {
         title: 'Genres',
         icon: Tag,
         schema: genreSchema,
         fields: [
-            {name: 'name', label: 'Nom du genre', type: 'text'}
+            {name: 'name', label: 'Nom du genre', type: 'text' as const}
         ],
-        displayFields: ['name']
-    },
+        displayFields: ['name'] as Array<keyof GenreEntity>
+    } satisfies EntityConfiguration<typeof genreSchema, GenreEntity>,
+
     badges: {
         title: 'Badges',
         icon: Award,
         schema: badgeSchema,
         fields: [
-            {name: 'name', label: 'Nom', type: 'text'},
-            {name: 'ownerDescription', label: 'Description propriétaire', type: 'textarea'},
-            {name: 'publicDescription', label: 'Description publique', type: 'textarea'},
+            {name: 'name', label: 'Nom', type: 'text' as const},
+            {name: 'ownerDescription', label: 'Description propriétaire', type: 'textarea' as const},
+            {name: 'publicDescription', label: 'Description publique', type: 'textarea' as const},
             {
                 name: 'category',
                 label: 'Catégorie',
-                type: 'select',
+                type: 'select' as const,
                 options: ['BOOKS_READ', 'PAGES_READ', 'REVIEWS_WRITTEN', 'GOALS_COMPLETED', 'READING_STREAK', 'GENRE_EXPLORER', 'SPECIAL']
             },
-            {name: 'requirement', label: 'Requirement', type: 'number'},
-            {name: 'icon', label: 'Icône', type: 'text'}
+            {name: 'requirement', label: 'Requirement', type: 'number' as const},
+            {name: 'icon', label: 'Icône', type: 'text' as const}
         ],
-        displayFields: ['name', 'category', 'requirement', 'icon']
-    },
+        displayFields: ['name', 'category', 'requirement'] as Array<keyof BadgeEntity>
+    } satisfies EntityConfiguration<typeof badgeSchema, BadgeEntity>,
+
     goals: {
         title: 'Objectifs',
         icon: Target,
         schema: goalSchema,
         fields: [
-            {name: 'target', label: 'Objectif', type: 'number'},
-            {name: 'type', label: 'Type', type: 'select', options: ['BOOKS', 'PAGES', 'TIME']},
-            {name: 'deadline', label: 'Date limite', type: 'date'},
-            {name: 'progress', label: 'Progrès', type: 'number'},
-            {name: 'userId', label: 'ID Utilisateur', type: 'text'}
+            {name: 'target', label: 'Objectif', type: 'number' as const},
+            {name: 'type', label: 'Type', type: 'select' as const, options: ['BOOKS', 'PAGES', 'TIME']},
+            {name: 'deadline', label: 'Date limite', type: 'date' as const},
+            {name: 'progress', label: 'Progrès', type: 'number' as const},
+            {name: 'userId', label: 'ID Utilisateur', type: 'text' as const}
         ],
-        displayFields: ['target', 'type', 'deadline', 'progress']
-    }
+        displayFields: ['target', 'type', 'deadline', 'progress'] as Array<keyof GoalEntity>
+    } satisfies EntityConfiguration<typeof goalSchema, GoalEntity>
 };
 
-// Mapping des server actions
 const serverActions = {
     users: {
         get: getUsers,
         create: createUser,
         update: updateUser,
         delete: deleteUser
-    },
+    } as unknown as ServerActions<UserFormData, UserEntity>,
+
     books: {
         get: getBooks,
         create: createBook,
         update: updateBook,
         delete: deleteBook
-    },
+    } as unknown as ServerActions<BookFormData, BookEntity>,
+
     genres: {
         get: getGenres,
         create: createGenre,
         update: updateGenre,
         delete: deleteGenre
-    },
+    } as unknown as ServerActions<GenreFormData, GenreEntity>,
+
     badges: {
         get: getBadges,
         create: createBadge,
         update: updateBadge,
         delete: deleteBadge
-    },
+    } as unknown as ServerActions<BadgeFormData, BadgeEntity>,
+
     goals: {
-        get: getAllReadingGoals,
+        get: getUserReadingGoals,
         create: null,
         update: null,
         delete: null
-    }
+    } as ServerActions<GoalFormData, GoalEntity>
 };
 
 interface AdminCrudPageProps {
@@ -193,18 +283,19 @@ interface AdminCrudPageProps {
 
 export default function AdminCrudPage({slug}: AdminCrudPageProps) {
     const {toast} = useToast();
-    const [data, setData] = useState<any[]>([]);
+    const [data, setData] = useState<EntityData[]>([]);
     const [loading, setLoading] = useState(true);
     const [dialogOpen, setDialogOpen] = useState(false);
-    const [editingItem, setEditingItem] = useState<any>(null);
+    const [editingItem, setEditingItem] = useState<EntityData | null>(null);
     const [isPending, startTransition] = useTransition();
 
     const config = entityConfig[slug];
     const IconComponent = config.icon;
     const actions = serverActions[slug];
 
-    const form = useForm({
-        resolver: zodResolver(config.schema),
+    // Hook form utilisé directement dans le composant pour éviter les erreurs de type
+    const form = useForm<FormData>({
+        resolver: zodResolver(config.schema as z.ZodType<FormData>),
         defaultValues: getDefaultValues(slug)
     });
 
@@ -217,7 +308,8 @@ export default function AdminCrudPage({slug}: AdminCrudPageProps) {
 
         setLoading(true);
         try {
-            const result = await actions.get();
+            //Undefined pour l'instant, car on ne gère pas encore les utilisateurs spécifiques
+            const result = await actions.get(undefined);
             setData(result || []);
         } catch (error) {
             console.error('Erreur lors du chargement des données:', error);
@@ -229,13 +321,13 @@ export default function AdminCrudPage({slug}: AdminCrudPageProps) {
         } finally {
             setLoading(false);
         }
-    }, [actions, slug, toast]);
+    }, [slug, toast, actions]);
 
     useEffect(() => {
         loadData();
     }, [loadData]);
 
-    const onSubmit = async (values: any) => {
+    const onSubmit = async (values: FormData) => {
         if (!actions.create || !actions.update) {
             toast({
                 title: 'Erreur',
@@ -250,9 +342,14 @@ export default function AdminCrudPage({slug}: AdminCrudPageProps) {
                 const processedValues = processFormValues(values, slug);
 
                 if (editingItem) {
-                    await actions.update(editingItem.id, processedValues);
+                    if (actions.update) {
+                        await actions.update(editingItem.id, processedValues as Partial<FormData>);
+                    }
                 } else {
-                    await actions.create(processedValues);
+                    if (actions.create) {
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                        await actions.create(processedValues as any);
+                    }
                 }
 
                 toast({
@@ -275,7 +372,7 @@ export default function AdminCrudPage({slug}: AdminCrudPageProps) {
         });
     };
 
-    const handleEdit = (item: any) => {
+    const handleEdit = (item: EntityData) => {
         setEditingItem(item);
         const formValues = prepareFormValues(item, slug);
         form.reset(formValues);
@@ -294,7 +391,9 @@ export default function AdminCrudPage({slug}: AdminCrudPageProps) {
 
         startTransition(async () => {
             try {
-                await actions.delete(id);
+                if (actions.delete) {
+                    await actions.delete(id);
+                }
                 toast({
                     title: 'Succès',
                     description: 'Élément supprimé avec succès'
@@ -311,12 +410,12 @@ export default function AdminCrudPage({slug}: AdminCrudPageProps) {
         });
     };
 
-    const renderFormField = (field: any) => {
+    const renderFormField = (field: FormField) => {
         return (
             <FormField
                 key={field.name}
                 control={form.control}
-                name={field.name}
+                name={field.name as keyof FormData}
                 render={({field: formField}) => (
                     <FormItem>
                         <FormLabel>{field.label}</FormLabel>
@@ -324,12 +423,12 @@ export default function AdminCrudPage({slug}: AdminCrudPageProps) {
                             {field.type === 'textarea' ? (
                                 <Textarea {...formField} />
                             ) : field.type === 'select' ? (
-                                <Select onValueChange={formField.onChange} value={formField.value}>
+                                <Select onValueChange={formField.onChange} value={formField.value as string}>
                                     <SelectTrigger>
                                         <SelectValue placeholder={`Sélectionner ${field.label.toLowerCase()}`}/>
                                     </SelectTrigger>
                                     <SelectContent>
-                                        {field.options.map((option: string) => (
+                                        {field.options?.map((option: string) => (
                                             <SelectItem key={option} value={option}>
                                                 {option}
                                             </SelectItem>
@@ -347,7 +446,7 @@ export default function AdminCrudPage({slug}: AdminCrudPageProps) {
         );
     };
 
-    const renderTableCell = (item: any, field: string) => {
+    const renderTableCell = (item: EntityData, field: string) => {
         const value = item[field];
 
         if (field === 'authors' && Array.isArray(value)) {
@@ -355,18 +454,28 @@ export default function AdminCrudPage({slug}: AdminCrudPageProps) {
         }
 
         if (field === 'role') {
-            return <Badge variant={value === 'ADMIN' ? 'destructive' : 'secondary'}>{value}</Badge>;
+            const roleValue = value as string;
+            return <Badge variant={roleValue === 'ADMIN' ? 'destructive' : 'secondary'}>{roleValue}</Badge>;
         }
 
         if (field === 'category') {
-            return <Badge variant="outline">{value}</Badge>;
+            return <Badge variant="outline">{value as string}</Badge>;
         }
 
         if (field === 'deadline') {
-            return new Date(value).toLocaleDateString('fr-FR');
+            const dateValue = value instanceof Date ? value : new Date(value as string);
+            return dateValue.toLocaleDateString('fr-FR');
         }
 
-        return value || '-';
+        if (field === 'cover' && value === null) {
+            return '-';
+        }
+
+        if (field === 'numberOfPages' && value === null) {
+            return '-';
+        }
+
+        return (value as string | number) || '-';
     };
 
     return (
@@ -377,12 +486,15 @@ export default function AdminCrudPage({slug}: AdminCrudPageProps) {
                     <h1 className="text-3xl font-bold">{config.title}</h1>
                     {
                         loading ? (
-                            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
                         ) : (
-                            <span className="text-sm text-muted-foreground">({data.length})</span>
+                            <span className="text-sm text-muted-foreground">
+                                ({data.length})
+                            </span>
                         )
                     }
                 </div>
+
                 <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                     <DialogTrigger asChild>
                         <Button
@@ -430,12 +542,13 @@ export default function AdminCrudPage({slug}: AdminCrudPageProps) {
                     </DialogContent>
                 </Dialog>
             </div>
-            <div className="mb-4">
-                {
-                    !loading && !actions.create ? (
-                        <span className="text-sm text-red-500">La modification de cette entité n&#39;est pas encore disponible.</span>
-                    ) : null
-                }
+
+            <div>
+                {!actions.create && (
+                    <span className="text-sm text-red-500 mb-4">
+                        Action de création non disponible
+                    </span>
+                )}
             </div>
 
             <Card>
@@ -455,8 +568,8 @@ export default function AdminCrudPage({slug}: AdminCrudPageProps) {
                             <TableHeader>
                                 <TableRow>
                                     {config.displayFields.map((field) => (
-                                        <TableHead key={field} className="capitalize">
-                                            {field}
+                                        <TableHead key={field as string} className="capitalize">
+                                            {field as string}
                                         </TableHead>
                                     ))}
                                     <TableHead className="text-right">Actions</TableHead>
@@ -466,8 +579,8 @@ export default function AdminCrudPage({slug}: AdminCrudPageProps) {
                                 {data.map((item) => (
                                     <TableRow key={item.id}>
                                         {config.displayFields.map((field) => (
-                                            <TableCell key={field}>
-                                                {renderTableCell(item, field)}
+                                            <TableCell key={field as string}>
+                                                {renderTableCell(item, field as string)}
                                             </TableCell>
                                         ))}
                                         <TableCell className="text-right">
@@ -524,60 +637,125 @@ export default function AdminCrudPage({slug}: AdminCrudPageProps) {
     );
 }
 
-// Fonctions utilitaires (inchangées mais ajout du userId pour goals)
-function getDefaultValues(slug: EntitySlug) {
+// Fonctions utilitaires avec types stricts
+function getDefaultValues(slug: EntitySlug): FormData {
     switch (slug) {
         case 'users':
-            return {email: '', username: '', name: '', password: '', favoriteColor: '#3b82f6', role: 'USER'};
+            return {
+                email: '',
+                username: '',
+                name: '',
+                password: '',
+                favoriteColor: '#3b82f6',
+                role: 'USER' as const
+            } satisfies UserFormData;
         case 'books':
-            return {key: '', title: '', authors: '', cover: '', numberOfPages: undefined};
+            return {
+                key: '',
+                title: '',
+                authors: '',
+                cover: '',
+                numberOfPages: undefined
+            } satisfies BookFormData;
         case 'genres':
-            return {name: ''};
+            return {
+                name: ''
+            } satisfies GenreFormData;
         case 'badges':
             return {
                 name: '',
                 ownerDescription: '',
                 publicDescription: '',
-                category: 'BOOKS_READ',
+                category: 'BOOKS_READ' as const,
                 requirement: 1,
                 icon: ''
-            };
+            } satisfies BadgeFormData;
         case 'goals':
-            return {target: 1, type: 'BOOKS', deadline: '', progress: 0, userId: ''};
+            return {
+                target: 1,
+                type: 'BOOKS' as const,
+                deadline: '',
+                progress: 0,
+                userId: ''
+            } satisfies GoalFormData;
         default:
-            return {};
+            throw new Error(`Entity slug ${slug} not supported`);
     }
 }
 
-function prepareFormValues(item: any, slug: EntitySlug) {
+function prepareFormValues(item: EntityData, slug: EntitySlug): FormData {
     switch (slug) {
-        case 'books':
+        case 'books': {
+            const bookItem = item as BookEntity;
             return {
-                ...item,
-                authors: Array.isArray(item.authors) ? item.authors.join(', ') : item.authors
-            };
-        case 'goals':
+                key: bookItem.key,
+                title: bookItem.title,
+                authors: Array.isArray(bookItem.authors) ? bookItem.authors.join(', ') : bookItem.authors,
+                cover: bookItem.cover || '',
+                numberOfPages: bookItem.numberOfPages || undefined
+            } satisfies BookFormData;
+        }
+        case 'goals': {
+            const goalItem = item as GoalEntity;
             return {
-                ...item,
-                deadline: item.deadline ? new Date(item.deadline).toISOString().split('T')[0] : ''
-            };
+                target: goalItem.target,
+                type: goalItem.type as 'BOOKS' | 'PAGES' | 'TIME',
+                deadline: goalItem.deadline instanceof Date
+                    ? goalItem.deadline.toISOString().split('T')[0]
+                    : new Date(goalItem.deadline).toISOString().split('T')[0],
+                progress: goalItem.progress,
+                userId: goalItem.userId
+            } satisfies GoalFormData;
+        }
+        case 'users': {
+            const userItem = item as UserEntity;
+            return {
+                email: userItem.email,
+                username: userItem.username,
+                name: userItem.name || '',
+                password: '',
+                favoriteColor: '#3b82f6',
+                role: userItem.role as 'USER' | 'ADMIN' | 'MODERATOR'
+            } satisfies UserFormData;
+        }
+        case 'genres': {
+            const genreItem = item as GenreEntity;
+            return {
+                name: genreItem.name
+            } satisfies GenreFormData;
+        }
+        case 'badges': {
+            const badgeItem = item as BadgeEntity;
+            return {
+                name: badgeItem.name,
+                ownerDescription: badgeItem.ownerDescription,
+                publicDescription: badgeItem.publicDescription,
+                category: badgeItem.category as 'BOOKS_READ' | 'PAGES_READ' | 'REVIEWS_WRITTEN' | 'GOALS_COMPLETED' | 'READING_STREAK' | 'GENRE_EXPLORER' | 'SPECIAL',
+                requirement: badgeItem.requirement,
+                icon: badgeItem.icon || ''
+            } satisfies BadgeFormData;
+        }
         default:
-            return item;
+            throw new Error(`Entity slug ${slug} not supported`);
     }
 }
 
-function processFormValues(values: any, slug: EntitySlug) {
+function processFormValues(values: FormData, slug: EntitySlug): FormData {
     switch (slug) {
-        case 'books':
+        case 'books': {
+            const bookValues = values as BookFormData;
             return {
-                ...values,
-                authors: values.authors.split(',').map((author: string) => author.trim()).filter(Boolean)
-            };
-        case 'goals':
+                ...bookValues,
+                authors: bookValues.authors.split(',').map((author: string) => author.trim()).filter(Boolean).join(',')
+            } satisfies BookFormData;
+        }
+        case 'goals': {
+            const goalValues = values as GoalFormData;
             return {
-                ...values,
-                deadline: new Date(values.deadline).toISOString()
-            };
+                ...goalValues,
+                deadline: new Date(goalValues.deadline).toISOString()
+            } satisfies GoalFormData;
+        }
         default:
             return values;
     }

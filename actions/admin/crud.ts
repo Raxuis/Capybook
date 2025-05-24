@@ -8,22 +8,22 @@ type UserCreateInput = Omit<User, 'id' | 'createdAt' | 'updatedAt' | 'emailVerif
     emailVerified?: Date | null;
 };
 
-type UserUpdateInput = Partial<UserCreateInput>;
+export type UserUpdateInput = Partial<UserCreateInput>;
 
-type BookCreateInput = Omit<Book, 'id' | 'createdAt' | 'updatedAt'>;
-type BookUpdateInput = Partial<BookCreateInput>;
+export type BookCreateInput = Omit<Book, 'id' | 'createdAt' | 'updatedAt'>;
+export type BookUpdateInput = Partial<BookCreateInput>;
 
-type GenreCreateInput = Omit<Genre, 'id' | 'createdAt' | 'updatedAt'>;
-type GenreUpdateInput = Partial<GenreCreateInput>;
+export type GenreCreateInput = Omit<Genre, 'id' | 'createdAt' | 'updatedAt'>;
+export type GenreUpdateInput = Partial<GenreCreateInput>;
 
-type ReviewCreateInput = Omit<BookReview, 'id' | 'createdAt' | 'updatedAt'>;
-type ReviewUpdateInput = Partial<ReviewCreateInput>;
+export type ReviewCreateInput = Omit<BookReview, 'id' | 'createdAt' | 'updatedAt'>;
+export type ReviewUpdateInput = Partial<ReviewCreateInput>;
 
-type BadgeCreateInput = Omit<Badge, 'id' | 'createdAt' | 'updatedAt'>;
-type BadgeUpdateInput = Partial<BadgeCreateInput>;
+export type BadgeCreateInput = Omit<Badge, 'id' | 'createdAt' | 'updatedAt'>;
+export type BadgeUpdateInput = Partial<BadgeCreateInput>;
 
-type ReadingGoalCreateInput = Omit<ReadingGoal, 'id' | 'createdAt' | 'updatedAt'>;
-type ReadingGoalUpdateInput = Partial<ReadingGoalCreateInput>;
+export type ReadingGoalCreateInput = Omit<ReadingGoal, 'id' | 'createdAt' | 'updatedAt'>;
+export type ReadingGoalUpdateInput = Partial<ReadingGoalCreateInput>;
 
 // User Functions
 export async function getUsers() {
