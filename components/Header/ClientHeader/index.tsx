@@ -5,12 +5,13 @@ import {useState, useEffect} from "react";
 import {cn} from "@/lib/utils";
 import {Link} from "next-view-transitions";
 import {usePathname} from "next/navigation";
-import { useRouter } from 'nextjs-toploader/app';
+import {useRouter} from 'nextjs-toploader/app';
 import {User} from "@prisma/client";
 import {signOut, useSession} from "next-auth/react";
 import Image from "next/image";
 import {navigation} from "@/constants";
 import {Menu, X} from "lucide-react";
+import {SidebarTrigger} from "@/components/ui/sidebar";
 
 interface ClientHeaderProps {
     user: User | null;
@@ -78,6 +79,7 @@ export default function ClientHeader({user: initialUser, adminHeader = false}: C
                         >
                             Déconnexion
                         </motion.button>
+                        <SidebarTrigger/>
                     </div>
                 </div>
             </motion.header>

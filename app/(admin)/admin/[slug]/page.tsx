@@ -1,10 +1,9 @@
-import {tabs} from "@/components/admin/sidebar/tabs";
+import AdminCrudPage, {EntitySlug} from '@/components/admin/AdminCrudPage';
 import {redirect} from "next/navigation";
-
-type Params = Promise<{ slug: string }>
+import {tabs} from "@/components/admin/sidebar/tabs";
 
 export default async function Page(props: {
-    params: Params
+    params: Promise<{ slug: string }>
 }) {
     const params = await props.params;
     const {slug} = params;
@@ -16,12 +15,7 @@ export default async function Page(props: {
 
     if (!isValidTab) {
         redirect("/admin");
-        return null;
     }
 
-    return (
-        <div>
-            <h1>Page {slug}</h1>
-        </div>
-    )
+    return <AdminCrudPage slug={slug as EntitySlug} />;
 }
