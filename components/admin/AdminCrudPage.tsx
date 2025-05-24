@@ -307,9 +307,8 @@ export default function AdminCrudPage({slug}: AdminCrudPageProps) {
 
         setLoading(true);
         try {
-            let result: EntityData[] = [];
             const genericAction = actions.get as () => Promise<EntityData[]>;
-            result = await genericAction();
+            const result = await genericAction();
             setData(result || []);
         } catch (error) {
             console.error('Erreur lors du chargement des données:', error);
