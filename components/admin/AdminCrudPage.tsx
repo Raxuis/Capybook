@@ -30,251 +30,29 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger
 } from '@/components/ui/alert-dialog';
-import {Trash2, Edit, Plus, User, Book, Tag, Award, Target, LucideIcon} from 'lucide-react';
+import {Trash2, Edit, Plus} from 'lucide-react';
 import {useToast} from '@/hooks/use-toast';
-import {
-    getUsers, createUser, updateUser, deleteUser,
-    getBooks, createBook, updateBook, deleteBook,
-    getGenres, createGenre, updateGenre, deleteGenre,
-    getBadges, createBadge, updateBadge, deleteBadge, getAllReadingGoals
-} from '@/actions/admin/crud';
 import {z} from "zod";
-
-export type EntitySlug = 'users' | 'books' | 'genres' | 'badges' | 'goals';
-
-const userSchema = z.object({
-    email: z.string().email('Email invalide'),
-    username: z.string().min(3, 'Le nom d\'utilisateur doit contenir au moins 3 caractères'),
-    name: z.string().optional(),
-    password: z.string().min(6, 'Le mot de passe doit contenir au moins 6 caractères').optional(),
-    favoriteColor: z.string().default('#3b82f6'),
-    role: z.enum(['USER', 'ADMIN', 'MODERATOR']).default('USER')
-});
-
-const bookSchema = z.object({
-    key: z.string().min(1, 'La clé est requise'),
-    title: z.string().min(1, 'Le titre est requis'),
-    authors: z.string().min(1, 'Au moins un auteur est requis'),
-    cover: z.string().url('URL de couverture invalide').optional().or(z.literal('')),
-    numberOfPages: z.coerce.number().positive('Le nombre de pages doit être positif').optional()
-});
-
-const genreSchema = z.object({
-    name: z.string().min(1, 'Le nom du genre est requis')
-});
-
-const badgeSchema = z.object({
-    name: z.string().min(1, 'Le nom du badge est requis'),
-    ownerDescription: z.string().min(1, 'La description propriétaire est requise'),
-    publicDescription: z.string().min(1, 'La description publique est requise'),
-    category: z.enum(['BOOKS_READ', 'PAGES_READ', 'REVIEWS_WRITTEN', 'GOALS_COMPLETED', 'READING_STREAK', 'GENRE_EXPLORER', 'SPECIAL']),
-    requirement: z.coerce.number().positive('Le requirement doit être positif'),
-    icon: z.string().optional()
-});
-
-const goalSchema = z.object({
-    target: z.coerce.number().positive('L\'objectif doit être positif'),
-    type: z.enum(['BOOKS', 'PAGES', 'TIME']),
-    deadline: z.string().min(1, 'La date limite est requise'),
-    progress: z.coerce.number().min(0).default(0),
-    userId: z.string().min(1, 'L\'utilisateur est requis')
-});
-
-type UserFormData = z.infer<typeof userSchema>;
-type BookFormData = z.infer<typeof bookSchema>;
-type GenreFormData = z.infer<typeof genreSchema>;
-type BadgeFormData = z.infer<typeof badgeSchema>;
-type GoalFormData = z.infer<typeof goalSchema>;
-
-interface UserEntity {
-    id: string;
-    email: string;
-    username: string;
-    image?: string | null;
-    role: string;
-    name?: string | null;
-
-    [key: string]: unknown;
-}
-
-interface BookEntity {
-    id: string;
-    key: string;
-    title: string;
-    authors: string[];
-    cover: string | null;
-    numberOfPages: number | null;
-
-    [key: string]: unknown;
-}
-
-interface GenreEntity {
-    id: string;
-    name: string;
-
-    [key: string]: unknown;
-}
-
-interface BadgeEntity {
-    id: string;
-    name: string;
-    ownerDescription: string;
-    publicDescription: string;
-    category: string;
-    requirement: number;
-    icon: string | null;
-
-    [key: string]: unknown;
-}
-
-interface GoalEntity {
-    id: string;
-    userId: string;
-    target: number;
-    type: string;
-    deadline: Date | string;
-    progress: number;
-    completedAt?: Date | null;
-
-    [key: string]: unknown;
-}
-
-type EntityData = UserEntity | BookEntity | GenreEntity | BadgeEntity | GoalEntity;
-
-type FormData = UserFormData | BookFormData | GenreFormData | BadgeFormData | GoalFormData;
-
-interface FormField {
-    name: string;
-    label: string;
-    type: 'text' | 'email' | 'password' | 'textarea' | 'select' | 'number' | 'date' | 'url' | 'color';
-    options?: string[];
-}
-
-interface EntityConfiguration<TSchema extends z.ZodType<unknown>, TEntity extends { id: string }> {
-    title: string;
-    icon: LucideIcon;
-    schema: TSchema;
-    fields: FormField[];
-    displayFields: Array<keyof TEntity>;
-}
-
-interface ServerActions<TData, TEntity> {
-    get: (() => Promise<TEntity[]>) | ((userId: string) => Promise<TEntity[]>) | null;
-    create: ((data: TData) => Promise<TEntity>) | null;
-    update: ((id: string, data: Partial<TData>) => Promise<TEntity>) | null;
-    delete: ((id: string) => Promise<void>) | null;
-}
-
-const entityConfig = {
-    users: {
-        title: 'Utilisateurs',
-        icon: User,
-        schema: userSchema,
-        fields: [
-            {name: 'email', label: 'Email', type: 'email' as const},
-            {name: 'username', label: 'Nom d\'utilisateur', type: 'text' as const},
-            {name: 'password', label: 'Mot de passe', type: 'password' as const},
-            {name: 'favoriteColor', label: 'Couleur favorite', type: 'color' as const},
-            {name: 'role', label: 'Rôle', type: 'select' as const, options: ['USER', 'ADMIN', 'MODERATOR']}
-        ],
-        displayFields: ['email', 'username', 'role'] as Array<keyof UserEntity>
-    } satisfies EntityConfiguration<typeof userSchema, UserEntity>,
-
-    books: {
-        title: 'Livres',
-        icon: Book,
-        schema: bookSchema,
-        fields: [
-            {name: 'key', label: 'Clé', type: 'text' as const},
-            {name: 'title', label: 'Titre', type: 'text' as const},
-            {name: 'authors', label: 'Auteurs (séparés par des virgules)', type: 'text' as const},
-            {name: 'cover', label: 'URL de la couverture', type: 'url' as const},
-            {name: 'numberOfPages', label: 'Nombre de pages', type: 'number' as const}
-        ],
-        displayFields: ['title', 'authors', 'numberOfPages'] as Array<keyof BookEntity>
-    } satisfies EntityConfiguration<typeof bookSchema, BookEntity>,
-
-    genres: {
-        title: 'Genres',
-        icon: Tag,
-        schema: genreSchema,
-        fields: [
-            {name: 'name', label: 'Nom du genre', type: 'text' as const}
-        ],
-        displayFields: ['name'] as Array<keyof GenreEntity>
-    } satisfies EntityConfiguration<typeof genreSchema, GenreEntity>,
-
-    badges: {
-        title: 'Badges',
-        icon: Award,
-        schema: badgeSchema,
-        fields: [
-            {name: 'name', label: 'Nom', type: 'text' as const},
-            {name: 'ownerDescription', label: 'Description propriétaire', type: 'textarea' as const},
-            {name: 'publicDescription', label: 'Description publique', type: 'textarea' as const},
-            {
-                name: 'category',
-                label: 'Catégorie',
-                type: 'select' as const,
-                options: ['BOOKS_READ', 'PAGES_READ', 'REVIEWS_WRITTEN', 'GOALS_COMPLETED', 'READING_STREAK', 'GENRE_EXPLORER', 'SPECIAL']
-            },
-            {name: 'requirement', label: 'Requirement', type: 'number' as const},
-            {name: 'icon', label: 'Icône', type: 'text' as const}
-        ],
-        displayFields: ['name', 'category', 'requirement'] as Array<keyof BadgeEntity>
-    } satisfies EntityConfiguration<typeof badgeSchema, BadgeEntity>,
-
-    goals: {
-        title: 'Objectifs',
-        icon: Target,
-        schema: goalSchema,
-        fields: [
-            {name: 'target', label: 'Objectif', type: 'number' as const},
-            {name: 'type', label: 'Type', type: 'select' as const, options: ['BOOKS', 'PAGES', 'TIME']},
-            {name: 'deadline', label: 'Date limite', type: 'date' as const},
-            {name: 'progress', label: 'Progrès', type: 'number' as const},
-            {name: 'userId', label: 'ID Utilisateur', type: 'text' as const}
-        ],
-        displayFields: ['target', 'type', 'deadline', 'progress'] as Array<keyof GoalEntity>
-    } satisfies EntityConfiguration<typeof goalSchema, GoalEntity>
-};
-
-const serverActions = {
-    users: {
-        get: getUsers,
-        create: createUser,
-        update: updateUser,
-        delete: deleteUser
-    } as unknown as ServerActions<UserFormData, UserEntity>,
-
-    books: {
-        get: getBooks,
-        create: createBook,
-        update: updateBook,
-        delete: deleteBook
-    } as unknown as ServerActions<BookFormData, BookEntity>,
-
-    genres: {
-        get: getGenres,
-        create: createGenre,
-        update: updateGenre,
-        delete: deleteGenre
-    } as unknown as ServerActions<GenreFormData, GenreEntity>,
-
-    badges: {
-        get: getBadges,
-        create: createBadge,
-        update: updateBadge,
-        delete: deleteBadge
-    } as unknown as ServerActions<BadgeFormData, BadgeEntity>,
-
-    goals: {
-        get: getAllReadingGoals,
-        create: null,
-        update: null,
-        delete: null
-    } as ServerActions<GoalFormData, GoalEntity>
-};
+import {
+    serverActions,
+    entityConfig
+} from '@/constants/admin/crud';
+import {
+    EntitySlug,
+    FormData,
+    BookFormData,
+    EntityData,
+    GoalFormData,
+    BadgeFormData,
+    GenreFormData,
+    UserFormData,
+    FormFieldType,
+    GenreEntity,
+    BadgeEntity,
+    GoalEntity,
+    BookEntity,
+    UserEntity
+} from '@/types/admin/crud'
 
 interface AdminCrudPageProps {
     slug: EntitySlug;
@@ -409,7 +187,7 @@ export default function AdminCrudPage({slug}: AdminCrudPageProps) {
         });
     };
 
-    const renderFormField = (field: FormField) => {
+    const renderFormField = (field: FormFieldType) => {
         return (
             <FormField
                 key={field.name}

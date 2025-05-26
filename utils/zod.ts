@@ -78,3 +78,42 @@ export const EditProfileSchema = object({
     favoriteColor: string({required_error: "La couleur préférée est nécessaire"})
         .regex(/^#[0-9A-F]{6}$/i, "La couleur préférée doit être en hexadécimal"),
 })
+
+
+export const UserSchema = z.object({
+    email: z.string().email('Email invalide'),
+    username: z.string().min(3, 'Le nom d\'utilisateur doit contenir au moins 3 caractères'),
+    name: z.string().optional(),
+    password: z.string().min(6, 'Le mot de passe doit contenir au moins 6 caractères').optional(),
+    favoriteColor: z.string().default('#3b82f6'),
+    role: z.enum(['USER', 'ADMIN', 'MODERATOR']).default('USER')
+});
+
+export const BookSchema = z.object({
+    key: z.string().min(1, 'La clé est requise'),
+    title: z.string().min(1, 'Le titre est requis'),
+    authors: z.string().min(1, 'Au moins un auteur est requis'),
+    cover: z.string().url('URL de couverture invalide').optional().or(z.literal('')),
+    numberOfPages: z.coerce.number().positive('Le nombre de pages doit être positif').optional()
+});
+
+export const GenreSchema = z.object({
+    name: z.string().min(1, 'Le nom du genre est requis')
+});
+
+export const BadgeSchema = z.object({
+    name: z.string().min(1, 'Le nom du badge est requis'),
+    ownerDescription: z.string().min(1, 'La description propriétaire est requise'),
+    publicDescription: z.string().min(1, 'La description publique est requise'),
+    category: z.enum(['BOOKS_READ', 'PAGES_READ', 'REVIEWS_WRITTEN', 'GOALS_COMPLETED', 'READING_STREAK', 'GENRE_EXPLORER', 'SPECIAL']),
+    requirement: z.coerce.number().positive('Le requirement doit être positif'),
+    icon: z.string().optional()
+});
+
+export const GoalSchema = z.object({
+    target: z.coerce.number().positive('L\'objectif doit être positif'),
+    type: z.enum(['BOOKS', 'PAGES', 'TIME']),
+    deadline: z.string().min(1, 'La date limite est requise'),
+    progress: z.coerce.number().min(0).default(0),
+    userId: z.string().min(1, 'L\'utilisateur est requis')
+});
