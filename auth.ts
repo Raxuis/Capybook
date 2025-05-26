@@ -24,7 +24,7 @@ export const {handlers, signIn, auth} = NextAuth({
                     const {email, password} = await SignInSchema.parseAsync(credentials);
                     const user = await prisma.user.findUnique({
                         where: {email},
-                        select: {id: true, email: true, name: true, username: true, password: true}
+                        select: {id: true, email: true, name: true, username: true, password: true, role: true}
                     });
 
                     if (!user || !user.password) throw new Error("Invalid credentials");
@@ -37,6 +37,7 @@ export const {handlers, signIn, auth} = NextAuth({
                         email: user.email,
                         name: user.name,
                         username: user.username,
+                        role: user.role,
                     };
                 } catch (error) {
                     if (error instanceof ZodError) return null;
@@ -53,7 +54,8 @@ export const {handlers, signIn, auth} = NextAuth({
                     email: token.email as string,
                     username: token.username as string,
                     name: token.name as string,
-                    emailVerified: null
+                    role: token.role as string,
+                    emailVerified: null,
                 };
             }
             return session;
@@ -65,9 +67,10 @@ export const {handlers, signIn, auth} = NextAuth({
 
             if (user) {
                 token.id = user.id as string;
-                token.email = user.email as string;
-                token.username = (user.username as string | undefined) ?? "No name";
+                token.email = user.email;
+                token.username = user.username ?? "No name";
                 token.name = user.name;
+                token.role = user.role ?? "USER";
             }
             return token;
         },

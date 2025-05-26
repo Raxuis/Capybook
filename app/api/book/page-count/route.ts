@@ -7,7 +7,7 @@ const bodySchema = z.object({
     bookId: z.string(),
     pageCount: z.number(),
 });
-
+//FIXME: Type instantiation is excessively deep and possibly infinite.
 export const PUT = createZodRoute().body(bodySchema).handler(async (_, context) => {
     try {
         const {bookId, pageCount} = context.body;

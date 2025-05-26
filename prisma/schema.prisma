@@ -23,6 +23,7 @@ model User {
   emailVerified DateTime?
   image         String?
   favoriteColor String    @default("#3b82f6")
+  role          Role      @default(USER) // USER, ADMIN, MODERATOR
   accounts      Account[]
   sessions      Session[]
 
@@ -87,8 +88,8 @@ model UserBook {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   finishedAt    DateTime?
-  User          User      @relation(fields: [userId], references: [id])
-  Book          Book      @relation(fields: [bookId], references: [id])
+  User          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Book          Book      @relation(fields: [bookId], references: [id], onDelete: Cascade)
 
   @@unique([userId, bookId])
 }
@@ -99,8 +100,8 @@ model UserBookWishlist {
   bookId    String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  User      User     @relation(fields: [userId], references: [id])
-  Book      Book     @relation(fields: [bookId], references: [id])
+  User      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Book      Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
 
   @@unique([userId, bookId])
 }
@@ -128,8 +129,8 @@ model BookReview {
   feedback  String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  User      User     @relation(fields: [userId], references: [id])
-  Book      Book     @relation(fields: [bookId], references: [id])
+  User      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Book      Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
 
   @@unique([userId, bookId])
 }
@@ -144,7 +145,7 @@ model ReadingGoal {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   completedAt DateTime?
-  User        User      @relation(fields: [userId], references: [id])
+  User        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Badge {
@@ -165,10 +166,16 @@ model UserBadge {
   userId   String
   badgeId  String
   earnedAt DateTime @default(now())
-  User     User     @relation(fields: [userId], references: [id])
-  Badge    Badge    @relation(fields: [badgeId], references: [id])
+  User     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Badge    Badge    @relation(fields: [badgeId], references: [id], onDelete: Cascade)
 
   @@unique([userId, badgeId]) // Un utilisateur ne peut avoir un type de badge qu'une seule fois
+}
+
+enum Role {
+  USER
+  ADMIN
+  MODERATOR
 }
 
 enum GoalType {
@@ -195,7 +202,7 @@ model ReadingProgress {
   date           DateTime
   pagesRead      Int
   booksCompleted Int
-  user           User       @relation(fields: [userId], references: [id])
+  user           User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   readingDay     ReadingDay @relation(fields: [readingDayId], references: [id])
 }
 
@@ -205,7 +212,7 @@ model ReadingDay {
   date            DateTime         @default(now()) @db.Date
   minutesRead     Int              @default(0)
   pagesRead       Int              @default(0)
-  user            User             @relation(fields: [userId], references: [id])
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   readingProgress ReadingProgress?
 
   @@unique([userId, date])
@@ -225,8 +232,8 @@ model BookGenre {
   genreId   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  book      Book     @relation(fields: [bookId], references: [id])
-  genre     Genre    @relation(fields: [genreId], references: [id])
+  book      Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  genre     Genre    @relation(fields: [genreId], references: [id], onDelete: Cascade)
 
   @@unique([bookId, genreId])
 }

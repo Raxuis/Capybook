@@ -63,5 +63,7 @@ const DashboardHeader = memo(({showStatistics}: { showStatistics: boolean }) => 
     );
 });
 
+DashboardHeader.displayName = "DashboardHeader";
+
 
 export default DashboardHeader;

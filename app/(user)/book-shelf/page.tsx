@@ -16,7 +16,8 @@ export default async function BookShelf({searchParams}: {
     searchParams: { view?: string };
 }) {
     const session = await auth();
-    const showStatistics = searchParams.view === "statistics";
+    const view = await searchParams.view;
+    const showStatistics = view === "statistics";
 
     return (
         <DashboardLayout>
