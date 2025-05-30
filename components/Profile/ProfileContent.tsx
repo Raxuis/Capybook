@@ -26,6 +26,7 @@ import {generateGradientClasses} from "@/utils/color";
 import {Button, buttonVariants} from "@/components/ui/button";
 import {cn} from "@/lib/utils";
 import Image from "next/image";
+import Link from "next/link";
 
 type ProfileData = {
     user: {
@@ -614,8 +615,9 @@ const ProfileContent = ({username}: { username: string }) => {
                                 <div className="space-y-3">
                                     {data?.followers?.length ? (
                                         data.followers.map((follower) => (
-                                            <div key={follower.id}
-                                                 className="flex items-center space-x-3 p-2 hover:bg-gray-50 rounded-lg transition-colors cursor-default">
+                                            <Link key={follower.id}
+                                                  href={`/profile/${follower.username}`}
+                                                  className="flex items-center space-x-3 p-2 hover:bg-gray-50 rounded-lg transition-colors">
                                                 <div
                                                     className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
                                                     {follower.image ? (
@@ -633,7 +635,7 @@ const ProfileContent = ({username}: { username: string }) => {
                                                         className="font-medium">{follower.name || follower.username}</div>
                                                     <div className="text-sm text-gray-500">@{follower.username}</div>
                                                 </div>
-                                            </div>
+                                            </Link>
                                         ))
                                     ) : (
                                         <div className="text-center py-4 text-gray-500">
@@ -652,8 +654,9 @@ const ProfileContent = ({username}: { username: string }) => {
                                 <div className="space-y-3">
                                     {data?.following?.length ? (
                                         data.following.map((following) => (
-                                            <div key={following.id}
-                                                 className="flex items-center space-x-3 p-2 hover:bg-gray-50 rounded-lg transition-colors cursor-default">
+                                            <Link key={following.id}
+                                                  href={`/profile/${following.username}`}
+                                                  className="flex items-center space-x-3 p-2 hover:bg-gray-50 rounded-lg transition-colors">
                                                 <div
                                                     className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
                                                     {following.image ? (
@@ -671,7 +674,7 @@ const ProfileContent = ({username}: { username: string }) => {
                                                         className="font-medium">{following.name || following.username}</div>
                                                     <div className="text-sm text-gray-500">@{following.username}</div>
                                                 </div>
-                                            </div>
+                                            </Link>
                                         ))
                                     ) : (
                                         <div className="text-center py-4 text-gray-500">

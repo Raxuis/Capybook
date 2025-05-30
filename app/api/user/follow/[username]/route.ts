@@ -13,16 +13,12 @@ export const POST = createZodRoute()
     .body(paramsSchema)
     .handler(async (_, context) => {
         const {username} = context.body;
-        console.log("Received username:", username);
         const formattedUsername = formatUsername(username);
         try {
-            console.log("Attempting to follow user:", formattedUsername);
             const session = await auth()
             if (!session?.user) {
                 return new NextResponse("Unauthorized", {status: 401});
             }
-
-            console.log("Session user:", session.user);
 
             const targetUser = await prisma.user.findUnique({
                 where: {username: formattedUsername},
@@ -32,8 +28,6 @@ export const POST = createZodRoute()
             if (!targetUser) {
                 return new NextResponse("User not found", {status: 404});
             }
-
-            console.log("Target user:", targetUser);
 
             if (targetUser.id === session.user.id) {
                 return new NextResponse("Cannot follow yourself", {status: 400});
