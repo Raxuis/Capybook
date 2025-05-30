@@ -127,6 +127,7 @@ model BookReview {
   bookId    String
   rating    Int?
   feedback  String?
+  privacy   Privacy  @default(PUBLIC) // "PUBLIC", "PRIVATE", "FRIENDS"
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   User      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -184,7 +185,6 @@ enum GoalType {
   TIME
 }
 
-//Idées de badges
 enum BadgeCategory {
   BOOKS_READ // Nombre de livres lus
   PAGES_READ // Nombre de pages lues
@@ -193,6 +193,12 @@ enum BadgeCategory {
   READING_STREAK // Jours consécutifs de lecture
   GENRE_EXPLORER // Diversité des genres lus
   SPECIAL // Badges spéciaux ou événementiels
+}
+
+enum Privacy {
+  PUBLIC
+  PRIVATE
+  FRIENDS
 }
 
 model ReadingProgress {
