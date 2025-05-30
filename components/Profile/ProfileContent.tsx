@@ -5,12 +5,27 @@ import useSWR from "swr";
 import {formatBadgeCategory, formatUsername} from "@/utils/format";
 import {fetcher} from "@/utils/fetcher";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
-import {Book, Star, PenTool, Calendar, Award, User, ChevronRight, Eye, ChartBarIcon, Loader2} from "lucide-react";
+import {
+    Book,
+    Star,
+    PenTool,
+    Calendar,
+    Award,
+    User,
+    ChevronRight,
+    Eye,
+    ChartBarIcon,
+    Loader2,
+    UserPlus,
+    Users,
+    UserMinus
+} from "lucide-react";
 import EditProfileModal from "@/components/Profile/EditProfile/EditProfileModal";
 import {SWR_CONFIG} from "@/constants/SWR";
 import {generateGradientClasses} from "@/utils/color";
 import {Button, buttonVariants} from "@/components/ui/button";
 import {cn} from "@/lib/utils";
+import Image from "next/image";
 
 type ProfileData = {
     user: {
@@ -57,6 +72,19 @@ type ProfileData = {
             };
         }>;
     };
+    followers?: Array<{
+        id: string;
+        username: string;
+        name: string | null;
+        image: string | null;
+    }>;
+    following?: Array<{
+        id: string;
+        username: string;
+        name: string | null;
+        image: string | null;
+    }>;
+    isFollowing?: boolean;
 };
 
 const ProfileContent = ({username}: { username: string }) => {
@@ -98,6 +126,32 @@ const ProfileContent = ({username}: { username: string }) => {
         setModalOpen(isOpen);
     };
 
+    const handleFollowToggle = async () => {
+        try {
+            if (!usernameParamFormatted) {
+                console.error("Username parameter is not formatted correctly.");
+                return;
+            }
+
+            const response = await fetch(`/api/user/follow/${usernameParamFormatted}`, {
+                method: data.isFollowing ? 'DELETE' : 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: data.isFollowing ? null : JSON.stringify({username: usernameParamFormatted}),
+            });
+
+            if (!response.ok) {
+                console.log(`Failed to ${data.isFollowing ? 'unfollow' : 'follow'} user:`, response);
+                throw new Error('Failed to update follow status');
+            }
+
+            await mutate();
+        } catch (error) {
+            console.error('Error updating follow status:', error);
+        }
+    };
+
     if (isLoading) {
         return (
             <div className="flex flex-col items-center justify-center min-h-screen p-4">
@@ -111,7 +165,7 @@ const ProfileContent = ({username}: { username: string }) => {
         return (
             <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-lg shadow-sm">
                 <h3 className="font-semibold">Impossible de charger le profil</h3>
-                <p className="text-sm">Veuillez réessayer ultérieurement ou vérifier l'URL.</p>
+                <p className="text-sm">Veuillez réessayer ultérieurement ou vérifier l&#39;URL.</p>
             </div>
         );
     }
@@ -132,18 +186,15 @@ const ProfileContent = ({username}: { username: string }) => {
         return acc;
     }, {} as Record<string, typeof badges>);
 
-    // Preview items for overview tab
     const previewBooks = detailedData?.books.slice(0, 3) || [];
     const previewReviews = detailedData?.reviews.slice(0, 2) || [];
     const hasMoreBooks = detailedData && detailedData.books.length > 3;
     const hasMoreReviews = detailedData && detailedData.reviews.length > 2;
 
-    // Calculate which books to display based on showAllBooks state
     const displayedBooks = showAllBooks
         ? detailedData?.books || []
         : previewBooks;
 
-    // Calculate which reviews to display based on showAllReviews state
     const displayedReviews = showAllReviews
         ? detailedData?.reviews || []
         : previewReviews;
@@ -189,7 +240,7 @@ const ProfileContent = ({username}: { username: string }) => {
                 </span>
                             </div>
                         </div>
-                        {isOwner && (
+                        {isOwner ? (
                             <div className="max-sm:w-full sm:ml-auto mt-4 sm:mt-0 text-center sm:text-left">
                                 <Button
                                     className={cn(buttonVariants({
@@ -200,6 +251,27 @@ const ProfileContent = ({username}: { username: string }) => {
                                 >
                                     <PenTool size={16} className="mr-2"/>
                                     Modifier le profil
+                                </Button>
+                            </div>
+                        ) : (
+                            <div className="max-sm:w-full sm:ml-auto mt-4 sm:mt-0 text-center sm:text-left">
+                                <Button
+                                    className={cn(buttonVariants({
+                                        size: "sm",
+                                    }), "px-4 py-2 rounded-md transition-colors shadow-md flex items-center mx-auto sm:mx-0")}
+                                    onClick={handleFollowToggle}
+                                >
+                                    {data.isFollowing ? (
+                                        <>
+                                            <UserMinus size={16} className="mr-2"/>
+                                            Se désabonner
+                                        </>
+                                    ) : (
+                                        <>
+                                            <UserPlus size={16} className="mr-2"/>
+                                            S&#39;abonner
+                                        </>
+                                    )}
                                 </Button>
                             </div>
                         )}
@@ -216,7 +288,7 @@ const ProfileContent = ({username}: { username: string }) => {
                                 value="overview"
                                 className="flex-1 min-w-[100px] py-3 sm:py-4 px-2 sm:px-6 rounded-none data-[state=active]:bg-transparent data-[state=active]:shadow-none whitespace-nowrap text-xs sm:text-sm"
                             >
-                                <span className="hidden sm:inline">Vue d'ensemble</span>
+                                <span className="hidden sm:inline">Vue d&#39;ensemble</span>
                                 <span className="sm:hidden">Aperçu</span>
                             </TabsTrigger>
                             <TabsTrigger
@@ -224,6 +296,12 @@ const ProfileContent = ({username}: { username: string }) => {
                                 className="flex-1 min-w-[80px] py-3 sm:py-4 px-2 sm:px-6 rounded-none data-[state=active]:bg-transparent data-[state=active]:shadow-none whitespace-nowrap text-xs sm:text-sm"
                             >
                                 Badges
+                            </TabsTrigger>
+                            <TabsTrigger
+                                value="relations"
+                                className="flex-1 min-w-[80px] py-3 sm:py-4 px-2 sm:px-6 rounded-none data-[state=active]:bg-transparent data-[state=active]:shadow-none whitespace-nowrap text-xs sm:text-sm"
+                            >
+                                Relations
                             </TabsTrigger>
                             {isOwner && detailedData && (
                                 <>
@@ -459,7 +537,7 @@ const ProfileContent = ({username}: { username: string }) => {
                                             className="w-full py-3 text-center text-blue-600 hover:text-blue-800 border-t border-gray-100 flex items-center justify-center"
                                         >
                                             <Eye size={16} className="mr-2"/>
-                                            Voir plus d'avis
+                                            Voir plus d&#39;avis
                                         </button>
                                     )}
                                     {showAllReviews && hasMoreReviews && (
@@ -525,6 +603,86 @@ const ProfileContent = ({username}: { username: string }) => {
                         )}
                     </TabsContent>
 
+                    <TabsContent value="relations" className="p-4 sm:p-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {/* Section Abonnés */}
+                            <div className="bg-white rounded-lg border p-4">
+                                <h2 className="text-lg font-semibold mb-4 flex items-center">
+                                    <Users size={20} className="mr-2 text-green-600"/>
+                                    Abonnés ({data?.followers?.length || 0})
+                                </h2>
+                                <div className="space-y-3">
+                                    {data?.followers?.length ? (
+                                        data.followers.map((follower) => (
+                                            <div key={follower.id}
+                                                 className="flex items-center space-x-3 p-2 hover:bg-gray-50 rounded-lg transition-colors cursor-default">
+                                                <div
+                                                    className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
+                                                    {follower.image ? (
+                                                        <Image src={follower.image} alt={follower.username}
+                                                               width={40} height={40}
+                                                               className="w-full h-full rounded-full"/>
+                                                    ) : (
+                                                        <span className="text-lg font-semibold text-gray-600">
+                              {(follower.name || follower.username)[0].toUpperCase()}
+                            </span>
+                                                    )}
+                                                </div>
+                                                <div>
+                                                    <div
+                                                        className="font-medium">{follower.name || follower.username}</div>
+                                                    <div className="text-sm text-gray-500">@{follower.username}</div>
+                                                </div>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <div className="text-center py-4 text-gray-500">
+                                            Aucun abonné pour le moment
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Section Abonnements */}
+                            <div className="bg-white rounded-lg border p-4">
+                                <h2 className="text-lg font-semibold mb-4 flex items-center">
+                                    <UserPlus size={20} className="mr-2 text-indigo-600"/>
+                                    Abonnements ({data?.following?.length || 0})
+                                </h2>
+                                <div className="space-y-3">
+                                    {data?.following?.length ? (
+                                        data.following.map((following) => (
+                                            <div key={following.id}
+                                                 className="flex items-center space-x-3 p-2 hover:bg-gray-50 rounded-lg transition-colors cursor-default">
+                                                <div
+                                                    className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
+                                                    {following.image ? (
+                                                        <Image src={following.image} alt={following.username}
+                                                               width={40} height={40}
+                                                               className="w-full h-full rounded-full"/>
+                                                    ) : (
+                                                        <span className="text-lg font-semibold text-gray-600">
+                              {(following.name || following.username)[0].toUpperCase()}
+                            </span>
+                                                    )}
+                                                </div>
+                                                <div>
+                                                    <div
+                                                        className="font-medium">{following.name || following.username}</div>
+                                                    <div className="text-sm text-gray-500">@{following.username}</div>
+                                                </div>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <div className="text-center py-4 text-gray-500">
+                                            Aucun abonnement pour le moment
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    </TabsContent>
+
                     {isOwner && detailedData && (
                         <>
                             <TabsContent value="books" className="p-4 sm:p-6">
@@ -547,13 +705,13 @@ const ProfileContent = ({username}: { username: string }) => {
                                                     {bookData.finishedAt ? (
                                                         <span
                                                             className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                                            Lu le {new Date(bookData.finishedAt).toLocaleDateString('fr-FR')}
-                                                        </span>
+                              Lu le {new Date(bookData.finishedAt).toLocaleDateString('fr-FR')}
+                            </span>
                                                     ) : (
                                                         <span
                                                             className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                                                            En cours
-                                                        </span>
+                              En cours
+                            </span>
                                                     )}
                                                 </div>
                                             </div>

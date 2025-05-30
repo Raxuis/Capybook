@@ -60,17 +60,30 @@ interface ResponseData {
         reviews: ReviewData[];
         userId: string;
     };
+    followers?: Array<{
+        id: string;
+        username: string;
+        name: string | null;
+        image: string | null;
+    }>;
+    following?: Array<{
+        id: string;
+        username: string;
+        name: string | null;
+        image: string | null;
+    }>;
+    isFollowing: boolean;
 }
 
 export const GET = createZodRoute()
     .params(paramsSchema)
     .handler(async (_, context) => {
         const {username} = context.params;
-        // Format username to remove any @ symbol
         const formattedUsername = formatUsername(username);
 
         try {
             const session = await auth();
+            console.log("test")
 
             const user = await prisma.user.findUnique({
                 where: {username: formattedUsername},
@@ -90,10 +103,10 @@ export const GET = createZodRoute()
                                     id: true,
                                     title: true,
                                     authors: true,
-                                    numberOfPages: true
-                                }
-                            }
-                        }
+                                    numberOfPages: true,
+                                },
+                            },
+                        },
                     },
                     BookReview: {
                         select: {
@@ -105,10 +118,10 @@ export const GET = createZodRoute()
                                 select: {
                                     id: true,
                                     title: true,
-                                    authors: true
-                                }
-                            }
-                        }
+                                    authors: true,
+                                },
+                            },
+                        },
                     },
                     UserBadge: {
                         select: {
@@ -120,25 +133,59 @@ export const GET = createZodRoute()
                                     ownerDescription: true,
                                     publicDescription: true,
                                     icon: true,
-                                    category: true
-                                }
-                            }
-                        }
-                    }
-                }
+                                    category: true,
+                                },
+                            },
+                        },
+                    },
+                    followers: {
+                        select: {
+                            follower: {
+                                select: {
+                                    id: true,
+                                    username: true,
+                                    name: true,
+                                    image: true,
+                                },
+                            },
+                        },
+                    },
+                    following: {
+                        select: {
+                            following: {
+                                select: {
+                                    id: true,
+                                    username: true,
+                                    name: true,
+                                    image: true,
+                                },
+                            },
+                        },
+                    },
+                },
             });
 
             if (!user) {
                 return NextResponse.json({error: 'User not found'}, {status: 404});
             }
 
-            const isOwner = session?.user?.email ?
-                await prisma.user.findFirst({
+            const isOwner = session?.user?.email
+                ? await prisma.user.findFirst({
+                where: {
+                    email: session.user.email,
+                    id: user.id,
+                },
+            }) !== null
+                : false;
+
+            const isFollowing = session?.user?.id
+                ? await prisma.follow.findFirst({
                     where: {
-                        email: session.user.email,
-                        id: user.id
-                    }
-                }) !== null : false;
+                        followingId: user.id,
+                        followerId: session.user.id,
+                    },
+                })
+                : false;
 
             const totalBooksRead = user.UserBook.filter(book => book.finishedAt).length;
             const totalReviews = user.BookReview.length;
@@ -150,29 +197,35 @@ export const GET = createZodRoute()
                 publicDescription: userBadge.Badge.publicDescription,
                 icon: userBadge.Badge.icon,
                 category: userBadge.Badge.category,
-                earnedAt: userBadge.earnedAt
+                earnedAt: userBadge.earnedAt,
             }));
+
+            const followers = (user.followers ?? []).map(f => f.follower);
+            const following = (user.following ?? []).map(f => f.following);
 
             const responseData: ResponseData = {
                 user: {
                     username: user.username,
                     favoriteColor: user.favoriteColor,
                     name: user.name,
-                    createdAt: user.createdAt
+                    createdAt: user.createdAt,
                 },
                 isOwner,
                 stats: {
                     totalBooksRead,
-                    totalReviews
+                    totalReviews,
                 },
-                badges
+                badges,
+                followers,
+                following,
+                isFollowing,
             };
 
             if (isOwner) {
-                responseData['detailedData'] = {
+                responseData.detailedData = {
                     books: user.UserBook,
                     reviews: user.BookReview,
-                    userId: user.id
+                    userId: user.id,
                 };
             }
 

@@ -37,6 +37,10 @@ model User {
   UserBadge        UserBadge[]
   ReadingProgress  ReadingProgress[]
   ReadingDay       ReadingDay[]
+
+  // Add these new relations
+  followers Follow[] @relation("following")
+  following Follow[] @relation("followers")
 }
 
 model Account {
@@ -141,8 +145,8 @@ model ReadingGoal {
   userId      String
   target      Int // Nombre de livres ou pages à lire
   type        GoalType // "BOOKS" ou "PAGES" ou "TIME"
-  deadline    DateTime // Date limite pour l’objectif
-  progress    Int       @default(0) // Avancement de l’utilisateur
+  deadline    DateTime // Date limite pour l'objectif
+  progress    Int       @default(0) // Avancement de l'utilisateur
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   completedAt DateTime?
@@ -204,7 +208,7 @@ enum Privacy {
 model ReadingProgress {
   id             String     @id @default(cuid())
   userId         String
-  readingDayId   String     @unique // Assure qu’un seul progrès par ReadingDay
+  readingDayId   String     @unique // Assure qu'un seul progrès par ReadingDay
   date           DateTime
   pagesRead      Int
   booksCompleted Int
@@ -242,4 +246,17 @@ model BookGenre {
   genre     Genre    @relation(fields: [genreId], references: [id], onDelete: Cascade)
 
   @@unique([bookId, genreId])
+}
+
+model Follow {
+  id          String   @id @default(cuid())
+  followerId  String // The user who follows
+  followingId String // The user being followed
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  follower  User @relation("followers", fields: [followerId], references: [id], onDelete: Cascade)
+  following User @relation("following", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followingId]) // Prevents duplicate follows
 }
