@@ -1,4 +1,4 @@
-import {Suspense} from "react";
+import {Suspense, use} from "react";
 import {DashboardLayout} from "@/components/Layout";
 import ReviewList from "@/components/Reviews/ReviewList";
 import ReviewsListLoading from "@/components/Reviews/ReviewsListLoading";
@@ -8,7 +8,7 @@ type Props = {
 };
 
 export default function ReviewsPage({searchParams}: Props) {
-    const {page} = searchParams;
+    const {page} = use(searchParams);
     const currentPage = page || "1";
 
     return (

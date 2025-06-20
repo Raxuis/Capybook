@@ -90,6 +90,7 @@ type ProfileData = {
 
 const ProfileContent = ({username}: { username: string }) => {
     const router = useRouter();
+    const [isFollowingOrUnfollowing, setisFollowingOrUnfollowing] = useState(false);
     const [activeTab, setActiveTab] = useState("overview");
     const [isModalOpen, setModalOpen] = useState(false);
     const usernameParamFormatted = username ? formatUsername(username) : null;
@@ -128,6 +129,7 @@ const ProfileContent = ({username}: { username: string }) => {
     };
 
     const handleFollowToggle = async () => {
+        setisFollowingOrUnfollowing(true);
         try {
             if (!usernameParamFormatted) {
                 console.error("Username parameter is not formatted correctly.");
@@ -135,21 +137,23 @@ const ProfileContent = ({username}: { username: string }) => {
             }
 
             const response = await fetch(`/api/user/follow/${usernameParamFormatted}`, {
-                method: data.isFollowing ? 'DELETE' : 'POST',
+                method: data?.isFollowing ? 'DELETE' : 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: data.isFollowing ? null : JSON.stringify({username: usernameParamFormatted}),
+                body: data?.isFollowing ? null : JSON.stringify({username: usernameParamFormatted}),
             });
 
             if (!response.ok) {
-                console.log(`Failed to ${data.isFollowing ? 'unfollow' : 'follow'} user:`, response);
+                console.log(`Failed to ${data?.isFollowing ? 'unfollow' : 'follow'} user:`, response);
                 throw new Error('Failed to update follow status');
             }
 
             await mutate();
         } catch (error) {
             console.error('Error updating follow status:', error);
+        } finally {
+            setisFollowingOrUnfollowing(false);
         }
     };
 
@@ -262,17 +266,24 @@ const ProfileContent = ({username}: { username: string }) => {
                                     }), "px-4 py-2 rounded-md transition-colors shadow-md flex items-center mx-auto sm:mx-0")}
                                     onClick={handleFollowToggle}
                                 >
-                                    {data.isFollowing ? (
-                                        <>
-                                            <UserMinus size={16} className="mr-2"/>
-                                            Se désabonner
-                                        </>
-                                    ) : (
-                                        <>
-                                            <UserPlus size={16} className="mr-2"/>
-                                            S&#39;abonner
-                                        </>
-                                    )}
+                                    {
+                                        isFollowingOrUnfollowing ? (
+                                            <>
+                                                <Loader2 className="animate-spin mr-2" size={16}/>
+                                                Chargement...
+                                            </>
+                                        ) : data.isFollowing ? (
+                                            <>
+                                                <UserMinus size={16} className="mr-2"/>
+                                                Se désabonner
+                                            </>
+                                        ) : (
+                                            <>
+                                                <UserPlus size={16} className="mr-2"/>
+                                                S&#39;abonner
+                                            </>
+                                        )
+                                    }
                                 </Button>
                             </div>
                         )}
