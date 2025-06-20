@@ -5,6 +5,13 @@ import useSWR from "swr";
 import {formatBadgeCategory, formatUsername} from "@/utils/format";
 import {fetcher} from "@/utils/fetcher";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
+
+import {
+    Tooltip,
+    TooltipContent, TooltipProvider,
+    TooltipTrigger,
+} from "@/components/ui/tooltip"
+
 import {
     Book,
     Star,
@@ -18,7 +25,7 @@ import {
     Loader2,
     UserPlus,
     Users,
-    UserMinus, Globe, UserCheck, Lock
+    UserMinus, Globe, UserCheck, Lock, CopyIcon, CheckIcon
 } from "lucide-react";
 import EditProfileModal from "@/components/Profile/EditProfile/EditProfileModal";
 import {SWR_CONFIG} from "@/constants/SWR";
@@ -28,6 +35,7 @@ import {cn} from "@/lib/utils";
 import Image from "next/image";
 import {Link} from "next-view-transitions";
 import {Badge} from "@/components/ui/badge";
+import {useCopyToClipboard} from "@/hooks/use-copy-to-clipboard";
 
 type ProfileData = {
     user: {
@@ -69,7 +77,7 @@ type ProfileData = {
             createdAt: string;
             privacy: "PUBLIC" | "PRIVATE" | "FRIENDS" | "SPECIFIC_FRIEND",
             privateLink: string,
-            specificFriend: {
+            SpecificFriend: {
                 id: string;
                 username: string;
                 name: string | null;
@@ -99,7 +107,8 @@ type ProfileData = {
 
 const ProfileContent = ({username}: { username: string }) => {
     const router = useRouter();
-    const [isFollowingOrUnfollowing, setisFollowingOrUnfollowing] = useState(false);
+    const [isFollowingOrUnfollowing, setIsFollowingOrUnfollowing] = useState(false);
+    const [copiedText, copy] = useCopyToClipboard();
     const [activeTab, setActiveTab] = useState("overview");
     const [isModalOpen, setModalOpen] = useState(false);
     const usernameParamFormatted = username ? formatUsername(username) : null;
@@ -138,7 +147,7 @@ const ProfileContent = ({username}: { username: string }) => {
     };
 
     const handleFollowToggle = async () => {
-        setisFollowingOrUnfollowing(true);
+        setIsFollowingOrUnfollowing(true);
         try {
             if (!usernameParamFormatted) {
                 console.error("Username parameter is not formatted correctly.");
@@ -162,7 +171,7 @@ const ProfileContent = ({username}: { username: string }) => {
         } catch (error) {
             console.error('Error updating follow status:', error);
         } finally {
-            setisFollowingOrUnfollowing(false);
+            setIsFollowingOrUnfollowing(false);
         }
     };
 
@@ -225,35 +234,40 @@ const ProfileContent = ({username}: { username: string }) => {
                     label: "Publique",
                     icon: Globe,
                     variant: "default" as const,
-                    className: "bg-green-100 text-green-800 hover:bg-green-200 dark:bg-green-900/20 dark:text-green-400"
+                    className: "bg-green-100 text-green-800 hover:bg-green-200 dark:bg-green-900/20 dark:text-green-400",
+                    description: "Visible par tous les utilisateurs",
                 };
             case "FRIENDS":
                 return {
                     label: "Amis",
                     icon: Users,
                     variant: "secondary" as const,
-                    className: "bg-blue-100 text-blue-800 hover:bg-blue-200 dark:bg-blue-900/20 dark:text-blue-400"
+                    className: "bg-blue-100 text-blue-800 hover:bg-blue-200 dark:bg-blue-900/20 dark:text-blue-400",
+                    description: "Visible par tous vos amis"
                 };
             case "SPECIFIC_FRIEND":
                 return {
                     label: "Ami spécifique",
                     icon: UserCheck,
                     variant: "secondary" as const,
-                    className: "bg-purple-100 text-purple-800 hover:bg-purple-200 dark:bg-purple-900/20 dark:text-purple-400"
+                    className: "bg-purple-100 text-purple-800 hover:bg-purple-200 dark:bg-purple-900/20 dark:text-purple-400",
+                    description: "Visible par un ami en particulier",
                 };
             case "PRIVATE":
                 return {
                     label: "Privé",
                     icon: Lock,
                     variant: "outline" as const,
-                    className: "bg-gray-100 text-gray-800 hover:bg-gray-200 dark:bg-gray-900/20 dark:text-gray-400"
+                    className: "bg-gray-100 text-gray-800 hover:bg-gray-200 dark:bg-gray-900/20 dark:text-gray-400",
+                    description: "Accessible uniquement par lien privé",
                 };
             default:
                 return {
                     label: "Public",
                     icon: Globe,
                     variant: "default" as const,
-                    className: "bg-green-100 text-green-800 hover:bg-green-200 dark:bg-green-900/20 dark:text-green-400"
+                    className: "bg-green-100 text-green-800 hover:bg-green-200 dark:bg-green-900/20 dark:text-green-400",
+                    description: "Visible par tous les utilisateurs",
                 };
         }
     };
@@ -571,6 +585,13 @@ const ProfileContent = ({username}: { username: string }) => {
                                                 className="flex justify-between items-start mb-2 flex-wrap sm:flex-nowrap">
                                                 <h3 className="font-semibold mr-2">{review.Book.title}</h3>
                                                 <div className="flex items-center space-x-2">
+                                                    {
+                                                        review.specificFriend ? (
+                                                            <span className="text-xs text-gray-500">
+                                                                Partagé avec {review.specificFriend.username}
+                                                            </span>
+                                                        ) : null
+                                                    }
                                                     <Badge
                                                         variant={getPrivacyConfig(review.privacy).variant}
                                                         className={cn(
@@ -813,15 +834,58 @@ const ProfileContent = ({username}: { username: string }) => {
                                                     className="flex justify-between items-start mb-2 flex-wrap sm:flex-nowrap">
                                                     <h3 className="font-semibold mr-2">{review.Book.title}</h3>
                                                     <div className="flex items-center space-x-2">
-                                                        <Badge
-                                                            variant={getPrivacyConfig(review.privacy).variant}
-                                                            className={cn(
-                                                                "flex items-center gap-1 text-xs font-medium transition-colors",
-                                                                getPrivacyConfig(review.privacy)
-                                                            )}
-                                                        >
-                                                            {getPrivacyConfig(review.privacy).label}
-                                                        </Badge>
+                                                        <TooltipProvider>
+                                                            <Tooltip>
+                                                                <TooltipTrigger>
+                                                                    <Badge
+                                                                        variant={getPrivacyConfig(review.privacy).variant}
+                                                                        className={cn(
+                                                                            "flex items-center gap-1 text-xs font-medium transition-colors",
+                                                                            getPrivacyConfig(review.privacy)
+                                                                        )}
+                                                                    >
+                                                                        {getPrivacyConfig(review.privacy).label}
+                                                                    </Badge>
+                                                                </TooltipTrigger>
+                                                                <TooltipContent>
+                                                                    <div className="text-sm">
+                                                                        {
+                                                                            (review.privacy === "SPECIFIC_FRIEND" && review.SpecificFriend) ? (
+                                                                                <span>
+                                                                                    Partagé avec {" "}
+                                                                                    <Link
+                                                                                        href={`/profile/${review.SpecificFriend.username}`}
+                                                                                        className="underline">
+                                                                                        @{review.SpecificFriend.username}
+                                                                                    </Link>
+                                                                                </span>
+                                                                            ) : (
+                                                                                review.privacy === "PRIVATE" ? (
+                                                                                    <Button
+                                                                                        onClick={() => copy(`${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/review/${review.privateLink}`)}
+                                                                                    >
+                                                                                        Copier le lien pour partager
+                                                                                        {
+                                                                                            copiedText !== "" && copiedText === `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/review/${review.privateLink}` ? (
+                                                                                                <CheckIcon
+                                                                                                    className="ml-1 h-4 w-4"/>
+                                                                                            ) : (
+                                                                                                <CopyIcon
+                                                                                                    className="ml-1 h-4 w-4"/>
+                                                                                            )
+                                                                                        }
+                                                                                    </Button>
+                                                                                ) : (
+                                                                                    <span>
+                                                                                    {getPrivacyConfig(review.privacy).description}
+                                                                                </span>
+                                                                                )
+                                                                            )
+                                                                        }
+                                                                    </div>
+                                                                </TooltipContent>
+                                                            </Tooltip>
+                                                        </TooltipProvider>
                                                         <div className="flex items-center mt-1 sm:mt-0">
                                                             {review.rating && Array.from({length: 5}).map((_, i) => (
                                                                 <Star

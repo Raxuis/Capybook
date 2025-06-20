@@ -41,7 +41,6 @@ export function ReviewPrivacyModal({isOpen, onClose, onSubmit, userId}: PrivacyM
         setIsLoadingFriends(true);
         try {
             const response = await axios.get(`/api/user/${userId}/friends`);
-            console.log("Loaded friends:", response);
             setFriends(response.data || []);
         } catch (error) {
             console.error("Error loading friends:", error);
