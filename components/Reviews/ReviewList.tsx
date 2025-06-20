@@ -2,10 +2,7 @@
 
 import {useEffect, useState} from "react";
 import {getReviews, getReviewsCounts} from "@/actions/reviews";
-import ReviewCard from "@/components/Reviews/ReviewCard";
 import {Pagination} from "@/components/Reviews/Pagination";
-import {Star} from "lucide-react";
-import ReviewsListLoading from "./ReviewsListLoading";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs"
 import ReviewCards from "@/components/Reviews/ReviewCards";
 

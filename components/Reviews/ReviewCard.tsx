@@ -42,7 +42,7 @@ const ReviewCard = ({review, index}: ReviewCardProps) => {
         switch (privacy) {
             case "PUBLIC":
                 return {
-                    label: "Public",
+                    label: "Publique",
                     icon: Globe,
                     variant: "default" as const,
                     className: "bg-green-100 text-green-800 hover:bg-green-200 dark:bg-green-900/20 dark:text-green-400"
@@ -70,7 +70,7 @@ const ReviewCard = ({review, index}: ReviewCardProps) => {
                 };
             default:
                 return {
-                    label: "Public",
+                    label: "Publique",
                     icon: Globe,
                     variant: "default" as const,
                     className: "bg-green-100 text-green-800 hover:bg-green-200 dark:bg-green-900/20 dark:text-green-400"

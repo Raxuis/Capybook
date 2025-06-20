@@ -18,7 +18,7 @@ import {
     Loader2,
     UserPlus,
     Users,
-    UserMinus
+    UserMinus, Globe, UserCheck, Lock
 } from "lucide-react";
 import EditProfileModal from "@/components/Profile/EditProfile/EditProfileModal";
 import {SWR_CONFIG} from "@/constants/SWR";
@@ -27,6 +27,7 @@ import {Button, buttonVariants} from "@/components/ui/button";
 import {cn} from "@/lib/utils";
 import Image from "next/image";
 import {Link} from "next-view-transitions";
+import {Badge} from "@/components/ui/badge";
 
 type ProfileData = {
     user: {
@@ -66,6 +67,14 @@ type ProfileData = {
             rating: number | null;
             feedback: string | null;
             createdAt: string;
+            privacy: "PUBLIC" | "PRIVATE" | "FRIENDS" | "SPECIFIC_FRIEND",
+            privateLink: string,
+            specificFriend: {
+                id: string;
+                username: string;
+                name: string | null;
+                image: string | null;
+            } | null;
             Book: {
                 id: string;
                 title: string;
@@ -204,8 +213,51 @@ const ProfileContent = ({username}: { username: string }) => {
         ? detailedData?.reviews || []
         : previewReviews;
 
+    console.log('displayedReviews', displayedReviews);
+
     const {headerGradient, headerGradientStyle, avatarGradient, avatarGradientStyle} =
         generateGradientClasses(user.favoriteColor);
+
+    const getPrivacyConfig = (privacy: string) => {
+        switch (privacy) {
+            case "PUBLIC":
+                return {
+                    label: "Publique",
+                    icon: Globe,
+                    variant: "default" as const,
+                    className: "bg-green-100 text-green-800 hover:bg-green-200 dark:bg-green-900/20 dark:text-green-400"
+                };
+            case "FRIENDS":
+                return {
+                    label: "Amis",
+                    icon: Users,
+                    variant: "secondary" as const,
+                    className: "bg-blue-100 text-blue-800 hover:bg-blue-200 dark:bg-blue-900/20 dark:text-blue-400"
+                };
+            case "SPECIFIC_FRIEND":
+                return {
+                    label: "Ami spécifique",
+                    icon: UserCheck,
+                    variant: "secondary" as const,
+                    className: "bg-purple-100 text-purple-800 hover:bg-purple-200 dark:bg-purple-900/20 dark:text-purple-400"
+                };
+            case "PRIVATE":
+                return {
+                    label: "Privé",
+                    icon: Lock,
+                    variant: "outline" as const,
+                    className: "bg-gray-100 text-gray-800 hover:bg-gray-200 dark:bg-gray-900/20 dark:text-gray-400"
+                };
+            default:
+                return {
+                    label: "Public",
+                    icon: Globe,
+                    variant: "default" as const,
+                    className: "bg-green-100 text-green-800 hover:bg-green-200 dark:bg-green-900/20 dark:text-green-400"
+                };
+        }
+    };
+
 
     return (
         <div className="container mx-auto px-4 sm:px-6 max-w-5xl">
@@ -518,16 +570,27 @@ const ProfileContent = ({username}: { username: string }) => {
                                             <div
                                                 className="flex justify-between items-start mb-2 flex-wrap sm:flex-nowrap">
                                                 <h3 className="font-semibold mr-2">{review.Book.title}</h3>
-                                                <div className="flex items-center mt-1 sm:mt-0">
-                                                    {review.rating && Array.from({length: 5}).map((_, i) => (
-                                                        <Star
-                                                            key={i}
-                                                            size={14}
-                                                            className="sm:ml-0.5"
-                                                            fill={i < (review.rating ?? 0) ? "#FBBF24" : "none"}
-                                                            stroke={i < (review.rating ?? 0) ? "#FBBF24" : "#D1D5DB"}
-                                                        />
-                                                    ))}
+                                                <div className="flex items-center space-x-2">
+                                                    <Badge
+                                                        variant={getPrivacyConfig(review.privacy).variant}
+                                                        className={cn(
+                                                            "flex items-center gap-1 text-xs font-medium transition-colors",
+                                                            getPrivacyConfig(review.privacy)
+                                                        )}
+                                                    >
+                                                        {getPrivacyConfig(review.privacy).label}
+                                                    </Badge>
+                                                    <div className="flex items-center mt-1 sm:mt-0">
+                                                        {review.rating && Array.from({length: 5}).map((_, i) => (
+                                                            <Star
+                                                                key={i}
+                                                                size={14}
+                                                                className="sm:ml-0.5"
+                                                                fill={i < (review.rating ?? 0) ? "#FBBF24" : "none"}
+                                                                stroke={i < (review.rating ?? 0) ? "#FBBF24" : "#D1D5DB"}
+                                                            />
+                                                        ))}
+                                                    </div>
                                                 </div>
                                             </div>
                                             <p className="text-xs sm:text-sm text-gray-600 mb-2">{review.Book.authors.join(", ")}</p>
@@ -749,16 +812,27 @@ const ProfileContent = ({username}: { username: string }) => {
                                                 <div
                                                     className="flex justify-between items-start mb-2 flex-wrap sm:flex-nowrap">
                                                     <h3 className="font-semibold mr-2">{review.Book.title}</h3>
-                                                    <div className="flex items-center mt-1 sm:mt-0">
-                                                        {review.rating && Array.from({length: 5}).map((_, i) => (
-                                                            <Star
-                                                                key={i}
-                                                                size={16}
-                                                                className="sm:ml-0.5"
-                                                                fill={i < (review.rating ?? 0) ? "#FBBF24" : "none"}
-                                                                stroke={i < (review.rating ?? 0) ? "#FBBF24" : "#D1D5DB"}
-                                                            />
-                                                        ))}
+                                                    <div className="flex items-center space-x-2">
+                                                        <Badge
+                                                            variant={getPrivacyConfig(review.privacy).variant}
+                                                            className={cn(
+                                                                "flex items-center gap-1 text-xs font-medium transition-colors",
+                                                                getPrivacyConfig(review.privacy)
+                                                            )}
+                                                        >
+                                                            {getPrivacyConfig(review.privacy).label}
+                                                        </Badge>
+                                                        <div className="flex items-center mt-1 sm:mt-0">
+                                                            {review.rating && Array.from({length: 5}).map((_, i) => (
+                                                                <Star
+                                                                    key={i}
+                                                                    size={16}
+                                                                    className="sm:ml-0.5"
+                                                                    fill={i < (review.rating ?? 0) ? "#FBBF24" : "none"}
+                                                                    stroke={i < (review.rating ?? 0) ? "#FBBF24" : "#D1D5DB"}
+                                                                />
+                                                            ))}
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <p className="text-xs sm:text-sm text-gray-600 mb-3">{review.Book.authors.join(", ")}</p>

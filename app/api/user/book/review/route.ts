@@ -46,8 +46,8 @@ export const POST = createZodRoute().body(bodySchema).handler(async (_, context)
         const friendship = await prisma.follow.findFirst({
             where: {
                 OR: [
-                    { followerId: userId, followingId: specificFriendId },
-                    { followerId: specificFriendId, followingId: userId }
+                    {followerId: userId, followingId: specificFriendId},
+                    {followerId: specificFriendId, followingId: userId}
                 ]
             }
         });
@@ -94,6 +94,6 @@ export const POST = createZodRoute().body(bodySchema).handler(async (_, context)
             newBadgesCount: newBadges.length,
             newBadges: newBadges,
         },
-        privateLink: privateLink ? `${process.env.NEXT_PUBLIC_APP_URL}/review/${privateLink}` : null
+        privateLink: privateLink ? `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/review/${privateLink}` : null
     }, {status: 200});
 });

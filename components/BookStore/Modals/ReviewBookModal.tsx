@@ -122,17 +122,25 @@ export default function ReviewBookModal(
             try {
                 await navigator.clipboard.writeText(privateLink);
                 setLinkCopied(true);
-                toast({
-                    title: "Lien copié",
-                    description: "Le lien privé a été copié dans le presse-papiers",
-                });
-                setTimeout(() => setLinkCopied(false), 2000);
-            } catch {
+
+                // Toast avec délai pour éviter les interférences
+                setTimeout(() => {
+                    toast({
+                        title: "Lien copié",
+                        description: "Le lien privé a été copié dans le presse-papiers",
+                        duration: 2000,
+                    });
+                }, 100);
+
+                setTimeout(() => setLinkCopied(false), 3000);
+            } catch (error) {
+                console.error('Failed to copy link:', error);
                 toast({
                     variant: "destructive",
                     title: "Erreur",
                     description: "Impossible de copier le lien",
                 });
+                setLinkCopied(false);
             }
         }
     };
@@ -151,10 +159,23 @@ export default function ReviewBookModal(
         return ratingMap[rating] || "";
     }, []);
 
-    // Success Modal for Private Link
+    // Success Modal for Private Link - Version corrigée
     const SuccessModal = () => (
-        <Dialog open={showSuccessModal} onOpenChange={(open) => !open && handleClose()}>
-            <DialogContent className="max-w-md">
+        <Dialog
+            open={showSuccessModal}
+            onOpenChange={(open) => {
+                // Empêcher la fermeture involontaire de la modal
+                if (!open && !linkCopied) {
+                    handleClose();
+                }
+            }}
+        >
+            <DialogContent className="max-w-md" onInteractOutside={(e) => {
+                // Empêcher la fermeture quand on clique sur le toast
+                if (linkCopied) {
+                    e.preventDefault();
+                }
+            }}>
                 <DialogHeader>
                     <DialogTitle className="flex items-center gap-2">
                         <CheckCircle className="w-5 h-5 text-green-500"/>
@@ -179,12 +200,17 @@ export default function ReviewBookModal(
                             className="shrink-0"
                         >
                             {linkCopied ? (
-                                <CheckCircle className="w-4 h-4"/>
+                                <CheckCircle className="w-4 h-4 text-green-500"/>
                             ) : (
                                 <Copy className="w-4 h-4"/>
                             )}
                         </Button>
                     </div>
+                    {linkCopied && (
+                        <div className="text-xs text-green-600 font-medium">
+                            ✓ Lien copié dans le presse-papiers
+                        </div>
+                    )}
                     <p className="text-xs text-muted-foreground">
                         Seules les personnes avec ce lien pourront voir votre avis.
                     </p>

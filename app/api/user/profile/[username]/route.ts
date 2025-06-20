@@ -114,6 +114,16 @@ export const GET = createZodRoute()
                             rating: true,
                             feedback: true,
                             createdAt: true,
+                            privacy:true,
+                            privateLink: true,
+                            SpecificFriend: {
+                                select: {
+                                    id: true,
+                                    username: true,
+                                    name: true,
+                                    image: true,
+                                },
+                            },
                             Book: {
                                 select: {
                                     id: true,
