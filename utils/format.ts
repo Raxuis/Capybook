@@ -4,7 +4,7 @@ export const formatList = (items?: string[]) => {
 };
 
 export const formatUsername = (username: string) => {
-    return username.replace(/@/g, "");
+    return username.replace(/@|%40/g, "");
 }
 
 export const formatUrlParam = (param: string) => {

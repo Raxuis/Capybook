@@ -20,10 +20,17 @@ export function Pagination({currentPage, totalPages, basePath}: PaginationProps)
         visiblePages = pages.slice(start - 1, end);
     }
 
+    // Helper function to construct URL with existing query parameters
+    const constructUrl = (page: number) => {
+        const url = new URL(basePath, window.location.origin);
+        url.searchParams.set('page', page.toString());
+        return url.pathname + url.search;
+    };
+
     return (
         <nav className="flex items-center justify-center space-x-2">
             {currentPage > 1 && (
-                <Link href={`${basePath}?page=${currentPage - 1}`}>
+                <Link href={constructUrl(currentPage - 1)}>
                     <Button variant="outline" size="icon">
                         <ChevronLeft className="h-4 w-4"/>
                         <span className="sr-only">Page précédente</span>
@@ -33,7 +40,7 @@ export function Pagination({currentPage, totalPages, basePath}: PaginationProps)
 
             {visiblePages[0] > 1 && (
                 <>
-                    <Link href={`${basePath}?page=1`}>
+                    <Link href={constructUrl(1)}>
                         <Button variant="outline" size="sm">
                             1
                         </Button>
@@ -43,7 +50,7 @@ export function Pagination({currentPage, totalPages, basePath}: PaginationProps)
             )}
 
             {visiblePages.map((page) => (
-                <Link key={page} href={`${basePath}?page=${page}`}>
+                <Link key={page} href={constructUrl(page)}>
                     <Button
                         variant={page === currentPage ? "default" : "outline"}
                         size="sm"
@@ -62,7 +69,7 @@ export function Pagination({currentPage, totalPages, basePath}: PaginationProps)
                     {visiblePages[visiblePages.length - 1] < totalPages - 1 && (
                         <span className="px-2">...</span>
                     )}
-                    <Link href={`${basePath}?page=${totalPages}`}>
+                    <Link href={constructUrl(totalPages)}>
                         <Button variant="outline" size="sm">
                             {totalPages}
                         </Button>
@@ -71,7 +78,7 @@ export function Pagination({currentPage, totalPages, basePath}: PaginationProps)
             )}
 
             {currentPage < totalPages && (
-                <Link href={`${basePath}?page=${currentPage + 1}`}>
+                <Link href={constructUrl(currentPage + 1)}>
                     <Button variant="outline" size="icon">
                         <ChevronRight className="h-4 w-4"/>
                         <span className="sr-only">Page suivante</span>

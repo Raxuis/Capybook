@@ -4,15 +4,18 @@ import {motion} from "motion/react";
 import {Star} from "lucide-react";
 import {Card, CardContent} from "@/components/ui/card";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
+import {Badge} from "@/components/ui/badge";
 import {formatDistanceToNow} from "date-fns";
 import {fr} from "date-fns/locale";
 import {cn} from "@/lib/utils";
+import {getPrivacyConfig} from "@/utils/reviews";
 
 type ReviewCardProps = {
     review: {
         id: string;
         rating: number;
         feedback: string | null;
+        privacy: "PUBLIC" | "PRIVATE" | "FRIENDS" | "SPECIFIC_FRIEND";
         createdAt: string;
         User: {
             username: string;
@@ -35,6 +38,9 @@ const ReviewCard = ({review, index}: ReviewCardProps) => {
             .join("")
             .toUpperCase();
     };
+
+    const privacyConfig = getPrivacyConfig(review.privacy);
+    const PrivacyIcon = privacyConfig.icon;
 
     return (
         <motion.div
@@ -61,15 +67,27 @@ const ReviewCard = ({review, index}: ReviewCardProps) => {
                                 </p>
                             </div>
                         </div>
-                        <div className="flex items-center space-x-1">
-                            <Star className="h-4 w-4 text-amber-500"/>
-                            <span className="text-sm font-medium">{review.rating}/5</span>
+                        <div className="flex items-center space-x-2">
+                            <Badge
+                                variant={privacyConfig.variant}
+                                className={cn(
+                                    "flex items-center gap-1 text-xs font-medium transition-colors",
+                                    privacyConfig.className
+                                )}
+                            >
+                                <PrivacyIcon className="h-3 w-3" />
+                                {privacyConfig.label}
+                            </Badge>
+                            <div className="flex items-center space-x-1">
+                                <Star className="h-4 w-4 text-amber-500 fill-current"/>
+                                <span className="text-sm font-medium">{review.rating}/5</span>
+                            </div>
                         </div>
                     </div>
 
                     <div className="space-y-2">
                         <p className={cn(
-                            "text-sm text-muted-foreground",
+                            "text-sm text-muted-foreground leading-relaxed",
                             !review.feedback && "italic"
                         )}>
                             {review.feedback || "Pas de commentaire"}
@@ -77,12 +95,12 @@ const ReviewCard = ({review, index}: ReviewCardProps) => {
                     </div>
 
                     <div className="flex items-center justify-between text-xs text-muted-foreground">
-            <span>
-              {formatDistanceToNow(new Date(review.createdAt), {
-                  addSuffix: true,
-                  locale: fr
-              })}
-            </span>
+                        <span>
+                            {formatDistanceToNow(new Date(review.createdAt), {
+                                addSuffix: true,
+                                locale: fr
+                            })}
+                        </span>
                     </div>
                 </CardContent>
             </Card>
