@@ -3,7 +3,7 @@ import {createZodRoute} from "next-zod-route";
 import {NextResponse} from 'next/server';
 import prisma from "@/utils/prisma";
 import {checkAndAssignBadges} from "@/utils/badges";
-import {nanoid} from 'nanoid';
+// import {nanoid} from 'nanoid';
 
 const bodySchema = z.object({
     bookKey: z.string(),
@@ -57,9 +57,6 @@ export const POST = createZodRoute().body(bodySchema).handler(async (_, context)
         }
     }
 
-    // Generate private link if privacy is PRIVATE
-    const privateLink = privacy === 'PRIVATE' ? nanoid(12) : null;
-
     const newBookReview = await prisma.bookReview.upsert({
         where: {
             userId_bookId: {userId, bookId: book.id},
@@ -68,7 +65,6 @@ export const POST = createZodRoute().body(bodySchema).handler(async (_, context)
             rating,
             feedback,
             privacy,
-            privateLink,
             specificFriendId,
         },
         create: {
@@ -77,7 +73,6 @@ export const POST = createZodRoute().body(bodySchema).handler(async (_, context)
             rating,
             feedback,
             privacy,
-            privateLink,
             specificFriendId,
         },
     });
@@ -94,6 +89,6 @@ export const POST = createZodRoute().body(bodySchema).handler(async (_, context)
             newBadgesCount: newBadges.length,
             newBadges: newBadges,
         },
-        privateLink: privateLink ? `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/review/${privateLink}` : null
+        privateLink: (newBookReview.id && newBookReview.privacy === "PRIVATE") ? `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/private-review/${newBookReview.id}` : null
     }, {status: 200});
 });

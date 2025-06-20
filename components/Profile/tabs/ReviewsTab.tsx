@@ -9,7 +9,6 @@ import {
     TooltipProvider
 } from "@/components/ui/tooltip"
 import {Badge} from "@/components/ui/badge";
-import {Button} from "@/components/ui/button";
 import {getPrivacyConfig} from "@/utils/reviews";
 import {cn} from "@/lib/utils";
 import {useCopyToClipboard} from "@/hooks/use-copy-to-clipboard";
@@ -34,88 +33,101 @@ const ReviewsTab = memo<ReviewsTabProps>(({reviews}) => {
         );
     }
 
-
     return (
         <div className="space-y-4 sm:space-y-6">
-            {reviews.map(review => (
-                <div key={review.id} className="bg-gray-50 p-3 sm:p-4 rounded-lg">
-                    <div className="flex justify-between items-start mb-2 flex-wrap sm:flex-nowrap">
-                        <h3 className="font-semibold mr-2">{review.Book.title}</h3>
-                        <div className="flex items-center space-x-2">
-                            <TooltipProvider>
-                                <Tooltip>
-                                    <TooltipTrigger>
-                                        <Badge
-                                            variant={getPrivacyConfig(review.privacy).variant}
-                                            className={cn(
-                                                "flex items-center gap-1 text-xs font-medium transition-colors",
-                                                getPrivacyConfigMemo(review.privacy)
-                                            )}
-                                        >
-                                            {getPrivacyConfigMemo(review.privacy).label}
-                                        </Badge>
-                                    </TooltipTrigger>
-                                    <TooltipContent>
-                                        <div className="text-sm">
+            {reviews.map(review => {
+                const privacyConfig = getPrivacyConfigMemo(review.privacy);
+                const PrivacyIcon = privacyConfig.icon;
+                return (
+                    <div key={review.id} className="bg-gray-50 p-3 sm:p-4 rounded-lg">
+                        <div className="flex justify-between items-start mb-2 flex-wrap sm:flex-nowrap">
+                            <h3 className="font-semibold mr-2">{review.Book.title}</h3>
+                            <div className="flex items-center space-x-2">
+                                <TooltipProvider>
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <Badge
+                                                variant={privacyConfig.variant}
+                                                className={cn(
+                                                    "flex items-center gap-1 text-xs font-medium transition-colors cursor-pointer",
+                                                    privacyConfig.className
+                                                )}
+                                            >
+                                                <PrivacyIcon className="h-3 w-3"/>
+                                                {privacyConfig.label}
+                                            </Badge>
+                                        </TooltipTrigger>
+                                        <TooltipContent asChild className={cn("p-0", privacyConfig.className)}>
                                             {
                                                 (review.privacy === "SPECIFIC_FRIEND" && review.SpecificFriend) ? (
-                                                    <span>
-                                                                                    Partagé avec {" "}
-                                                        <Link
-                                                            href={`/profile/${review.SpecificFriend.username}`}
-                                                            className="underline">
-                                                                                        @{review.SpecificFriend.username}
-                                                                                    </Link>
-                                                                                </span>
+                                                    <div
+                                                        className={cn(
+                                                            "text-sm px-3 py-2 rounded-md",
+                                                            privacyConfig.className
+                                                        )}
+                                                    >
+                                                        <span className="flex items-center gap-1">
+                                                          Partagé avec{" "}
+                                                            <Link
+                                                                href={`/profile/${review.SpecificFriend.username}`}
+                                                                className="underline"
+                                                            >
+                                                            @{review.SpecificFriend.username}
+                                                          </Link>
+                                                        </span>
+                                                    </div>
+                                                ) : review.privacy === "PRIVATE" ? (
+                                                    <div
+                                                        className={cn(
+                                                            "text-sm px-3 py-2 rounded-md cursor-pointer flex items-center gap-1",
+                                                            privacyConfig.className
+                                                        )}
+                                                        onClick={() => copy(`${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/private-review/${review.id}`)}
+                                                    >
+                                                        Copier le lien pour partager
+                                                        {copiedText !== "" && copiedText === `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/private-review/${review.id}` ? (
+                                                            <CheckIcon className="ml-1 h-4 w-4"/>
+                                                        ) : (
+                                                            <CopyIcon className="ml-1 h-4 w-4"/>
+                                                        )}
+                                                    </div>
                                                 ) : (
-                                                    review.privacy === "PRIVATE" ? (
-                                                        <Button
-                                                            onClick={() => copy(`${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/review/${review.privateLink}`)}
-                                                        >
-                                                            Copier le lien pour partager
-                                                            {
-                                                                copiedText !== "" && copiedText === `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/review/${review.privateLink}` ? (
-                                                                    <CheckIcon
-                                                                        className="ml-1 h-4 w-4"/>
-                                                                ) : (
-                                                                    <CopyIcon
-                                                                        className="ml-1 h-4 w-4"/>
-                                                                )
-                                                            }
-                                                        </Button>
-                                                    ) : (
-                                                        <span>
-                                                                                    {getPrivacyConfigMemo(review.privacy).description}
-                                                                                </span>
-                                                    )
+                                                    <div
+                                                        className={cn(
+                                                            "text-sm px-3 py-2 rounded-md",
+                                                            privacyConfig.className
+                                                        )}
+                                                    >
+                                                        {privacyConfig.description}
+                                                    </div>
                                                 )
                                             }
-                                        </div>
-                                    </TooltipContent>
-                                </Tooltip>
-                            </TooltipProvider>
-                            <div className="flex items-center mt-1 sm:mt-0">
-                                {review.rating && Array.from({length: 5}).map((_, i) => (
-                                    <Star
-                                        key={i}
-                                        size={16}
-                                        className="sm:ml-0.5"
-                                        fill={i < (review.rating ?? 0) ? "#FBBF24" : "none"}
-                                        stroke={i < (review.rating ?? 0) ? "#FBBF24" : "#D1D5DB"}
-                                    />
-                                ))}
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </TooltipProvider>
+                                <div className="flex items-center mt-1 sm:mt-0">
+                                    {review.rating && Array.from({length: 5}).map((_, i) => (
+                                        <Star
+                                            key={i}
+                                            size={16}
+                                            className="sm:ml-0.5"
+                                            fill={i < (review.rating ?? 0) ? "#FBBF24" : "none"}
+                                            stroke={i < (review.rating ?? 0) ? "#FBBF24" : "#D1D5DB"}
+                                        />
+                                    ))}
+                                </div>
                             </div>
                         </div>
+                        <p className="text-xs sm:text-sm text-gray-600 mb-3">{review.Book.authors.join(", ")}</p>
+                        {review.feedback && (
+                            <p className="text-sm sm:text-base text-gray-700">{review.feedback}</p>
+                        )}
+                        <div className="text-xs text-gray-500 mt-3">
+                            Publié le {new Date(review.createdAt).toLocaleDateString('fr-FR')}
+                        </div>
                     </div>
-                    <p className="text-xs sm:text-sm text-gray-600 mb-3">{review.Book.authors.join(", ")}</p>
-                    {review.feedback && (
-                        <p className="text-sm sm:text-base text-gray-700">{review.feedback}</p>
-                    )}
-                    <div className="text-xs text-gray-500 mt-3">
-                        Publié le {new Date(review.createdAt).toLocaleDateString('fr-FR')}
-                    </div>
-                </div>
-            ))}
+                )
+            })}
         </div>
     );
 });
