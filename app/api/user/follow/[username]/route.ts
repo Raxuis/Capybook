@@ -66,14 +66,39 @@ export const DELETE = createZodRoute()
                 return new NextResponse("User not found", {status: 404});
             }
 
-            // Supprimer la relation de suivi
-            await prisma.follow.delete({
-                where: {
-                    followerId_followingId: {
-                        followerId: session.user.id,
-                        followingId: targetUser.id,
+            // Utilisation d'une transaction pour s'assurer que toutes les opérations sont atomiques
+            await prisma.$transaction(async (tx) => {
+                // Supprimession de la relation de suivi
+                await tx.follow.delete({
+                    where: {
+                        followerId_followingId: {
+                            followerId: session.user.id,
+                            followingId: targetUser.id,
+                        },
                     },
-                },
+                });
+
+                // Supprimer tous les bookReviews où :
+                // 1. L'utilisateur qu'on unfollow avait partagé des avis spécifiquement avec nous
+                // 2. Nous avions partagé des avis spécifiquement avec l'utilisateur qu'on unfollow
+                await tx.bookReview.deleteMany({
+                    where: {
+                        OR: [
+                            // Cas 1: L'utilisateur qu'on unfollow avait des avis partagés spécifiquement avec nous
+                            {
+                                userId: targetUser.id,
+                                privacy: "SPECIFIC_FRIEND",
+                                specificFriendId: session.user.id,
+                            },
+                            // Cas 2: Nous avions des avis partagés spécifiquement avec l'utilisateur qu'on unfollow
+                            {
+                                userId: session.user.id,
+                                privacy: "SPECIFIC_FRIEND",
+                                specificFriendId: targetUser.id,
+                            }
+                        ]
+                    },
+                });
             });
 
             return new NextResponse("Unfollowed successfully", {status: 200});
