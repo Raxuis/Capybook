@@ -42,7 +42,8 @@ model User {
   following Follow[] @relation("followers")
 
   // New relation for specific friend reviews
-  specificFriendReviews BookReview[] @relation("SpecificFriendReviews")
+  specificFriendReviews BookReview[]    @relation("SpecificFriendReviews")
+  UserBookNotes         UserBookNotes[]
 }
 
 model Account {
@@ -100,6 +101,20 @@ model UserBook {
   @@unique([userId, bookId])
 }
 
+model UserBookNotes {
+  id        String   @id @default(cuid())
+  userId    String
+  bookId    String
+  note      String
+  page      Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  User      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Book      Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
+
+  // Aucun @@unique ici pour permettre plusieurs notes par livre
+}
+
 model UserBookWishlist {
   id        String   @id @default(cuid())
   userId    String
@@ -125,6 +140,7 @@ model Book {
   BookReview       BookReview[]
   UserBookWishlist UserBookWishlist[]
   BookGenre        BookGenre[]
+  UserBookNotes    UserBookNotes[]
 }
 
 model BookReview {
