@@ -102,15 +102,18 @@ model UserBook {
 }
 
 model UserBookNotes {
-  id        String   @id @default(cuid())
+  id        String       @id @default(cuid())
   userId    String
   bookId    String
   note      String
   page      Int?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  User      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  Book      Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  chapter   Int?
+  tags      String[]     @default([])
+  type      BookNoteType @default(NOTE)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  User      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Book      Book         @relation(fields: [bookId], references: [id], onDelete: Cascade)
 
   // Aucun @@unique ici pour permettre plusieurs notes par livre
 }
@@ -198,6 +201,54 @@ model UserBadge {
   @@unique([userId, badgeId]) // Un utilisateur ne peut avoir un type de badge qu'une seule fois
 }
 
+model ReadingProgress {
+  id             String     @id @default(cuid())
+  userId         String
+  readingDayId   String     @unique // Assure qu'un seul progrès par ReadingDay
+  date           DateTime
+  pagesRead      Int
+  booksCompleted Int
+  user           User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  readingDay     ReadingDay @relation(fields: [readingDayId], references: [id])
+}
+
+model ReadingDay {
+  id              String           @id @default(cuid())
+  userId          String
+  date            DateTime         @default(now()) @db.Date
+  minutesRead     Int              @default(0)
+  pagesRead       Int              @default(0)
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  readingProgress ReadingProgress?
+
+  @@unique([userId, date])
+}
+
+model BookGenre {
+  id        String   @id @default(cuid())
+  bookId    String
+  genreId   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  book      Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  genre     Genre    @relation(fields: [genreId], references: [id], onDelete: Cascade)
+
+  @@unique([bookId, genreId])
+}
+
+model Follow {
+  id          String   @id @default(cuid())
+  followerId  String // The user who follows
+  followingId String // The user being followed
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  follower  User @relation("followers", fields: [followerId], references: [id], onDelete: Cascade)
+  following User @relation("following", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followingId]) // Prevents duplicate follows
+}
+
 enum Role {
   USER
   ADMIN
@@ -227,29 +278,6 @@ enum Privacy {
   SPECIFIC_FRIEND
 }
 
-model ReadingProgress {
-  id             String     @id @default(cuid())
-  userId         String
-  readingDayId   String     @unique // Assure qu'un seul progrès par ReadingDay
-  date           DateTime
-  pagesRead      Int
-  booksCompleted Int
-  user           User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  readingDay     ReadingDay @relation(fields: [readingDayId], references: [id])
-}
-
-model ReadingDay {
-  id              String           @id @default(cuid())
-  userId          String
-  date            DateTime         @default(now()) @db.Date
-  minutesRead     Int              @default(0)
-  pagesRead       Int              @default(0)
-  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  readingProgress ReadingProgress?
-
-  @@unique([userId, date])
-}
-
 model Genre {
   id        String      @id @default(cuid())
   name      String      @unique
@@ -258,27 +286,9 @@ model Genre {
   books     BookGenre[]
 }
 
-model BookGenre {
-  id        String   @id @default(cuid())
-  bookId    String
-  genreId   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  book      Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
-  genre     Genre    @relation(fields: [genreId], references: [id], onDelete: Cascade)
-
-  @@unique([bookId, genreId])
-}
-
-model Follow {
-  id          String   @id @default(cuid())
-  followerId  String // The user who follows
-  followingId String // The user being followed
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  follower  User @relation("followers", fields: [followerId], references: [id], onDelete: Cascade)
-  following User @relation("following", fields: [followingId], references: [id], onDelete: Cascade)
-
-  @@unique([followerId, followingId]) // Prevents duplicate follows
+enum BookNoteType {
+  NOTE
+  QUOTE
+  SUMMARY
+  THOUGHT
 }
