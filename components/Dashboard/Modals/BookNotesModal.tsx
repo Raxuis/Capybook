@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 import {
   Dialog,
   DialogContent,
@@ -12,7 +12,6 @@ import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
 import {
   StickyNote,
   Plus,
@@ -25,31 +24,19 @@ import {
   Calendar,
   Tag,
   FileText,
-  Filter,
   SortAsc,
   Quote
 } from 'lucide-react';
-
-// Types
-interface Note {
-  id: string;
-  title: string;
-  content: string;
-  page?: number;
-  chapter?: string;
-  tags: string[];
-  createdAt: Date;
-  updatedAt: Date;
-  type: 'note' | 'quote' | 'thought';
-}
+import { BookNoteType, Note, MoreInfoBook } from "@/types";
+import { BookNotesConstants } from "@/constants/books/notes";
 
 interface BookNotesProps {
-  bookTitle: string;
+  book: MoreInfoBook;
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
 }
 
-const BookNotesModal = ({ bookTitle, isOpen, setIsOpen }: BookNotesProps) => {
+const BookNotesModal = ({ book, isOpen, setIsOpen }: BookNotesProps) => {
   const [notes, setNotes] = useState<Note[]>([]);
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -63,7 +50,7 @@ const BookNotesModal = ({ bookTitle, isOpen, setIsOpen }: BookNotesProps) => {
     page: '',
     chapter: '',
     tags: '',
-    type: 'note' as Note['type']
+    type: BookNotesConstants.note as BookNoteType
   });
 
   const filteredAndSortedNotes = useMemo(() => {
@@ -83,19 +70,17 @@ const BookNotesModal = ({ bookTitle, isOpen, setIsOpen }: BookNotesProps) => {
           return a.title.localeCompare(b.title);
         case 'date':
         default:
-          return b.createdAt.getTime() - a.createdAt.getTime();
+          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
       }
     });
   }, [notes, searchTerm, selectedTags, sortBy]);
 
-  // Récupération de tous les tags
   const allTags = useMemo(() => {
     const tags = new Set<string>();
     notes.forEach(note => note.tags.forEach(tag => tags.add(tag)));
     return Array.from(tags);
   }, [notes]);
 
-  // Fonctions CRUD
   const createNote = () => {
     if (!newNote.title.trim() || !newNote.content.trim()) return;
 
@@ -106,13 +91,13 @@ const BookNotesModal = ({ bookTitle, isOpen, setIsOpen }: BookNotesProps) => {
       page: newNote.page ? parseInt(newNote.page) : undefined,
       chapter: newNote.chapter || undefined,
       tags: newNote.tags.split(',').map(tag => tag.trim()).filter(Boolean),
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      createdAt: "",
+      updatedAt: "",
       type: newNote.type
     };
 
     setNotes(prev => [note, ...prev]);
-    setNewNote({ title: '', content: '', page: '', chapter: '', tags: '', type: 'note' });
+    setNewNote({ title: '', content: '', page: '', chapter: '', tags: '', type: 'Note' });
     setIsCreating(false);
   };
 
@@ -120,31 +105,35 @@ const BookNotesModal = ({ bookTitle, isOpen, setIsOpen }: BookNotesProps) => {
     setNotes(prev => prev.filter(note => note.id !== id));
   };
 
-  const updateNote = (id: string, updates: Partial<Note>) => {
-    setNotes(prev => prev.map(note =>
-      note.id === id
-        ? { ...note, ...updates, updatedAt: new Date() }
-        : note
-    ));
-  };
+  // const updateNote = (id: string, updates: Partial<Note>) => {
+  //   setNotes(prev => prev.map(note =>
+  //     note.id === id
+  //       ? { ...note, ...updates, updatedAt: new Date() }
+  //       : note
+  //   ));
+  // };
 
-  const getTypeIcon = (type: Note['type']) => {
+  const getTypeIcon = (type: BookNoteType) => {
     switch (type) {
-      case 'quote':
+      case BookNotesConstants.quote: // "Quote"
         return <Quote className="h-4 w-4" />;
-      case 'thought':
+      case BookNotesConstants.thought: // "Thought"
         return <Edit3 className="h-4 w-4" />;
+      case BookNotesConstants.summary: // "Summary"
+        return <BookOpen className="h-4 w-4" />;
       default:
         return <FileText className="h-4 w-4" />;
     }
   };
 
-  const getTypeColor = (type: Note['type']) => {
+  const getTypeColor = (type: BookNoteType) => {
     switch (type) {
-      case 'quote':
+      case BookNotesConstants.quote: // "Quote"
         return 'bg-amber-100 text-amber-800 border-amber-200';
-      case 'thought':
+      case BookNotesConstants.thought: // "Thought"
         return 'bg-purple-100 text-purple-800 border-purple-200';
+      case BookNotesConstants.summary: // "Summary"
+        return 'bg-green-100 text-green-800 border-green-200';
       default:
         return 'bg-blue-100 text-blue-800 border-blue-200';
     }
@@ -158,7 +147,7 @@ const BookNotesModal = ({ bookTitle, isOpen, setIsOpen }: BookNotesProps) => {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <BookOpen className="h-5 w-5" />
-              Notes - {bookTitle}
+              Notes - {book.title}
             </DialogTitle>
             <DialogDescription>
               Gérez vos notes, citations et réflexions pour ce livre
@@ -169,7 +158,8 @@ const BookNotesModal = ({ bookTitle, isOpen, setIsOpen }: BookNotesProps) => {
             {/* Barre d'outils */}
             <div className="flex flex-col sm:flex-row gap-2 pb-2 border-b">
               <div className="flex-1 relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Search
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder="Rechercher dans les notes..."
                   value={searchTerm}
@@ -259,16 +249,19 @@ const BookNotesModal = ({ bookTitle, isOpen, setIsOpen }: BookNotesProps) => {
                       </CardHeader>
                       <CardContent className="space-y-3">
                         <div className="flex gap-2 mb-3">
-                          {(['note', 'quote', 'thought'] as const).map(type => (
+                          {Object.entries(BookNotesConstants).map(([key, value]) => (
                             <Button
-                              key={type}
-                              variant={newNote.type === type ? "default" : "outline"}
+                              key={key}
+                              variant={newNote.type === value ? "default" : "outline"}
                               size="sm"
-                              onClick={() => setNewNote(prev => ({ ...prev, type }))}
+                              onClick={() => setNewNote(prev => ({
+                                ...prev,
+                                type: value
+                              }))}
                             >
-                              {getTypeIcon(type)}
-                              <span className="ml-1 capitalize">
-                                {type === 'note' ? 'Note' : type === 'quote' ? 'Citation' : 'Réflexion'}
+                              {getTypeIcon(value)}
+                              <span className="ml-1">
+                                {value}
                               </span>
                             </Button>
                           ))}
@@ -277,13 +270,19 @@ const BookNotesModal = ({ bookTitle, isOpen, setIsOpen }: BookNotesProps) => {
                         <Input
                           placeholder="Titre de la note"
                           value={newNote.title}
-                          onChange={(e) => setNewNote(prev => ({ ...prev, title: e.target.value }))}
+                          onChange={(e) => setNewNote(prev => ({
+                            ...prev,
+                            title: e.target.value
+                          }))}
                         />
 
                         <Textarea
                           placeholder="Contenu de la note..."
                           value={newNote.content}
-                          onChange={(e) => setNewNote(prev => ({ ...prev, content: e.target.value }))}
+                          onChange={(e) => setNewNote(prev => ({
+                            ...prev,
+                            content: e.target.value
+                          }))}
                           rows={4}
                         />
 
@@ -291,14 +290,20 @@ const BookNotesModal = ({ bookTitle, isOpen, setIsOpen }: BookNotesProps) => {
                           <Input
                             placeholder="Page (optionnel)"
                             value={newNote.page}
-                            onChange={(e) => setNewNote(prev => ({ ...prev, page: e.target.value }))}
+                            onChange={(e) => setNewNote(prev => ({
+                              ...prev,
+                              page: e.target.value
+                            }))}
                             type="number"
                             className="w-24"
                           />
                           <Input
                             placeholder="Chapitre (optionnel)"
                             value={newNote.chapter}
-                            onChange={(e) => setNewNote(prev => ({ ...prev, chapter: e.target.value }))}
+                            onChange={(e) => setNewNote(prev => ({
+                              ...prev,
+                              chapter: e.target.value
+                            }))}
                             className="flex-1"
                           />
                         </div>
@@ -306,7 +311,10 @@ const BookNotesModal = ({ bookTitle, isOpen, setIsOpen }: BookNotesProps) => {
                         <Input
                           placeholder="Tags (séparés par des virgules)"
                           value={newNote.tags}
-                          onChange={(e) => setNewNote(prev => ({ ...prev, tags: e.target.value }))}
+                          onChange={(e) => setNewNote(prev => ({
+                            ...prev,
+                            tags: e.target.value
+                          }))}
                         />
 
                         <Button onClick={createNote} className="w-full">
@@ -335,7 +343,7 @@ const BookNotesModal = ({ bookTitle, isOpen, setIsOpen }: BookNotesProps) => {
                               <Badge className={`text-xs ${getTypeColor(note.type)}`}>
                                 {getTypeIcon(note.type)}
                                 <span className="ml-1">
-                                  {note.type === 'note' ? 'Note' : note.type === 'quote' ? 'Citation' : 'Réflexion'}
+                                  {note.type}
                                 </span>
                               </Badge>
                               {note.page && (
@@ -377,18 +385,20 @@ const BookNotesModal = ({ bookTitle, isOpen, setIsOpen }: BookNotesProps) => {
                           {note.tags.length > 0 && (
                             <div className="flex flex-wrap gap-1">
                               {note.tags.map((tag, idx) => (
-                                <Badge key={idx} variant="secondary" className="text-xs">
+                                <Badge key={idx} variant="secondary"
+                                  className="text-xs">
                                   {tag}
                                 </Badge>
                               ))}
                             </div>
                           )}
 
-                          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                          <div
+                            className="flex items-center gap-2 text-xs text-muted-foreground">
                             <Calendar className="h-3 w-3" />
-                            Créé le {note.createdAt.toLocaleDateString('fr-FR')}
-                            {note.updatedAt.getTime() !== note.createdAt.getTime() && (
-                              <span>• Modifié le {note.updatedAt.toLocaleDateString('fr-FR')}</span>
+                            Créé le {new Date(note.createdAt).toLocaleDateString('fr-FR')}
+                            {new Date(note.updatedAt).getTime() !== new Date(note.createdAt).getTime() && (
+                              <span>• Modifié le {new Date(note.updatedAt).toLocaleDateString('fr-FR')}</span>
                             )}
                           </div>
                         </div>

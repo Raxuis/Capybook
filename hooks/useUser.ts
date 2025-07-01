@@ -9,6 +9,7 @@ export type UserWithRelations = Prisma.UserGetPayload<{
         UserBook: { include: { Book: true } },
         UserBookWishlist: { include: { Book: true } },
         BookReview: { include: { Book: true } },
+        UserBookNotes: { include: { Book: true } },
         ReadingGoal: true,
         UserBadge: { include: { Badge: true } },
     }

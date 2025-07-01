@@ -380,11 +380,15 @@ const BookModal = ({
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
-            <BookNotesModal
-                isOpen={isNotesModalOpened}
-                setIsOpen={setIsNotesModalOpened}
-                bookTitle={book?.title || ""}
-            />
+            {
+                book && (
+                    <BookNotesModal
+                        isOpen={isNotesModalOpened}
+                        setIsOpen={setIsNotesModalOpened}
+                        book={book}
+                    />
+                )
+            }
         </motion.div>
     );
 };

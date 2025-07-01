@@ -4,16 +4,16 @@ import {z} from "zod";
 import prisma from "@/utils/prisma";
 
 const paramsSchema = z.object({
-    id: z.string(),
+    userId: z.string(),
 });
 
 export const GET = createZodRoute()
     .params(paramsSchema)
     .handler(async (_, context) => {
-        const {id} = context.params;
+        const {userId} = context.params;
 
         const user = await prisma.user.findUnique({
-            where: {id},
+            where: {id: userId},
             select: {
                 id: true,
                 email: true,
@@ -35,6 +35,11 @@ export const GET = createZodRoute()
                     include: {
                         Book: true
                     }
+                },
+                UserBookNotes: {
+                    include: {
+                        Book: true
+                    }
                 }
             }
         })
@@ -53,10 +58,10 @@ const putSchema = z.object({
 
 export const PUT = createZodRoute().body(putSchema).params(paramsSchema).handler(async (_, context) => {
     const {username, favoriteColor} = context.body;
-    const {id} = context.params;
+    const {userId} = context.params;
 
     const user = await prisma.user.findUnique({
-        where: {id},
+        where: {id: userId},
     });
 
     if (!user) {
@@ -72,7 +77,7 @@ export const PUT = createZodRoute().body(putSchema).params(paramsSchema).handler
     }
 
     const updatedUser = await prisma.user.update({
-        where: {id},
+        where: {id: userId},
         data: {
             username,
             favoriteColor,
