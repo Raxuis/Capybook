@@ -1,4 +1,5 @@
 import z, { coerce, object, string, number, date } from "zod"
+import { BookNoteType } from "@prisma/client";
 
 export const SignInSchema = object({
   email: string({ required_error: "L'email est nécessaire" })
@@ -120,21 +121,25 @@ export const GoalSchema = z.object({
   userId: z.string().min(1, 'L\'utilisateur est requis')
 });
 
-export const noteFormSchema = z.object({
-  title: z.string().min(1, 'Le titre est obligatoire').max(100),
-  content: z.string().min(1, 'Le contenu est obligatoire').max(2000),
+export const NoteFormSchema = z.object({
+  note: z.string().min(1, 'Le contenu de la note est requis'),
   page: z.string().optional().refine(
     (val) => !val || /^\d+$/.test(val),
     {
       message: 'La page doit être un nombre entier positif',
     }
   ),
-  chapter: z.string().max(50).optional(),
+  chapter: z.string().max(50).optional().refine(
+    (val) => !val || /^[a-zA-Z0-9 ]*$/.test(val),
+    {
+      message: 'Le chapitre ne peut contenir que des lettres, des chiffres et des espaces',
+    }
+  ),
   tags: z.string().optional().refine(
     (val) => !val || /^[a-zA-Z0-9, ]*$/.test(val),
     {
       message: 'Les tags ne peuvent contenir que des lettres, des chiffres et des virgules',
     }
   ),
-  type: z.enum(['note', 'quote', 'thought'])
+  type: z.nativeEnum(BookNoteType).optional(),
 });

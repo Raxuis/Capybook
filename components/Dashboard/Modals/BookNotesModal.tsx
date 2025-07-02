@@ -49,39 +49,13 @@ import {
   Loader2
 } from 'lucide-react';
 import { MoreInfoBook } from "@/types";
-import { BookNoteType } from "@prisma/client";
+import { NoteFormSchema } from '@/utils/zod';
+import { BookNoteType } from '@prisma/client';
+import { ApiNote } from '@/types';
 
-// Schémas Zod pour les formulaires
-const noteFormSchema = z.object({
-  note: z.string().min(1, 'Le contenu de la note est requis'),
-  page: z.string().optional(),
-  chapter: z.string().optional(),
-  tags: z.string().optional(),
-  type: z.nativeEnum(BookNoteType).optional(),
-});
+type NoteFormData = z.infer<typeof NoteFormSchema>;
 
-type NoteFormData = z.infer<typeof noteFormSchema>;
-
-// Interface pour les notes depuis l'API
-interface ApiNote {
-  id: string;
-  note: string;
-  page?: number;
-  chapter?: number;
-  tags: string[];
-  type: BookNoteType;
-  createdAt: string;
-  updatedAt: string;
-  User: {
-    name: string;
-    username: string;
-  };
-  Book: {
-    title: string;
-  };
-}
-
-interface BookNotesProps {
+type BookNotesProps = {
   book: MoreInfoBook;
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
@@ -101,9 +75,8 @@ const BookNotesModal = ({ book, isOpen, setIsOpen, userId }: BookNotesProps) => 
   const { toast } = useToast();
   const { refreshUser } = useUser();
 
-  // Form pour créer une note
   const createForm = useForm<NoteFormData>({
-    resolver: zodResolver(noteFormSchema),
+    resolver: zodResolver(NoteFormSchema),
     defaultValues: {
       note: '',
       page: '',
@@ -113,9 +86,8 @@ const BookNotesModal = ({ book, isOpen, setIsOpen, userId }: BookNotesProps) => 
     },
   });
 
-  // Form pour éditer une note
   const editForm = useForm<NoteFormData>({
-    resolver: zodResolver(noteFormSchema),
+    resolver: zodResolver(NoteFormSchema),
     defaultValues: {
       note: '',
       page: '',
@@ -159,17 +131,6 @@ const BookNotesModal = ({ book, isOpen, setIsOpen, userId }: BookNotesProps) => 
       setLoading(false);
     }
   };
-
-  // Recharger les notes quand les filtres changent
-  useEffect(() => {
-    if (isOpen && book.id) {
-      const debounceTimer = setTimeout(() => {
-        fetchNotes();
-      }, 300);
-
-      return () => clearTimeout(debounceTimer);
-    }
-  }, [searchTerm, selectedTags, sortBy]);
 
   const filteredAndSortedNotes = useMemo(() => {
     return notes.filter(note => {
@@ -324,7 +285,7 @@ const BookNotesModal = ({ book, isOpen, setIsOpen, userId }: BookNotesProps) => 
       page: note.page?.toString() || '',
       chapter: note.chapter?.toString() || '',
       tags: note.tags.join(', '),
-      type: note.type,
+      type: note.type as BookNoteType,
     });
   };
 
@@ -356,13 +317,13 @@ const BookNotesModal = ({ book, isOpen, setIsOpen, userId }: BookNotesProps) => 
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="max-w-2xl h-[40vh] overflow-hidden flex flex-col">
+      <DialogContent className="max-w-7xl w-[95vw] h-[90vh] max-h-[900px] overflow-hidden flex flex-col bg-gradient-to-br from-slate-50 to-white border-0 shadow-2xl">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <BookOpen className="h-5 w-5" />
-            Notes - {book.title}
+            <span className="truncate">Notes - {book.title}</span>
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="mt-2 text-slate-600">
             Gérez vos notes, citations et réflexions pour ce livre
           </DialogDescription>
         </DialogHeader>
@@ -370,7 +331,7 @@ const BookNotesModal = ({ book, isOpen, setIsOpen, userId }: BookNotesProps) => 
         <div className="flex-1 overflow-hidden flex flex-col gap-4">
           {/* Barre d'outils */}
           <div className="flex flex-col sm:flex-row gap-2 pb-2 border-b">
-            <div className="flex-1 relative">
+            <div className="flex-1 relative focus:outline-none">
               <Search
                 className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
@@ -604,32 +565,34 @@ const BookNotesModal = ({ book, isOpen, setIsOpen, userId }: BookNotesProps) => 
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
                   layout
+                  transition={{ duration: 0.2 }}
                 >
-                  <Card className="hover:shadow-md transition-shadow">
-                    <CardHeader className="pb-3">
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-2">
-                            <Badge className={`text-xs ${getTypeColor(note.type)}`}>
-                              {getTypeIcon(note.type)}
-                              <span className="ml-1">{note.type}</span>
+                  <Card className="hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-slate-50/50 border-slate-200/60 overflow-hidden group">
+                    <CardHeader className="pb-4">
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-3 flex-wrap">
+                            <Badge className={`text-xs font-medium shadow-sm ${getTypeColor(note.type as BookNoteType)}`}>
+                              {getTypeIcon(note.type as BookNoteType)}
+                              <span className="ml-1.5">{note.type}</span>
                             </Badge>
                             {note.page && (
-                              <Badge variant="outline" className="text-xs">
+                              <Badge variant="outline" className="text-xs bg-white/80 border-slate-200">
                                 Page {note.page}
                               </Badge>
                             )}
                           </div>
                           {note.chapter && (
-                            <p className="text-sm text-muted-foreground mb-2">{note.chapter}</p>
+                            <p className="text-sm text-slate-600 mb-2 font-medium">{note.chapter}</p>
                           )}
                         </div>
-                        <div className="flex gap-1">
+                        <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                           <Button
                             variant="ghost"
                             size="sm"
                             onClick={() => startEditing(note)}
                             disabled={loading}
+                            className="text-slate-500 hover:text-blue-600 hover:bg-blue-50"
                           >
                             <Edit3 className="h-4 w-4" />
                           </Button>
@@ -637,7 +600,7 @@ const BookNotesModal = ({ book, isOpen, setIsOpen, userId }: BookNotesProps) => 
                             variant="ghost"
                             size="sm"
                             onClick={() => deleteNote(note.id)}
-                            className="text-destructive hover:text-destructive"
+                            className="text-slate-500 hover:text-red-600 hover:bg-red-50"
                             disabled={deleteLoading === note.id}
                           >
                             {deleteLoading === note.id ? (
@@ -652,27 +615,24 @@ const BookNotesModal = ({ book, isOpen, setIsOpen, userId }: BookNotesProps) => 
                     <CardContent>
                       {editingNote === note.id ? (
                         <Form {...editForm}>
-                          <form onSubmit={editForm.handleSubmit(onEditSubmit)}
-                            className="space-y-4">
+                          <form onSubmit={editForm.handleSubmit(onEditSubmit)} className="space-y-4">
                             <FormField
                               control={editForm.control}
                               name="type"
                               render={({ field }) => (
                                 <FormItem>
-                                  <FormLabel>Type de note</FormLabel>
-                                  <Select onValueChange={field.onChange}
-                                    value={field.value}>
+                                  <FormLabel className="text-slate-700 font-medium">Type de note</FormLabel>
+                                  <Select onValueChange={field.onChange} value={field.value}>
                                     <FormControl>
-                                      <SelectTrigger>
+                                      <SelectTrigger className="bg-white/80 border-slate-200">
                                         <SelectValue />
                                       </SelectTrigger>
                                     </FormControl>
                                     <SelectContent>
-                                      {Object.values(BookNoteType).map((type) => (
+                                      {['NOTE', 'QUOTE', 'THOUGHT', 'SUMMARY'].map((type) => (
                                         <SelectItem key={type} value={type}>
-                                          <div
-                                            className="flex items-center gap-2">
-                                            {getTypeIcon(type)}
+                                          <div className="flex items-center gap-2">
+                                            {getTypeIcon(type as BookNoteType)}
                                             {type}
                                           </div>
                                         </SelectItem>
@@ -690,22 +650,21 @@ const BookNotesModal = ({ book, isOpen, setIsOpen, userId }: BookNotesProps) => 
                               render={({ field }) => (
                                 <FormItem>
                                   <FormControl>
-                                    <Textarea {...field} rows={4} />
+                                    <Textarea {...field} rows={4} className="bg-white/80 border-slate-200 resize-none" />
                                   </FormControl>
                                   <FormMessage />
                                 </FormItem>
                               )}
                             />
 
-                            <div className="flex gap-2">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                               <FormField
                                 control={editForm.control}
                                 name="page"
                                 render={({ field }) => (
-                                  <FormItem className="w-24">
+                                  <FormItem>
                                     <FormControl>
-                                      <Input type="number"
-                                        placeholder="Page" {...field} />
+                                      <Input type="number" placeholder="Page" {...field} className="bg-white/80 border-slate-200" />
                                     </FormControl>
                                     <FormMessage />
                                   </FormItem>
@@ -716,9 +675,9 @@ const BookNotesModal = ({ book, isOpen, setIsOpen, userId }: BookNotesProps) => 
                                 control={editForm.control}
                                 name="chapter"
                                 render={({ field }) => (
-                                  <FormItem className="flex-1">
+                                  <FormItem>
                                     <FormControl>
-                                      <Input placeholder="Chapitre" {...field} />
+                                      <Input placeholder="Chapitre" {...field} className="bg-white/80 border-slate-200" />
                                     </FormControl>
                                     <FormMessage />
                                   </FormItem>
@@ -732,16 +691,19 @@ const BookNotesModal = ({ book, isOpen, setIsOpen, userId }: BookNotesProps) => 
                               render={({ field }) => (
                                 <FormItem>
                                   <FormControl>
-                                    <Input
-                                      placeholder="Tags séparés par des virgules" {...field} />
+                                    <Input placeholder="Tags séparés par des virgules" {...field} className="bg-white/80 border-slate-200" />
                                   </FormControl>
                                   <FormMessage />
                                 </FormItem>
                               )}
                             />
 
-                            <div className="flex gap-2">
-                              <Button type="submit" disabled={loading}>
+                            <div className="flex flex-col sm:flex-row gap-2">
+                              <Button
+                                type="submit"
+                                disabled={loading}
+                                className="flex-1 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white"
+                              >
                                 {loading ? (
                                   <>
                                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -758,6 +720,7 @@ const BookNotesModal = ({ book, isOpen, setIsOpen, userId }: BookNotesProps) => 
                                 type="button"
                                 variant="outline"
                                 onClick={() => setEditingNote(null)}
+                                className="flex-1 sm:flex-none bg-white/80 border-slate-200"
                               >
                                 Annuler
                               </Button>
