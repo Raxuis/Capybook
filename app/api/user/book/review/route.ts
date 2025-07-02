@@ -3,7 +3,6 @@ import {createZodRoute} from "next-zod-route";
 import {NextResponse} from 'next/server';
 import prisma from "@/utils/prisma";
 import {checkAndAssignBadges} from "@/utils/badges";
-// import {nanoid} from 'nanoid';
 
 const bodySchema = z.object({
     bookKey: z.string(),

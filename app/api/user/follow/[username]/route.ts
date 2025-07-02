@@ -68,7 +68,7 @@ export const DELETE = createZodRoute()
 
             // Utilisation d'une transaction pour s'assurer que toutes les opérations sont atomiques
             await prisma.$transaction(async (tx) => {
-                // Supprimession de la relation de suivi
+                // Suppression de la relation de suivi
                 await tx.follow.delete({
                     where: {
                         followerId_followingId: {
