@@ -38,7 +38,6 @@ export function useUser() {
   useEffect(() => {
     if (userId !== undefined) {
       setIsInitializing(false);
-      console.log("user", data);
     }
   }, [userId]);
 

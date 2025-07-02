@@ -31,6 +31,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
+import { useUser } from '@/hooks/useUser';
 import {
   StickyNote,
   Plus,
@@ -98,6 +99,7 @@ const BookNotesModal = ({ book, isOpen, setIsOpen, userId }: BookNotesProps) => 
   const [deleteLoading, setDeleteLoading] = useState<string | null>(null);
 
   const { toast } = useToast();
+  const { refreshUser } = useUser();
 
   // Form pour créer une note
   const createForm = useForm<NoteFormData>({
@@ -139,9 +141,6 @@ const BookNotesModal = ({ book, isOpen, setIsOpen, userId }: BookNotesProps) => 
       });
 
       const response = await fetch(`/api/user/${userId}/book/${book.id}/notes?${params}`);
-
-      console.log(`Fetching notes with params: ${params.toString()}`);
-      console.log("response", response);
 
       if (!response.ok) {
         throw new Error('Erreur lors du chargement des notes');
@@ -216,7 +215,7 @@ const BookNotesModal = ({ book, isOpen, setIsOpen, userId }: BookNotesProps) => 
       setNotes(prev => [newNote, ...prev]);
       setIsCreating(false);
       createForm.reset();
-
+      refreshUser();
       toast({
         title: "Succès",
         description: "Note créée avec succès",
@@ -292,8 +291,7 @@ const BookNotesModal = ({ book, isOpen, setIsOpen, userId }: BookNotesProps) => 
         },
         body: JSON.stringify({
           noteId,
-          bookId: book.id,
-          userId: 'current-user-id', // À adapter selon votre système d'auth
+          bookId: book.id
         }),
       });
 
@@ -302,7 +300,7 @@ const BookNotesModal = ({ book, isOpen, setIsOpen, userId }: BookNotesProps) => 
       }
 
       setNotes(prev => prev.filter(note => note.id !== noteId));
-
+      refreshUser();
       toast({
         title: "Succès",
         description: "Note supprimée avec succès",
@@ -358,7 +356,7 @@ const BookNotesModal = ({ book, isOpen, setIsOpen, userId }: BookNotesProps) => 
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
+      <DialogContent className="max-w-2xl h-[40vh] overflow-hidden flex flex-col">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <BookOpen className="h-5 w-5" />

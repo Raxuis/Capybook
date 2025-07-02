@@ -46,7 +46,6 @@ const BookModal = ({
     getNotesCount
   } = useBooks(undefined);
 
-
   const bookStatus = useMemo(() => {
     if (!book) return {
       inLibrary: false,

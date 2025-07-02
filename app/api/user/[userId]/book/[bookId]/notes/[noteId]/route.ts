@@ -102,7 +102,6 @@ export const DELETE = createZodRoute()
 
       const data = await request.json();
       const { noteId } = context.params;
-      // Check if the noteId is valid
       const { error: paramsError } = DeleteParamsSchema.safeParse(data);
       const { error: bodyError } = DeleteBodySchema.safeParse(data);
 
@@ -147,7 +146,7 @@ const getBodySchema = z.object({
   noteId: z.string(),
 });
 
-export const GET = createZodRoute().body().handler(async (request, _) => {
+export const GET = createZodRoute().body().handler(async (_) => {
   try {
     const session = await auth();
 
@@ -156,6 +155,11 @@ export const GET = createZodRoute().body().handler(async (request, _) => {
     }
 
     const { bookId, noteId } = context.params;
+    const { error: paramsError } = getBodySchema.safeParse(data);
+
+    if (paramsError) {
+      return NextResponse.json({ error: paramsError }, { status: 400 });
+    }
 
     const note = await prisma.userBookNotes.findFirst({
       where: {
