@@ -1,3 +1,5 @@
+"use client";
+
 import React, {useRef} from 'react';
 import {motion, useInView, useScroll, useTransform} from "motion/react";
 import {animations} from "@/constants";

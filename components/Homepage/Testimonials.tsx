@@ -1,3 +1,5 @@
+"use client";
+
 import React, {useEffect, useRef, useState} from 'react';
 import {motion, useInView} from "motion/react";
 import {animations, testimonials} from "@/constants";
@@ -135,9 +137,9 @@ const Testimonials = () => {
                                     </div>
                                     <motion.div
                                         className="relative bg-primary/5 rounded-xl p-4 mt-2"
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        transition={{ delay: 0.3, duration: 0.8 }}
+                                        initial={{opacity: 0}}
+                                        animate={{opacity: 1}}
+                                        transition={{delay: 0.3, duration: 0.8}}
                                     >
                                         <p className="text-lg italic">
                                             {userTestimonials[activeTestimonialIndex].content}

@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useRef, useState } from "react";
 import { AnimatePresence, motion, useInView } from "motion/react";
 import { animations } from "@/constants";
