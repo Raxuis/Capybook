@@ -44,6 +44,13 @@ export const dockRoutes: DockRoute[] = [
     },
     {
         index: 5,
+        imageSrc: "/dock/daily-book.png",
+        tooltip: "Livre du jour",
+        link: "/daily-book",
+        needsAuth: true,
+    },
+    {
+        index: 6,
         imageSrc: "/dock/book-store.png",
         tooltip: "La librairie",
         link: "/book-store",
