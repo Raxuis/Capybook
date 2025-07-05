@@ -2,6 +2,12 @@ import {Suspense, use} from "react";
 import {DashboardLayout} from "@/components/Layout";
 import ReviewList from "@/components/Reviews/ReviewList";
 import ReviewsListLoading from "@/components/Reviews/ReviewsListLoading";
+import {Metadata} from "next";
+
+export const metadata: Metadata = {
+    title: "Avis des lecteurs - Capybook",
+    description: "Découvrez les avis des lecteurs sur les livres que vous aimez.",
+};
 
 type Props = {
     searchParams: { page?: string };

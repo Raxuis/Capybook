@@ -10,6 +10,12 @@ import {
 } from "@/components/ui/accordion";
 import {Card, CardContent} from "@/components/ui/card";
 import {faqs, services, team, history} from "@/constants/about";
+import {Metadata} from "next";
+
+export const metadata: Metadata = {
+    title: "À propos de Capybook",
+    description: "Découvrez l'histoire, la mission et l'équipe derrière Capybook.",
+};
 
 export default function AboutPage() {
     return (

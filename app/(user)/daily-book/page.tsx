@@ -4,8 +4,8 @@ import {auth} from '@/auth';
 import DailyBook from "@/components/DailyBook/DailyBook";
 
 export const metadata: Metadata = {
-    title: "Capybook Journal Quotidien",
-    description: "Le journal quotidien de Capybook",
+    title: "Capybook Livre Du Jour",
+    description: "Découvrez le livre du jour sur Capybook, une nouvelle fonctionnalité pour enrichir votre expérience de lecture."
 };
 
 export default async function BookShelf() {

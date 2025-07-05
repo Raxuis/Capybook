@@ -5,6 +5,12 @@ import {Button} from "@/components/ui/button";
 import {Badge} from "@/components/ui/badge";
 import {Link as NextLink} from "next-view-transitions";
 import {ArrowLeft, AlertTriangle, Lock, Eye, Shield, UserCheck} from "lucide-react";
+import {Metadata} from "next";
+
+export const metadata: Metadata = {
+    title: "Critique Privée - Capybook",
+    description: "Accédez à une critique privée sur Capybook, réservée aux utilisateurs autorisés.",
+};
 
 interface PrivateReviewPageProps {
     params: {
