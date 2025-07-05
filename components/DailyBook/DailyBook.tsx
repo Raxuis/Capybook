@@ -1,21 +1,25 @@
 import {Layout} from "@/components/Layout";
 import {getDailyBookWithDetails} from "@/actions/daily-book";
-import DailyBookCard from "@/components/DailyBook/DailyBookCard";
+import {DailyBookHeader} from "./DailyBookHeader";
+import {DailyBookContent} from "./DailyBookContent";
+import {LoginPrompt} from "./Error/LoginPrompt";
+import {ErrorState} from "./Error/ErrorState";
 
-export default async function DailyBook({user}: {
-    user: {
-        id: string;
-        username?: string;
-        role: string;
-    } | null;
-}) {
+interface User {
+    id: string;
+    username?: string;
+    role: string;
+}
+
+interface DailyBookProps {
+    user: User | null;
+}
+
+export default async function DailyBook({user}: DailyBookProps) {
     if (!user || !user.id) {
         return (
             <Layout>
-                <div className="flex flex-col items-center justify-center h-full">
-                    <h1 className="text-2xl font-bold mb-4">Veuillez vous connecter</h1>
-                    <p className="text-muted-foreground">Pour accéder au livre du jour, veuillez vous connecter.</p>
-                </div>
+                <LoginPrompt/>
             </Layout>
         );
     }
@@ -25,25 +29,18 @@ export default async function DailyBook({user}: {
     if (!dailyBook) {
         return (
             <Layout>
-                <div className="flex flex-col items-center justify-center h-full">
-                    <h1 className="text-2xl font-bold mb-4">Livre du jour indisponible</h1>
-                    <p className="text-muted-foreground">Aucun livre du jour n&#39;est disponible pour le moment.</p>
-                </div>
+                <ErrorState message="Livre du jour indisponible"/>
             </Layout>
         );
     }
 
     return (
         <Layout>
-            <div className="flex flex-col p-4">
-                <h1 className="text-2xl font-bold mb-4">Livre du jour</h1>
-                <p className="text-muted-foreground mb-6">
-                    Bienvenue dans la toute dernière fonctionnalité de Capybook : le livre du jour !
-                    Chaque jour, nous vous proposons un livre différent à découvrir, lire et surtout à apprécier.
-                </p>
+            <div
+                className="bg-gradient-to-br from-blue-50 via-white to-purple-50 rounded-2xl p-6 mb-20 text-gray-800 relative overflow-hidden">
+                <DailyBookHeader/>
+                <DailyBookContent dailyBook={dailyBook}/>
             </div>
-
-            <DailyBookCard dailyBook={dailyBook}/>
         </Layout>
     );
-};
+}
