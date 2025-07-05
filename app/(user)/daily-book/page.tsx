@@ -1,7 +1,6 @@
 import React from 'react';
 import {Metadata} from 'next';
 import {auth} from '@/auth';
-import ClientHydration from "@/hydratation/ClientHydratation";
 import DailyBook from "@/components/DailyBook/DailyBook";
 
 export const metadata: Metadata = {
@@ -12,8 +11,6 @@ export const metadata: Metadata = {
 export default async function BookShelf() {
     const session = await auth();
     return (
-        <ClientHydration userId={session?.user?.id}>
-            <DailyBook/>
-        </ClientHydration>
+        <DailyBook user={session?.user || null}/>
     );
 }

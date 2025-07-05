@@ -16,7 +16,14 @@ interface OpenLibrarySearchResult {
     numFound: number;
 }
 
-interface DailyBookData {
+interface AuthorResponse {
+    name: string;
+    key: string;
+    birth_date?: string;
+    death_date?: string;
+}
+
+export interface DailyBookData {
     key: string;
     title: string;
     authors: string[];
@@ -24,6 +31,39 @@ interface DailyBookData {
     numberOfPages?: number;
     subjects?: string[];
     publishYear?: number;
+}
+
+/**
+ * Récupère les informations d'un auteur depuis Open Library
+ * @param authorKey Clé de l'auteur (ex: "/authors/OL23919A")
+ */
+async function fetchAuthorInfo(authorKey: string): Promise<string | null> {
+    try {
+        const response = await axios.get<AuthorResponse>(`https://openlibrary.org${authorKey}.json`);
+        return response.data.name || null;
+    } catch (error) {
+        console.error(`Erreur lors de la récupération de l'auteur ${authorKey}:`, error);
+        return null;
+    }
+}
+
+/**
+ * Récupère les informations de plusieurs auteurs
+ * @param authorRefs Références d'auteurs avec leurs clés
+ */
+async function fetchMultipleAuthors(authorRefs: Array<{author: {key: string}}>): Promise<string[]> {
+    const authorPromises = authorRefs.map(ref => fetchAuthorInfo(ref.author.key));
+    const authors = await Promise.all(authorPromises);
+    return authors.filter(name => name !== null) as string[];
+}
+
+/**
+ * Génère l'URL de couverture depuis Open Library
+ * @param coverKey Clé de couverture (cover_i depuis la recherche ou covers depuis les détails)
+ * @param size Taille de la couverture ('S', 'M', 'L')
+ */
+function getCoverUrl(coverKey: number | string, size: 'S' | 'M' | 'L' = 'L'): string {
+    return `https://covers.openlibrary.org/b/id/${coverKey}-${size}.jpg`;
 }
 
 /**
@@ -278,6 +318,26 @@ export async function getDailyBookWithDetails(
             return null;
         }
 
+        // Traiter les auteurs
+        let authors: string[] = [];
+        if (bookDetails.authors && Array.isArray(bookDetails.authors)) {
+            // Si les auteurs sont des références (avec des clés)
+            if (bookDetails.authors.length > 0 && bookDetails.authors[0].author && bookDetails.authors[0].author.key) {
+                authors = await fetchMultipleAuthors(bookDetails.authors);
+            } else if (typeof bookDetails.authors[0] === 'string') {
+                // Si les auteurs sont déjà des chaînes
+                authors = bookDetails.authors;
+            }
+        }
+
+        // Traiter la couverture
+        let cover: string | undefined;
+        if (bookDetails.covers && bookDetails.covers.length > 0) {
+            cover = getCoverUrl(bookDetails.covers[0], 'L');
+        } else if (bookDetails.cover_i) {
+            cover = getCoverUrl(bookDetails.cover_i, 'L');
+        }
+
         // Le livre est déjà marqué comme vu dans selectDailyBookForUser
         if (useGlobalSystem) {
             await markBookAsViewed(userId, bookKey);
@@ -286,9 +346,9 @@ export async function getDailyBookWithDetails(
         return {
             key: bookKey,
             title: bookDetails.title || 'Titre inconnu',
-            authors: bookDetails.authors || [],
-            cover: bookDetails.cover,
-            numberOfPages: bookDetails.numberOfPages,
+            authors: authors,
+            cover: cover,
+            numberOfPages: bookDetails.numberOfPages || bookDetails.number_of_pages,
             subjects: bookDetails.subjects,
             publishYear: bookDetails.first_publish_year
         };

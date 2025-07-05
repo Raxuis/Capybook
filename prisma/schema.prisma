@@ -174,7 +174,7 @@ model DailyBookView {
   date     DateTime @db.Date // Date à laquelle le livre était proposé
 
   user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  Book   Book?   @relation(fields: [bookId], references: [id])
+  book   Book?   @relation(fields: [bookId], references: [id], onDelete: SetNull)
   bookId String?
 
   @@unique([userId, bookKey, date])
