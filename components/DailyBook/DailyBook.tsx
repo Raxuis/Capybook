@@ -22,8 +22,6 @@ export default async function DailyBook({user}: {
 
     const dailyBook = await getDailyBookWithDetails(user.id);
 
-    console.log("Daily Book Data:", dailyBook);
-
     if (!dailyBook) {
         return (
             <Layout>
