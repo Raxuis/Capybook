@@ -404,20 +404,29 @@ export async function getDailyBookHistory(limit: number = 30): Promise<Array<{
             where: {isActive: true}
         });
 
-        // Compter les vues pour chaque livre
-        return await Promise.all(
-            history.map(async (book) => {
-                const viewCount = await prisma.dailyBookView.count({
-                    where: {bookKey: book.bookKey}
-                });
+        // Fetch view counts for all books in a single query
+        const viewCounts = await prisma.dailyBookView.groupBy({
+            by: ['bookKey'],
+            _count: {
+                bookKey: true
+            },
+            where: {
+                bookKey: { in: history.map(book => book.bookKey) }
+            }
+        });
 
-                return {
-                    bookKey: book.bookKey,
-                    date: book.date,
-                    viewCount
-                };
-            })
-        );
+        // Map view counts to a dictionary for quick lookup
+        const viewCountMap = viewCounts.reduce((acc, item) => {
+            acc[item.bookKey] = item._count.bookKey;
+            return acc;
+        }, {} as Record<string, number>);
+
+        // Combine view counts with history data
+        return history.map(book => ({
+            bookKey: book.bookKey,
+            date: book.date,
+            viewCount: viewCountMap[book.bookKey] || 0
+        }));
     } catch (error) {
         console.error('Erreur lors de la récupération de l\'historique:', error);
         return [];
