@@ -149,8 +149,6 @@ model Book {
   BookGenre        BookGenre[]
   UserBookNotes    UserBookNotes[]
   BookLending      BookLending[]
-
-  dailyBookViews DailyBookView[]
 }
 
 model DailyBook {
@@ -173,9 +171,7 @@ model DailyBookView {
   viewedAt DateTime @default(now())
   date     DateTime @db.Date // Date à laquelle le livre était proposé
 
-  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  book   Book?   @relation(fields: [bookId], references: [id], onDelete: SetNull)
-  bookId String?
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, bookKey, date])
   @@index([userId, viewedAt])
