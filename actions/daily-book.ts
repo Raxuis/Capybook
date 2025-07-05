@@ -176,7 +176,7 @@ export async function selectDailyBookForUser(userId: string): Promise<string | n
 }
 
 /**
- * Version globale - même livre pour tous les utilisateurs ce jour-là
+ * Version globale — même livre pour tous les utilisateurs ce jour-là
  * Mais chaque utilisateur ne le verra qu'une seule fois
  * @param userId ID de l'utilisateur pour vérifier s'il l'a déjà vu
  */
@@ -261,15 +261,9 @@ export async function getDailyBookWithDetails(
     useGlobalSystem: boolean = false
 ): Promise<DailyBookData | null> {
 
-    let bookKey: string | null;
-
-    if (useGlobalSystem) {
-        // Système global mais avec vérification utilisateur
-        bookKey = await selectGlobalDailyBook(userId);
-    } else {
-        // Système complètement personnalisé
-        bookKey = await selectDailyBookForUser(userId);
-    }
+    const bookKey: string | null = useGlobalSystem
+        ? await selectGlobalDailyBook(userId)
+        : await selectDailyBookForUser(userId);
 
     if (!bookKey) {
         console.warn(`Aucun livre trouvé pour l'utilisateur ${userId}`);
@@ -277,7 +271,6 @@ export async function getDailyBookWithDetails(
     }
 
     try {
-        // Récupérer les détails du livre depuis Open Library
         const bookDetails = await fetchMoreBookInfos(bookKey);
 
         if (bookDetails.error) {
@@ -286,7 +279,6 @@ export async function getDailyBookWithDetails(
         }
 
         // Le livre est déjà marqué comme vu dans selectDailyBookForUser
-        // Mais on peut le remarquer pour être sûr
         if (useGlobalSystem) {
             await markBookAsViewed(userId, bookKey);
         }
