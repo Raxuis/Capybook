@@ -91,6 +91,15 @@ export default function ClientHeader({user: initialUser, adminHeader = false}: C
 
     const handleNavigation = (link: string) => {
         setIsMenuOpen(false);
+
+        if (link.startsWith("#")) {
+            const element = document.querySelector(link);
+            if (element) {
+                element.scrollIntoView({behavior: "smooth"});
+            }
+            return;
+        }
+
         setTimeout(() => {
             router.push(link);
         }, 100);
