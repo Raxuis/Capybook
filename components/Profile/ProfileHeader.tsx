@@ -42,12 +42,12 @@ const ProfileHeader = memo<ProfileHeaderProps>(({
 
     return (
         <div className="bg-white rounded-xl shadow-md overflow-hidden mb-6">
-            <div className={`${headerGradient} h-20 sm:h-32`} style={headerGradientStyle}></div>
+            <div className={cn("h-20 sm:h-32", headerGradient)} style={headerGradientStyle}></div>
             <div className="relative px-4 sm:px-6 pb-6">
                 <div className="flex flex-col sm:flex-row sm:items-end -mt-12 sm:-mt-16 mb-4">
                     <div className="relative self-center sm:self-auto">
                         <div
-                            className={`w-24 h-24 sm:w-28 md:w-32 sm:h-28 md:h-32 rounded-full border-4 border-white shadow-lg ${avatarGradient} flex items-center justify-center`}
+                            className={cn("w-24 h-24 sm:w-28 md:w-32 sm:h-28 md:h-32 rounded-full border-4 border-white shadow-lg flex items-center justify-center", avatarGradient)}
                             style={avatarGradientStyle}
                         >
                             <span className="text-3xl font-bold text-white">

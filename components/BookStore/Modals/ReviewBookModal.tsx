@@ -19,6 +19,7 @@ import {useToast} from "@/hooks/use-toast";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useBadgeQueue} from "@/Context/BadgeQueueContext";
 import {ReviewPrivacyModal} from "@/components/BookStore/Modals/PrivacySelectionModal";
+import {cn} from "@/lib/utils";
 
 export default function ReviewBookModal(
     {userId}: { userId: string | null }
@@ -280,11 +281,11 @@ export default function ReviewBookModal(
                                                                         className="p-1 transition-all duration-150"
                                                                     >
                                                                         <Star
-                                                                            className={`h-8 w-8 ${
+                                                                            className={cn("h-8 w-8 transition-colors",
                                                                                 isActive
                                                                                     ? "fill-yellow-400 text-yellow-500"
                                                                                     : "fill-gray-200 text-gray-300"
-                                                                            } transition-colors`}
+                                                                            )}
                                                                         />
                                                                     </button>
                                                                 );

@@ -11,6 +11,7 @@ import {BookNoteType} from '@prisma/client';
 import {X, Save, Loader2} from 'lucide-react';
 import {getTypeIcon} from '@/utils/bookNotes';
 import {NoteFormData} from "@/types";
+import {cn} from "@/lib/utils";
 
 interface NoteFormProps {
     form: UseFormReturn<NoteFormData>;
@@ -37,8 +38,11 @@ export const NoteForm = ({
             animate={{opacity: 1, y: 0}}
             exit={{opacity: 0, y: -20}}
         >
-            <Card className={`${!isEdit ? 'border-2 border-dashed border-primary/30 mt-4' : ''}`}>
+            <Card className={cn(
+                "mt-4",
+                !isEdit && "border-2 border-dashed border-primary/30")}>
                 <CardHeader className="pb-3">
+
                     <div className="flex items-center justify-between">
                         <CardTitle className="text-lg">{title}</CardTitle>
                         <Button variant="ghost" size="sm" onClick={onCancel}>
