@@ -1,6 +1,6 @@
-import { useState, useCallback } from 'react';
-import { useToast } from '@/hooks/use-toast';
-import { ApiNote, NoteFormData, NotePayload } from '@/types';
+import {useState, useCallback} from 'react';
+import {useToast} from '@/hooks/use-toast';
+import {ApiNote, NoteFormData, NotePayload} from '@/types';
 import {BookNoteType} from "@prisma/client";
 
 interface UseBookNotesProps {
@@ -18,16 +18,16 @@ interface UseBookNotesReturn {
     deleteNote: (noteId: string) => Promise<void>;
 }
 
-export const useBookNotes = ({ userId, bookId }: UseBookNotesProps): UseBookNotesReturn => {
+export const useBookNotes = ({userId, bookId}: UseBookNotesProps): UseBookNotesReturn => {
     const [notes, setNotes] = useState<ApiNote[]>([]);
     const [loading, setLoading] = useState(false);
     const [deleteLoading, setDeleteLoading] = useState<string | null>(null);
-    const { toast } = useToast();
+    const {toast} = useToast();
 
     const createNotePayload = (noteData: NoteFormData): NotePayload => ({
         note: noteData.note,
-        page: noteData.page ? parseInt(noteData.page, 10) : undefined,
-        chapter: noteData.chapter || undefined,
+        page: noteData.page && noteData.page.trim() !== '' ? noteData.page : undefined,
+        chapter: noteData.chapter && noteData.chapter.trim() !== '' ? noteData.chapter : undefined,
         tags: noteData.tags ? noteData.tags.split(',').map(tag => tag.trim()).filter(Boolean) : [],
         type: noteData.type || BookNoteType.NOTE,
     });
@@ -39,6 +39,7 @@ export const useBookNotes = ({ userId, bookId }: UseBookNotesProps): UseBookNote
             const response = await fetch(`/api/user/${userId}/book/${bookId}/notes${queryString}`);
 
             if (!response.ok) {
+                console.log(`Erreur lors du chargement des notes: ${response.statusText}`);
                 throw new Error('Erreur lors du chargement des notes');
             }
 
@@ -60,13 +61,15 @@ export const useBookNotes = ({ userId, bookId }: UseBookNotesProps): UseBookNote
         try {
             setLoading(true);
             const payload = createNotePayload(noteData);
+            console.log('Création de la note avec les données:', payload);
             const response = await fetch(`/api/user/${userId}/book/${bookId}/notes`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(payload),
             });
 
             if (!response.ok) {
+                console.log(`Erreur lors de la création de la note: ${response.statusText}`);
                 throw new Error('Erreur lors de la création de la note');
             }
 
@@ -96,9 +99,10 @@ export const useBookNotes = ({ userId, bookId }: UseBookNotesProps): UseBookNote
         try {
             setLoading(true);
             const payload = createNotePayload(noteData);
+            console.log('Mise à jour de la note avec les données:', payload);
             const response = await fetch(`/api/user/${userId}/book/${bookId}/notes/${noteId}`, {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(payload),
             });
 
@@ -135,8 +139,8 @@ export const useBookNotes = ({ userId, bookId }: UseBookNotesProps): UseBookNote
             setDeleteLoading(noteId);
             const response = await fetch(`/api/user/${userId}/book/${bookId}/notes/${noteId}`, {
                 method: 'DELETE',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ noteId, bookId }),
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({noteId, bookId}),
             });
 
             if (!response.ok) {

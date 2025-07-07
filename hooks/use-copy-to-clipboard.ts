@@ -9,7 +9,12 @@ export function useCopyToClipboard({
                                        isCopiedDelay = 2000,
                                    }: {
     isCopiedDelay?: number;
-} = {}): [CopiedValue, CopyFn, boolean] {
+} = {}): {
+    copiedText: CopiedValue;
+    copy: CopyFn;
+    isCopied: boolean;
+    setIsCopied: (value: boolean) => void;
+} {
     const [copiedText, setCopiedText] = useState<CopiedValue>(null);
     const [isCopied, setIsCopied] = useState(false);
 
@@ -39,5 +44,5 @@ export function useCopyToClipboard({
         }
     }, []);
 
-    return [copiedText, copy, isCopied];
+    return {copiedText, copy, isCopied, setIsCopied};
 }

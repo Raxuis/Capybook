@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {motion} from 'motion/react';
 import {Card, CardContent, CardHeader} from '@/components/ui/card';
 import {Badge} from '@/components/ui/badge';
@@ -7,6 +7,8 @@ import {Edit3, Trash2, Calendar, Loader2, Copy, Check, Expand, BookOpen, FileTex
 import {ApiNote} from '@/types';
 import {BookNoteType} from '@prisma/client';
 import {getTypeIcon, getTypeColor} from '@/utils/bookNotes';
+import {useCopyToClipboard} from "@/hooks/use-copy-to-clipboard";
+import {useToast} from "@/hooks/use-toast";
 
 interface NoteCardProps {
     note: ApiNote;
@@ -23,8 +25,13 @@ export const BookNoteCard = ({
                                  loading,
                                  deleteLoading,
                              }: NoteCardProps) => {
-    const [copied, setCopied] = useState(false);
+    const {toast} = useToast();
     const [expanded, setExpanded] = useState(false);
+    const {
+        copy,
+        isCopied,
+        setIsCopied
+    } = useCopyToClipboard({isCopiedDelay: 2000});
 
     const isLongNote = note.note.length > 200;
     const displayNote = !expanded && isLongNote
@@ -33,11 +40,16 @@ export const BookNoteCard = ({
 
     const handleCopy = async () => {
         try {
-            await navigator.clipboard.writeText(note.note);
-            setCopied(true);
-            setTimeout(() => setCopied(false), 2000);
+            await copy(note.note);
+            setIsCopied(true);
         } catch (err) {
+            setIsCopied(false);
             console.error('Failed to copy note:', err);
+            toast({
+                title: "Erreur",
+                description: "Impossible de copier la note",
+                variant: "destructive",
+            });
         }
     };
 
@@ -62,8 +74,11 @@ export const BookNoteCard = ({
             transition={{duration: 0.2}}
             whileHover={{y: -2}}
         >
-            <Card className="hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white via-white to-slate-50/30 border-slate-200/60 overflow-hidden group h-full flex flex-col relative">
-                <div className={`absolute top-0 left-0 w-full h-1 ${getTypeColor(note.type as BookNoteType).replace('bg-', 'bg-gradient-to-r from-')}`} />
+            <Card
+                className="hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white via-white to-slate-50/30 border-slate-200/60 overflow-hidden group h-full flex flex-col relative"
+            >
+                <div
+                    className={`absolute top-0 left-0 w-full h-1 ${getTypeColor(note.type as BookNoteType).replace('bg-', 'bg-gradient-to-r from-')}`}/>
 
                 <CardHeader className="pb-3 relative">
                     <div className="flex items-start justify-between gap-3">
@@ -79,7 +94,7 @@ export const BookNoteCard = ({
                             <div className="flex items-center gap-3 mb-2 text-sm">
                                 {note.chapter && (
                                     <div className="flex items-center gap-1.5 text-slate-600">
-                                        <BookOpen className="h-3.5 w-3.5 text-slate-400" />
+                                        <BookOpen className="h-3.5 w-3.5 text-slate-400"/>
                                         <span className="font-medium">
                                             Chapitre{' '}
                                             {note.chapter}
@@ -88,14 +103,15 @@ export const BookNoteCard = ({
                                 )}
                                 {note.page && (
                                     <div className="flex items-center gap-1.5 text-slate-600">
-                                        <FileText className="h-3.5 w-3.5 text-slate-400" />
+                                        <FileText className="h-3.5 w-3.5 text-slate-400"/>
                                         <span className="font-medium">Page {note.page}</span>
                                     </div>
                                 )}
                             </div>
                         </div>
 
-                        <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-all duration-200 bg-white/90 backdrop-blur-sm rounded-lg p-1 shadow-sm">
+                        <div
+                            className="flex gap-1 opacity-0 group-hover:opacity-100 transition-all duration-200 bg-white/90 backdrop-blur-sm rounded-lg p-1 shadow-sm">
                             <Button
                                 variant="ghost"
                                 size="sm"
@@ -103,10 +119,10 @@ export const BookNoteCard = ({
                                 className="text-slate-500 hover:text-green-600 hover:bg-green-50 h-8 w-8 p-0"
                                 title="Copier la note"
                             >
-                                {copied ? (
-                                    <Check className="h-3.5 w-3.5 text-green-600" />
+                                {isCopied ? (
+                                    <Check className="h-3.5 w-3.5 text-green-600"/>
                                 ) : (
-                                    <Copy className="h-3.5 w-3.5" />
+                                    <Copy className="h-3.5 w-3.5"/>
                                 )}
                             </Button>
                             <Button
@@ -139,7 +155,8 @@ export const BookNoteCard = ({
 
                 <CardContent className="flex-1 flex flex-col">
                     <div className="space-y-4 flex-1">
-                        <div className="bg-gradient-to-br from-white to-slate-50/50 backdrop-blur-sm rounded-xl p-4 border border-slate-200/50 shadow-sm hover:shadow-md transition-shadow duration-200 relative">
+                        <div
+                            className="bg-gradient-to-br from-white to-slate-50/50 backdrop-blur-sm rounded-xl p-4 border border-slate-200/50 shadow-sm hover:shadow-md transition-shadow duration-200 relative">
                             <p className="text-slate-800 leading-relaxed whitespace-pre-wrap font-medium text-[15px] tracking-wide">
                                 {displayNote}
                             </p>
@@ -153,12 +170,12 @@ export const BookNoteCard = ({
                                 >
                                     {expanded ? (
                                         <>
-                                            <Expand className="h-3 w-3 mr-1 rotate-180" />
+                                            <Expand className="h-3 w-3 mr-1 rotate-180"/>
                                             Voir moins
                                         </>
                                     ) : (
                                         <>
-                                            <Expand className="h-3 w-3 mr-1" />
+                                            <Expand className="h-3 w-3 mr-1"/>
                                             Voir plus
                                         </>
                                     )}
@@ -189,7 +206,7 @@ export const BookNoteCard = ({
                             </div>
                             {new Date(note.updatedAt).getTime() !== new Date(note.createdAt).getTime() && (
                                 <div className="flex items-center gap-1.5">
-                                    <div className="w-1 h-1 bg-slate-300 rounded-full" />
+                                    <div className="w-1 h-1 bg-slate-300 rounded-full"/>
                                     <span className="text-slate-400">Modifié {formatDate(note.updatedAt)}</span>
                                 </div>
                             )}

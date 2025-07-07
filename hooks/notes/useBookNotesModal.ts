@@ -18,6 +18,8 @@ interface UseBookNotesModalReturn {
     // States
     isCreating: boolean;
     editingNote: string | null;
+    setIsCreating: (value: boolean) => void;
+    setEditingNote: (noteId: string | null) => void;
 
     // Book notes hook
     notes: ApiNote[];
@@ -176,7 +178,9 @@ export const useBookNotesModal = ({
     return {
         // States
         isCreating,
+        setIsCreating,
         editingNote,
+        setEditingNote,
 
         // Book notes hook
         notes,

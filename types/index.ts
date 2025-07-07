@@ -1,10 +1,6 @@
-import { GoalType } from "@prisma/client";
-import { BookNotesConstants } from "@/constants/books/notes";
+import {BookNoteType, GoalType} from "@prisma/client";
 import { z } from "zod";
 import {NoteFormSchema} from "@/utils/zod";
-
-
-export type BookNoteType = (typeof BookNotesConstants)[keyof typeof BookNotesConstants];
 
 export type Note = {
   id: string;
@@ -83,7 +79,7 @@ export interface BookNotesProps {
 
 export interface NotePayload {
   note: string;
-  page?: number;
+  page?: string;
   chapter?: string;
   tags: string[];
   type: BookNoteType;

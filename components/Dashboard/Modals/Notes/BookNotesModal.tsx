@@ -1,4 +1,4 @@
-import React, {memo} from 'react';
+import React, {memo, useEffect} from 'react';
 import {motion, AnimatePresence} from 'motion/react';
 import {
     Dialog,
@@ -21,6 +21,8 @@ const BookNotesModal = memo(({book, isOpen, setIsOpen, userId}: BookNotesProps) 
         // States
         isCreating,
         editingNote,
+        setIsCreating,
+        setEditingNote,
 
         // Data
         loading,
@@ -51,6 +53,19 @@ const BookNotesModal = memo(({book, isOpen, setIsOpen, userId}: BookNotesProps) 
         handleDeleteNote,
         handleSortChange,
     } = useBookNotesModal({book, isOpen, userId});
+
+    useEffect(() => {
+        // Reset state when modal opens
+        if (isOpen && book.id) {
+            createForm.reset();
+            editForm.reset();
+            setSearchTerm('');
+            toggleTag('');
+            setIsCreating(false);
+            setEditingNote(null);
+            clearFilters();
+        }
+    }, [isOpen, book.id, createForm, editForm, setSearchTerm, toggleTag, setIsCreating, setEditingNote, clearFilters]);
 
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -143,7 +158,6 @@ const BookNotesModal = memo(({book, isOpen, setIsOpen, userId}: BookNotesProps) 
                         >
                             <AnimatePresence
                                 initial={false}
-                                mode="wait"
                             >
                                 {
                                     filteredAndSortedNotes.map(note => (

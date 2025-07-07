@@ -37,7 +37,7 @@ export const NoteForm = ({
             animate={{opacity: 1, y: 0}}
             exit={{opacity: 0, y: -20}}
         >
-            <Card className={`${!isEdit ? 'border-2 border-dashed border-primary/30' : ''}`}>
+            <Card className={`${!isEdit ? 'border-2 border-dashed border-primary/30 mt-4' : ''}`}>
                 <CardHeader className="pb-3">
                     <div className="flex items-center justify-between">
                         <CardTitle className="text-lg">{title}</CardTitle>
