@@ -1,3 +1,5 @@
+import {BookNoteType} from "@prisma/client";
+
 export const formatList = (items?: string[]) => {
     if (!items || items.length === 0) return "Non disponible";
     return items.join(", ");
@@ -23,5 +25,18 @@ export const formatBadgeCategory = (category: string) => {
             return "Critiques écrites";
         default:
             return category;
+    }
+}
+
+export const formatBookNoteType = (bookNoteType: BookNoteType) => {
+    switch (bookNoteType) {
+        case BookNoteType.QUOTE:
+            return "Citation";
+        case BookNoteType.THOUGHT:
+            return "Pensée";
+        case BookNoteType.SUMMARY:
+            return "Résumé";
+        default:
+            return "Note";
     }
 }

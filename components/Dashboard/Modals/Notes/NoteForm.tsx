@@ -12,6 +12,7 @@ import {X, Save, Loader2} from 'lucide-react';
 import {getTypeIcon} from '@/utils/bookNotes';
 import {NoteFormData} from "@/types";
 import {cn} from "@/lib/utils";
+import {formatBookNoteType} from "@/utils/format";
 
 interface NoteFormProps {
     form: UseFormReturn<NoteFormData>;
@@ -70,7 +71,7 @@ export const NoteForm = ({
                                                     <SelectItem key={type} value={type}>
                                                         <div className="flex items-center gap-2">
                                                             {getTypeIcon(type)}
-                                                            {type}
+                                                            {formatBookNoteType(type)}
                                                         </div>
                                                     </SelectItem>
                                                 ))}

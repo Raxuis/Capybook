@@ -9,6 +9,7 @@ import {BookNoteType} from '@prisma/client';
 import {getTypeIcon, getTypeColor} from '@/utils/bookNotes';
 import {useCopyToClipboard} from "@/hooks/use-copy-to-clipboard";
 import {useToast} from "@/hooks/use-toast";
+import {formatBookNoteType} from "@/utils/format";
 
 interface NoteCardProps {
     note: ApiNote;
@@ -87,7 +88,9 @@ export const BookNoteCard = ({
                                 <Badge
                                     className={`text-xs font-medium shadow-sm ${getTypeColor(note.type as BookNoteType)} border-0`}>
                                     {getTypeIcon(note.type as BookNoteType)}
-                                    <span className="ml-1.5 capitalize">{note.type}</span>
+                                    <span className="ml-1.5 capitalize">
+                                        {formatBookNoteType(note.type as BookNoteType)}
+                                    </span>
                                 </Badge>
                             </div>
 
