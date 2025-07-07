@@ -1,5 +1,7 @@
 import { GoalType } from "@prisma/client";
 import { BookNotesConstants } from "@/constants/books/notes";
+import { z } from "zod";
+import {NoteFormSchema} from "@/utils/zod";
 
 
 export type BookNoteType = (typeof BookNotesConstants)[keyof typeof BookNotesConstants];
@@ -66,4 +68,23 @@ export type ApiNote = {
   Book: {
     title: string;
   };
+}
+
+export type NoteFormData = z.infer<typeof NoteFormSchema>;
+
+export type SortOption = 'createdAt' | 'page';
+
+export interface BookNotesProps {
+  book: MoreInfoBook;
+  isOpen: boolean;
+  setIsOpen: (open: boolean) => void;
+  userId: string;
+}
+
+export interface NotePayload {
+  note: string;
+  page?: number;
+  chapter?: string;
+  tags: string[];
+  type: BookNoteType;
 }

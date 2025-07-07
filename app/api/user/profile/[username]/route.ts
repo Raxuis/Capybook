@@ -1,245 +1,244 @@
-import { createZodRoute } from 'next-zod-route';
-import { NextResponse } from 'next/server';
-import { z } from "zod";
+import {createZodRoute} from 'next-zod-route';
+import {NextResponse} from 'next/server';
+import {z} from "zod";
 import prisma from "@/utils/prisma";
-import { formatUsername } from "@/utils/format";
-import { auth } from "@/auth";
-import { BadgeCategory } from "@prisma/client";
+import {formatUsername} from "@/utils/format";
+import {auth} from "@/auth";
+import {BadgeCategory} from "@prisma/client";
 
 
 const paramsSchema = z.object({
-  username: z.string(),
+    username: z.string(),
 });
 
 interface BookData {
-  id: string;
-  finishedAt: Date | null;
-  Book: {
     id: string;
-    title: string;
-    authors: string[];
-    numberOfPages: number | null;
-  };
+    finishedAt: Date | null;
+    Book: {
+        id: string;
+        title: string;
+        authors: string[];
+        numberOfPages: number | null;
+    };
 }
 
 interface ReviewData {
-  id: string;
-  rating: number | null;
-  feedback: string | null;
-  createdAt: Date;
-  Book: {
     id: string;
-    title: string;
-    authors: string[];
-  };
+    rating: number | null;
+    feedback: string | null;
+    createdAt: Date;
+    Book: {
+        id: string;
+        title: string;
+        authors: string[];
+    };
 }
 
 interface ResponseData {
-  user: {
-    username: string;
-    name: string | null;
-    createdAt: Date;
-    favoriteColor: string;
-  };
-  isOwner: boolean;
-  stats: {
-    totalBooksRead: number;
-    totalReviews: number;
-  };
-  badges: Array<{
-    id: string;
-    name: string;
-    publicDescription: string;
-    ownerDescription: string;
-    icon: string | null;
-    category: BadgeCategory;
-    earnedAt: Date;
-  }>;
-  detailedData?: {
-    books: BookData[];
-    reviews: ReviewData[];
-    userId: string;
-  };
-  followers?: Array<{
-    id: string;
-    username: string;
-    name: string | null;
-    image: string | null;
-  }>;
-  following?: Array<{
-    id: string;
-    username: string;
-    name: string | null;
-    image: string | null;
-  }>;
-  isFollowing: boolean;
+    user: {
+        username: string;
+        name: string | null;
+        createdAt: Date;
+        favoriteColor: string;
+    };
+    isOwner: boolean;
+    stats: {
+        totalBooksRead: number;
+        totalReviews: number;
+    };
+    badges: Array<{
+        id: string;
+        name: string;
+        publicDescription: string;
+        ownerDescription: string;
+        icon: string | null;
+        category: BadgeCategory;
+        earnedAt: Date;
+    }>;
+    detailedData?: {
+        books: BookData[];
+        reviews: ReviewData[];
+        userId: string;
+    };
+    followers?: Array<{
+        id: string;
+        username: string;
+        name: string | null;
+        image: string | null;
+    }>;
+    following?: Array<{
+        id: string;
+        username: string;
+        name: string | null;
+        image: string | null;
+    }>;
+    isFollowing: boolean;
 }
 
 export const GET = createZodRoute()
-  .params(paramsSchema)
-  .handler(async (_, context) => {
-    const { username } = context.params;
-    const formattedUsername = formatUsername(username);
+    .params(paramsSchema)
+    .handler(async (_, context) => {
+        const {username} = context.params;
+        const formattedUsername = formatUsername(username);
 
-    try {
-      const session = await auth();
+        try {
+            const session = await auth();
 
-      const user = await prisma.user.findUnique({
-        where: { username: formattedUsername },
-        select: {
-          id: true,
-          username: true,
-          name: true,
-          image: true,
-          createdAt: true,
-          favoriteColor: true,
-          UserBook: {
-            select: {
-              id: true,
-              finishedAt: true,
-              Book: {
+            const user = await prisma.user.findUnique({
+                where: {username: formattedUsername},
                 select: {
-                  id: true,
-                  title: true,
-                  authors: true,
-                  numberOfPages: true,
+                    id: true,
+                    username: true,
+                    name: true,
+                    image: true,
+                    createdAt: true,
+                    favoriteColor: true,
+                    UserBook: {
+                        select: {
+                            id: true,
+                            finishedAt: true,
+                            Book: {
+                                select: {
+                                    id: true,
+                                    title: true,
+                                    authors: true,
+                                    numberOfPages: true,
+                                },
+                            },
+                        },
+                    },
+                    BookReview: {
+                        select: {
+                            id: true,
+                            rating: true,
+                            feedback: true,
+                            createdAt: true,
+                            privacy: true,
+                            SpecificFriend: {
+                                select: {
+                                    id: true,
+                                    username: true,
+                                    name: true,
+                                    image: true,
+                                },
+                            },
+                            Book: {
+                                select: {
+                                    id: true,
+                                    title: true,
+                                    authors: true,
+                                },
+                            },
+                        },
+                    },
+                    UserBadge: {
+                        select: {
+                            earnedAt: true,
+                            Badge: {
+                                select: {
+                                    id: true,
+                                    name: true,
+                                    ownerDescription: true,
+                                    publicDescription: true,
+                                    icon: true,
+                                    category: true,
+                                },
+                            },
+                        },
+                    },
+                    followers: {
+                        select: {
+                            follower: {
+                                select: {
+                                    id: true,
+                                    username: true,
+                                    name: true,
+                                    image: true,
+                                },
+                            },
+                        },
+                    },
+                    following: {
+                        select: {
+                            following: {
+                                select: {
+                                    id: true,
+                                    username: true,
+                                    name: true,
+                                    image: true,
+                                },
+                            },
+                        },
+                    },
                 },
-              },
-            },
-          },
-          BookReview: {
-            select: {
-              id: true,
-              rating: true,
-              feedback: true,
-              createdAt: true,
-              privacy: true,
-              SpecificFriend: {
-                select: {
-                  id: true,
-                  username: true,
-                  name: true,
-                  image: true,
+            });
+
+            if (!user) {
+                return NextResponse.json({error: 'User not found'}, {status: 404});
+            }
+
+            const isOwner = session?.user?.email
+                ? await prisma.user.findFirst({
+                where: {
+                    email: session.user.email,
+                    id: user.id,
                 },
-              },
-              Book: {
-                select: {
-                  id: true,
-                  title: true,
-                  authors: true,
+            }) !== null
+                : false;
+
+            const isFollowing = session?.user?.id
+                ? await prisma.follow.findFirst({
+                    where: {
+                        followingId: user.id,
+                        followerId: session.user.id,
+                    },
+                }) : false;
+
+            const totalBooksRead = user.UserBook.filter(book => book.finishedAt).length;
+            const totalReviews = user.BookReview.length;
+
+            const badges = user.UserBadge.map(userBadge => ({
+                id: userBadge.Badge.id,
+                name: userBadge.Badge.name,
+                ownerDescription: userBadge.Badge.ownerDescription,
+                publicDescription: userBadge.Badge.publicDescription,
+                icon: userBadge.Badge.icon,
+                category: userBadge.Badge.category,
+                earnedAt: userBadge.earnedAt,
+            }));
+
+            const followers = (user.followers ?? []).map(f => f.follower);
+            const following = (user.following ?? []).map(f => f.following);
+
+            const responseData: ResponseData = {
+                user: {
+                    username: user.username,
+                    favoriteColor: user.favoriteColor,
+                    name: user.name,
+                    createdAt: user.createdAt,
                 },
-              },
-            },
-          },
-          UserBadge: {
-            select: {
-              earnedAt: true,
-              Badge: {
-                select: {
-                  id: true,
-                  name: true,
-                  ownerDescription: true,
-                  publicDescription: true,
-                  icon: true,
-                  category: true,
+                isOwner,
+                stats: {
+                    totalBooksRead,
+                    totalReviews,
                 },
-              },
-            },
-          },
-          followers: {
-            select: {
-              follower: {
-                select: {
-                  id: true,
-                  username: true,
-                  name: true,
-                  image: true,
-                },
-              },
-            },
-          },
-          following: {
-            select: {
-              following: {
-                select: {
-                  id: true,
-                  username: true,
-                  name: true,
-                  image: true,
-                },
-              },
-            },
-          },
-        },
-      });
+                badges,
+                followers,
+                following,
+                isFollowing,
+            };
 
-      if (!user) {
-        return NextResponse.json({ error: 'User not found' }, { status: 404 });
-      }
+            if (isOwner) {
+                responseData.detailedData = {
+                    books: user.UserBook,
+                    reviews: user.BookReview,
+                    userId: user.id,
+                };
+            }
 
-      const isOwner = session?.user?.email
-        ? await prisma.user.findFirst({
-          where: {
-            email: session.user.email,
-            id: user.id,
-          },
-        }) !== null
-        : false;
-
-      const isFollowing = session?.user?.id
-        ? await prisma.follow.findFirst({
-          where: {
-            followingId: user.id,
-            followerId: session.user.id,
-          },
-        })
-        : false;
-
-      const totalBooksRead = user.UserBook.filter(book => book.finishedAt).length;
-      const totalReviews = user.BookReview.length;
-
-      const badges = user.UserBadge.map(userBadge => ({
-        id: userBadge.Badge.id,
-        name: userBadge.Badge.name,
-        ownerDescription: userBadge.Badge.ownerDescription,
-        publicDescription: userBadge.Badge.publicDescription,
-        icon: userBadge.Badge.icon,
-        category: userBadge.Badge.category,
-        earnedAt: userBadge.earnedAt,
-      }));
-
-      const followers = (user.followers ?? []).map(f => f.follower);
-      const following = (user.following ?? []).map(f => f.following);
-
-      const responseData: ResponseData = {
-        user: {
-          username: user.username,
-          favoriteColor: user.favoriteColor,
-          name: user.name,
-          createdAt: user.createdAt,
-        },
-        isOwner,
-        stats: {
-          totalBooksRead,
-          totalReviews,
-        },
-        badges,
-        followers,
-        following,
-        isFollowing,
-      };
-
-      if (isOwner) {
-        responseData.detailedData = {
-          books: user.UserBook,
-          reviews: user.BookReview,
-          userId: user.id,
-        };
-      }
-
-      return NextResponse.json(responseData);
-    } catch (error) {
-      console.error('Error fetching profile:', error);
-      return NextResponse.json({ error: 'Failed to fetch profile' }, { status: 500 });
-    }
-  });
+            return NextResponse.json(responseData);
+        } catch (error) {
+            console.error('Error fetching profile:', error);
+            return NextResponse.json({error: 'Failed to fetch profile'}, {status: 500});
+        }
+    });
