@@ -6,7 +6,7 @@ import {Button} from '@/components/ui/button';
 import {Edit3, Trash2, Calendar, Loader2, Copy, Check, Expand, BookOpen, FileText, MoreVertical} from 'lucide-react';
 import {ApiNote} from '@/types';
 import {BookNoteType} from '@prisma/client';
-import {getTypeIcon, getTypeColor} from '@/utils/bookNotes';
+import {getTypeIcon, getTypeColorAll, getTypeBackgroundColor, getTypeAccentColor} from '@/utils/bookNotes';
 import {useCopyToClipboard} from "@/hooks/use-copy-to-clipboard";
 import {useToast} from "@/hooks/use-toast";
 import {formatBookNoteType} from "@/utils/format";
@@ -39,6 +39,9 @@ export const BookNoteCard = ({
     const displayNote = !expanded && isLongNote
         ? note.note.substring(0, 200) + '...'
         : note.note;
+
+    // Récupération des couleurs thématiques
+    const accentColors = getTypeAccentColor(note.type as BookNoteType);
 
     const handleCopy = async () => {
         try {
@@ -77,17 +80,15 @@ export const BookNoteCard = ({
             className="hover:scale-[1.02] transition-transform duration-200"
         >
             <Card
-                className="hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white via-white to-slate-50/30 border-slate-200/60 overflow-hidden group h-full flex flex-col relative"
+                className={`${getTypeBackgroundColor(note.type as BookNoteType)} hover:shadow-xl transition-all duration-300 border-slate-200/60 dark:border-slate-700/60 overflow-hidden group h-full flex flex-col relative`}
             >
-                <div
-                    className={`absolute top-0 left-0 w-full h-1 ${getTypeColor(note.type as BookNoteType).replace('bg-', 'bg-gradient-to-r from-')}`}/>
 
                 <CardHeader className="pb-3 relative">
                     <div className="flex items-start justify-between gap-3">
                         <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 mb-3 flex-wrap">
                                 <Badge
-                                    className={`text-xs font-medium shadow-sm ${getTypeColor(note.type as BookNoteType)} border-0`}>
+                                    className={`text-xs font-medium shadow-sm ${getTypeColorAll(note.type as BookNoteType)} border-0 cursor-default`}>
                                     {getTypeIcon(note.type as BookNoteType)}
                                     <span className="ml-1.5 capitalize">
                                         {formatBookNoteType(note.type as BookNoteType)}
@@ -97,8 +98,9 @@ export const BookNoteCard = ({
 
                             <div className="flex items-center gap-3 mb-2 text-sm flex-wrap">
                                 {note.chapter && (
-                                    <div className="flex items-center gap-1.5 text-slate-600">
-                                        <BookOpen className="h-3.5 w-3.5 text-slate-400 flex-shrink-0"/>
+                                    <div className="flex items-center gap-1.5 text-slate-600 dark:text-slate-300">
+                                        <BookOpen
+                                            className="h-3.5 w-3.5 text-slate-400 dark:text-slate-500 flex-shrink-0"/>
                                         <span className="font-medium text-xs sm:text-sm">
                                             Chapitre{' '}
                                             {note.chapter}
@@ -106,8 +108,9 @@ export const BookNoteCard = ({
                                     </div>
                                 )}
                                 {note.page && (
-                                    <div className="flex items-center gap-1.5 text-slate-600">
-                                        <FileText className="h-3.5 w-3.5 text-slate-400 flex-shrink-0"/>
+                                    <div className="flex items-center gap-1.5 text-slate-600 dark:text-slate-300">
+                                        <FileText
+                                            className="h-3.5 w-3.5 text-slate-400 dark:text-slate-500 flex-shrink-0"/>
                                         <span className="font-medium text-xs sm:text-sm">Page {note.page}</span>
                                     </div>
                                 )}
@@ -162,7 +165,7 @@ export const BookNoteCard = ({
                                 variant="ghost"
                                 size="sm"
                                 onClick={() => setShowMobileActions(!showMobileActions)}
-                                className="text-slate-500 hover:text-slate-700 hover:bg-slate-100 h-8 w-8 p-0"
+                                className="text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 h-8 w-8 p-0"
                                 title="Actions"
                             >
                                 <MoreVertical className="h-4 w-4"/>
@@ -176,7 +179,7 @@ export const BookNoteCard = ({
                             initial={{opacity: 0, y: -10}}
                             animate={{opacity: 1, y: 0}}
                             exit={{opacity: 0, y: -10}}
-                            className="md:hidden absolute right-4 top-16 bg-white rounded-lg shadow-lg border border-slate-200 p-1 z-10"
+                            className="md:hidden absolute right-4 top-16 bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 p-1 z-10"
                         >
                             <div className="flex flex-col gap-1">
                                 <Button
@@ -186,11 +189,11 @@ export const BookNoteCard = ({
                                         handleCopy();
                                         setShowMobileActions(false);
                                     }}
-                                    className="text-slate-600 hover:text-green-600 hover:bg-green-50 justify-start h-8 px-3 text-sm"
+                                    className={`text-slate-600 dark:text-slate-300 justify-start h-8 px-3 text-sm ${accentColors.copy}`}
                                 >
                                     {isCopied ? (
                                         <>
-                                            <Check className="h-3.5 w-3.5 mr-2 text-green-600"/>
+                                            <Check className="h-3.5 w-3.5 mr-2 text-green-600 dark:text-green-400"/>
                                             Copié
                                         </>
                                     ) : (
@@ -208,7 +211,7 @@ export const BookNoteCard = ({
                                         setShowMobileActions(false);
                                     }}
                                     disabled={loading}
-                                    className="text-slate-600 hover:text-blue-600 hover:bg-blue-50 justify-start h-8 px-3 text-sm"
+                                    className={`text-slate-600 dark:text-slate-300 justify-start h-8 px-3 text-sm ${accentColors.edit}`}
                                 >
                                     <Edit3 className="h-3.5 w-3.5 mr-2"/>
                                     Modifier
@@ -220,7 +223,7 @@ export const BookNoteCard = ({
                                         onDelete(note.id);
                                         setShowMobileActions(false);
                                     }}
-                                    className="text-slate-600 hover:text-red-600 hover:bg-red-50 justify-start h-8 px-3 text-sm"
+                                    className={`text-slate-600 dark:text-slate-300 justify-start h-8 px-3 text-sm ${accentColors.delete}`}
                                     disabled={deleteLoading === note.id}
                                 >
                                     {deleteLoading === note.id ? (
@@ -243,8 +246,8 @@ export const BookNoteCard = ({
                 <CardContent className="flex-1 flex flex-col">
                     <div className="space-y-4 flex-1">
                         <div
-                            className="bg-gradient-to-br from-white to-slate-50/50 backdrop-blur-sm rounded-xl p-3 sm:p-4 border border-slate-200/50 shadow-sm hover:shadow-md transition-shadow duration-200 relative">
-                            <p className="text-slate-800 leading-relaxed whitespace-pre-wrap font-medium text-sm sm:text-[15px] tracking-wide">
+                            className="bg-gradient-to-br from-white to-slate-50/50 dark:from-slate-800/50 dark:to-slate-900/50 backdrop-blur-sm rounded-xl p-3 sm:p-4 border border-slate-200/50 dark:border-slate-700/50 shadow-sm hover:shadow-md transition-shadow duration-200 relative">
+                            <p className="text-slate-800 dark:text-slate-200 leading-relaxed whitespace-pre-wrap font-medium text-sm sm:text-[15px] tracking-wide">
                                 {displayNote}
                             </p>
 
@@ -253,7 +256,7 @@ export const BookNoteCard = ({
                                     variant="ghost"
                                     size="sm"
                                     onClick={() => setExpanded(!expanded)}
-                                    className="mt-2 text-xs text-slate-500 hover:text-slate-700 h-auto p-1 font-medium"
+                                    className="mt-2 text-xs text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 h-auto p-1 font-medium"
                                 >
                                     {expanded ? (
                                         <>
@@ -276,7 +279,7 @@ export const BookNoteCard = ({
                                     <Badge
                                         key={idx}
                                         variant="secondary"
-                                        className="text-xs bg-slate-100/80 text-slate-700 hover:bg-slate-200/80 transition-colors cursor-default border-0 px-2 py-1"
+                                        className="text-xs bg-slate-100/80 dark:bg-slate-700/80 text-slate-700 dark:text-slate-300 hover:bg-slate-200/80 dark:hover:bg-slate-600/80 transition-colors cursor-default border-0 px-2 py-1"
                                     >
                                         #{tag}
                                     </Badge>
@@ -285,22 +288,32 @@ export const BookNoteCard = ({
                         )}
                     </div>
 
-                    <div className="mt-4 pt-3 border-t border-slate-100">
-                        <div className="flex items-center justify-between text-xs text-slate-500 gap-2">
+                    <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-700">
+                        <div
+                            className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 gap-2">
                             <div className="flex items-center gap-1.5 flex-shrink-0">
-                                <Calendar className="h-3 w-3 text-slate-400"/>
+                                <Calendar className="h-3 w-3 text-slate-400 dark:text-slate-500"/>
                                 <span className="text-xs">Créé {formatDate(note.createdAt)}</span>
                             </div>
                             {new Date(note.updatedAt).getTime() !== new Date(note.createdAt).getTime() && (
                                 <div className="flex items-center gap-1.5 flex-shrink-0">
-                                    <div className="w-1 h-1 bg-slate-300 rounded-full"/>
-                                    <span className="text-slate-400 text-xs">Modifié {formatDate(note.updatedAt)}</span>
+                                    <div className="w-1 h-1 bg-slate-300 dark:bg-slate-600 rounded-full"/>
+                                    <span
+                                        className="text-slate-400 dark:text-slate-500 text-xs">Modifié {formatDate(note.updatedAt)}</span>
                                 </div>
                             )}
                         </div>
                     </div>
                 </CardContent>
             </Card>
+
+            {/* Overlay pour fermer le menu mobile */}
+            {showMobileActions && (
+                <div
+                    className="fixed inset-0 z-0 md:hidden"
+                    onClick={() => setShowMobileActions(false)}
+                />
+            )}
         </motion.div>
     );
 };
