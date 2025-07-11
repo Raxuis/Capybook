@@ -32,7 +32,10 @@ export default function ReviewBookModal(
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [hoverRating, setHoverRating] = useState<number | null>(null);
     const [showPrivacyModal, setShowPrivacyModal] = useState(false);
-    const [pendingReviewData, setPendingReviewData] = useState<z.infer<typeof ReviewBookSchema>>(null);
+    const [pendingReviewData, setPendingReviewData] = useState<z.infer<typeof ReviewBookSchema>>({
+        rating: "",
+        feedback: ""
+    });
     const [privateLink, setPrivateLink] = useState<string | null>(null);
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [linkCopied, setLinkCopied] = useState(false);
@@ -114,7 +117,10 @@ export default function ReviewBookModal(
             });
         } finally {
             setIsSubmitting(false);
-            setPendingReviewData(null);
+            setPendingReviewData({
+                rating: "",
+                feedback: ""
+            });
         }
     };
 
