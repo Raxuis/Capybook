@@ -40,6 +40,7 @@ export function useBooks(bookName?: string | null, page: number = 1) {
             finishedBookKeys: new Set(),
             reviewedKeys: new Set(),
             lentBookKeys: new Set(),
+            pendingLentBookKeys: new Set(),
             notesCounts: new Map()
         };
 
@@ -49,6 +50,7 @@ export function useBooks(bookName?: string | null, page: number = 1) {
         const finishedBookKeys = new Set();
         const reviewedKeys = new Set();
         const lentBookKeys = new Set();
+        const pendingLentBookKeys = new Set();
         const notesCounts = new Map();
 
         user.UserBook.forEach((ub) => {
@@ -70,9 +72,10 @@ export function useBooks(bookName?: string | null, page: number = 1) {
         // Gérer les livres prêtés (lentBooks)
         if (user.lentBooks) {
             user.lentBooks.forEach((lending) => {
-                // Considérer un livre comme prêté s'il est accepté et pas encore retourné
                 if (lending.status === 'ACCEPTED' && !lending.returnedAt) {
                     lentBookKeys.add(lending.book.key);
+                } else if (lending.status === 'PENDING' && !lending.returnedAt) {
+                    pendingLentBookKeys.add(lending.book.key);
                 }
             });
         }
@@ -86,7 +89,16 @@ export function useBooks(bookName?: string | null, page: number = 1) {
             });
         }
 
-        return {libraryKeys, wishlistKeys, currentBookKeys, finishedBookKeys, reviewedKeys, lentBookKeys, notesCounts};
+        return {
+            libraryKeys,
+            wishlistKeys,
+            currentBookKeys,
+            finishedBookKeys,
+            reviewedKeys,
+            lentBookKeys,
+            pendingLentBookKeys,
+            notesCounts
+        };
     }, [user]);
 
     const isInLibrary = useCallback((bookKey: string) => bookSets.libraryKeys.has(bookKey), [bookSets.libraryKeys]);
@@ -95,6 +107,7 @@ export function useBooks(bookName?: string | null, page: number = 1) {
     const isCurrentBook = useCallback((bookKey: string) => bookSets.currentBookKeys.has(bookKey), [bookSets.currentBookKeys]);
     const isBookFinished = useCallback((bookKey: string) => bookSets.finishedBookKeys.has(bookKey), [bookSets.finishedBookKeys]);
     const isBookLoaned = useCallback((bookKey: string) => bookSets.lentBookKeys.has(bookKey), [bookSets.lentBookKeys]);
+    const isBookPendingLoan = useCallback((bookKey: string) => bookSets.pendingLentBookKeys.has(bookKey), [bookSets.pendingLentBookKeys]);
     const getNotesCount = useCallback((bookKey: string) => bookSets.notesCounts.get(bookKey) || 0, [bookSets.notesCounts]);
 
     const getBookNumberOfPages = useCallback(async (bookKey: string): Promise<number | null> => {
@@ -313,6 +326,7 @@ export function useBooks(bookName?: string | null, page: number = 1) {
         isCurrentBook,
         isReviewed,
         isBookLoaned,
+        isBookPendingLoan,
         getNotesCount,
         toggleLibrary,
         toggleWishlist,

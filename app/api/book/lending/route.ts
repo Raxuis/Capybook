@@ -10,7 +10,7 @@ const createLendingSchema = z.object({
     message: z.string().optional()
 })
 
-export const {POST} = createZodRoute()
+export const POST = createZodRoute()
     .body(createLendingSchema)
     .handler(async (_, context) => {
         try {
@@ -74,8 +74,7 @@ export const {POST} = createZodRoute()
                     borrowerId,
                     bookId,
                     message,
-                    status: 'PENDING', // En attente d'acceptation
-                    createdAt: new Date()
+                    status: 'PENDING' // En attente d'acceptation
                 },
                 include: {
                     lender: {
@@ -100,7 +99,7 @@ export const {POST} = createZodRoute()
                             title: true,
                             key: true,
                             cover: true,
-                            author: true
+                            authors: true
                         }
                     }
                 }

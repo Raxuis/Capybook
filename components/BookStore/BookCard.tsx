@@ -290,4 +290,6 @@ const BookCard = memo(({
         </div>
     );
 })
+BookCard.displayName = "BookCard";
+
 export default BookCard;

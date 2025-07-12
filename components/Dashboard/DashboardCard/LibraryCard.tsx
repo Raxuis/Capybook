@@ -9,19 +9,28 @@ import {useReviewModalStore} from "@/store/reviewModalStore";
 import {useUser} from "@/hooks/useUser";
 import {useBooks} from "@/hooks/useBooks";
 import {useCallback, useMemo} from "react";
-import {UserBook} from "@prisma/client";
 
 type LibraryCardProps = {
-    userBook: UserBook;
+    userBook: {
+        Book: BookType;
+        progress: number;
+        progressType: "percentage" | "numberOfPages";
+        isCurrentBook: boolean;
+    };
     openBookModal: (book: BookType) => void;
 };
 
 const LibraryCard = ({userBook, openBookModal}: LibraryCardProps) => {
     const {setBookToReview} = useReviewModalStore();
     const {user} = useUser();
-    const {isBookLoaned} = useBooks();
+    const {isBookLoaned, isBookPendingLoan} = useBooks();
 
-    const isBookFinished = useCallback((userBook: UserBook) => {
+    const isBookFinished = useCallback((userBook: {
+        Book: BookType;
+        progress: number;
+        progressType: "percentage" | "numberOfPages";
+        isCurrentBook: boolean;
+    }) => {
         return (
             (userBook.progressType === "percentage" && userBook.progress === 100) ||
             (userBook.progressType === "numberOfPages" &&
@@ -38,29 +47,32 @@ const LibraryCard = ({userBook, openBookModal}: LibraryCardProps) => {
         return isBookLoaned(userBook.Book.key);
     }, [isBookLoaned, userBook.Book.key]);
 
+    const isPendingLoan = useMemo(() => {
+        return isBookPendingLoan(userBook.Book.key);
+    }, [isBookPendingLoan, userBook.Book.key]);
+
     const lendingInfo = useMemo(() => {
-        if (!user?.lentBooks || !isLoaned) return null;
+        if (!user?.lentBooks || (!isLoaned && !isPendingLoan)) return null;
 
         return user.lentBooks.find(
             lending => lending.book.key === userBook.Book.key &&
-                lending.status === 'ACCEPTED' &&
+                (lending.status === 'ACCEPTED' || lending.status === 'PENDING') &&
                 !lending.returnedAt
         );
-    }, [user?.lentBooks, isLoaned, userBook.Book.key]);
+    }, [user?.lentBooks, isLoaned, isPendingLoan, userBook.Book.key]);
 
     const handleReviewClick = () => {
         setBookToReview(userBook.Book as MoreInfoBook);
     };
 
-    // Déterminer le statut du livre pour l'affichage
     const bookStatus = useMemo(() => {
         if (isLoaned) return 'loaned';
+        if (isPendingLoan) return 'pending_loan';
         if (isBookFinished(userBook)) return 'finished';
         if (userBook.isCurrentBook) return 'current';
         return 'in_library';
-    }, [isLoaned, isBookFinished, userBook]);
+    }, [isLoaned, isPendingLoan, isBookFinished, userBook]);
 
-    // Configuration des badges selon le statut
     const statusConfig = useMemo(() => {
         switch (bookStatus) {
             case 'loaned':
@@ -72,6 +84,16 @@ const LibraryCard = ({userBook, openBookModal}: LibraryCardProps) => {
                         icon: UserCheck
                     },
                     cardClassName: 'border-orange-200 bg-orange-50/30'
+                };
+            case 'pending_loan':
+                return {
+                    badge: {
+                        text: 'Prêt en attente',
+                        variant: 'outline' as const,
+                        className: 'bg-yellow-50 text-yellow-700 border-yellow-200 hover:bg-yellow-100',
+                        icon: Clock
+                    },
+                    cardClassName: 'border-yellow-200 bg-yellow-50/30'
                 };
             case 'finished':
                 return {
@@ -176,6 +198,24 @@ const LibraryCard = ({userBook, openBookModal}: LibraryCardProps) => {
                         {lendingInfo.dueDate && (
                             <p className="text-orange-600 mt-1">
                                 À retourner le {new Date(lendingInfo.dueDate).toLocaleDateString('fr-FR')}
+                            </p>
+                        )}
+                    </div>
+                )}
+
+                {(isLoaned || isPendingLoan) && lendingInfo && (
+                    <div
+                        className={`${isPendingLoan ? 'bg-yellow-50 border-yellow-200' : 'bg-orange-50 border-orange-200'} border rounded-lg p-3 text-sm`}>
+                        <div
+                            className={`flex items-center gap-2 ${isPendingLoan ? 'text-yellow-700' : 'text-orange-700'}`}>
+                            <UserCheck className="h-4 w-4"/>
+                            <span className="font-medium">
+                    {isPendingLoan ? 'Demande de prêt en attente' : `Prêté à ${lendingInfo.borrower.name || lendingInfo.borrower.username}`}
+                </span>
+                        </div>
+                        {lendingInfo.acceptedAt && (
+                            <p className={`${isPendingLoan ? 'text-yellow-600' : 'text-orange-600'} mt-1`}>
+                                Depuis le {new Date(lendingInfo.acceptedAt).toLocaleDateString('fr-FR')}
                             </p>
                         )}
                     </div>
