@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
 import {Badge} from "@/components/ui/badge";
-import {Book as BookIcon, Heart, Trash2, BookOpen, Globe, Loader2, BookMarked, BookCopy, FileText} from "lucide-react";
+import {Book as BookIcon, Heart, Trash2, BookOpen, Globe, Loader2, BookMarked, BookCopy, FileText, Users, UserCheck} from "lucide-react";
 import Image from "next/image";
 import {useBooks} from "@/hooks/useBooks";
 import {formatList} from "@/utils/format";
@@ -18,6 +18,7 @@ import {Skeleton} from "@/components/ui/skeleton";
 import {motion} from "motion/react";
 import {MoreInfoBook} from "@/types";
 import BookNotesModal from "./Notes/BookNotesModal";
+import LendingModal from "./Lending/LendingModal";
 
 interface BookModalProps {
     book: MoreInfoBook | null;
@@ -34,15 +35,19 @@ const BookModal = ({
                        isLoading = false,
                        userId
                    }: BookModalProps) => {
-    const [isNotesModalOpened, setIsNotesModalOpened] = useState<boolean>(false)
+    const [isNotesModalOpened, setIsNotesModalOpened] = useState<boolean>(false);
+    const [isLendingModalOpened, setIsLendingModalOpened] = useState<boolean>(false);
     const {
         isBookFinished,
         isInLibrary,
         isInWishlist,
         isCurrentBook,
+        isBookLoaned,
         toggleLibrary,
         toggleWishlist,
         toggleCurrentBook,
+        lendBook,
+        cancelLending,
         getNotesCount
     } = useBooks(undefined);
 
@@ -51,20 +56,23 @@ const BookModal = ({
             inLibrary: false,
             inWishlist: false,
             isCurrentBookInstance: false,
-            isBookFinishedInstance: false
+            isBookFinishedInstance: false,
+            isBookLoanedInstance: false
         };
 
         return {
             inLibrary: isInLibrary(book.key),
             inWishlist: isInWishlist(book.key),
             isCurrentBookInstance: isCurrentBook(book.key),
-            isBookFinishedInstance: isBookFinished(book.key)
+            isBookFinishedInstance: isBookFinished(book.key),
+            isBookLoanedInstance: isBookLoaned(book.key)
         };
-    }, [book, isInLibrary, isInWishlist, isCurrentBook, isBookFinished]);
+    }, [book, isInLibrary, isInWishlist, isCurrentBook, isBookFinished, isBookLoaned]);
 
     const [loadingLibrary, setLoadingLibrary] = useState(false);
     const [loadingWishlist, setLoadingWishlist] = useState(false);
     const [loadingCurrentBook, setLoadingCurrentBook] = useState(false);
+    const [loadingLending, setLoadingLending] = useState(false);
     const [isAnimating, setIsAnimating] = useState(false);
 
     const handleClose = () => {
@@ -111,9 +119,34 @@ const BookModal = ({
         }
     };
 
+    const handleLendBook = async (borrowerId: string, message?: string) => {
+        if (!book) return;
+        setLoadingLending(true);
+        try {
+            await lendBook(book, borrowerId, message);
+            setIsLendingModalOpened(false);
+        } catch (error) {
+            console.error("Error lending book:", error);
+        } finally {
+            setLoadingLending(false);
+        }
+    };
+
+    const handleCancelLending = async () => {
+        if (!book) return;
+        setLoadingLending(true);
+        try {
+            await cancelLending(book.key);
+        } catch (error) {
+            console.error("Error cancelling lending:", error);
+        } finally {
+            setLoadingLending(false);
+        }
+    };
+
     const notesCount = getNotesCount(book?.key || "");
 
-    const {isBookFinishedInstance, inLibrary, inWishlist, isCurrentBookInstance} = bookStatus;
+    const {isBookFinishedInstance, inLibrary, inWishlist, isCurrentBookInstance, isBookLoanedInstance} = bookStatus;
 
     return (
         <motion.div
@@ -240,6 +273,13 @@ const BookModal = ({
                                                     Dans ma wishlist
                                                 </Badge>
                                             )}
+                                            {isBookLoanedInstance && (
+                                                <Badge variant="outline"
+                                                       className="bg-orange-50 text-orange-600 flex items-center gap-1">
+                                                    <Users className="h-3 w-3"/>
+                                                    Prêté
+                                                </Badge>
+                                            )}
                                             {!inLibrary && !inWishlist && (
                                                 <Badge variant="outline" className="text-gray-500">
                                                     Non ajouté
@@ -289,7 +329,7 @@ const BookModal = ({
                                 variant="outline"
                                 className="w-full sm:w-auto hover:bg-indigo-200 border-indigo-300 text-indigo-700"
                                 onClick={handleToggleCurrentBook}
-                                disabled={loadingLibrary || loadingWishlist || loadingCurrentBook}
+                                disabled={loadingLibrary || loadingWishlist || loadingCurrentBook || loadingLending}
                             >
                                 {loadingCurrentBook ? (
                                     <Loader2 className="h-4 w-4 animate-spin mr-2"/>
@@ -304,7 +344,7 @@ const BookModal = ({
                                 variant="outline"
                                 className="w-full sm:w-auto hover:bg-gray-200 border-gray-300"
                                 onClick={handleToggleCurrentBook}
-                                disabled={loadingLibrary || loadingWishlist || loadingCurrentBook}
+                                disabled={loadingLibrary || loadingWishlist || loadingCurrentBook || loadingLending}
                             >
                                 {loadingCurrentBook ? (
                                     <Loader2 className="h-4 w-4 animate-spin mr-2"/>
@@ -312,6 +352,36 @@ const BookModal = ({
                                     <BookCopy className="h-4 w-4 mr-2"/>
                                 )}
                                 Marquer comme non commencé
+                            </Button>
+                        )}
+                        {inLibrary && !isBookLoanedInstance && (
+                            <Button
+                                variant="outline"
+                                className="w-full sm:w-auto hover:bg-blue-200 border-blue-300 text-blue-700"
+                                onClick={() => setIsLendingModalOpened(true)}
+                                disabled={loadingLibrary || loadingWishlist || loadingCurrentBook || loadingLending}
+                            >
+                                {loadingLending ? (
+                                    <Loader2 className="h-4 w-4 animate-spin mr-2"/>
+                                ) : (
+                                    <Users className="h-4 w-4 mr-2"/>
+                                )}
+                                Prêter ce livre
+                            </Button>
+                        )}
+                        {inLibrary && isBookLoanedInstance && (
+                            <Button
+                                variant="outline"
+                                className="w-full sm:w-auto hover:bg-orange-200 border-orange-300 text-orange-700"
+                                onClick={handleCancelLending}
+                                disabled={loadingLibrary || loadingWishlist || loadingCurrentBook || loadingLending}
+                            >
+                                {loadingLending ? (
+                                    <Loader2 className="h-4 w-4 animate-spin mr-2"/>
+                                ) : (
+                                    <UserCheck className="h-4 w-4 mr-2"/>
+                                )}
+                                Marquer comme rendu
                             </Button>
                         )}
                         {inLibrary && (
@@ -387,6 +457,8 @@ const BookModal = ({
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
+
+            {/* Modal des notes */}
             {
                 (book && userId) && (
                     <BookNotesModal
@@ -394,6 +466,19 @@ const BookModal = ({
                         setIsOpen={setIsNotesModalOpened}
                         book={book}
                         userId={userId}
+                    />
+                )
+            }
+
+            {/* Modal de prêt */}
+            {
+                book && (
+                    <LendingModal
+                        book={book}
+                        isOpen={isLendingModalOpened}
+                        onClose={() => setIsLendingModalOpened(false)}
+                        onLend={handleLendBook}
+                        isLoading={loadingLending}
                     />
                 )
             }

@@ -2,9 +2,10 @@ import { Info, Star } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Book as BookType } from "@/types";
+import {Review} from "@/types/profile";
 
 type ReviewCardProps = {
-  review: any;
+  review: Review;
   openBookModal: (book: BookType) => void;
 };
 

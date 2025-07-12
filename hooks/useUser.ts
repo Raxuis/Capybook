@@ -1,55 +1,67 @@
-import { fetcher } from "@/utils/fetcher";
-import { Prisma } from "@prisma/client";
-import { useCallback, useEffect, useState } from "react";
+import {fetcher} from "@/utils/fetcher";
+import {Prisma} from "@prisma/client";
+import {useCallback, useEffect, useState} from "react";
 import useSWR from "swr";
-import { useUserStore } from "@/store/useUserStore";
+import {useUserStore} from "@/store/useUserStore";
 
 export type UserWithRelations = Prisma.UserGetPayload<{
-  include: {
-    UserBook: { include: { Book: true } },
-    UserBookWishlist: { include: { Book: true } },
-    BookReview: { include: { Book: true } },
-    UserBookNotes: { include: { Book: true } },
-    ReadingGoal: true,
-    UserBadge: { include: { Badge: true } },
-  }
+    include: {
+        UserBook: { include: { Book: true } },
+        UserBookWishlist: { include: { Book: true } },
+        BookReview: { include: { Book: true } },
+        UserBookNotes: { include: { Book: true } },
+        ReadingGoal: true,
+        UserBadge: { include: { Badge: true } },
+        lentBooks: {
+            include: {
+                book: true,
+                borrower: true
+            }
+        },
+        borrowedBooks: {
+            include: {
+                book: true,
+                lender: true
+            }
+        }
+    }
 }>;
 
 const SWR_CONFIG = {
-  revalidateOnFocus: false,
-  revalidateOnReconnect: false,
-  revalidateIfStale: true,
-  dedupingInterval: 60000,
-  keepPreviousData: false
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false,
+    revalidateIfStale: true,
+    dedupingInterval: 60000,
+    keepPreviousData: false
 };
 
 export function useUser() {
-  const userId = useUserStore((state) => state.userId);
-  const swrKey = userId ? `/api/user/${userId}` : null;
+    const userId = useUserStore((state) => state.userId);
+    const swrKey = userId ? `/api/user/${userId}` : null;
 
-  const { data, error, isLoading, isValidating, mutate } = useSWR<UserWithRelations>(
-    swrKey,
-    fetcher<UserWithRelations>,
-    SWR_CONFIG
-  );
+    const {data, error, isLoading, isValidating, mutate} = useSWR<UserWithRelations>(
+        swrKey,
+        fetcher<UserWithRelations>,
+        SWR_CONFIG
+    );
 
-  const [isInitializing, setIsInitializing] = useState(true);
+    const [isInitializing, setIsInitializing] = useState(true);
 
-  useEffect(() => {
-    if (userId !== undefined) {
-      setIsInitializing(false);
-    }
-  }, [userId]);
+    useEffect(() => {
+        if (userId !== undefined) {
+            setIsInitializing(false);
+        }
+    }, [userId]);
 
-  const refreshUser = useCallback(async () => {
-    if (swrKey) await mutate();
-  }, [mutate, swrKey]);
+    const refreshUser = useCallback(async () => {
+        if (swrKey) await mutate();
+    }, [mutate, swrKey]);
 
-  return {
-    user: data,
-    isLoading: isLoading || isInitializing, // Fusion des états de chargement pour une meilleure expérience utilisateur
-    isValidating,
-    isError: Boolean(error),
-    refreshUser,
-  };
+    return {
+        user: data,
+        isLoading: isLoading || isInitializing,
+        isValidating,
+        isError: Boolean(error),
+        refreshUser,
+    };
 }
