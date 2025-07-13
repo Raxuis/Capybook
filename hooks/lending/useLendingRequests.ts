@@ -93,7 +93,7 @@ export const useLendingRequests = () => {
                 return [...prevQueue, ...newRequests];
             });
         }
-    }, [user.borrowedBooks, user.id]);
+    }, [user?.borrowedBooks, user?.id]);
 
     useEffect(() => {
         if (!currentRequest && !isPopupOpen && autoShowNext) {
