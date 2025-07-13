@@ -1,7 +1,6 @@
-import React, {useState, useEffect} from 'react';
-import {Award, X, CheckCircle, XCircle} from 'lucide-react';
+import React, {useState, useEffect, useCallback} from 'react';
+import {Award, X} from 'lucide-react';
 import confetti from 'canvas-confetti';
-import {Button} from "@/components/ui/button";
 
 interface Badge {
     name: string;
@@ -73,12 +72,13 @@ export default function BadgeNotification({
         return () => clearTimeout(timer);
     }, [autoCloseDelay, showConfetti]);
 
-    const handleClose = (): void => {
+    const handleClose = useCallback((): void => {
         setIsClosing(true);
         setTimeout(() => {
+            // eslint-disable-next-line @typescript-eslint/no-unused-expressions
             onClose && onClose();
         }, 500);
-    };
+    }, [onClose]);
 
     if (!badge) return null;
 

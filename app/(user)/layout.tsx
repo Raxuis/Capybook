@@ -1,6 +1,7 @@
 import React from "react";
 import Header from "@/components/Header";
 import Dock from "@/components/Dock";
+import LendingRequestsManager from "@/managers/LendingRequestManager";
 
 export default function UserLayout({
                                        children,
@@ -12,6 +13,7 @@ export default function UserLayout({
             <Header/>
             {children}
             <Dock/>
+            <LendingRequestsManager/>
         </div>
     );
 }
