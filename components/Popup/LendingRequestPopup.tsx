@@ -23,6 +23,8 @@ const LendingRequestPopup = ({
                              }: LendingRequestPopupProps) => {
     const [actionType, setActionType] = useState<'accept' | 'reject' | null>(null);
 
+    console.log('Rendering LendingRequestPopup with request:', request);
+
     if (!isOpen) return null;
 
     const handleAccept = async () => {
@@ -84,13 +86,13 @@ const LendingRequestPopup = ({
 
                     {/* Content */}
                     <div className="p-6 space-y-6">
-                        {/* Borrower Info */}
+                        {/* Lender Info */}
                         <div className="flex items-center">
                             <p className="font-medium text-gray-900">
-                                {request.borrower.name}
+                                {request.lender.name}
                             </p>
                             <p className="text-sm text-gray-500">
-                                @{request.borrower.username}
+                                @{request.lender.username}
                             </p>
                         </div>
 
@@ -133,7 +135,7 @@ const LendingRequestPopup = ({
                                     <MessageCircle size={16} className="text-blue-600 mt-0.5 flex-shrink-0"/>
                                     <div>
                                         <p className="text-sm font-medium text-blue-900 mb-1">
-                                            Message de {request.borrower.name}:
+                                            Message :
                                         </p>
                                         <p className="text-sm text-blue-800">
                                             {request.message}

@@ -4,7 +4,7 @@ import {NextResponse} from 'next/server';
 import prisma from "@/utils/prisma";
 
 const bodySchema = z.object({
-    lenderId: z.string(),
+    borrowerId: z.string(),
 });
 
 const paramsSchema = z.object({
@@ -15,11 +15,10 @@ export const PUT = createZodRoute()
     .body(bodySchema)
     .params(paramsSchema)
     .handler(async (_, context) => {
-        const {lenderId} = context.body;
+        const {borrowerId} = context.body;
         const {requestId} = context.params;
 
         try {
-            // Vérifier que la demande existe et est en attente
             const lendingRequest = await prisma.bookLending.findUnique({
                 where: {id: requestId},
                 include: {
@@ -36,15 +35,13 @@ export const PUT = createZodRoute()
                 );
             }
 
-            // Vérifier que l'utilisateur est bien le propriétaire du livre
-            if (lendingRequest.lenderId !== lenderId) {
+            if (lendingRequest.borrowerId !== borrowerId) {
                 return NextResponse.json(
                     {error: "Vous n'êtes pas autorisé à refuser cette demande."},
                     {status: 403}
                 );
             }
 
-            // Vérifier que la demande est bien en attente
             if (lendingRequest.status !== 'PENDING') {
                 return NextResponse.json(
                     {error: "Cette demande n'est plus en attente."},
@@ -52,7 +49,6 @@ export const PUT = createZodRoute()
                 );
             }
 
-            // Refuser la demande
             const updatedLendingRequest = await prisma.bookLending.update({
                 where: {id: requestId},
                 data: {

@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect, useCallback } from 'react';
-import { useUser } from '@/hooks/useUser';
-import { api } from '@/utils/api';
-import { toast } from 'sonner';
+import {useState, useEffect, useCallback} from 'react';
+import {useUser} from '@/hooks/useUser';
+import {api} from '@/utils/api';
+import {toast} from 'sonner';
 
 export type LendingRequest = {
     id: string;
@@ -43,7 +43,7 @@ export type LendingRequest = {
 };
 
 export const useLendingRequests = () => {
-    const { user, refreshUser } = useUser();
+    const {user, refreshUser} = useUser();
     const [pendingRequests, setPendingRequests] = useState<LendingRequest[]>([]);
     const [currentRequest, setCurrentRequest] = useState<LendingRequest | null>(null);
     const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -52,27 +52,27 @@ export const useLendingRequests = () => {
 
     // Extraire les demandes en attente depuis les données utilisateur
     useEffect(() => {
-        if (user?.lentBooks) {
-            const pending = user.lentBooks
-                .filter(lending => lending.status === 'PENDING')
-                .map(lending => ({
-                    id: lending.id,
-                    lenderId: lending.lenderId,
-                    borrowerId: lending.borrowerId,
-                    bookId: lending.bookId,
-                    status: lending.status,
-                    message: lending.message,
-                    requestedAt: lending.requestedAt,
-                    acceptedAt: lending.acceptedAt,
-                    rejectedAt: lending.rejectedAt,
-                    returnedAt: lending.returnedAt,
-                    dueDate: lending.dueDate,
-                    reminderSent: lending.reminderSent,
-                    createdAt: lending.createdAt,
-                    updatedAt: lending.updatedAt,
-                    lender: lending.lender,
-                    borrower: lending.borrower,
-                    book: lending.book,
+        if (user?.borrowedBooks) {
+            const pending = user.borrowedBooks
+                .filter(borrow => borrow.status === 'PENDING' && borrow.borrowerId === user.id)
+                .map(borrow => ({
+                    id: borrow.id,
+                    lenderId: borrow.lenderId,
+                    borrowerId: borrow.borrowerId,
+                    bookId: borrow.bookId,
+                    status: borrow.status,
+                    message: borrow.message,
+                    requestedAt: borrow.requestedAt,
+                    acceptedAt: borrow.acceptedAt,
+                    rejectedAt: borrow.rejectedAt,
+                    returnedAt: borrow.returnedAt,
+                    dueDate: borrow.dueDate,
+                    reminderSent: borrow.reminderSent,
+                    createdAt: borrow.createdAt,
+                    updatedAt: borrow.updatedAt,
+                    lender: borrow.lender,
+                    borrower: borrow.borrower,
+                    book: borrow.book,
                 })) as LendingRequest[];
 
             setPendingRequests(pending);
@@ -102,7 +102,7 @@ export const useLendingRequests = () => {
         setIsLoading(true);
         try {
             await api.put(`/book/lending/${requestId}/accept`, {
-                lenderId: user?.id
+                borrowerId: user?.id
             });
 
             // Mettre à jour l'état local
@@ -132,7 +132,7 @@ export const useLendingRequests = () => {
         setIsLoading(true);
         try {
             await api.put(`/book/lending/${requestId}/reject`, {
-                lenderId: user?.id
+                borrowerId: user?.id
             });
 
             // Mettre à jour l'état local
