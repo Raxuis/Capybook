@@ -3,7 +3,7 @@
 import {useState, useEffect, useCallback} from 'react';
 import {useUser} from '@/hooks/useUser';
 import {api} from '@/utils/api';
-import {toast} from 'sonner';
+import {useToast} from "@/hooks/use-toast";
 
 export type LendingRequest = {
     id: string;
@@ -49,8 +49,17 @@ export const useLendingRequests = () => {
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [requestQueue, setRequestQueue] = useState<LendingRequest[]>([]);
+    const [autoShowNext, setAutoShowNext] = useState(true);
+    const {toast} = useToast();
 
-    // Extraire les demandes en attente depuis les données utilisateur
+    const processNextRequest = useCallback(() => {
+        if (requestQueue.length > 0 && !isPopupOpen && autoShowNext) {
+            const nextRequest = requestQueue[0];
+            setCurrentRequest(nextRequest);
+            setIsPopupOpen(true);
+        }
+    }, [requestQueue, isPopupOpen, autoShowNext]);
+
     useEffect(() => {
         if (user?.borrowedBooks) {
             const pending = user.borrowedBooks
@@ -77,27 +86,21 @@ export const useLendingRequests = () => {
 
             setPendingRequests(pending);
 
-            // Gérer la file d'attente des demandes
-            const newRequests = pending.filter(
-                request => !requestQueue.some(queued => queued.id === request.id)
-            );
-
-            if (newRequests.length > 0) {
-                setRequestQueue(prev => [...prev, ...newRequests]);
-            }
-
-            // Afficher automatiquement la première demande en attente s'il n'y en a pas déjà une ouverte
-            if (pending.length > 0 && !currentRequest && !isPopupOpen) {
-                const nextRequest = requestQueue[0] || pending[0];
-                if (nextRequest) {
-                    setCurrentRequest(nextRequest);
-                    setIsPopupOpen(true);
-                }
-            }
+            setRequestQueue(prevQueue => {
+                const newRequests = pending.filter(
+                    request => !prevQueue.some(queued => queued.id === request.id)
+                );
+                return [...prevQueue, ...newRequests];
+            });
         }
-    }, [user, currentRequest, isPopupOpen, requestQueue]);
+    }, [user.borrowedBooks, user.id]);
 
-    // Accepter une demande de prêt
+    useEffect(() => {
+        if (!currentRequest && !isPopupOpen && autoShowNext) {
+            processNextRequest();
+        }
+    }, [currentRequest, isPopupOpen, processNextRequest, autoShowNext]);
+
     const acceptRequest = useCallback(async (requestId: string) => {
         setIsLoading(true);
         try {
@@ -105,29 +108,31 @@ export const useLendingRequests = () => {
                 borrowerId: user?.id
             });
 
-            // Mettre à jour l'état local
             setPendingRequests(prev => prev.filter(r => r.id !== requestId));
             setRequestQueue(prev => prev.filter(r => r.id !== requestId));
-
-            // Fermer la popup actuelle
             setCurrentRequest(null);
             setIsPopupOpen(false);
 
-            // Afficher un message de succès
             toast.success('Demande acceptée avec succès !');
-
-            // Rafraîchir les données utilisateur
             await refreshUser();
+
+            setTimeout(() => {
+                setAutoShowNext(true);
+            }, 500);
+
         } catch (error) {
             console.error('Erreur lors de l\'acceptation de la demande:', error);
-            toast.error('Erreur lors de l\'acceptation de la demande');
+            toast({
+                title: 'Erreur',
+                description: 'Erreur lors de l\'acceptation de la demande',
+                variant: 'destructive'
+            });
             throw error;
         } finally {
             setIsLoading(false);
         }
-    }, [user?.id, refreshUser]);
+    }, [user?.id, toast, refreshUser]);
 
-    // Refuser une demande de prêt
     const rejectRequest = useCallback(async (requestId: string) => {
         setIsLoading(true);
         try {
@@ -135,67 +140,71 @@ export const useLendingRequests = () => {
                 borrowerId: user?.id
             });
 
-            // Mettre à jour l'état local
             setPendingRequests(prev => prev.filter(r => r.id !== requestId));
             setRequestQueue(prev => prev.filter(r => r.id !== requestId));
-
-            // Fermer la popup actuelle
             setCurrentRequest(null);
             setIsPopupOpen(false);
 
-            // Afficher un message de succès
             toast.success('Demande refusée');
-
-            // Rafraîchir les données utilisateur
             await refreshUser();
+
+            setTimeout(() => {
+                setAutoShowNext(true);
+            }, 500);
+
         } catch (error) {
             console.error('Erreur lors du refus de la demande:', error);
-            toast.error('Erreur lors du refus de la demande');
+            toast({
+                title: 'Erreur',
+                description: 'Erreur lors du refus de la demande',
+                variant: 'destructive'
+            });
             throw error;
         } finally {
             setIsLoading(false);
         }
-    }, [user?.id, refreshUser]);
+    }, [user?.id, toast, refreshUser]);
 
-    // Fermer la popup et passer à la demande suivante
     const closePopup = useCallback(() => {
         setIsPopupOpen(false);
         setCurrentRequest(null);
+        setAutoShowNext(false); // Empêcher l'ouverture automatique
 
-        // Retirer la demande actuelle de la file d'attente
-        setRequestQueue(prev => prev.filter(r => r.id !== currentRequest?.id));
+        // Retirer la demande actuelle de la queue
+        if (currentRequest) {
+            setRequestQueue(prev => prev.filter(r => r.id !== currentRequest.id));
+        }
+    }, [currentRequest]);
 
-        // Afficher la prochaine demande s'il y en a une
-        setTimeout(() => {
-            const nextRequest = requestQueue.find(r => r.id !== currentRequest?.id);
-            if (nextRequest) {
-                setCurrentRequest(nextRequest);
-                setIsPopupOpen(true);
-            }
-        }, 300);
-    }, [requestQueue, currentRequest]);
-
-    // Afficher une demande spécifique
     const showRequest = useCallback((request: LendingRequest) => {
         setCurrentRequest(request);
         setIsPopupOpen(true);
+        setAutoShowNext(false); // Désactiver l'auto-show quand on montre manuellement
     }, []);
 
-    // Reporter une demande (la remettre en fin de file)
     const snoozeRequest = useCallback((requestId: string) => {
         const request = pendingRequests.find(r => r.id === requestId);
         if (request) {
-            setRequestQueue(prev => [...prev.filter(r => r.id !== requestId), request]);
+            // Remettre la demande à la fin de la queue
+            setRequestQueue(prev => {
+                const filtered = prev.filter(r => r.id !== requestId);
+                return [...filtered, request];
+            });
             setCurrentRequest(null);
             setIsPopupOpen(false);
+
+            // Traiter la prochaine demande après un délai
+            setTimeout(() => {
+                setAutoShowNext(true);
+            }, 500);
         }
     }, [pendingRequests]);
 
-    // Vider la file d'attente
     const clearQueue = useCallback(() => {
         setRequestQueue([]);
         setCurrentRequest(null);
         setIsPopupOpen(false);
+        setAutoShowNext(false);
     }, []);
 
     return {
