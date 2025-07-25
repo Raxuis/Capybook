@@ -10,6 +10,7 @@ import {Skeleton} from "@/components/ui/skeleton";
 import {Link} from "next-view-transitions";
 import {Button} from "@/components/ui/button";
 import {cn} from "@/lib/utils";
+import {motion} from "motion/react";
 
 const BookStore = () => {
     const [search, setSearch] = useQueryState("search", {defaultValue: ""});
@@ -33,10 +34,17 @@ const BookStore = () => {
 
     return (
         <div className="container max-w-6xl mx-auto px-4 pt-8 pb-28">
-            <h1 className="text-3xl font-bold mb-6">
+            <motion.h1 className="text-3xl font-bold mb-3"
+                       initial={{opacity: 0, y: 20}}
+                       animate={{opacity: 1, y: 0}}
+                       transition={{duration: 0.6, ease: "easeInOut"}}
+            >
                 Parcourir les livres
-            </h1>
-            <div className="relative">
+            </motion.h1>
+            <motion.div className="relative" initial={{opacity: 0, y: 20}}
+                        animate={{opacity: 1, y: 0}}
+                        transition={{duration: 0.6, ease: "easeIn"}}
+            >
                 <div
                     className={cn("flex items-center border rounded-lg px-3 transition-all", searchFocused ? 'ring-2 ring-primary shadow-sm' : 'border-gray-300')}>
                     <Search className="h-5 w-5 text-gray-400 mr-2"/>
@@ -52,7 +60,7 @@ const BookStore = () => {
                         className="border-0 shadow-none focus-visible:ring-0 focus-visible:outline-none"
                     />
                 </div>
-            </div>
+            </motion.div>
             {isError && (
                 <div className="mt-8 p-4 rounded-lg bg-red-50 text-red-600 flex items-center justify-center">
                     <p>Une erreur est survenue lors de la recherche. Veuillez réessayer.</p>
@@ -95,8 +103,8 @@ const BookStore = () => {
                                 <ChevronLeft className="h-4 w-4"/>
                             </Button>
                             <span className="text-sm text-muted-foreground">
-                Page {currentPage} sur {totalPages}
-              </span>
+                                Page {currentPage} sur {totalPages}
+                            </span>
                             <Button
                                 variant="outline"
                                 size="icon"
@@ -121,7 +129,12 @@ const BookStore = () => {
                     </p>
                 </div>
             ) : (
-                <div className="mt-16 flex flex-col items-center justify-center text-center">
+                <motion.div
+                    className="mt-16 flex flex-col items-center justify-center text-center"
+                    initial={{opacity: 0, y: 20}}
+                    animate={{opacity: 1, y: 0}}
+                    transition={{duration: 0.6, delay: 0.8, ease: "easeIn", initial: true}}
+                >
                     <h3 className="text-xl font-semibold mb-2">Commencez votre recherche</h3>
                     <p className="text-gray-500 max-w-md">
                         Recherchez des livres par titre, auteur ou ISBN pour les ajouter à {" "}
@@ -130,7 +143,7 @@ const BookStore = () => {
                         </Link>
                         .
                     </p>
-                </div>
+                </motion.div>
             )}
         </div>
     );
