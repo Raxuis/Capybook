@@ -18,7 +18,7 @@ interface ReviewsTabProps {
 }
 
 const ReviewsTab = memo<ReviewsTabProps>(({reviews}) => {
-    const [copiedText, copy] = useCopyToClipboard();
+    const {copiedText, copy} = useCopyToClipboard();
     const getPrivacyConfigMemo = useCallback((privacy: string) => {
         return getPrivacyConfig(privacy);
     }, [])

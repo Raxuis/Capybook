@@ -14,7 +14,7 @@ interface ReviewsPreviewProps {
 }
 
 const ReviewsPreview = memo<ReviewsPreviewProps>(({reviews, onViewAll}) => {
-    const [copiedText, copy] = useCopyToClipboard();
+    const {copiedText, copy} = useCopyToClipboard();
     const getPrivacyConfigMemo = useCallback((privacy: string) => {
         return getPrivacyConfig(privacy);
     }, [])
