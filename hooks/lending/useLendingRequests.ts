@@ -113,7 +113,11 @@ export const useLendingRequests = () => {
             setCurrentRequest(null);
             setIsPopupOpen(false);
 
-            toast.success('Demande acceptée avec succès !');
+            toast({
+                title: 'Succès',
+                description: 'Demande acceptée avec succès',
+                variant: 'success'
+            });
             await refreshUser();
 
             setTimeout(() => {
@@ -145,7 +149,11 @@ export const useLendingRequests = () => {
             setCurrentRequest(null);
             setIsPopupOpen(false);
 
-            toast.success('Demande refusée');
+            toast({
+                title: 'Succès',
+                description: 'Demande refusée avec succès',
+                variant: 'success'
+            });
             await refreshUser();
 
             setTimeout(() => {
