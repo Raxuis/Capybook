@@ -1,5 +1,5 @@
 "use client";
-import {useState} from "react";
+import {useState, useRef} from "react";
 import {useBooks} from "@/hooks/useBooks";
 import {useQueryState} from "nuqs";
 import {Input} from "@/components/ui/input";
@@ -10,7 +10,7 @@ import {Skeleton} from "@/components/ui/skeleton";
 import {Link} from "next-view-transitions";
 import {Button} from "@/components/ui/button";
 import {cn} from "@/lib/utils";
-import {motion} from "motion/react";
+import {motion, AnimatePresence} from "motion/react";
 
 const BookStore = () => {
     const [search, setSearch] = useQueryState("search", {defaultValue: ""});
@@ -25,6 +25,8 @@ const BookStore = () => {
     } = useBooks(debouncedSearch, parseInt(page));
 
     const [searchFocused, setSearchFocused] = useState<boolean>(false);
+
+    const hasAnimatedInitialPrompt = useRef<boolean>(false);
 
     const handlePageChange = (newPage: number) => {
         if (newPage >= 1 && newPage <= totalPages) {
@@ -129,21 +131,48 @@ const BookStore = () => {
                     </p>
                 </div>
             ) : (
-                <motion.div
-                    className="mt-16 flex flex-col items-center justify-center text-center"
-                    initial={{opacity: 0, y: 20}}
-                    animate={{opacity: 1, y: 0}}
-                    transition={{duration: 0.6, delay: 0.8, ease: "easeIn", initial: true}}
-                >
-                    <h3 className="text-xl font-semibold mb-2">Commencez votre recherche</h3>
-                    <p className="text-gray-500 max-w-md">
-                        Recherchez des livres par titre, auteur ou ISBN pour les ajouter à {" "}
-                        <Link href="/book-shelf" className="text-primary underline">
-                            votre bibliothèque
-                        </Link>
-                        .
-                    </p>
-                </motion.div>
+                <AnimatePresence mode="wait">
+                    {search.trim() === "" && books.length === 0 && !isLoading && !isError && !hasAnimatedInitialPrompt.current && (
+                        <motion.div
+                            key="initial-prompt"
+                            className="mt-16 flex flex-col items-center justify-center text-center"
+                            initial={{opacity: 0, y: 20}}
+                            animate={{opacity: 1, y: 0}}
+                            exit={{opacity: 0, y: 10}}
+                            transition={{duration: 0.6, delay: 0.3, ease: "easeInOut"}}
+                            onAnimationComplete={() => {
+                                hasAnimatedInitialPrompt.current = true;
+                            }}
+                        >
+                            <h3 className="text-xl font-semibold mb-2">Commencez votre recherche</h3>
+                            <p className="text-gray-500 max-w-md">
+                                Recherchez des livres par titre, auteur ou ISBN pour les ajouter à {" "}
+                                <Link href="/book-shelf" className="text-primary underline">
+                                    votre bibliothèque
+                                </Link>
+                                .
+                            </p>
+                        </motion.div>
+                    )}
+                    {search.trim() === "" && books.length === 0 && !isLoading && !isError && hasAnimatedInitialPrompt.current && (
+                        <motion.div
+                            className="mt-16 flex flex-col items-center justify-center text-center"
+                            initial={{opacity: 0}}
+                            animate={{opacity: 1}}
+                            exit={{opacity: 0}}
+                            transition={{duration: 0.3, ease: "easeInOut"}}
+                        >
+                            <h3 className="text-xl font-semibold mb-2">Commencez votre recherche</h3>
+                            <p className="text-gray-500 max-w-md">
+                                Recherchez des livres par titre, auteur ou ISBN pour les ajouter à{" "}
+                                <Link href="/book-shelf" className="text-primary underline">
+                                    votre bibliothèque
+                                </Link>
+                                .
+                            </p>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             )}
         </div>
     );
