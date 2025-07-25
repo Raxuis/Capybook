@@ -8,48 +8,63 @@ const paramsSchema = z.object({
 });
 
 export const GET = createZodRoute()
-  .params(paramsSchema)
-  .handler(async (_, context) => {
-    const { userId } = context.params;
+    .params(paramsSchema)
+    .handler(async (_, context) => {
+      const { userId } = context.params;
 
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-      select: {
-        id: true,
-        email: true,
-        username: true,
-        name: true,
-        image: true,
-        ReadingGoal: true,
-        UserBook: {
-          include: {
-            Book: true
-          }
-        },
-        UserBookWishlist: {
-          include: {
-            Book: true
-          }
-        },
-        BookReview: {
-          include: {
-            Book: true
-          }
-        },
-        UserBookNotes: {
-          include: {
-            Book: true
+      const user = await prisma.user.findUnique({
+        where: { id: userId },
+        include: {
+          ReadingGoal: true,
+          UserBook: {
+            include: {
+              Book: true
+            }
+          },
+          UserBookWishlist: {
+            include: {
+              Book: true
+            }
+          },
+          BookReview: {
+            include: {
+              Book: true
+            }
+          },
+          UserBookNotes: {
+            include: {
+              Book: true
+            }
+          },
+          UserBadge: {
+            include: {
+              Badge: true
+            }
+          },
+          lentBooks: {
+            include: {
+              book: true,
+              borrower: true
+            }
+          },
+          borrowedBooks: {
+            include: {
+              book: true,
+              lender: true
+            }
           }
         }
+      })
+
+      if (!user) {
+        return NextResponse.json({ error: 'User not found' }, { status: 404 });
       }
-    })
 
-    if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
-    }
+      // Optionnel: retirer le mot de passe de la réponse pour plus de sécurité
+      const { password, ...userWithoutPassword } = user;
 
-    return NextResponse.json(user, { status: 200 });
-  });
+      return NextResponse.json(userWithoutPassword, { status: 200 });
+    });
 
 const putSchema = z.object({
   username: z.string(),
@@ -72,7 +87,7 @@ export const PUT = createZodRoute().body(putSchema).params(paramsSchema).handler
     where: { username },
   });
 
-  if (existingUsername && existingUsername.id !== id) {
+  if (existingUsername && existingUsername.id !== userId) { // Correction: userId au lieu de id
     return NextResponse.json({ error: 'Username already taken' }, { status: 400 });
   }
 

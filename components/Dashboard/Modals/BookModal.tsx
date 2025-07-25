@@ -9,15 +9,17 @@ import {
 } from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
 import {Badge} from "@/components/ui/badge";
-import {Book as BookIcon, Heart, Trash2, BookOpen, Globe, Loader2, BookMarked, BookCopy, FileText} from "lucide-react";
+import {Book as BookIcon, Heart, Trash2, BookOpen, Globe, Loader2, BookMarked, BookCopy, FileText, Users, UserCheck, Clock} from "lucide-react";
 import Image from "next/image";
 import {useBooks} from "@/hooks/useBooks";
+import {useUser} from "@/hooks/useUser";
 import {formatList} from "@/utils/format";
 import React, {useMemo, useState} from "react";
 import {Skeleton} from "@/components/ui/skeleton";
 import {motion} from "motion/react";
 import {MoreInfoBook} from "@/types";
 import BookNotesModal from "./Notes/BookNotesModal";
+import LendingModal from "./Lending/LendingModal";
 
 interface BookModalProps {
     book: MoreInfoBook | null;
@@ -34,37 +36,60 @@ const BookModal = ({
                        isLoading = false,
                        userId
                    }: BookModalProps) => {
-    const [isNotesModalOpened, setIsNotesModalOpened] = useState<boolean>(false)
+    const [isNotesModalOpened, setIsNotesModalOpened] = useState<boolean>(false);
+    const [isLendingModalOpened, setIsLendingModalOpened] = useState<boolean>(false);
     const {
         isBookFinished,
         isInLibrary,
         isInWishlist,
         isCurrentBook,
+        isBookLoaned,
+        isBookPendingLoan,
         toggleLibrary,
         toggleWishlist,
         toggleCurrentBook,
+        lendBook,
+        cancelLending,
         getNotesCount
     } = useBooks(undefined);
+
+    const {user} = useUser();
 
     const bookStatus = useMemo(() => {
         if (!book) return {
             inLibrary: false,
             inWishlist: false,
             isCurrentBookInstance: false,
-            isBookFinishedInstance: false
+            isBookFinishedInstance: false,
+            isBookLoanedInstance: false,
+            isPendingLoanInstance: false
         };
 
         return {
             inLibrary: isInLibrary(book.key),
             inWishlist: isInWishlist(book.key),
             isCurrentBookInstance: isCurrentBook(book.key),
-            isBookFinishedInstance: isBookFinished(book.key)
+            isBookFinishedInstance: isBookFinished(book.key),
+            isBookLoanedInstance: isBookLoaned(book.key),
+            isPendingLoanInstance: isBookPendingLoan(book.key)
         };
-    }, [book, isInLibrary, isInWishlist, isCurrentBook, isBookFinished]);
+    }, [book, isInLibrary, isInWishlist, isCurrentBook, isBookFinished, isBookLoaned, isBookPendingLoan]);
+
+    // Informations de prêt
+    const lendingInfo = useMemo(() => {
+        if (!user?.lentBooks || !book || (!bookStatus.isBookLoanedInstance && !bookStatus.isPendingLoanInstance)) return null;
+
+        return user.lentBooks.find(
+            lending => lending.book.key === book.key &&
+                (lending.status === 'ACCEPTED' || lending.status === 'PENDING') &&
+                !lending.returnedAt
+        );
+    }, [user?.lentBooks, book, bookStatus.isBookLoanedInstance, bookStatus.isPendingLoanInstance]);
 
     const [loadingLibrary, setLoadingLibrary] = useState(false);
     const [loadingWishlist, setLoadingWishlist] = useState(false);
     const [loadingCurrentBook, setLoadingCurrentBook] = useState(false);
+    const [loadingLending, setLoadingLending] = useState(false);
     const [isAnimating, setIsAnimating] = useState(false);
 
     const handleClose = () => {
@@ -111,9 +136,41 @@ const BookModal = ({
         }
     };
 
+    const handleLendBook = async (borrowerId: string, message?: string) => {
+        if (!book) return;
+        setLoadingLending(true);
+        try {
+            await lendBook(book, borrowerId, message);
+            setIsLendingModalOpened(false);
+        } catch (error) {
+            console.error("Error lending book:", error);
+        } finally {
+            setLoadingLending(false);
+        }
+    };
+
+    const handleCancelLending = async () => {
+        if (!book) return;
+        setLoadingLending(true);
+        try {
+            await cancelLending(book.key);
+        } catch (error) {
+            console.error("Error cancelling lending:", error);
+        } finally {
+            setLoadingLending(false);
+        }
+    };
+
     const notesCount = getNotesCount(book?.key || "");
 
-    const {isBookFinishedInstance, inLibrary, inWishlist, isCurrentBookInstance} = bookStatus;
+    const {
+        isBookFinishedInstance,
+        inLibrary,
+        inWishlist,
+        isCurrentBookInstance,
+        isBookLoanedInstance,
+        isPendingLoanInstance
+    } = bookStatus;
 
     return (
         <motion.div
@@ -240,6 +297,20 @@ const BookModal = ({
                                                     Dans ma wishlist
                                                 </Badge>
                                             )}
+                                            {isBookLoanedInstance && (
+                                                <Badge variant="outline"
+                                                       className="bg-orange-50 text-orange-700 border-orange-200 flex items-center gap-1">
+                                                    <UserCheck className="h-3 w-3"/>
+                                                    Prêté
+                                                </Badge>
+                                            )}
+                                            {isPendingLoanInstance && (
+                                                <Badge variant="outline"
+                                                       className="bg-yellow-50 text-yellow-700 border-yellow-200 flex items-center gap-1">
+                                                    <Clock className="h-3 w-3"/>
+                                                    Prêt en attente
+                                                </Badge>
+                                            )}
                                             {!inLibrary && !inWishlist && (
                                                 <Badge variant="outline" className="text-gray-500">
                                                     Non ajouté
@@ -283,13 +354,39 @@ const BookModal = ({
                         </div>
                     </div>
 
+                    {/* Informations de prêt */}
+                    {(isBookLoanedInstance || isPendingLoanInstance) && lendingInfo && (
+                        <div className={`${isPendingLoanInstance ? 'bg-yellow-50 border-yellow-200' : 'bg-orange-50 border-orange-200'} border rounded-lg p-4 space-y-2`}>
+                            <div className={`flex items-center gap-2 ${isPendingLoanInstance ? 'text-yellow-700' : 'text-orange-700'}`}>
+                                <UserCheck className="h-4 w-4"/>
+                                <span className="font-medium">
+                                    {isPendingLoanInstance
+                                        ? 'Demande de prêt en attente'
+                                        : `Prêté à ${lendingInfo.borrower.name || lendingInfo.borrower.username}`
+                                    }
+                                </span>
+                            </div>
+                            {lendingInfo.acceptedAt && (
+                                <p className={`${isPendingLoanInstance ? 'text-yellow-600' : 'text-orange-600'} text-sm`}>
+                                    Depuis le {new Date(lendingInfo.acceptedAt).toLocaleDateString('fr-FR')}
+                                </p>
+                            )}
+                            {lendingInfo.dueDate && (
+                                <p className={`${isPendingLoanInstance ? 'text-yellow-600' : 'text-orange-600'} text-sm`}>
+                                    À retourner le {new Date(lendingInfo.dueDate).toLocaleDateString('fr-FR')}
+                                </p>
+                            )}
+                        </div>
+                    )}
+
                     <DialogFooter className="flex flex-col sm:flex-row flex-wrap mt-4 sm:justify-start">
-                        {(inLibrary && !isCurrentBookInstance && !isBookFinishedInstance) && (
+                        {/* Bouton pour marquer comme en lecture */}
+                        {(inLibrary && !isCurrentBookInstance && !isBookFinishedInstance && !isBookLoanedInstance && !isPendingLoanInstance) && (
                             <Button
                                 variant="outline"
                                 className="w-full sm:w-auto hover:bg-indigo-200 border-indigo-300 text-indigo-700"
                                 onClick={handleToggleCurrentBook}
-                                disabled={loadingLibrary || loadingWishlist || loadingCurrentBook}
+                                disabled={loadingLibrary || loadingWishlist || loadingCurrentBook || loadingLending}
                             >
                                 {loadingCurrentBook ? (
                                     <Loader2 className="h-4 w-4 animate-spin mr-2"/>
@@ -299,12 +396,14 @@ const BookModal = ({
                                 Marquer comme en lecture
                             </Button>
                         )}
-                        {inLibrary && isCurrentBookInstance && (
+
+                        {/* Bouton pour marquer comme non commencé */}
+                        {(inLibrary && isCurrentBookInstance && !isBookLoanedInstance && !isPendingLoanInstance) && (
                             <Button
                                 variant="outline"
                                 className="w-full sm:w-auto hover:bg-gray-200 border-gray-300"
                                 onClick={handleToggleCurrentBook}
-                                disabled={loadingLibrary || loadingWishlist || loadingCurrentBook}
+                                disabled={loadingLibrary || loadingWishlist || loadingCurrentBook || loadingLending}
                             >
                                 {loadingCurrentBook ? (
                                     <Loader2 className="h-4 w-4 animate-spin mr-2"/>
@@ -314,6 +413,42 @@ const BookModal = ({
                                 Marquer comme non commencé
                             </Button>
                         )}
+
+                        {/* Bouton pour prêter le livre */}
+                        {(inLibrary && !isBookLoanedInstance && !isPendingLoanInstance) && (
+                            <Button
+                                variant="outline"
+                                className="w-full sm:w-auto hover:bg-blue-200 border-blue-300 text-blue-700"
+                                onClick={() => setIsLendingModalOpened(true)}
+                                disabled={loadingLibrary || loadingWishlist || loadingCurrentBook || loadingLending}
+                            >
+                                {loadingLending ? (
+                                    <Loader2 className="h-4 w-4 animate-spin mr-2"/>
+                                ) : (
+                                    <Users className="h-4 w-4 mr-2"/>
+                                )}
+                                Prêter ce livre
+                            </Button>
+                        )}
+
+                        {/* Bouton pour marquer comme rendu */}
+                        {(inLibrary && (isBookLoanedInstance || isPendingLoanInstance)) && (
+                            <Button
+                                variant="outline"
+                                className="w-full sm:w-auto hover:bg-orange-200 border-orange-300 text-orange-700"
+                                onClick={handleCancelLending}
+                                disabled={loadingLibrary || loadingWishlist || loadingCurrentBook || loadingLending}
+                            >
+                                {loadingLending ? (
+                                    <Loader2 className="h-4 w-4 animate-spin mr-2"/>
+                                ) : (
+                                    <UserCheck className="h-4 w-4 mr-2"/>
+                                )}
+                                {isPendingLoanInstance ? 'Annuler la demande' : 'Marquer comme rendu'}
+                            </Button>
+                        )}
+
+                        {/* Bouton pour retirer de la bibliothèque */}
                         {inLibrary && (
                             <Button
                                 variant="destructive"
@@ -329,6 +464,8 @@ const BookModal = ({
                                 Retirer de ma bibliothèque
                             </Button>
                         )}
+
+                        {/* Bouton pour retirer de la wishlist */}
                         {inWishlist && (
                             <Button
                                 variant="destructive"
@@ -344,36 +481,40 @@ const BookModal = ({
                                 Retirer de ma wishlist
                             </Button>
                         )}
+
+                        {/* Boutons pour ajouter à la bibliothèque/wishlist */}
                         {!inLibrary && !inWishlist && (
-                            <Button
-                                variant="outline"
-                                className="w-full sm:w-auto hover:bg-green-300"
-                                onClick={handleToggleLibrary}
-                                disabled={loadingLibrary || loadingWishlist || loadingCurrentBook}
-                            >
-                                {loadingLibrary ? (
-                                    <Loader2 className="h-4 w-4 animate-spin mr-2"/>
-                                ) : (
-                                    <BookIcon className="h-4 w-4 mr-2"/>
-                                )}
-                                Ajouter à ma bibliothèque
-                            </Button>
+                            <>
+                                <Button
+                                    variant="outline"
+                                    className="w-full sm:w-auto hover:bg-green-300"
+                                    onClick={handleToggleLibrary}
+                                    disabled={loadingLibrary || loadingWishlist || loadingCurrentBook}
+                                >
+                                    {loadingLibrary ? (
+                                        <Loader2 className="h-4 w-4 animate-spin mr-2"/>
+                                    ) : (
+                                        <BookIcon className="h-4 w-4 mr-2"/>
+                                    )}
+                                    Ajouter à ma bibliothèque
+                                </Button>
+                                <Button
+                                    variant="outline"
+                                    className="w-full sm:w-auto hover:bg-amber-300"
+                                    onClick={handleToggleWishlist}
+                                    disabled={loadingLibrary || loadingWishlist || loadingCurrentBook}
+                                >
+                                    {loadingWishlist ? (
+                                        <Loader2 className="h-4 w-4 animate-spin mr-2"/>
+                                    ) : (
+                                        <Heart className="h-4 w-4 mr-2"/>
+                                    )}
+                                    Ajouter à ma wishlist
+                                </Button>
+                            </>
                         )}
-                        {!inWishlist && !inLibrary && (
-                            <Button
-                                variant="outline"
-                                className="w-full sm:w-auto hover:bg-amber-300"
-                                onClick={handleToggleWishlist}
-                                disabled={loadingLibrary || loadingWishlist || loadingCurrentBook}
-                            >
-                                {loadingWishlist ? (
-                                    <Loader2 className="h-4 w-4 animate-spin mr-2"/>
-                                ) : (
-                                    <Heart className="h-4 w-4 mr-2"/>
-                                )}
-                                Ajouter à ma wishlist
-                            </Button>
-                        )}
+
+                        {/* Bouton pour voir les notes */}
                         <Button
                             onClick={() => setIsNotesModalOpened(true)}
                             variant="notes"
@@ -381,12 +522,14 @@ const BookModal = ({
                             <FileText className="h-4 w-4 mr-2"/>
                             Voir les notes
                             <span className="text-xs text-gray-500">
-                ({notesCount ? notesCount : 0})
-              </span>
+                                ({notesCount ? notesCount : 0})
+                            </span>
                         </Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
+
+            {/* Modal des notes */}
             {
                 (book && userId) && (
                     <BookNotesModal
@@ -394,6 +537,19 @@ const BookModal = ({
                         setIsOpen={setIsNotesModalOpened}
                         book={book}
                         userId={userId}
+                    />
+                )
+            }
+
+            {/* Modal de prêt */}
+            {
+                book && (
+                    <LendingModal
+                        book={book}
+                        isOpen={isLendingModalOpened}
+                        onClose={() => setIsLendingModalOpened(false)}
+                        onLend={handleLendBook}
+                        isLoading={loadingLending}
                     />
                 )
             }
