@@ -75,6 +75,10 @@ const LendingRequestPopup = ({
                         <h2 className="text-xl font-semibold text-gray-900">
                             Demande de prêt
                         </h2>
+                        <p className="text-sm text-destructive-foreground">
+                            Vous pouvez accepter ou refuser cette demande. Si vous acceptez, le livre sera dans votre
+                            bibliothèque.
+                        </p>
                         <button
                             onClick={onClose}
                             className="text-gray-400 hover:text-gray-600 transition-colors p-1 rounded-full hover:bg-gray-100"
@@ -102,6 +106,7 @@ const LendingRequestPopup = ({
                                 <div
                                     className="w-16 h-24 bg-gray-200 rounded flex items-center justify-center flex-shrink-0 overflow-hidden">
                                     {request.book.cover ? (
+                                        // eslint-disable-next-line @next/next/no-img-element
                                         <img
                                             src={request.book.cover}
                                             alt={request.book.title}
@@ -148,7 +153,7 @@ const LendingRequestPopup = ({
                         {/* Request Date */}
                         <div className="flex items-center text-sm text-gray-500">
                             <Clock size={14} className="mr-1"/>
-                            Demandé le {formatDate(request.requestedAt)}
+                            Demandé le {formatDate(request.requestedAt as string)}
                         </div>
                     </div>
 
@@ -161,7 +166,7 @@ const LendingRequestPopup = ({
                         >
                             {isActionLoading && actionType === 'reject' ? (
                                 <div
-                                    className="w-4 h-4 border-2 border-red-600 border-t-transparent rounded-full animate-spin"></div>
+                                    className="w-4 h-4 border-2 border-red-600 border-t-transparent rounded-full animate-spin"/>
                             ) : (
                                 <X size={16}/>
                             )}
