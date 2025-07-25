@@ -23,7 +23,7 @@ const LendingRequestPopup = ({
                              }: LendingRequestPopupProps) => {
     const [actionType, setActionType] = useState<'accept' | 'reject' | null>(null);
 
-    console.log('Rendering LendingRequestPopup with request:', request);
+// Removed unnecessary console.log statement.
 
     if (!isOpen) return null;
 
