@@ -7,8 +7,17 @@ const protectedRoutes = [
     '/reviews',
     '/challenges',
     '/statistics',
+    '/profile',
+    '/private-review',
+    '/daily-book'
 ]
+
 const publicRoutes = ['/about', '/register', '/login']
+
+// Pour plus tard, au cas où je souhaite ajouter des routes API publiques
+const publicApiRoutes: string[] = [
+    '/api/public',
+]
 
 export default async function middleware(req: NextRequest) {
     const path = req.nextUrl.pathname
@@ -17,6 +26,37 @@ export default async function middleware(req: NextRequest) {
     const isProtectedRoute = protectedRoutes.includes(path)
     const isPublicRoute = publicRoutes.includes(path)
     const isAdminRoute = path.startsWith('/admin')
+    const isApiRoute = path.startsWith('/api/')
+
+    // Protection of API routes
+    if (isApiRoute) {
+        const isPublicApiRoute = publicApiRoutes.some(route =>
+            path.startsWith(route)
+        )
+
+        if (!isPublicApiRoute && !user) {
+            return NextResponse.json(
+                {error: 'Non autorisé - Authentication requise'},
+                {status: 401}
+            )
+        }
+
+        // Validation for admin routes
+        if (path.startsWith('/api/admin/')) {
+            if (!user) {
+                return NextResponse.json(
+                    {error: 'Non autorisé - Authentication requise'},
+                    {status: 401}
+                )
+            }
+            if (user.role !== 'ADMIN') {
+                return NextResponse.json(
+                    {error: 'Accès interdit - Droits administrateur requis'},
+                    {status: 403}
+                )
+            }
+        }
+    }
 
     // Redirect to /login if the user is not authenticated
     if (isProtectedRoute && !user) {
@@ -47,5 +87,5 @@ export default async function middleware(req: NextRequest) {
 }
 
 export const config = {
-    matcher: ['/((?!api|_next/static|_next/image|.*\\.png$).*)'],
+    matcher: ['/((?!_next/static|_next/image|.*\\.png$).*)'],
 }
