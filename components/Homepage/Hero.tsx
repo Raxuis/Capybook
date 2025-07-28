@@ -116,7 +116,7 @@ const Hero = () => {
                 }}
                 onDragStart={() => {
                   // Ajout d'un feedback haptic si sur mobile
-                  if (navigator.vibrate) {
+                  if (typeof navigator !== "undefined" && navigator.vibrate) {
                     navigator.vibrate(50);
                   }
                 }}

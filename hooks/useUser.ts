@@ -21,8 +21,8 @@ export type UserWithRelations = Prisma.UserGetPayload<{
         borrowedBooks: {
             include: {
                 book: true,
-                lender: true
-                borrower: true
+                lender: true,
+                borrower: true,
             }
         }
     }
