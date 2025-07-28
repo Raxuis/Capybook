@@ -54,7 +54,7 @@ export const POST = createZodRoute().body(PostSchema).handler(async (_, context)
             deadline,
         }
     })
-    const {id, ...challengeWithoutId} = newChallenge;
+    const {id: _, ...challengeWithoutId} = newChallenge;
 
     return NextResponse.json({challenge: challengeWithoutId}, {status: 201});
 });
@@ -134,7 +134,7 @@ const DeleteSchema = z.object({
     userId: z.string()
 })
 
-export const DELETE = createZodRoute().handler(async (request, _) => {
+export const DELETE = createZodRoute().handler(async (request) => {
     const data = await request.json();
     const {error} = DeleteSchema.safeParse(data);
 

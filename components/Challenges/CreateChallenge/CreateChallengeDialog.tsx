@@ -106,4 +106,6 @@ const CreateChallengeDialog = memo(() => {
     );
 });
 
+CreateChallengeDialog.displayName = 'CreateChallengeDialog';
+
 export default CreateChallengeDialog;

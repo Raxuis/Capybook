@@ -25,4 +25,6 @@ const SimplifiedTooltip = memo(({children, tooltipContent, triggerClassName, con
     );
 });
 
+SimplifiedTooltip.displayName = 'SimplifiedTooltip';
+
 export default SimplifiedTooltip;

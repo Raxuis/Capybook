@@ -98,4 +98,6 @@ const UpdateChallengeDialog = memo(() => {
     );
 });
 
+UpdateChallengeDialog.displayName = 'UpdateChallengeDialog';
+
 export default UpdateChallengeDialog;

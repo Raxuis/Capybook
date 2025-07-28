@@ -82,7 +82,7 @@ export const POST = createZodRoute()
     });
 
 export const DELETE = createZodRoute()
-    .handler(async (request, _) => {
+    .handler(async (request) => {
         try {
             const data = await request.json();
             const {error} = UserWishlistSchema.safeParse(data);

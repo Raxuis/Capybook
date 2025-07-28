@@ -54,5 +54,6 @@ const DeleteChallengeDialog = memo(({
     );
 });
 
+DeleteChallengeDialog.displayName = 'DeleteChallengeDialog';
 
 export default DeleteChallengeDialog;

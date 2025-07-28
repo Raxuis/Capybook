@@ -19,7 +19,7 @@ import {UpdateChallengeSchema} from "@/utils/zod";
 import {useUser} from "@/hooks/useUser";
 
 type Props = {
-    onSubmit: (data: any) => Promise<void>;
+    onSubmit: (data: z.infer<typeof UpdateChallengeSchema>) => Promise<void>;
     initialData?: ModalData;
     onCancel: () => void;
 }
@@ -27,7 +27,7 @@ type Props = {
 const UpdateChallengeForm = ({onSubmit, initialData, onCancel}: Props) => {
     const {toast} = useToast();
     const {user} = useUser();
-    if (!user) return null;
+
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const form = useForm<z.infer<typeof UpdateChallengeSchema>>({
@@ -39,6 +39,9 @@ const UpdateChallengeForm = ({onSubmit, initialData, onCancel}: Props) => {
             deadline: initialData?.deadline ? new Date(initialData.deadline) : new Date(),
         },
     });
+
+    if (!user) return null;
+
 
     const watchType = form.watch('type');
     const watchTarget = form.watch('target');
@@ -187,7 +190,7 @@ const UpdateChallengeForm = ({onSubmit, initialData, onCancel}: Props) => {
                                         selected={field.value}
                                         onSelect={field.onChange}
                                         disabled={[
-                                            { before: new Date(), to: new Date() }, // Désactive aujourd’hui et les jours précédents
+                                            {before: new Date(), to: new Date()}, // Désactive aujourd’hui et les jours précédents
                                             ...user.ReadingGoal.map(goal => {
                                                 if (goal.id !== initialData?.id && !goal.completedAt) {
                                                     return new Date(goal.deadline);
@@ -264,7 +267,7 @@ const UpdateChallengeForm = ({onSubmit, initialData, onCancel}: Props) => {
                                 <div className="mt-4 text-center">
                                     <div className="text-sm font-medium">
                                         {watchProgress} / {watchTarget} livre {
-                                            watchProgress > 1 ? 's' : ''
+                                        watchProgress > 1 ? 's' : ''
                                     } lu {
                                         watchProgress > 1 ? 's' : ''
                                     }
@@ -413,8 +416,10 @@ const UpdateChallengeForm = ({onSubmit, initialData, onCancel}: Props) => {
                                                 <stop offset="100%" stopColor="#7c3aed"/>
                                             </linearGradient>
                                             <linearGradient id="completedGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                                                <stop offset="0%" stopColor="#22c55e"/>  {/* as green-500 */}
-                                                <stop offset="100%" stopColor="#16a34a"/> {/* as green-600 */}
+                                                <stop offset="0%" stopColor="#22c55e"/>
+                                                {/* as green-500 */}
+                                                <stop offset="100%" stopColor="#16a34a"/>
+                                                {/* as green-600 */}
                                             </linearGradient>
                                         </defs>
                                     </svg>

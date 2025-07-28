@@ -81,7 +81,7 @@ const ChallengeCard = memo(({
                                 {challenge.target} {getChallengeTypeText(challenge.type)}
                             </CardTitle>
                             <CardDescription>
-                                {isPast ? 'Terminé' : 'À compléter'} d'ici{' '}
+                                {isPast ? 'Terminé' : 'À compléter'} d&#39;ici{' '}
                                 {format(new Date(challenge.deadline), 'dd MMMM yyyy', {locale: fr})}
                             </CardDescription>
                         </div>
@@ -124,5 +124,7 @@ const ChallengeCard = memo(({
         </>
     );
 });
+
+ChallengeCard.displayName = 'ChallengeCard';
 
 export default ChallengeCard;

@@ -25,9 +25,19 @@ const CreateChallengeForm = memo(() => {
     const {setDialogOpen} = useChallengeCrudModalStore();
     const {user} = useUser();
     const {toast} = useToast()
+    const {createChallenge} = useChallenges();
+
+    const form = useForm<ChallengeFormValues>({
+        resolver: zodResolver(CreateChallengeSchema),
+        defaultValues: {
+            type: "BOOKS",
+            target: 10,
+            deadline: new Date(new Date().getFullYear(), 11, 31), // 31 décembre de l'année en cours
+        },
+    });
+
     if (!user) return null;
 
-    const {createChallenge} = useChallenges();
 
     type ChallengeFormValues = z.infer<typeof CreateChallengeSchema>;
 
@@ -63,15 +73,6 @@ const CreateChallengeForm = memo(() => {
             form.reset();
         }
     };
-
-    const form = useForm<ChallengeFormValues>({
-        resolver: zodResolver(CreateChallengeSchema),
-        defaultValues: {
-            type: "BOOKS",
-            target: 10,
-            deadline: new Date(new Date().getFullYear(), 11, 31), // 31 décembre de l'année en cours
-        },
-    });
 
     return (
         <Form {...form}>
@@ -209,7 +210,8 @@ const CreateChallengeForm = memo(() => {
                 />
 
                 <DialogFooter>
-                    <Button type="button" variant="outline" onClick={() => setDialogOpen(false)} className="hover:bg-black/10 transition-colors">
+                    <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}
+                            className="hover:bg-black/10 transition-colors">
                         Annuler
                     </Button>
                     <Button type="submit">Créer le challenge</Button>
@@ -218,5 +220,7 @@ const CreateChallengeForm = memo(() => {
         </Form>
     );
 });
+
+CreateChallengeForm.displayName = "CreateChallengeForm";
 
 export default CreateChallengeForm;

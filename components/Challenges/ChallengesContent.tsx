@@ -44,4 +44,6 @@ const ChallengesContent = memo(() => {
     );
 });
 
+ChallengesContent.displayName = 'ChallengesContent';
+
 export default ChallengesContent;
