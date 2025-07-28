@@ -54,7 +54,8 @@ export const POST = createZodRoute().body(PostSchema).handler(async (_, context)
             deadline,
         }
     })
-    const {id: _, ...challengeWithoutId} = newChallenge;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const {id, ...challengeWithoutId} = newChallenge;
 
     return NextResponse.json({challenge: challengeWithoutId}, {status: 201});
 });
