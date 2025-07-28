@@ -48,9 +48,9 @@ export const POST = createZodRoute()
                 if (book.genres && book.genres.length > 0) {
                     for (const genreName of book.genres) {
                         const genre = await prisma.genre.upsert({
-                            where: { name: genreName },
+                            where: {name: genreName},
                             update: {},
-                            create: { name: genreName }
+                            create: {name: genreName}
                         });
 
                         await prisma.bookGenre.create({
@@ -91,7 +91,7 @@ export const POST = createZodRoute()
     });
 
 export const DELETE = createZodRoute()
-    .handler(async (request, _) => {
+    .handler(async (request) => {
         try {
             const data = await request.json();
             const {error} = UserBookSchema.safeParse(data);

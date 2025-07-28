@@ -100,7 +100,7 @@ export const PUT = createZodRoute().body(bodySchema).handler(async (_, context) 
             data: {pagesRead: {increment: pagesRead}}
         });
 
-        let readingProgress = await prisma.readingProgress.findUnique({
+        const readingProgress = await prisma.readingProgress.findUnique({
             where: {readingDayId: readingDay.id}
         });
 
