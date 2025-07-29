@@ -31,7 +31,7 @@ export type BookNoteWithRelations = Prisma.UserBookNotesGetPayload<{
     }
 }>;
 
-export type UserWithoutPassword = Omit<Prisma.UserGetPayload<{}>, 'password'>;
+export type UserWithoutPassword = Omit<Prisma.UserGetPayload<object>, 'password'>;
 
 // =============== FONCTIONS BOOK ===============
 
