@@ -1,36 +1,39 @@
+import {NextRequest, NextResponse} from 'next/server';
 import {z} from "zod";
-import {createZodRoute} from "next-zod-route";
-import {NextResponse} from 'next/server';
 import prisma from "@/utils/prisma";
 import {checkAndAssignBadges} from "@/utils/badges";
 import {Badge} from "@prisma/client";
+import {
+    validateBody,
+    withErrorHandling,
+    createResponse,
+    createErrorResponse,
+    ValidationError
+} from "@/utils/api-validation";
+import {getBookById, getUserBookByUserIdBookId} from "@/utils/database";
 
 const bodySchema = z.object({
-    bookId: z.string(),
-    userId: z.string(),
-    progress: z.number(),
+    bookId: z.string().uuid("L'ID du livre doit être un UUID valide"),
+    userId: z.string().uuid("L'ID utilisateur doit être un UUID valide"),
+    progress: z.number()
+        .min(0, "Le progrès ne peut pas être négatif")
+        .finite("Le progrès doit être un nombre fini"),
 });
 
-export const PUT = createZodRoute().body(bodySchema).handler(async (_, context) => {
-    const {bookId, userId, progress} = context.body;
+async function handlePut(
+    request: NextRequest
+): Promise<NextResponse> {
+    const {bookId, userId, progress} = await validateBody(request, bodySchema);
 
-    const book = await prisma.book.findUnique({
-        where: {id: bookId}
-    });
+    const book = await getBookById(bookId);
+    const userBook = await getUserBookByUserIdBookId(userId, bookId);
 
-    if (!book) {
-        return NextResponse.json({error: "No book with the corresponding id."}, {status: 404});
+    if (userBook.progressType === "percentage" && (progress < 0 || progress > 100)) {
+        throw new ValidationError("Le progrès en pourcentage doit être entre 0 et 100", 400);
     }
 
-    const userBook = await prisma.userBook.findFirst({
-        where: {
-            bookId: bookId,
-            userId: userId,
-        }
-    });
-
-    if (!userBook) {
-        return NextResponse.json({error: 'User doesn\'t have this book yet.'}, {status: 400});
+    if (userBook.progressType === "numberOfPages" && book.numberOfPages && progress > book.numberOfPages) {
+        throw new ValidationError("Le progrès ne peut pas dépasser le nombre total de pages", 400);
     }
 
     const previousProgress = userBook.progress;
@@ -52,12 +55,10 @@ export const PUT = createZodRoute().body(bodySchema).handler(async (_, context) 
         (userBook.progressType === "numberOfPages" && progress === book.numberOfPages) ||
         (userBook.progressType === "percentage" && progress === 100);
 
-    // Vérifier si le livre était déjà terminé avant cette mise à jour
     const wasAlreadyFinished = userBook.finishedAt !== null;
-    // Ne comptabiliser comme "nouveau livre terminé" que si le livre vient d'être terminé
     const newlyFinishedBook = isBookFinishedVerification && !wasAlreadyFinished;
 
-    const newBook = await prisma.userBook.update({
+    const updatedUserBook = await prisma.userBook.update({
         where: {userId_bookId: {userId, bookId}},
         data: {
             progress,
@@ -66,8 +67,8 @@ export const PUT = createZodRoute().body(bodySchema).handler(async (_, context) 
         }
     });
 
-    if (!newBook) {
-        return NextResponse.json({error: 'An error occurred while retrieving book.'}, {status: 500});
+    if (!updatedUserBook) {
+        return createErrorResponse("Une erreur s'est produite lors de la récupération du livre", 500);
     }
 
     // Mise à jour des statistiques journalières de lecture
@@ -177,11 +178,13 @@ export const PUT = createZodRoute().body(bodySchema).handler(async (_, context) 
         }));
     }
 
-    return NextResponse.json({
-        data: newBook,
+    return createResponse({
+        data: updatedUserBook,
         badges: {
             newBadgesCount: newBadges.length,
             newBadges
         }
-    }, {status: 200});
-});
+    });
+}
+
+export const PUT = withErrorHandling(handlePut);

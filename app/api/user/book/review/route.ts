@@ -1,27 +1,34 @@
+import {NextRequest, NextResponse} from 'next/server';
 import {z} from "zod";
-import {createZodRoute} from "next-zod-route";
-import {NextResponse} from 'next/server';
 import prisma from "@/utils/prisma";
 import {checkAndAssignBadges} from "@/utils/badges";
+import {validateBody, withErrorHandling, createResponse, createErrorResponse} from "@/utils/api-validation";
 
 const bodySchema = z.object({
-    bookKey: z.string(),
-    userId: z.string(),
-    rating: z.number(),
-    feedback: z.string(),
-    privacy: z.enum(['PUBLIC', 'PRIVATE', 'FRIENDS', 'SPECIFIC_FRIEND']),
-    specificFriendId: z.string().optional(),
+    bookKey: z.string().min(1, "La clé du livre est requise"),
+    userId: z.string().uuid("L'ID utilisateur doit être un UUID valide"),
+    rating: z.number()
+        .min(1, "La note doit être au minimum de 1")
+        .max(5, "La note doit être au maximum de 5")
+        .int("La note doit être un nombre entier"),
+    feedback: z.string().min(1, "Le commentaire est requis"),
+    privacy: z.enum(['PUBLIC', 'PRIVATE', 'FRIENDS', 'SPECIFIC_FRIEND'], {
+        errorMap: () => ({message: "Le niveau de confidentialité doit être PUBLIC, PRIVATE, FRIENDS ou SPECIFIC_FRIEND"})
+    }),
+    specificFriendId: z.string().uuid("L'ID de l'ami spécifique doit être un UUID valide").optional(),
 });
 
-export const POST = createZodRoute().body(bodySchema).handler(async (_, context) => {
-    const {bookKey, userId, rating, feedback, privacy, specificFriendId} = context.body;
+async function handlePost(
+    request: NextRequest
+): Promise<NextResponse> {
+    const {bookKey, userId, rating, feedback, privacy, specificFriendId} = await validateBody(request, bodySchema);
 
     const book = await prisma.book.findUnique({
         where: {key: bookKey}
     });
 
     if (!book) {
-        return NextResponse.json({error: "No book with the corresponding key."}, {status: 404});
+        return createErrorResponse("Aucun livre trouvé avec cette clé", 404);
     }
 
     const userBook = await prisma.userBook.findFirst({
@@ -32,15 +39,15 @@ export const POST = createZodRoute().body(bodySchema).handler(async (_, context)
     });
 
     if (!userBook) {
-        return NextResponse.json({error: 'User doesn\'t have this book yet.'}, {status: 400});
+        return createErrorResponse("L'utilisateur ne possède pas encore ce livre", 400);
     }
 
-    // Validate specific friend selection
+    // Valider la sélection d'ami spécifique
     if (privacy === 'SPECIFIC_FRIEND' && !specificFriendId) {
-        return NextResponse.json({error: 'Specific friend must be selected for this privacy setting.'}, {status: 400});
+        return createErrorResponse("Un ami spécifique doit être sélectionné pour ce niveau de confidentialité", 400);
     }
 
-    // Verify friendship exists if specific friend is selected
+    // Vérifier que l'amitié existe si un ami spécifique est sélectionné
     if (specificFriendId) {
         const friendship = await prisma.follow.findFirst({
             where: {
@@ -52,7 +59,7 @@ export const POST = createZodRoute().body(bodySchema).handler(async (_, context)
         });
 
         if (!friendship) {
-            return NextResponse.json({error: 'You are not friends with the selected user.'}, {status: 400});
+            return createErrorResponse("Vous n'êtes pas ami avec l'utilisateur sélectionné", 400);
         }
     }
 
@@ -77,17 +84,25 @@ export const POST = createZodRoute().body(bodySchema).handler(async (_, context)
     });
 
     if (!newBookReview) {
-        return NextResponse.json({error: 'An error occurred while saving review.'}, {status: 500});
+        return createErrorResponse("Une erreur s'est produite lors de la sauvegarde de la review", 500);
     }
 
+    // Vérifier et assigner de nouveaux badges
     const newBadges = await checkAndAssignBadges(userId);
 
-    return NextResponse.json({
+    // Générer le lien privé si nécessaire
+    const privateLink = (newBookReview.id && newBookReview.privacy === "PRIVATE")
+        ? `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/private-review/${newBookReview.id}`
+        : null;
+
+    return createResponse({
         data: newBookReview,
         badges: {
             newBadgesCount: newBadges.length,
             newBadges: newBadges,
         },
-        privateLink: (newBookReview.id && newBookReview.privacy === "PRIVATE") ? `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/private-review/${newBookReview.id}` : null
-    }, {status: 200});
-});
+        privateLink
+    }, 201);
+}
+
+export const POST = withErrorHandling(handlePost);

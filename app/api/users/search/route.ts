@@ -1,75 +1,89 @@
-import {createZodRoute} from 'next-zod-route'
-import {z} from 'zod'
+import {NextRequest, NextResponse} from 'next/server';
+import {z} from 'zod';
 import prisma from "@/utils/prisma";
-import {NextResponse} from 'next/server'
+import {validateSearchParams, withErrorHandling, createResponse, createErrorResponse} from "@/utils/api-validation";
 
 const searchUsersSchema = z.object({
     q: z.string().min(1, "Le terme de recherche est requis"),
-    excludeId: z.string().optional()
-})
+    excludeId: z.string().uuid("L'ID à exclure doit être un UUID valide").optional(),
+    limit: z.string()
+        .optional()
+        .default("10")
+        .transform((val) => parseInt(val))
+        .refine((val) => val > 0 && val <= 50, "La limite doit être entre 1 et 50"),
+});
 
-export const GET = createZodRoute()
-    .query(searchUsersSchema)
-    .handler(async (_, context) => {
-        try {
-            const {q: searchTerm, excludeId} = context.query
+async function handleGet(
+    request: NextRequest
+): Promise<NextResponse> {
+    const {q: searchTerm, excludeId, limit} = validateSearchParams(
+        new URL(request.url).searchParams,
+        searchUsersSchema
+    );
 
-            // Construire les conditions de recherche
-            const searchConditions = {
-                OR: [
-                    {
-                        username: {
-                            contains: searchTerm,
-                            mode: 'insensitive' as const
-                        }
-                    },
-                    {
-                        name: {
-                            contains: searchTerm,
-                            mode: 'insensitive' as const
-                        }
-                    },
-                    {
-                        email: {
-                            contains: searchTerm,
-                            mode: 'insensitive' as const
-                        }
-                    }
-                ],
-                // Exclure l'utilisateur actuel si spécifié
-                ...(excludeId && {
-                    NOT: {
-                        id: excludeId
-                    }
-                })
-            }
+    if (searchTerm.trim().length < 2) {
+        return createErrorResponse("Le terme de recherche doit contenir au moins 2 caractères", 400);
+    }
 
-            // Rechercher les utilisateurs
-            const users = await prisma.user.findMany({
-                where: searchConditions,
-                select: {
-                    id: true,
-                    username: true,
-                    name: true,
-                    email: true,
-                    image: true
-                },
-                take: 10, // Limiter les résultats
-                orderBy: {
-                    username: 'asc'
+    const searchConditions = {
+        OR: [
+            {
+                username: {
+                    contains: searchTerm.trim(),
+                    mode: 'insensitive' as const
                 }
-            })
+            },
+            {
+                name: {
+                    contains: searchTerm.trim(),
+                    mode: 'insensitive' as const
+                }
+            },
+            {
+                email: {
+                    contains: searchTerm.trim(),
+                    mode: 'insensitive' as const
+                }
+            }
+        ],
+        // Exclure l'utilisateur actuel si spécifié
+        ...(excludeId && {
+            NOT: {
+                id: excludeId
+            }
+        })
+    };
 
-            return NextResponse.json({
-                users,
-                count: users.length
-            })
+    // Rechercher les utilisateurs
+    const users = await prisma.user.findMany({
+        where: searchConditions,
+        select: {
+            id: true,
+            username: true,
+            name: true,
+            email: true,
+            image: true
+        },
+        take: limit,
+        orderBy: [
+            // Prioriser les correspondances exactes de username
+            {
+                username: 'asc'
+            },
+            // Puis par nom
+            {
+                name: 'asc'
+            }
+        ]
+    });
 
-        } catch (error) {
-            console.error('Erreur lors de la recherche d\'utilisateurs:', error)
-            return NextResponse.json(
-                {error: 'Erreur lors de la recherche d\'utilisateurs'},
-                {status: 500}
-            )
-        }
-    })
+    return createResponse({
+        users,
+        count: users.length,
+        searchTerm: searchTerm.trim(),
+        hasMore: users.length === limit
+    });
+}
+
+// Export du handler avec gestion d'erreur
+export const GET = withErrorHandling(handleGet);
