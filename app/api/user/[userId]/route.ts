@@ -6,7 +6,8 @@ import {
     validateBody,
     withErrorHandling,
     createResponse,
-    createErrorResponse
+    createErrorResponse,
+    withErrorHandlingContextOnly
 } from "@/utils/api-validation";
 
 const paramsSchema = z.object({
@@ -27,12 +28,9 @@ const putBodySchema = z.object({
 });
 
 async function handleGet(
-    request: NextRequest,
     {params}: { params: Record<string, string> }
 ): Promise<NextResponse> {
     const {userId} = await validateParams(params, paramsSchema);
-
-    console.log('userId:', userId); // Pour débugger
 
     const user = await prisma.user.findUnique({
         where: {id: userId},
@@ -128,5 +126,5 @@ async function handlePut(
     return createResponse(userWithoutPassword);
 }
 
-export const GET = withErrorHandling(handleGet);
+export const GET = withErrorHandlingContextOnly(handleGet);
 export const PUT = withErrorHandling(handlePut);

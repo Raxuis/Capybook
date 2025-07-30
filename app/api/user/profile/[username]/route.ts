@@ -76,9 +76,9 @@ interface ResponseData {
 }
 
 async function handleGet(
-    context: { params: { username: string } }
+    {params}: { params: { username: string } }
 ): Promise<NextResponse> {
-    const {username} = await validateParams(context.params, paramsSchema);
+    const {username} = await validateParams(params, paramsSchema);
     const formattedUsername = formatUsername(username);
     const session = await auth();
 

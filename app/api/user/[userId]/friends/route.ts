@@ -1,7 +1,7 @@
 import {NextResponse} from 'next/server';
 import {z} from "zod";
 import prisma from "@/utils/prisma";
-import {validateParams, withErrorHandling, createResponse} from "@/utils/api-validation";
+import {validateParams, createResponse, withErrorHandlingContextOnly} from "@/utils/api-validation";
 
 const paramsSchema = z.object({
     userId: z.string().cuid("L'ID utilisateur doit être un CUID valide"),
@@ -10,7 +10,7 @@ const paramsSchema = z.object({
 async function handleGet(
     {params}: { params: Record<string, string> }
 ): Promise<NextResponse> {
-    const {userId} = validateParams(params, paramsSchema);
+    const {userId} = await validateParams(params, paramsSchema);
 
     const following = await prisma.follow.findMany({
         where: {followerId: userId},
@@ -46,4 +46,4 @@ async function handleGet(
     return createResponse(mutualFriends);
 }
 
-export const GET = withErrorHandling(handleGet);
+export const GET = withErrorHandlingContextOnly(handleGet);

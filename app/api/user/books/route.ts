@@ -1,7 +1,7 @@
 import {NextRequest, NextResponse} from 'next/server';
 import {z} from 'zod';
 import prisma from "@/utils/prisma";
-import {validateBody, withErrorHandling} from "@/utils/api-validation";
+import {validateBody, validateParams, withErrorHandling} from "@/utils/api-validation";
 
 const UserBookSchema = z.object({
     userId: z.string(),
@@ -83,7 +83,13 @@ async function handlePost(
 async function handleDelete(
     context: { params: Record<string, string | string[]> }
 ): Promise<NextResponse> {
-    const {userId, bookKey} = context.params;
+    const {userId, bookKey} = await validateParams(
+        context.params,
+        z.object({
+            userId: z.string(),
+            bookKey: z.string()
+        })
+    );
 
     if (!userId || !bookKey) {
         return NextResponse.json({error: 'User ID and Book Key are required'}, {status: 400});
