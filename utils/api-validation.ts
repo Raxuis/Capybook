@@ -19,8 +19,24 @@ type SimpleRouteHandler = (request: NextRequest, context?: RouteContext) => Prom
 
 /**
  * Valide les paramètres d'URL avec un schéma Zod
+ * Gère automatiquement les paramètres asynchrones de Next.js 13+
  */
-export function validateParams<T>(params: RouteParams, schema: z.ZodSchema<T>): T {
+export async function validateParams<T>(
+    params: RouteParams | Promise<RouteParams>,
+    schema: z.ZodSchema<T>
+): Promise<T> {
+    // Résoudre la Promise si nécessaire
+    const resolvedParams = await params;
+
+    const result = schema.safeParse(resolvedParams);
+    if (!result.success) {
+        const errorMessages = result.error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join(', ');
+        throw new ValidationError(`Invalid parameters: ${errorMessages}`);
+    }
+    return result.data;
+}
+
+export function validateParamsSync<T>(params: RouteParams, schema: z.ZodSchema<T>): T {
     const result = schema.safeParse(params);
     if (!result.success) {
         const errorMessages = result.error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join(', ');

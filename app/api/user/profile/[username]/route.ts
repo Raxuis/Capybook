@@ -1,10 +1,10 @@
-import {NextRequest, NextResponse} from 'next/server';
+import {NextResponse} from 'next/server';
 import {z} from "zod";
 import prisma from "@/utils/prisma";
 import {formatUsername} from "@/utils/format";
 import {auth} from "@/auth";
 import {BadgeCategory} from "@prisma/client";
-import {validateSearchParams, withErrorHandling} from "@/utils/api-validation";
+import {validateParams, withErrorHandling} from "@/utils/api-validation";
 
 
 const paramsSchema = z.object({
@@ -76,12 +76,12 @@ interface ResponseData {
 }
 
 async function handleGet(
-    request: NextRequest
+    context: { params: { username: string } }
 ): Promise<NextResponse> {
-    const {username} = validateSearchParams(
-        new URL(request.url).searchParams,
-        paramsSchema
-    );
+    const {
+        username
+    } = await validateParams(context.params, paramsSchema);
+    console.log(`Fetching profile for username: ${username}`);
     const formattedUsername = formatUsername(username);
     const session = await auth();
 
@@ -188,12 +188,13 @@ async function handleGet(
         : false;
 
     const isFollowing = session?.user?.id
-        ? await prisma.follow.findFirst({
-            where: {
-                followingId: user.id,
-                followerId: session.user.id,
-            },
-        }) : false;
+        ? (await prisma.follow.findFirst({
+        where: {
+            followingId: user.id,
+            followerId: session.user.id,
+        },
+    })) !== null
+        : false;
 
     const totalBooksRead = user.UserBook.filter(book => book.finishedAt).length;
     const totalReviews = user.BookReview.length;
