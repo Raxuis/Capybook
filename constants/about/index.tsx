@@ -4,17 +4,17 @@ const services = [
     {
         title: "Suivi de Lecture",
         description: "Suivez votre progression dans chaque livre avec des outils intuitifs et personnalisables.",
-        icon: <BookOpen className="h-6 w-6 text-primary"/>,
+        icon: <BookOpen className="text-primary size-6"/>,
     },
     {
         title: "Communauté",
         description: "Rejoignez une communauté active de lecteurs et partagez vos découvertes littéraires.",
-        icon: <Users className="h-6 w-6 text-primary"/>,
+        icon: <Users className="text-primary size-6"/>,
     },
     {
         title: "Statistiques",
         description: "Analysez vos habitudes de lecture avec des statistiques détaillées et personnalisées.",
-        icon: <Star className="h-6 w-6 text-primary"/>,
+        icon: <Star className="text-primary size-6"/>,
     },
 ];
 
@@ -49,7 +49,7 @@ const history = {
     title: "Notre Histoire",
     description: "Fondée en 2025, Capybook est née d'une passion partagée pour la lecture et la technologie. " +
         "Plus précisément de Raphaël, qui lisait des livres mais n'arrivait jamais à les finir, soit car il oubliait où il en était ou par manque de temps.",
-    listIcon: <CheckCircle className="h-6 w-6 text-primary mt-1"/>,
+    listIcon: <CheckCircle className="text-primary mt-1 size-6"/>,
     list: [
         {
             title: "Innovation Continue",

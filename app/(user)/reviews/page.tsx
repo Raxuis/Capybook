@@ -19,11 +19,11 @@ export default function ReviewsPage({searchParams}: Props) {
 
     return (
         <DashboardLayout className="py-8">
-            <div className="max-w-6xl mx-auto px-4 sm:px-6">
+            <div className="mx-auto max-w-6xl px-4 sm:px-6">
                 <div className="mb-10">
-                    <div className="border-b pb-4 mb-6">
+                    <div className="mb-6 border-b pb-4">
                         <h1 className="text-4xl font-bold tracking-tight">Avis des lecteurs</h1>
-                        <p className="text-lg text-muted-foreground mt-2">
+                        <p className="text-muted-foreground mt-2 text-lg">
                             Découvrez ce que les autres lecteurs pensent des livres
                         </p>
                     </div>

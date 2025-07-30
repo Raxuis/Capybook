@@ -64,24 +64,24 @@ const LendingRequestPopup = ({
     return (
         <>
             {/* Backdrop */}
-            <div className="fixed inset-0 bg-black bg-opacity-50 z-50" onClick={onClose}/>
+            <div className="fixed inset-0 z-50 bg-black bg-opacity-50" onClick={onClose}/>
 
             {/* Modal */}
-            <div className="fixed inset-0 flex items-center justify-center z-50 p-4 pointer-events-none">
+            <div className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center p-4">
                 <div
-                    className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto pointer-events-auto">
+                    className="pointer-events-auto max-h-[90vh] w-full max-w-md overflow-y-auto rounded-lg bg-white shadow-xl">
                     {/* Header */}
-                    <div className="flex items-center justify-between p-6 border-b">
+                    <div className="flex items-center justify-between border-b p-6">
                         <h2 className="text-xl font-semibold text-gray-900">
                             Demande de prêt
                         </h2>
-                        <p className="text-sm text-destructive-foreground">
+                        <p className="text-destructive-foreground text-sm">
                             Vous pouvez accepter ou refuser cette demande. Si vous acceptez, le livre sera dans votre
                             bibliothèque.
                         </p>
                         <button
                             onClick={onClose}
-                            className="text-gray-400 hover:text-gray-600 transition-colors p-1 rounded-full hover:bg-gray-100"
+                            className="rounded-full p-1 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"
                             disabled={isActionLoading}
                         >
                             <X size={20}/>
@@ -89,7 +89,7 @@ const LendingRequestPopup = ({
                     </div>
 
                     {/* Content */}
-                    <div className="p-6 space-y-6">
+                    <div className="space-y-6 p-6">
                         {/* Lender Info */}
                         <div className="flex items-center">
                             <p className="font-medium text-gray-900">
@@ -101,30 +101,30 @@ const LendingRequestPopup = ({
                         </div>
 
                         {/* Book Info */}
-                        <div className="bg-gray-50 rounded-lg p-4">
+                        <div className="rounded-lg bg-gray-50 p-4">
                             <div className="flex items-start space-x-4">
                                 <div
-                                    className="w-16 h-24 bg-gray-200 rounded flex items-center justify-center flex-shrink-0 overflow-hidden">
+                                    className="flex h-24 w-16 shrink-0 items-center justify-center overflow-hidden rounded bg-gray-200">
                                     {request.book.cover ? (
                                         // eslint-disable-next-line @next/next/no-img-element
                                         <img
                                             src={request.book.cover}
                                             alt={request.book.title}
-                                            className="w-full h-full object-cover"
+                                            className="size-full object-cover"
                                         />
                                     ) : (
                                         <Book size={32} className="text-gray-400"/>
                                     )}
                                 </div>
                                 <div className="flex-1">
-                                    <h3 className="font-medium text-gray-900 mb-1">
+                                    <h3 className="mb-1 font-medium text-gray-900">
                                         {request.book.title}
                                     </h3>
-                                    <p className="text-sm text-gray-600 mb-2">
+                                    <p className="mb-2 text-sm text-gray-600">
                                         par {request.book.authors.join(', ')}
                                     </p>
                                     {request.book.numberOfPages && (
-                                        <p className="text-xs text-gray-500 flex items-center">
+                                        <p className="flex items-center text-xs text-gray-500">
                                             <Book size={12} className="mr-1"/>
                                             {request.book.numberOfPages} pages
                                         </p>
@@ -135,11 +135,11 @@ const LendingRequestPopup = ({
 
                         {/* Message */}
                         {request.message && (
-                            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                            <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
                                 <div className="flex items-start space-x-2">
-                                    <MessageCircle size={16} className="text-blue-600 mt-0.5 flex-shrink-0"/>
+                                    <MessageCircle size={16} className="mt-0.5 shrink-0 text-blue-600"/>
                                     <div>
-                                        <p className="text-sm font-medium text-blue-900 mb-1">
+                                        <p className="mb-1 text-sm font-medium text-blue-900">
                                             Message :
                                         </p>
                                         <p className="text-sm text-blue-800">
@@ -158,15 +158,15 @@ const LendingRequestPopup = ({
                     </div>
 
                     {/* Actions */}
-                    <div className="flex space-x-3 p-6 border-t bg-gray-50">
+                    <div className="flex space-x-3 border-t bg-gray-50 p-6">
                         <button
                             onClick={handleReject}
                             disabled={isActionLoading}
-                            className="flex-1 px-4 py-2 border border-red-300 text-red-700 rounded-lg hover:bg-red-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+                            className="flex flex-1 items-center justify-center space-x-2 rounded-lg border border-red-300 px-4 py-2 text-red-700 transition-colors hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
                         >
                             {isActionLoading && actionType === 'reject' ? (
                                 <div
-                                    className="w-4 h-4 border-2 border-red-600 border-t-transparent rounded-full animate-spin"/>
+                                    className="size-4 animate-spin rounded-full border-2 border-red-600 border-t-transparent"/>
                             ) : (
                                 <X size={16}/>
                             )}
@@ -176,11 +176,11 @@ const LendingRequestPopup = ({
                         <button
                             onClick={handleAccept}
                             disabled={isActionLoading}
-                            className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+                            className="flex flex-1 items-center justify-center space-x-2 rounded-lg bg-green-600 px-4 py-2 text-white transition-colors hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
                         >
                             {isActionLoading && actionType === 'accept' ? (
                                 <div
-                                    className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                    className="size-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
                             ) : (
                                 <Check size={16}/>
                             )}

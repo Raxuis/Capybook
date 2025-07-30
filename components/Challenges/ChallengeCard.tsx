@@ -38,13 +38,13 @@ const ChallengeCard = memo(({
     const getChallengeIcon = useCallback((type: GoalType) => {
         switch (type) {
             case 'BOOKS':
-                return <BookOpen className="h-6 w-6 text-indigo-500"/>;
+                return <BookOpen className="size-6 text-indigo-500"/>;
             case 'PAGES':
-                return <FileText className="h-6 w-6 text-emerald-500"/>;
+                return <FileText className="size-6 text-emerald-500"/>;
             case 'TIME':
-                return <Clock className="h-6 w-6 text-amber-500"/>;
+                return <Clock className="size-6 text-amber-500"/>;
             default:
-                return <Trophy className="h-6 w-6 text-primary"/>;
+                return <Trophy className="text-primary size-6"/>;
         }
     }, []);
 
@@ -79,15 +79,15 @@ const ChallengeCard = memo(({
 
                 <CardHeader className="pb-3">
                     <div className="flex items-start justify-between">
-                        <div className="flex items-center space-x-3 flex-1 min-w-0">
-                            <div className="flex-shrink-0">
+                        <div className="flex min-w-0 flex-1 items-center space-x-3">
+                            <div className="shrink-0">
                                 {getChallengeIcon(challenge.type)}
                             </div>
-                            <div className="flex-1 min-w-0">
+                            <div className="min-w-0 flex-1">
                                 <CardTitle className="text-lg font-semibold text-gray-900">
                                     {challenge.target} {getChallengeTypeText(challenge.type)}
                                 </CardTitle>
-                                <CardDescription className="text-sm text-gray-600 mt-1">
+                                <CardDescription className="mt-1 text-sm text-gray-600">
                                     {isPast ? 'Terminé' : 'À compléter'} d&#39;ici le{' '}
                                     <span className="font-medium">
                                         {format(new Date(challenge.deadline), 'dd MMMM yyyy', {locale: fr})}
@@ -96,10 +96,10 @@ const ChallengeCard = memo(({
                             </div>
                         </div>
 
-                        <div className="flex items-center space-x-2 flex-shrink-0">
+                        <div className="flex shrink-0 items-center space-x-2">
                             {isCompleted && (
-                                <div className="flex items-center justify-center w-8 h-8 bg-yellow-100 rounded-full">
-                                    <Trophy className="h-4 w-4 text-yellow-600"/>
+                                <div className="flex size-8 items-center justify-center rounded-full bg-yellow-100">
+                                    <Trophy className="size-4 text-yellow-600"/>
                                 </div>
                             )}
 
@@ -109,9 +109,9 @@ const ChallengeCard = memo(({
                                         <Button
                                             variant="ghost"
                                             size="sm"
-                                            className="h-8 w-8 p-0 hover:bg-gray-100 focus:bg-gray-100"
+                                            className="size-8 p-0 hover:bg-gray-100 focus:bg-gray-100"
                                         >
-                                            <MoreVertical className="h-4 w-4 text-gray-500"/>
+                                            <MoreVertical className="size-4 text-gray-500"/>
                                         </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end" className="w-40">
@@ -122,14 +122,14 @@ const ChallengeCard = memo(({
                                             }}
                                             className="cursor-pointer"
                                         >
-                                            <FileText className="mr-2 h-4 w-4"/>
+                                            <FileText className="mr-2 size-4"/>
                                             Mettre à jour
                                         </DropdownMenuItem>
                                         <DropdownMenuItem
                                             onClick={() => setShowDialog(true)}
-                                            className="cursor-pointer text-red-600 focus:text-red-600 hover:text-white"
+                                            className="cursor-pointer text-red-600 hover:text-white focus:text-red-600"
                                         >
-                                            <Trash2 className="mr-2 h-4 w-4"/>
+                                            <Trash2 className="mr-2 size-4"/>
                                             Supprimer
                                         </DropdownMenuItem>
                                     </DropdownMenuContent>
@@ -141,7 +141,7 @@ const ChallengeCard = memo(({
 
                 <CardContent className="pb-4">
                     <div className="space-y-3">
-                        <div className="flex justify-between items-center text-sm">
+                        <div className="flex items-center justify-between text-sm">
                             <span className="text-gray-600">
                                 Progression: <span className="font-medium text-gray-900">{challenge.progress}</span>
                                 <span className="text-gray-400">/{challenge.target}</span>
@@ -176,8 +176,8 @@ const ChallengeCard = memo(({
                     </div>
                 </CardContent>
 
-                <CardFooter className="pt-0 pb-4">
-                    <div className="flex justify-between items-center w-full">
+                <CardFooter className="pb-4 pt-0">
+                    <div className="flex w-full items-center justify-between">
                         <div className="text-xs text-gray-500">
                             Créé le {format(new Date(challenge.createdAt), 'dd/MM/yyyy')}
                         </div>

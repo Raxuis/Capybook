@@ -38,7 +38,7 @@ const CreateChallengeDialog = memo(() => {
                     {particles.map((_, index) => (
                         <motion.div
                             key={index}
-                            className="absolute w-1 h-1 bg-yellow-300 rounded-full opacity-70"
+                            className="absolute size-1 rounded-full bg-yellow-300 opacity-70"
                             initial={{scale: 0}}
                             animate={{
                                 scale: [0, 1, 0],
@@ -84,8 +84,8 @@ const CreateChallengeDialog = memo(() => {
                             }}
                         />
 
-                        <div className="flex items-center justify-center relative z-10">
-                            <Sparkles className="h-4 w-4 mr-2 text-yellow-200"/>
+                        <div className="relative z-10 flex items-center justify-center">
+                            <Sparkles className="mr-2 size-4 text-yellow-200"/>
                             <span className="font-medium">Nouveau challenge</span>
                         </div>
                     </motion.button>

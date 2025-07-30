@@ -185,20 +185,20 @@ export default function ReviewBookModal(
             }}>
                 <DialogHeader>
                     <DialogTitle className="flex items-center gap-2">
-                        <CheckCircle className="w-5 h-5 text-green-500"/>
+                        <CheckCircle className="size-5 text-green-500"/>
                         Avis publié avec succès !
                     </DialogTitle>
                 </DialogHeader>
                 <div className="space-y-4">
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-muted-foreground text-sm">
                         Votre avis privé a été créé. Voici le lien à partager :
                     </p>
-                    <div className="flex items-center gap-2 p-3 bg-muted rounded-md">
+                    <div className="bg-muted flex items-center gap-2 rounded-md p-3">
                         <input
                             type="text"
                             value={privateLink || ""}
                             readOnly
-                            className="flex-1 bg-transparent text-sm font-mono"
+                            className="flex-1 bg-transparent font-mono text-sm"
                         />
                         <Button
                             size="sm"
@@ -207,18 +207,18 @@ export default function ReviewBookModal(
                             className="shrink-0"
                         >
                             {linkCopied ? (
-                                <CheckCircle className="w-4 h-4 text-green-500"/>
+                                <CheckCircle className="size-4 text-green-500"/>
                             ) : (
-                                <Copy className="w-4 h-4"/>
+                                <Copy className="size-4"/>
                             )}
                         </Button>
                     </div>
                     {linkCopied && (
-                        <div className="text-xs text-green-600 font-medium">
+                        <div className="text-xs font-medium text-green-600">
                             ✓ Lien copié dans le presse-papiers
                         </div>
                     )}
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-muted-foreground text-xs">
                         Seules les personnes avec ce lien pourront voir votre avis.
                     </p>
                 </div>
@@ -232,9 +232,9 @@ export default function ReviewBookModal(
     return (
         <>
             <Dialog open={!!book && !showSuccessModal} onOpenChange={(open) => !open && handleClose()}>
-                <DialogContent className="flex flex-col gap-0 p-0 [&>button:last-child]:top-3.5 max-w-md">
+                <DialogContent className="flex max-w-md flex-col gap-0 p-0 [&>button:last-child]:top-3.5">
                     <DialogHeader className="contents space-y-0 text-left">
-                        <DialogTitle className="border-b px-6 py-4 text-base flex justify-between items-center">
+                        <DialogTitle className="flex items-center justify-between border-b px-6 py-4 text-base">
                             <div>
                                 Vous êtes sur le point de noter :
                                 <br/>
@@ -255,7 +255,7 @@ export default function ReviewBookModal(
                                         render={({field}) => (
                                             <FormItem>
                                                 <FormLabel
-                                                    className="text-foreground text-lg leading-none font-semibold">
+                                                    className="text-foreground text-lg font-semibold leading-none">
                                                     Qu&apos;avez-vous pensé de ce livre ?
                                                 </FormLabel>
                                                 <FormControl>
@@ -298,11 +298,11 @@ export default function ReviewBookModal(
                                                             })}
                                                         </div>
                                                         {(field.value || hoverRating) ? (
-                                                            <div className="text-primary font-medium mt-1">
+                                                            <div className="text-primary mt-1 font-medium">
                                                                 {getRatingText(hoverRating ? hoverRating.toString() : field.value)}
                                                             </div>
                                                         ) : (
-                                                            <div className="text-gray-500 mt-1">Sélectionnez une
+                                                            <div className="mt-1 text-gray-500">Sélectionnez une
                                                                 note</div>
                                                         )}
                                                     </div>

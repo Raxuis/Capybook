@@ -99,7 +99,7 @@ export default function ReviewList({page = "1"}: ReviewListProps) {
                     <TabsTrigger value="public" className="flex items-center gap-2">
                         Publique
                         {counts && (
-                            <span className="ml-1 rounded-full bg-muted px-2 py-0.5 text-xs font-medium">
+                            <span className="bg-muted ml-1 rounded-full px-2 py-0.5 text-xs font-medium">
                                 {counts.publicCount}
                             </span>
                         )}
@@ -107,7 +107,7 @@ export default function ReviewList({page = "1"}: ReviewListProps) {
                     <TabsTrigger value="friends" className="flex items-center gap-2">
                         Amis
                         {counts && (
-                            <span className="ml-1 rounded-full bg-muted px-2 py-0.5 text-xs font-medium">
+                            <span className="bg-muted ml-1 rounded-full px-2 py-0.5 text-xs font-medium">
                                 {counts.friendsCount}
                             </span>
                         )}

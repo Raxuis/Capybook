@@ -95,7 +95,7 @@ const ProgressTracker = ({book, initialProgress = 0}: Props) => {
                             onChange={handleInputChange}
                             onKeyDown={handleKeyDown}
                             onBlur={handleBlur}
-                            className="w-20 h-8 text-center"
+                            className="h-8 w-20 text-center"
                             autoFocus
                         />
                     ) : (
@@ -107,9 +107,9 @@ const ProgressTracker = ({book, initialProgress = 0}: Props) => {
                                 variant="ghost"
                                 size="sm"
                                 onClick={() => setIsEditing(true)}
-                                className="h-8 w-8 p-0"
+                                className="size-8 p-0"
                             >
-                                <Edit2 className="h-4 w-4"/>
+                                <Edit2 className="size-4"/>
                             </Button>
                         </div>
                     )}
@@ -135,7 +135,7 @@ const ProgressTracker = ({book, initialProgress = 0}: Props) => {
                     >
                         {isSaving ? (
                             <span className="flex items-center">
-                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                <svg className="-ml-1 mr-2 size-4 animate-spin text-white"
                      xmlns="http://www.w3.org/2000/svg"
                      fill="none" viewBox="0 0 24 24">
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
@@ -147,7 +147,7 @@ const ProgressTracker = ({book, initialProgress = 0}: Props) => {
               </span>
                         ) : (
                             <span className="flex items-center">
-                <Save className="h-4 w-4 mr-1"/>
+                <Save className="mr-1 size-4"/>
                 Enregistrer
               </span>
                         )}

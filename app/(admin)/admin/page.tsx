@@ -14,9 +14,9 @@ export default async function AdminDashboardPage() {
 
     if (!initialStats) {
         return (
-            <div className="flex h-full w-full items-center justify-center p-8">
-                <div className="rounded-lg bg-destructive/10 p-6 text-center">
-                    <h2 className="mb-2 text-xl font-semibold text-destructive">
+            <div className="flex size-full items-center justify-center p-8">
+                <div className="bg-destructive/10 rounded-lg p-6 text-center">
+                    <h2 className="text-destructive mb-2 text-xl font-semibold">
                         Erreur de chargement
                     </h2>
                     <p>Impossible de charger les données du tableau de bord.</p>

@@ -22,11 +22,11 @@ const ReviewsPreview = memo<ReviewsPreviewProps>(({reviews, onViewAll}) => {
 
     return (
         <div className="mb-6">
-            <div className="flex justify-between items-center mb-4 border-b pb-2">
-                <h2 className="text-lg sm:text-xl font-semibold">Avis récents</h2>
+            <div className="mb-4 flex items-center justify-between border-b pb-2">
+                <h2 className="text-lg font-semibold sm:text-xl">Avis récents</h2>
                 <button
                     onClick={onViewAll}
-                    className="text-sm text-blue-600 hover:text-blue-800 flex items-center gap-1"
+                    className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800"
                 >
                     Voir tous
                     <Eye size={16}/>
@@ -37,9 +37,9 @@ const ReviewsPreview = memo<ReviewsPreviewProps>(({reviews, onViewAll}) => {
                     const privacyConfig = getPrivacyConfigMemo(review.privacy);
                     const PrivacyIcon = privacyConfig.icon;
                     return (
-                        <div key={review.id} className="bg-gray-50 p-3 sm:p-4 rounded-lg">
-                            <div className="flex justify-between items-start mb-2 flex-wrap sm:flex-nowrap">
-                                <h3 className="font-semibold mr-2">{review.Book.title}</h3>
+                        <div key={review.id} className="rounded-lg bg-gray-50 p-3 sm:p-4">
+                            <div className="mb-2 flex flex-wrap items-start justify-between sm:flex-nowrap">
+                                <h3 className="mr-2 font-semibold">{review.Book.title}</h3>
                                 <div className="flex items-center space-x-2">
                                     <TooltipProvider>
                                         <Tooltip>
@@ -51,7 +51,7 @@ const ReviewsPreview = memo<ReviewsPreviewProps>(({reviews, onViewAll}) => {
                                                         privacyConfig.className
                                                     )}
                                                 >
-                                                    <PrivacyIcon className="h-3 w-3"/>
+                                                    <PrivacyIcon className="size-3"/>
                                                     {privacyConfig.label}
                                                 </Badge>
                                             </TooltipTrigger>
@@ -84,9 +84,9 @@ const ReviewsPreview = memo<ReviewsPreviewProps>(({reviews, onViewAll}) => {
                                                         >
                                                             Copier le lien pour partager
                                                             {copiedText !== "" && copiedText === `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/private-review/${review.id}` ? (
-                                                                <CheckIcon className="ml-1 h-4 w-4"/>
+                                                                <CheckIcon className="ml-1 size-4"/>
                                                             ) : (
-                                                                <CopyIcon className="ml-1 h-4 w-4"/>
+                                                                <CopyIcon className="ml-1 size-4"/>
                                                             )}
                                                         </div>
                                                     ) : (
@@ -103,7 +103,7 @@ const ReviewsPreview = memo<ReviewsPreviewProps>(({reviews, onViewAll}) => {
                                             </TooltipContent>
                                         </Tooltip>
                                     </TooltipProvider>
-                                    <div className="flex items-center mt-1 sm:mt-0">
+                                    <div className="mt-1 flex items-center sm:mt-0">
                                         {review.rating && Array.from({length: 5}).map((_, i) => (
                                             <Star
                                                 key={i}
@@ -116,17 +116,17 @@ const ReviewsPreview = memo<ReviewsPreviewProps>(({reviews, onViewAll}) => {
                                     </div>
                                 </div>
                             </div>
-                            <p className="text-xs sm:text-sm text-gray-600 mb-2">{review.Book.authors.join(", ")}</p>
+                            <p className="mb-2 text-xs text-gray-600 sm:text-sm">{review.Book.authors.join(", ")}</p>
                             {
                                 review.feedback && (
-                                    <p className="text-sm sm:text-base text-gray-700">
+                                    <p className="text-sm text-gray-700 sm:text-base">
                                         {review.feedback.length > 150
                                             ? `${review.feedback.substring(0, 150)}...`
                                             : review.feedback}
                                     </p>
                                 )
                             }
-                            <div className="text-xs text-gray-500 mt-2">
+                            <div className="mt-2 text-xs text-gray-500">
                                 Publié le {new Date(review.createdAt).toLocaleDateString('fr-FR')}
                             </div>
                         </div>
@@ -135,7 +135,7 @@ const ReviewsPreview = memo<ReviewsPreviewProps>(({reviews, onViewAll}) => {
                 {hasMore && (
                     <button
                         onClick={onViewAll}
-                        className="w-full py-3 text-center text-blue-600 hover:text-blue-800 border-t border-gray-100 flex items-center justify-center"
+                        className="flex w-full items-center justify-center border-t border-gray-100 py-3 text-center text-blue-600 hover:text-blue-800"
                     >
                         <Eye size={16} className="mr-2"/>
                         Voir plus d&#39;avis

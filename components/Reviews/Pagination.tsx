@@ -32,7 +32,7 @@ export function Pagination({currentPage, totalPages, basePath}: PaginationProps)
             {currentPage > 1 && (
                 <Link href={constructUrl(currentPage - 1)}>
                     <Button variant="outline" size="icon">
-                        <ChevronLeft className="h-4 w-4"/>
+                        <ChevronLeft className="size-4"/>
                         <span className="sr-only">Page précédente</span>
                     </Button>
                 </Link>
@@ -80,7 +80,7 @@ export function Pagination({currentPage, totalPages, basePath}: PaginationProps)
             {currentPage < totalPages && (
                 <Link href={constructUrl(currentPage + 1)}>
                     <Button variant="outline" size="icon">
-                        <ChevronRight className="h-4 w-4"/>
+                        <ChevronRight className="size-4"/>
                         <span className="sr-only">Page suivante</span>
                     </Button>
                 </Link>

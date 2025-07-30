@@ -66,11 +66,11 @@ export default function AdminDashboard({initialStats}: { initialStats: AdminDash
 
     if (isLoading) {
         return (
-            <div className="flex h-full w-full items-center justify-center p-8">
+            <div className="flex size-full items-center justify-center p-8">
                 <div className="flex flex-col items-center space-y-4">
                     <div
-                        className="h-16 w-16 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
-                    <p className="text-lg font-medium text-muted-foreground">Chargement des statistiques...</p>
+                        className="border-primary size-16 animate-spin rounded-full border-4 border-t-transparent"></div>
+                    <p className="text-muted-foreground text-lg font-medium">Chargement des statistiques...</p>
                 </div>
             </div>
         );
@@ -115,12 +115,12 @@ export default function AdminDashboard({initialStats}: { initialStats: AdminDash
                 <Card className="shadow-sm">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Utilisateurs</CardTitle>
-                        <Users className="h-4 w-4 text-muted-foreground"/>
+                        <Users className="text-muted-foreground size-4"/>
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{stats.overview.totalUsers}</div>
-                        <div className="flex items-center pt-1 text-xs text-muted-foreground">
-                            <ArrowUpRight className="mr-1 h-3 w-3 text-primary"/>
+                        <div className="text-muted-foreground flex items-center pt-1 text-xs">
+                            <ArrowUpRight className="text-primary mr-1 size-3"/>
                             <span className="text-primary">+{stats.overview.newUsersInPeriod}</span>
                             <span className="ml-1">cette période</span>
                         </div>
@@ -130,12 +130,12 @@ export default function AdminDashboard({initialStats}: { initialStats: AdminDash
                 <Card className="shadow-sm">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Livres</CardTitle>
-                        <BookOpen className="h-4 w-4 text-muted-foreground"/>
+                        <BookOpen className="text-muted-foreground size-4"/>
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{stats.overview.totalBooks}</div>
-                        <div className="flex items-center pt-1 text-xs text-muted-foreground">
-                            <ArrowUpRight className="mr-1 h-3 w-3 text-secondary"/>
+                        <div className="text-muted-foreground flex items-center pt-1 text-xs">
+                            <ArrowUpRight className="text-secondary mr-1 size-3"/>
                             <span className="text-secondary">+{stats.overview.newBooksInPeriod}</span>
                             <span className="ml-1">cette période</span>
                         </div>
@@ -145,12 +145,12 @@ export default function AdminDashboard({initialStats}: { initialStats: AdminDash
                 <Card className="shadow-sm">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Critiques</CardTitle>
-                        <Star className="h-4 w-4 text-muted-foreground"/>
+                        <Star className="text-muted-foreground size-4"/>
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{stats.overview.totalReviews}</div>
-                        <div className="flex items-center pt-1 text-xs text-muted-foreground">
-                            <ArrowUpRight className="mr-1 h-3 w-3 text-accent"/>
+                        <div className="text-muted-foreground flex items-center pt-1 text-xs">
+                            <ArrowUpRight className="text-accent mr-1 size-3"/>
                             <span className="text-accent">+{stats.overview.newReviewsInPeriod}</span>
                             <span className="ml-1">cette période</span>
                         </div>
@@ -160,12 +160,12 @@ export default function AdminDashboard({initialStats}: { initialStats: AdminDash
                 <Card className="shadow-sm">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Badges décernés</CardTitle>
-                        <Award className="h-4 w-4 text-muted-foreground"/>
+                        <Award className="text-muted-foreground size-4"/>
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{stats.overview.badgesAwarded}</div>
-                        <div className="flex items-center pt-1 text-xs text-muted-foreground">
-                            <div className="rounded-full bg-muted px-2 py-0.5">
+                        <div className="text-muted-foreground flex items-center pt-1 text-xs">
+                            <div className="bg-muted rounded-full px-2 py-0.5">
                                 {Math.round(stats.overview.badgesAwarded / stats.overview.totalUsers * 100)}% des
                                 utilisateurs
                             </div>
@@ -218,11 +218,11 @@ export default function AdminDashboard({initialStats}: { initialStats: AdminDash
                                 <div key={index}>
                                     <div className="flex items-center justify-between">
                                         <div className="text-sm font-medium">{genre.name}</div>
-                                        <div className="text-sm text-muted-foreground">{genre.count} livres</div>
+                                        <div className="text-muted-foreground text-sm">{genre.count} livres</div>
                                     </div>
-                                    <div className="mt-1 h-2 w-full overflow-hidden rounded-full bg-muted">
+                                    <div className="bg-muted mt-1 h-2 w-full overflow-hidden rounded-full">
                                         <div
-                                            className="h-full bg-primary"
+                                            className="bg-primary h-full"
                                             style={{
                                                 width: `${(genre.count / stats.topGenres[0].count) * 100}%`,
                                             }}
@@ -246,17 +246,17 @@ export default function AdminDashboard({initialStats}: { initialStats: AdminDash
                         <div className="flex flex-col gap-6">
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-2">
-                                    <Target className="h-6 w-6 text-primary"/>
+                                    <Target className="text-primary size-6"/>
                                     <div>
                                         <div className="text-lg font-semibold">{stats.overview.totalReadingGoals}</div>
-                                        <div className="text-xs text-muted-foreground">Objectifs créés</div>
+                                        <div className="text-muted-foreground text-xs">Objectifs créés</div>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <BadgeCheck className="h-6 w-6 text-secondary"/>
+                                    <BadgeCheck className="text-secondary size-6"/>
                                     <div>
                                         <div className="text-lg font-semibold">{stats.overview.completedGoals}</div>
-                                        <div className="text-xs text-muted-foreground">Objectifs atteints</div>
+                                        <div className="text-muted-foreground text-xs">Objectifs atteints</div>
                                     </div>
                                 </div>
                             </div>
@@ -264,13 +264,13 @@ export default function AdminDashboard({initialStats}: { initialStats: AdminDash
                             <div className="flex flex-col gap-1">
                                 <div className="flex items-center justify-between">
                                     <span className="text-sm font-medium">Taux de complétion</span>
-                                    <span className="text-sm font-medium text-primary">
+                                    <span className="text-primary text-sm font-medium">
                     {stats.overview.goalCompletionRate}%
                   </span>
                                 </div>
-                                <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
+                                <div className="bg-muted h-2 w-full overflow-hidden rounded-full">
                                     <div
-                                        className="h-full bg-primary"
+                                        className="bg-primary h-full"
                                         style={{
                                             width: `${stats.overview.goalCompletionRate}%`,
                                         }}
@@ -318,7 +318,7 @@ export default function AdminDashboard({initialStats}: { initialStats: AdminDash
                             <div className="flex flex-col gap-1">
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-2">
-                                        <Calendar className="h-4 w-4 text-primary"/>
+                                        <Calendar className="text-primary size-4"/>
                                         <span className="text-sm font-medium">Jours de lecture</span>
                                     </div>
                                     <span className="text-sm font-medium">{stats.overview.totalReadingDays}</span>
@@ -329,7 +329,7 @@ export default function AdminDashboard({initialStats}: { initialStats: AdminDash
                             <div className="flex flex-col gap-1">
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-2">
-                                        <BookOpenCheck className="h-4 w-4 text-primary"/>
+                                        <BookOpenCheck className="text-primary size-4"/>
                                         <span className="text-sm font-medium">Moyenne pages/jour</span>
                                     </div>
                                     <span className="text-sm font-medium">{stats.overview.avgPagesPerDay}</span>
@@ -340,7 +340,7 @@ export default function AdminDashboard({initialStats}: { initialStats: AdminDash
                             <div className="flex flex-col gap-1">
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-2">
-                                        <TrendingUp className="h-4 w-4 text-primary"/>
+                                        <TrendingUp className="text-primary size-4"/>
                                         <span className="text-sm font-medium">Minutes/jour</span>
                                     </div>
                                     <span className="text-sm font-medium">

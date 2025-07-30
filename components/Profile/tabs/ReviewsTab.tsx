@@ -25,10 +25,10 @@ const ReviewsTab = memo<ReviewsTabProps>(({reviews}) => {
 
     if (!reviews.length) {
         return (
-            <div className="text-center py-12">
-                <div className="text-4xl mb-4">✒️</div>
+            <div className="py-12 text-center">
+                <div className="mb-4 text-4xl">✒️</div>
                 <h3 className="text-xl font-semibold">Aucun avis pour le moment</h3>
-                <p className="text-gray-500 mt-2">Partagez votre opinion sur les livres que vous avez lus.</p>
+                <p className="mt-2 text-gray-500">Partagez votre opinion sur les livres que vous avez lus.</p>
             </div>
         );
     }
@@ -39,9 +39,9 @@ const ReviewsTab = memo<ReviewsTabProps>(({reviews}) => {
                 const privacyConfig = getPrivacyConfigMemo(review.privacy);
                 const PrivacyIcon = privacyConfig.icon;
                 return (
-                    <div key={review.id} className="bg-gray-50 p-3 sm:p-4 rounded-lg">
-                        <div className="flex justify-between items-start mb-2 flex-wrap sm:flex-nowrap">
-                            <h3 className="font-semibold mr-2">{review.Book.title}</h3>
+                    <div key={review.id} className="rounded-lg bg-gray-50 p-3 sm:p-4">
+                        <div className="mb-2 flex flex-wrap items-start justify-between sm:flex-nowrap">
+                            <h3 className="mr-2 font-semibold">{review.Book.title}</h3>
                             <div className="flex items-center space-x-2">
                                 <TooltipProvider>
                                     <Tooltip>
@@ -53,7 +53,7 @@ const ReviewsTab = memo<ReviewsTabProps>(({reviews}) => {
                                                     privacyConfig.className
                                                 )}
                                             >
-                                                <PrivacyIcon className="h-3 w-3"/>
+                                                <PrivacyIcon className="size-3"/>
                                                 {privacyConfig.label}
                                             </Badge>
                                         </TooltipTrigger>
@@ -86,9 +86,9 @@ const ReviewsTab = memo<ReviewsTabProps>(({reviews}) => {
                                                     >
                                                         Copier le lien pour partager
                                                         {copiedText !== "" && copiedText === `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/private-review/${review.id}` ? (
-                                                            <CheckIcon className="ml-1 h-4 w-4"/>
+                                                            <CheckIcon className="ml-1 size-4"/>
                                                         ) : (
-                                                            <CopyIcon className="ml-1 h-4 w-4"/>
+                                                            <CopyIcon className="ml-1 size-4"/>
                                                         )}
                                                     </div>
                                                 ) : (
@@ -105,7 +105,7 @@ const ReviewsTab = memo<ReviewsTabProps>(({reviews}) => {
                                         </TooltipContent>
                                     </Tooltip>
                                 </TooltipProvider>
-                                <div className="flex items-center mt-1 sm:mt-0">
+                                <div className="mt-1 flex items-center sm:mt-0">
                                     {review.rating && Array.from({length: 5}).map((_, i) => (
                                         <Star
                                             key={i}
@@ -118,11 +118,11 @@ const ReviewsTab = memo<ReviewsTabProps>(({reviews}) => {
                                 </div>
                             </div>
                         </div>
-                        <p className="text-xs sm:text-sm text-gray-600 mb-3">{review.Book.authors.join(", ")}</p>
+                        <p className="mb-3 text-xs text-gray-600 sm:text-sm">{review.Book.authors.join(", ")}</p>
                         {review.feedback && (
-                            <p className="text-sm sm:text-base text-gray-700">{review.feedback}</p>
+                            <p className="text-sm text-gray-700 sm:text-base">{review.feedback}</p>
                         )}
-                        <div className="text-xs text-gray-500 mt-3">
+                        <div className="mt-3 text-xs text-gray-500">
                             Publié le {new Date(review.createdAt).toLocaleDateString('fr-FR')}
                         </div>
                     </div>

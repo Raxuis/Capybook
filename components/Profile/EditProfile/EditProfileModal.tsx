@@ -126,7 +126,7 @@ function EditProfileModal({
             <DialogContent
                 className="flex flex-col gap-0 overflow-y-visible p-0 sm:max-w-lg [&>button:last-child]:top-3.5">
                 <DialogHeader className="contents space-y-0 text-left">
-                    <DialogTitle className="border-b border-border px-6 py-4 text-base">
+                    <DialogTitle className="border-border border-b px-6 py-4 text-base">
                         Modifier votre profil {" "}
                         <span className="text-primary font-semibold">
               @{user.username}
@@ -143,7 +143,7 @@ function EditProfileModal({
                                 control={form.control}
                                 name="favoriteColor"
                                 render={({field}) => (
-                                    <FormItem className="flex flex-col mb-4">
+                                    <FormItem className="mb-4 flex flex-col">
                                         <FormLabel className="text-sm font-medium text-gray-700">Couleur
                                             préférée</FormLabel>
                                         <FormControl>
@@ -164,16 +164,16 @@ function EditProfileModal({
                                         <FormLabel className="text-sm font-medium text-gray-700">Pseudo</FormLabel>
                                         <FormControl>
                                             <Input placeholder="JohnDoe_" {...field}
-                                                   className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-primary focus:ring focus:ring-primary/50"/>
+                                                   className="focus:border-primary focus:ring-primary/50 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring"/>
                                         </FormControl>
                                         <FormMessage/>
                                     </FormItem>
                                 )}
                             />
                         </div>
-                        <DialogFooter className="border-t border-border px-6 py-4">
+                        <DialogFooter className="border-border border-t px-6 py-4">
                             <DialogClose asChild>
-                                <Button type="button" variant="outline" className="hover:bg-black/10 transition-colors">
+                                <Button type="button" variant="outline" className="transition-colors hover:bg-black/10">
                                     Annuler
                                 </Button>
                             </DialogClose>

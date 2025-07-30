@@ -7,14 +7,14 @@ const Footer = () => {
 
     return (
         <footer
-            className="pt-16 pb-32 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
+            className="bg-gradient-to-br from-slate-50 to-slate-100 pb-32 pt-16 dark:from-slate-900 dark:to-slate-800">
             <div className="container mx-auto px-4">
-                <div className="flex flex-col md:flex-row justify-between items-center mb-12">
-                <div className="mb-8 md:mb-0 max-w-md">
-                        <div className="flex items-center gap-2 mb-4">
+                <div className="mb-12 flex flex-col items-center justify-between md:flex-row">
+                <div className="mb-8 max-w-md md:mb-0">
+                        <div className="mb-4 flex items-center gap-2">
                             <Image
                                 src={footer.iconUrl}
-                                className="h-10 w-10 text-primary"
+                                className="text-primary size-10"
                                 width="42"
                                 height="42"
                                 alt={footer.title}
@@ -36,15 +36,15 @@ const Footer = () => {
                                 <a
                                     key={index}
                                     href={item.href}
-                                    className="flex items-center group transition-all duration-300"
+                                    className="group flex items-center transition-all duration-300"
                                     target={item.external ? "_blank" : "_self"}
                                 >
                                     <div
-                                        className="p-2 rounded-full bg-white dark:bg-slate-800 shadow-sm group-hover:shadow-md mr-2 transition-all duration-300 group-hover:scale-110 group-hover:text-primary">
+                                        className="group-hover:text-primary mr-2 rounded-full bg-white p-2 shadow-sm transition-all duration-300 group-hover:scale-110 group-hover:shadow-md dark:bg-slate-800">
                                         {item.icon}
                                     </div>
                                     <span
-                                        className="text-sm font-medium text-slate-700 dark:text-slate-200 group-hover:text-primary transition-colors duration-300">
+                                        className="group-hover:text-primary text-sm font-medium text-slate-700 transition-colors duration-300 dark:text-slate-200">
                                         {item.label}
                                     </span>
                                 </a>
@@ -53,8 +53,8 @@ const Footer = () => {
                 </div>
 
                 <div
-                    className="pt-8 border-t border-slate-200 dark:border-slate-700 flex flex-col md:flex-row justify-between items-center">
-                    <p className="text-sm text-slate-500 dark:text-slate-400 mb-4 md:mb-0">
+                    className="flex flex-col items-center justify-between border-t border-slate-200 pt-8 md:flex-row dark:border-slate-700">
+                    <p className="mb-4 text-sm text-slate-500 md:mb-0 dark:text-slate-400">
                         © {currentYear} Capybook. Tous droits réservés.
                     </p>
                     {
@@ -74,7 +74,7 @@ const Footer = () => {
                                             <a
                                                 key={social.type}
                                                 href={social.url}
-                                                className="text-sm text-slate-500 hover:text-primary transition-colors duration-300"
+                                                className="hover:text-primary text-sm text-slate-500 transition-colors duration-300"
                                             >
                                                 {social.type}
                                             </a>

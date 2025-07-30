@@ -9,7 +9,7 @@ export default function UserLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <div className="min-h-screen min-w-screen flex flex-col">
+        <div className="min-w-screen flex min-h-screen flex-col">
             <Header/>
             {children}
             <Dock/>

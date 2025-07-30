@@ -34,8 +34,8 @@ export function GoalsComparison({data}: GoalsComparisonProps) {
             </CardHeader>
             <CardContent>
                 <div className="space-y-4">
-                    <div className="flex justify-between items-center">
-                        <span className="text-sm text-muted-foreground">Progression</span>
+                    <div className="flex items-center justify-between">
+                        <span className="text-muted-foreground text-sm">Progression</span>
                         <span className="text-sm font-medium">{data.percentage}%</span>
                     </div>
                     <Progress value={data.percentage} className="h-2"/>

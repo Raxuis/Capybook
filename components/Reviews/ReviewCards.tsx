@@ -11,7 +11,7 @@ const ReviewCards = ({reviews, isLoading, error}: { reviews?: Review[], isLoadin
     if (error) {
         return (
             <div className="flex flex-col items-center justify-center space-y-4 py-12">
-                <Star className="h-12 w-12 text-destructive"/>
+                <Star className="text-destructive size-12"/>
                 <p className="text-destructive">{error}</p>
             </div>
         );
@@ -24,7 +24,7 @@ const ReviewCards = ({reviews, isLoading, error}: { reviews?: Review[], isLoadin
 
         return (
             <div className="flex flex-col items-center justify-center space-y-4 py-12">
-                <Star className="h-12 w-12 text-muted-foreground"/>
+                <Star className="text-muted-foreground size-12"/>
                 <p className="text-muted-foreground">{emptyMessage}</p>
             </div>
         );

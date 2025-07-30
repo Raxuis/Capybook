@@ -41,10 +41,10 @@ const ProfileHeader = memo<ProfileHeaderProps>(({
     const avatarInitial = displayName[0].toUpperCase();
 
     return (
-        <div className="bg-white rounded-xl shadow-md overflow-hidden mb-6">
+        <div className="mb-6 overflow-hidden rounded-xl bg-white shadow-md">
             <div className={cn("h-20 sm:h-32", headerGradient)} style={headerGradientStyle}></div>
-            <div className="relative px-4 sm:px-6 pb-6">
-                <div className="flex flex-col sm:flex-row sm:items-end -mt-12 sm:-mt-16 mb-4">
+            <div className="relative px-4 pb-6 sm:px-6">
+                <div className="-mt-12 mb-4 flex flex-col sm:-mt-16 sm:flex-row sm:items-end">
                     <div className="relative self-center sm:self-auto">
                         <div
                             className={cn("w-24 h-24 sm:w-28 md:w-32 sm:h-28 md:h-32 rounded-full border-4 border-white shadow-lg flex items-center justify-center", avatarGradient)}
@@ -56,7 +56,7 @@ const ProfileHeader = memo<ProfileHeaderProps>(({
                         </div>
                         {badges && badges.length > 0 && (
                             <div
-                                className="absolute -bottom-2 -right-2 bg-yellow-400 text-xs text-yellow-900 font-semibold rounded-full w-8 h-8 flex items-center justify-center border-2 border-white"
+                                className="absolute -bottom-2 -right-2 flex size-8 items-center justify-center rounded-full border-2 border-white bg-yellow-400 text-xs font-semibold text-yellow-900"
                                 title={`${badges.length} badges obtenus`}
                             >
                                 {badges.length}
@@ -64,10 +64,10 @@ const ProfileHeader = memo<ProfileHeaderProps>(({
                         )}
                     </div>
 
-                    <div className="sm:ml-6 mt-4 sm:mt-0 text-center sm:text-left">
-                        <h1 className="text-2xl md:text-3xl font-bold">{displayName}</h1>
+                    <div className="mt-4 text-center sm:ml-6 sm:mt-0 sm:text-left">
+                        <h1 className="text-2xl font-bold md:text-3xl">{displayName}</h1>
                         <div
-                            className="flex flex-wrap items-center justify-center sm:justify-start gap-4 mt-2 text-gray-600">
+                            className="mt-2 flex flex-wrap items-center justify-center gap-4 text-gray-600 sm:justify-start">
                             <span className="flex items-center text-sm">
                                 <User size={16} className="mr-1"/>
                                 @{user.username}
@@ -79,7 +79,7 @@ const ProfileHeader = memo<ProfileHeaderProps>(({
                         </div>
                     </div>
 
-                    <div className="max-sm:w-full sm:ml-auto mt-4 sm:mt-0 text-center sm:text-left">
+                    <div className="mt-4 text-center max-sm:w-full sm:ml-auto sm:mt-0 sm:text-left">
                         {isOwner ? (
                             <Button
                                 className={cn(buttonVariants({
@@ -101,7 +101,7 @@ const ProfileHeader = memo<ProfileHeaderProps>(({
                             >
                                 {isFollowingOrUnfollowing ? (
                                     <>
-                                        <Loader2 className="animate-spin mr-2" size={16}/>
+                                        <Loader2 className="mr-2 animate-spin" size={16}/>
                                         Chargement...
                                     </>
                                 ) : isFollowing ? (

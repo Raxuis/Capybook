@@ -44,9 +44,9 @@ const OverviewTab = memo<OverviewTabProps>(({
 
     return (
         <>
-            <div className="flex justify-between items-center mb-4 border-b pb-2">
-                <h2 className="text-lg sm:text-xl font-semibold flex items-center mb-2 sm:mb-0">
-                    <span className="bg-blue-100 p-1 rounded-md mr-2 flex-shrink-0">
+            <div className="mb-4 flex items-center justify-between border-b pb-2">
+                <h2 className="mb-2 flex items-center text-lg font-semibold sm:mb-0 sm:text-xl">
+                    <span className="mr-2 shrink-0 rounded-md bg-blue-100 p-1">
                         <ChartBarIcon size={18} className="text-blue-700"/>
                     </span>
                     <span className="truncate">Vos statistiques</span>

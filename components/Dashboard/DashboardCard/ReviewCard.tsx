@@ -12,20 +12,20 @@ type ReviewCardProps = {
 const ReviewCard = ({ review, openBookModal }: ReviewCardProps) => {
   return (
     <Card key={review.id} className="overflow-hidden">
-      <CardHeader className="p-4 pb-2 flex flex-row items-center justify-between bg-primary/5 space-y-0">
+      <CardHeader className="bg-primary/5 flex flex-row items-center justify-between space-y-0 p-4 pb-2">
         <CardTitle className="text-lg font-medium">{review.Book.title}</CardTitle>
         <div className="flex items-center">
-          <div className="flex items-center bg-white px-2 py-1 rounded-full mr-2">
-            <Star className="h-3 w-3 text-amber-500 mr-1 inline-block" />
+          <div className="mr-2 flex items-center rounded-full bg-white px-2 py-1">
+            <Star className="mr-1 inline-block size-3 text-amber-500" />
             <span className="text-sm font-bold">{review.rating}/5</span>
           </div>
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8 p-0 pt-0.5"
+            className="size-8 p-0 pt-0.5"
             onClick={() => openBookModal(review.Book as BookType)}
           >
-            <Info className="h-4 w-4" />
+            <Info className="size-4" />
             <span className="sr-only">Détails</span>
           </Button>
         </div>

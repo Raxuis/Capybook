@@ -77,18 +77,18 @@ export const BookNoteCard = ({
             exit={{opacity: 0, y: -20}}
             layout
             transition={{duration: 0.2}}
-            className="hover:scale-[1.02] transition-transform duration-200"
+            className="transition-transform duration-200 hover:scale-[1.02]"
         >
             <Card
-                className={`${getTypeBackgroundColor(note.type as BookNoteType)} hover:shadow-xl transition-all duration-300 border-slate-200/60 dark:border-slate-700/60 overflow-hidden group h-full flex flex-col relative`}
+                className={`${getTypeBackgroundColor(note.type as BookNoteType)} group relative flex h-full flex-col overflow-hidden border-slate-200/60 transition-all duration-300 hover:shadow-xl dark:border-slate-700/60`}
             >
 
-                <CardHeader className="pb-3 relative">
+                <CardHeader className="relative pb-3">
                     <div className="flex items-start justify-between gap-3">
-                        <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-3 flex-wrap">
+                        <div className="min-w-0 flex-1">
+                            <div className="mb-3 flex flex-wrap items-center gap-2">
                                 <Badge
-                                    className={`text-xs font-medium shadow-sm ${getTypeColorAll(note.type as BookNoteType)} border-0 cursor-default`}>
+                                    className={`text-xs font-medium shadow-sm ${getTypeColorAll(note.type as BookNoteType)} cursor-default border-0`}>
                                     {getTypeIcon(note.type as BookNoteType)}
                                     <span className="ml-1.5 capitalize">
                                         {formatBookNoteType(note.type as BookNoteType)}
@@ -96,12 +96,12 @@ export const BookNoteCard = ({
                                 </Badge>
                             </div>
 
-                            <div className="flex items-center gap-3 mb-2 text-sm flex-wrap">
+                            <div className="mb-2 flex flex-wrap items-center gap-3 text-sm">
                                 {note.chapter && (
                                     <div className="flex items-center gap-1.5 text-slate-600 dark:text-slate-300">
                                         <BookOpen
-                                            className="h-3.5 w-3.5 text-slate-400 dark:text-slate-500 flex-shrink-0"/>
-                                        <span className="font-medium text-xs sm:text-sm">
+                                            className="size-3.5 shrink-0 text-slate-400 dark:text-slate-500"/>
+                                        <span className="text-xs font-medium sm:text-sm">
                                             Chapitre{' '}
                                             {note.chapter}
                                         </span>
@@ -110,8 +110,8 @@ export const BookNoteCard = ({
                                 {note.page && (
                                     <div className="flex items-center gap-1.5 text-slate-600 dark:text-slate-300">
                                         <FileText
-                                            className="h-3.5 w-3.5 text-slate-400 dark:text-slate-500 flex-shrink-0"/>
-                                        <span className="font-medium text-xs sm:text-sm">Page {note.page}</span>
+                                            className="size-3.5 shrink-0 text-slate-400 dark:text-slate-500"/>
+                                        <span className="text-xs font-medium sm:text-sm">Page {note.page}</span>
                                     </div>
                                 )}
                             </div>
@@ -119,18 +119,18 @@ export const BookNoteCard = ({
 
                         {/* Actions Desktop (hover) */}
                         <div
-                            className="hidden md:flex gap-1 opacity-0 group-hover:opacity-100 transition-all duration-200 bg-white/90 backdrop-blur-sm rounded-lg p-1 shadow-sm">
+                            className="hidden gap-1 rounded-lg bg-white/90 p-1 opacity-0 shadow-sm backdrop-blur-sm transition-all duration-200 group-hover:opacity-100 md:flex">
                             <Button
                                 variant="ghost"
                                 size="sm"
                                 onClick={handleCopy}
-                                className="text-slate-500 hover:text-green-600 hover:bg-green-50 h-8 w-8 p-0"
+                                className="size-8 p-0 text-slate-500 hover:bg-green-50 hover:text-green-600"
                                 title="Copier la note"
                             >
                                 {isCopied ? (
-                                    <Check className="h-3.5 w-3.5 text-green-600"/>
+                                    <Check className="size-3.5 text-green-600"/>
                                 ) : (
-                                    <Copy className="h-3.5 w-3.5"/>
+                                    <Copy className="size-3.5"/>
                                 )}
                             </Button>
                             <Button
@@ -138,23 +138,23 @@ export const BookNoteCard = ({
                                 size="sm"
                                 onClick={() => onEdit(note)}
                                 disabled={loading}
-                                className="text-slate-500 hover:text-blue-600 hover:bg-blue-50 h-8 w-8 p-0"
+                                className="size-8 p-0 text-slate-500 hover:bg-blue-50 hover:text-blue-600"
                                 title="Modifier la note"
                             >
-                                <Edit3 className="h-3.5 w-3.5"/>
+                                <Edit3 className="size-3.5"/>
                             </Button>
                             <Button
                                 variant="ghost"
                                 size="sm"
                                 onClick={() => onDelete(note.id)}
-                                className="text-slate-500 hover:text-red-600 hover:bg-red-50 h-8 w-8 p-0"
+                                className="size-8 p-0 text-slate-500 hover:bg-red-50 hover:text-red-600"
                                 disabled={deleteLoading === note.id}
                                 title="Supprimer la note"
                             >
                                 {deleteLoading === note.id ? (
-                                    <Loader2 className="h-3.5 w-3.5 animate-spin"/>
+                                    <Loader2 className="size-3.5 animate-spin"/>
                                 ) : (
-                                    <Trash2 className="h-3.5 w-3.5"/>
+                                    <Trash2 className="size-3.5"/>
                                 )}
                             </Button>
                         </div>
@@ -165,10 +165,10 @@ export const BookNoteCard = ({
                                 variant="ghost"
                                 size="sm"
                                 onClick={() => setShowMobileActions(!showMobileActions)}
-                                className="text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 h-8 w-8 p-0"
+                                className="size-8 p-0 text-slate-500 hover:bg-slate-100 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200"
                                 title="Actions"
                             >
-                                <MoreVertical className="h-4 w-4"/>
+                                <MoreVertical className="size-4"/>
                             </Button>
                         </div>
                     </div>
@@ -179,7 +179,7 @@ export const BookNoteCard = ({
                             initial={{opacity: 0, y: -10}}
                             animate={{opacity: 1, y: 0}}
                             exit={{opacity: 0, y: -10}}
-                            className="md:hidden absolute right-4 top-16 bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 p-1 z-10"
+                            className="absolute right-4 top-16 z-10 rounded-lg border border-slate-200 bg-white p-1 shadow-lg md:hidden dark:border-slate-700 dark:bg-slate-800"
                         >
                             <div className="flex flex-col gap-1">
                                 <Button
@@ -189,16 +189,16 @@ export const BookNoteCard = ({
                                         handleCopy();
                                         setShowMobileActions(false);
                                     }}
-                                    className={`text-slate-600 dark:text-slate-300 justify-start h-8 px-3 text-sm ${accentColors.copy}`}
+                                    className={`h-8 justify-start px-3 text-sm text-slate-600 dark:text-slate-300 ${accentColors.copy}`}
                                 >
                                     {isCopied ? (
                                         <>
-                                            <Check className="h-3.5 w-3.5 mr-2 text-green-600 dark:text-green-400"/>
+                                            <Check className="mr-2 size-3.5 text-green-600 dark:text-green-400"/>
                                             Copié
                                         </>
                                     ) : (
                                         <>
-                                            <Copy className="h-3.5 w-3.5 mr-2"/>
+                                            <Copy className="mr-2 size-3.5"/>
                                             Copier
                                         </>
                                     )}
@@ -211,9 +211,9 @@ export const BookNoteCard = ({
                                         setShowMobileActions(false);
                                     }}
                                     disabled={loading}
-                                    className={`text-slate-600 dark:text-slate-300 justify-start h-8 px-3 text-sm ${accentColors.edit}`}
+                                    className={`h-8 justify-start px-3 text-sm text-slate-600 dark:text-slate-300 ${accentColors.edit}`}
                                 >
-                                    <Edit3 className="h-3.5 w-3.5 mr-2"/>
+                                    <Edit3 className="mr-2 size-3.5"/>
                                     Modifier
                                 </Button>
                                 <Button
@@ -223,17 +223,17 @@ export const BookNoteCard = ({
                                         onDelete(note.id);
                                         setShowMobileActions(false);
                                     }}
-                                    className={`text-slate-600 dark:text-slate-300 justify-start h-8 px-3 text-sm ${accentColors.delete}`}
+                                    className={`h-8 justify-start px-3 text-sm text-slate-600 dark:text-slate-300 ${accentColors.delete}`}
                                     disabled={deleteLoading === note.id}
                                 >
                                     {deleteLoading === note.id ? (
                                         <>
-                                            <Loader2 className="h-3.5 w-3.5 animate-spin mr-2"/>
+                                            <Loader2 className="mr-2 size-3.5 animate-spin"/>
                                             Suppression...
                                         </>
                                     ) : (
                                         <>
-                                            <Trash2 className="h-3.5 w-3.5 mr-2"/>
+                                            <Trash2 className="mr-2 size-3.5"/>
                                             Supprimer
                                         </>
                                     )}
@@ -243,11 +243,11 @@ export const BookNoteCard = ({
                     )}
                 </CardHeader>
 
-                <CardContent className="flex-1 flex flex-col">
-                    <div className="space-y-4 flex-1">
+                <CardContent className="flex flex-1 flex-col">
+                    <div className="flex-1 space-y-4">
                         <div
-                            className="bg-gradient-to-br from-white to-slate-50/50 dark:from-slate-800/50 dark:to-slate-900/50 backdrop-blur-sm rounded-xl p-3 sm:p-4 border border-slate-200/50 dark:border-slate-700/50 shadow-sm hover:shadow-md transition-shadow duration-200 relative">
-                            <p className="text-slate-800 dark:text-slate-200 leading-relaxed whitespace-pre-wrap font-medium text-sm sm:text-[15px] tracking-wide">
+                            className="relative rounded-xl border border-slate-200/50 bg-gradient-to-br from-white to-slate-50/50 p-3 shadow-sm backdrop-blur-sm transition-shadow duration-200 hover:shadow-md sm:p-4 dark:border-slate-700/50 dark:from-slate-800/50 dark:to-slate-900/50">
+                            <p className="whitespace-pre-wrap text-sm font-medium leading-relaxed tracking-wide text-slate-800 sm:text-[15px] dark:text-slate-200">
                                 {displayNote}
                             </p>
 
@@ -256,16 +256,16 @@ export const BookNoteCard = ({
                                     variant="ghost"
                                     size="sm"
                                     onClick={() => setExpanded(!expanded)}
-                                    className="mt-2 text-xs text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 h-auto p-1 font-medium"
+                                    className="mt-2 h-auto p-1 text-xs font-medium text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
                                 >
                                     {expanded ? (
                                         <>
-                                            <Expand className="h-3 w-3 mr-1 rotate-180"/>
+                                            <Expand className="mr-1 size-3 rotate-180"/>
                                             Voir moins
                                         </>
                                     ) : (
                                         <>
-                                            <Expand className="h-3 w-3 mr-1"/>
+                                            <Expand className="mr-1 size-3"/>
                                             Voir plus
                                         </>
                                     )}
@@ -279,7 +279,7 @@ export const BookNoteCard = ({
                                     <Badge
                                         key={idx}
                                         variant="secondary"
-                                        className="text-xs bg-slate-100/80 dark:bg-slate-700/80 text-slate-700 dark:text-slate-300 hover:bg-slate-200/80 dark:hover:bg-slate-600/80 transition-colors cursor-default border-0 px-2 py-1"
+                                        className="cursor-default border-0 bg-slate-100/80 px-2 py-1 text-xs text-slate-700 transition-colors hover:bg-slate-200/80 dark:bg-slate-700/80 dark:text-slate-300 dark:hover:bg-slate-600/80"
                                     >
                                         #{tag}
                                     </Badge>
@@ -288,18 +288,18 @@ export const BookNoteCard = ({
                         )}
                     </div>
 
-                    <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-700">
+                    <div className="mt-4 border-t border-slate-100 pt-3 dark:border-slate-700">
                         <div
-                            className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 gap-2">
-                            <div className="flex items-center gap-1.5 flex-shrink-0">
-                                <Calendar className="h-3 w-3 text-slate-400 dark:text-slate-500"/>
+                            className="flex items-center justify-between gap-2 text-xs text-slate-500 dark:text-slate-400">
+                            <div className="flex shrink-0 items-center gap-1.5">
+                                <Calendar className="size-3 text-slate-400 dark:text-slate-500"/>
                                 <span className="text-xs">Créé {formatDate(note.createdAt)}</span>
                             </div>
                             {new Date(note.updatedAt).getTime() !== new Date(note.createdAt).getTime() && (
-                                <div className="flex items-center gap-1.5 flex-shrink-0">
-                                    <div className="w-1 h-1 bg-slate-300 dark:bg-slate-600 rounded-full"/>
+                                <div className="flex shrink-0 items-center gap-1.5">
+                                    <div className="size-1 rounded-full bg-slate-300 dark:bg-slate-600"/>
                                     <span
-                                        className="text-slate-400 dark:text-slate-500 text-xs">Modifié {formatDate(note.updatedAt)}</span>
+                                        className="text-xs text-slate-400 dark:text-slate-500">Modifié {formatDate(note.updatedAt)}</span>
                                 </div>
                             )}
                         </div>

@@ -13,11 +13,11 @@ const BooksPreview = memo<BooksPreviewProps>(({ books, onViewAll }) => {
 
   return (
     <div className="mb-6">
-      <div className="flex justify-between items-center mb-4 border-b pb-2">
-        <h2 className="text-lg sm:text-xl font-semibold">Livres récents</h2>
+      <div className="mb-4 flex items-center justify-between border-b pb-2">
+        <h2 className="text-lg font-semibold sm:text-xl">Livres récents</h2>
         <button
           onClick={onViewAll}
-          className="text-sm text-blue-600 hover:text-blue-800 flex items-center gap-1"
+          className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800"
         >
           Voir tous
           <Eye size={16} />
@@ -25,24 +25,24 @@ const BooksPreview = memo<BooksPreviewProps>(({ books, onViewAll }) => {
       </div>
       <div className="space-y-4">
         {previewBooks.map(bookData => (
-          <div key={bookData.id} className="py-3 flex items-center flex-wrap sm:flex-nowrap">
-            <div className="bg-blue-100 p-2 sm:p-3 rounded-lg mr-3 sm:mr-4">
+          <div key={bookData.id} className="flex flex-wrap items-center py-3 sm:flex-nowrap">
+            <div className="mr-3 rounded-lg bg-blue-100 p-2 sm:mr-4 sm:p-3">
               <BookIcon size={20} className="text-blue-600" />
             </div>
-            <div className="flex-grow min-w-0">
-              <h3 className="font-semibold truncate">{bookData.Book.title}</h3>
-              <p className="text-xs sm:text-sm text-gray-600 truncate">
+            <div className="min-w-0 grow">
+              <h3 className="truncate font-semibold">{bookData.Book.title}</h3>
+              <p className="truncate text-xs text-gray-600 sm:text-sm">
                 {bookData.Book.authors.join(", ")}
                 {bookData.Book.numberOfPages && ` · ${bookData.Book.numberOfPages} pages`}
               </p>
             </div>
-            <div className="ml-auto mt-2 sm:mt-0 w-full sm:w-auto text-right">
+            <div className="ml-auto mt-2 w-full text-right sm:mt-0 sm:w-auto">
               {bookData.finishedAt ? (
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
                   Lu le {new Date(bookData.finishedAt).toLocaleDateString('fr-FR')}
                 </span>
               ) : (
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                <span className="inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800">
                   En cours
                 </span>
               )}
@@ -52,7 +52,7 @@ const BooksPreview = memo<BooksPreviewProps>(({ books, onViewAll }) => {
         {hasMore && (
           <button
             onClick={onViewAll}
-            className="w-full py-3 text-center text-blue-600 hover:text-blue-800 border-t border-gray-100 flex items-center justify-center"
+            className="flex w-full items-center justify-center border-t border-gray-100 py-3 text-center text-blue-600 hover:text-blue-800"
           >
             <Eye size={16} className="mr-2" />
             Voir plus de livres

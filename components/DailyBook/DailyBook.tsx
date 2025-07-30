@@ -37,7 +37,7 @@ export default async function DailyBook({user}: DailyBookProps) {
     return (
         <Layout>
             <div
-                className="bg-gradient-to-br from-blue-50 via-white to-purple-50 rounded-2xl p-6 mb-20 text-gray-800 relative overflow-hidden">
+                className="relative mb-20 overflow-hidden rounded-2xl bg-gradient-to-br from-blue-50 via-white to-purple-50 p-6 text-gray-800">
                 <DailyBookHeader/>
                 <DailyBookContent dailyBook={dailyBook}/>
             </div>

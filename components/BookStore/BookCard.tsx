@@ -74,31 +74,31 @@ const BookCard = memo(({
             title: `${bookIsInLibrary ? "Retiré de" : "Ajouté à"} votre bibliothèque`,
             description: (
                 <div className="flex items-center gap-2">
-                    <div className="h-10 w-10 rounded-md overflow-hidden flex-shrink-0">
+                    <div className="size-10 shrink-0 overflow-hidden rounded-md">
                         {book.cover_i ? (
                             <Image
                                 src={`https://covers.openlibrary.org/b/id/${book.cover_i}-S.jpg`}
                                 alt={book.title}
                                 width={40}
                                 height={40}
-                                className="object-cover w-full h-full"
+                                className="size-full object-cover"
                             />
                         ) : (
-                            <div className="bg-gray-100 w-full h-full flex items-center justify-center">
-                                <BookOpen className="h-6 w-6 text-gray-400"/>
+                            <div className="flex size-full items-center justify-center bg-gray-100">
+                                <BookOpen className="size-6 text-gray-400"/>
                             </div>
                         )}
                     </div>
                     <div>
-                        <p className="font-medium line-clamp-1">{book.title}</p>
-                        <p className="text-sm text-gray-500 line-clamp-1">
+                        <p className="line-clamp-1 font-medium">{book.title}</p>
+                        <p className="line-clamp-1 text-sm text-gray-500">
                             {formattedAuthors}
                         </p>
                     </div>
                 </div>
             ),
             variant: bookIsInLibrary ? "default" : "success",
-            icon: bookIsInLibrary ? <X className="h-4 w-4"/> : <Check className="h-4 w-4"/>,
+            icon: bookIsInLibrary ? <X className="size-4"/> : <Check className="size-4"/>,
             duration: 3000,
         });
     }, [book, bookIsInLibrary, formattedAuthors, toast, toggleLibrary]);
@@ -112,29 +112,29 @@ const BookCard = memo(({
             title: `${bookIsInWishlist ? "Retiré des" : "Ajouté aux"} favoris`,
             description: (
                 <div className="flex items-center gap-2">
-                    <div className="h-10 w-10 rounded-md overflow-hidden flex-shrink-0">
+                    <div className="size-10 shrink-0 overflow-hidden rounded-md">
                         {book.cover_i ? (
                             <Image
                                 src={`https://covers.openlibrary.org/b/id/${book.cover_i}-S.jpg`}
                                 alt={book.title}
                                 width={40}
                                 height={40}
-                                className="object-cover w-full h-full"
+                                className="size-full object-cover"
                             />
                         ) : (
-                            <div className="bg-gray-100 w-full h-full flex items-center justify-center">
-                                <BookOpen className="h-6 w-6 text-gray-400"/>
+                            <div className="flex size-full items-center justify-center bg-gray-100">
+                                <BookOpen className="size-6 text-gray-400"/>
                             </div>
                         )}
                     </div>
                     <div>
-                        <p className="font-medium line-clamp-1">{book.title}</p>
-                        <p className="text-sm text-gray-500 line-clamp-1">{formattedAuthors}</p>
+                        <p className="line-clamp-1 font-medium">{book.title}</p>
+                        <p className="line-clamp-1 text-sm text-gray-500">{formattedAuthors}</p>
                     </div>
                 </div>
             ),
             variant: bookIsInWishlist ? "default" : "success",
-            icon: bookIsInWishlist ? <X className="h-4 w-4"/> : <Star className="h-4 w-4 fill-current"/>,
+            icon: bookIsInWishlist ? <X className="size-4"/> : <Star className="size-4 fill-current"/>,
             duration: 3000,
         });
     }, [book, bookIsInWishlist, formattedAuthors, toast, toggleWishlist]);
@@ -150,7 +150,7 @@ const BookCard = memo(({
             className={cn("flex flex-col h-full border rounded-lg overflow-hidden bg-white shadow-sm hover:shadow-md transition-shadow", className)}>
             <div className="relative">
                 {book.cover_i ? (
-                    <div className="aspect-[2/3] w-full bg-gray-100 relative">
+                    <div className="relative aspect-[2/3] w-full bg-gray-100">
                         <Image
                             src={bookCoverUrl ?? ""}
                             alt={book.title}
@@ -163,16 +163,16 @@ const BookCard = memo(({
                         {/* Animation overlay pour l'ajout à la bibliothèque */}
                         {showAnimation === 'library' && (
                             <div
-                                className="absolute inset-0 bg-black/30 flex items-center justify-center animate-fadein">
+                                className="animate-fadein absolute inset-0 flex items-center justify-center bg-black/30">
                                 <div
-                                    className={`text-white flex items-center gap-2 text-lg font-medium ${bookIsInLibrary ? 'animate-fadeout' : 'animate-scale-in'}`}>
+                                    className={`flex items-center gap-2 text-lg font-medium text-white ${bookIsInLibrary ? 'animate-fadeout' : 'animate-scale-in'}`}>
                                     {bookIsInLibrary ? (
                                         <>
-                                            <X className="h-6 w-6"/> Retiré
+                                            <X className="size-6"/> Retiré
                                         </>
                                     ) : (
                                         <>
-                                            <Library className="h-6 w-6"/> Bibliothèque
+                                            <Library className="size-6"/> Bibliothèque
                                         </>
                                     )}
                                 </div>
@@ -182,16 +182,16 @@ const BookCard = memo(({
                         {/* Animation overlay pour l'ajout aux favoris */}
                         {showAnimation === 'wishlist' && (
                             <div
-                                className="absolute inset-0 bg-black/30 flex items-center justify-center animate-fadein">
+                                className="animate-fadein absolute inset-0 flex items-center justify-center bg-black/30">
                                 <div
-                                    className={`text-white flex items-center gap-2 text-lg font-medium ${bookIsInWishlist ? 'animate-fadeout' : 'animate-scale-in'}`}>
+                                    className={`flex items-center gap-2 text-lg font-medium text-white ${bookIsInWishlist ? 'animate-fadeout' : 'animate-scale-in'}`}>
                                     {bookIsInWishlist ? (
                                         <>
-                                            <X className="h-6 w-6"/> Retiré
+                                            <X className="size-6"/> Retiré
                                         </>
                                     ) : (
                                         <>
-                                            <Star className="h-6 w-6 fill-current"/> Favori
+                                            <Star className="size-6 fill-current"/> Favori
                                         </>
                                     )}
                                 </div>
@@ -199,12 +199,12 @@ const BookCard = memo(({
                         )}
                     </div>
                 ) : (
-                    <div className="aspect-[2/3] w-full bg-gray-100 flex items-center justify-center">
-                        <BookOpen className="h-16 w-16 text-gray-300"/>
+                    <div className="flex aspect-[2/3] w-full items-center justify-center bg-gray-100">
+                        <BookOpen className="size-16 text-gray-300"/>
                     </div>
                 )}
 
-                <div className="absolute top-2 right-2 flex flex-col gap-2">
+                <div className="absolute right-2 top-2 flex flex-col gap-2">
                     <SimplifiedTooltip
                         tooltipContent={bookIsInLibrary ? "Retirer de ma bibliothèque" : "Ajouter à ma bibliothèque"}
                         asChild>
@@ -228,7 +228,7 @@ const BookCard = memo(({
                                 asChild>
                                 <Button
                                     onClick={handleWishlistClick}
-                                    className="h-8 w-8 flex items-center justify-center bg-white rounded-full border hover:bg-gray-100"
+                                    className="flex size-8 items-center justify-center rounded-full border bg-white hover:bg-gray-100"
                                 >
                                     {bookIsInWishlist ? <FcLike size={18}/> : <FcLikePlaceholder size={18}/>}
                                 </Button>
@@ -244,7 +244,7 @@ const BookCard = memo(({
                                 asChild>
                                 <Button
                                     onClick={handleReviewClick}
-                                    className="h-8 w-8 flex items-center justify-center bg-white rounded-full border hover:bg-gray-100"
+                                    className="flex size-8 items-center justify-center rounded-full border bg-white hover:bg-gray-100"
                                 >
                                     <FcComments size={18} className="opacity-40"/>
                                 </Button>
@@ -254,9 +254,9 @@ const BookCard = memo(({
                 </div>
             </div>
 
-            <div className="flex flex-col flex-grow p-4">
+            <div className="flex grow flex-col p-4">
                 <div className="mb-auto">
-                    <h3 className="font-semibold text-lg line-clamp-2 mb-1">{book.title}</h3>
+                    <h3 className="mb-1 line-clamp-2 text-lg font-semibold">{book.title}</h3>
                     {book.first_publish_year && (
                         <Badge variant="outline" className="mb-3">
                             {book.first_publish_year}
@@ -266,13 +266,13 @@ const BookCard = memo(({
 
                 <div className="mt-4 space-y-2 text-sm">
                     <div>
-                        <p className="text-gray-500 font-medium mb-1">Auteur(s) :</p>
+                        <p className="mb-1 font-medium text-gray-500">Auteur(s) :</p>
                         <p className="line-clamp-2">{formatList(book.author_name)}</p>
                     </div>
 
                     {formattedLanguages && (
                         <div>
-                            <p className="text-gray-500 font-medium mb-1">Langues :</p>
+                            <p className="mb-1 font-medium text-gray-500">Langues :</p>
                             <div className="flex flex-wrap gap-1">
                                 {formattedLanguages.map((formattedLanguage) => (
                                     formattedLanguage

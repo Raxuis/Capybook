@@ -33,7 +33,7 @@ export default function LendingRequestsManager() {
             {/* Notification du nombre de demandes en attente */}
             {hasRequests && !isPopupOpen && (
                 <div className="fixed bottom-4 right-4 z-40">
-                    <div className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-lg">
+                    <div className="rounded-lg bg-blue-500 px-4 py-2 text-white shadow-lg">
                         <span className="text-sm font-medium">
                             {requestCount} demande{requestCount > 1 ? 's' : ''} de prêt en attente
                         </span>

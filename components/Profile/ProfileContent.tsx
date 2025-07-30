@@ -96,8 +96,8 @@ const ProfileContent = ({username}: { username: string }) => {
 
     if (isLoading) {
         return (
-            <div className="flex flex-col items-center justify-center min-h-screen p-4">
-                <Loader2 className="h-8 w-8 animate-spin text-primary mb-2"/>
+            <div className="flex min-h-screen flex-col items-center justify-center p-4">
+                <Loader2 className="text-primary mb-2 size-8 animate-spin"/>
                 <p className="text-muted-foreground">Chargement des données...</p>
             </div>
         );
@@ -105,7 +105,7 @@ const ProfileContent = ({username}: { username: string }) => {
 
     if (error || !data) {
         return (
-            <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-lg shadow-sm">
+            <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-red-700 shadow-sm">
                 <h3 className="font-semibold">Impossible de charger le profil</h3>
                 <p className="text-sm">Veuillez réessayer ultérieurement ou vérifier l&#39;URL.</p>
             </div>
@@ -115,7 +115,7 @@ const ProfileContent = ({username}: { username: string }) => {
     const {user, isOwner, stats, badges, detailedData, followers, following} = data;
 
     return (
-        <div className="container mx-auto px-4 sm:px-6 max-w-5xl">
+        <div className="container mx-auto max-w-5xl px-4 sm:px-6">
             <ProfileHeader
                 user={user}
                 isOwner={isOwner}
@@ -126,26 +126,26 @@ const ProfileContent = ({username}: { username: string }) => {
                 onFollowToggle={handleFollowToggle}
             />
 
-            <div className="bg-white rounded-xl shadow-md overflow-hidden mb-32">
+            <div className="mb-32 overflow-hidden rounded-xl bg-white shadow-md">
                 <Tabs defaultValue="overview" value={activeTab} onValueChange={handleTabChange} className="w-full">
-                    <div className="border-b overflow-hidden scrollbar-hide">
-                        <TabsList className="flex bg-transparent p-0 w-full min-w-max">
+                    <div className="scrollbar-hide overflow-hidden border-b">
+                        <TabsList className="flex w-full min-w-max bg-transparent p-0">
                             <TabsTrigger
                                 value="overview"
-                                className="flex-1 min-w-[100px] py-3 sm:py-4 px-2 sm:px-6 rounded-none data-[state=active]:bg-transparent data-[state=active]:shadow-none whitespace-nowrap text-xs sm:text-sm"
+                                className="min-w-[100px] flex-1 whitespace-nowrap rounded-none px-2 py-3 text-xs data-[state=active]:bg-transparent data-[state=active]:shadow-none sm:px-6 sm:py-4 sm:text-sm"
                             >
                                 <span className="hidden sm:inline">Vue d&#39;ensemble</span>
                                 <span className="sm:hidden">Aperçu</span>
                             </TabsTrigger>
                             <TabsTrigger
                                 value="badges"
-                                className="flex-1 min-w-[80px] py-3 sm:py-4 px-2 sm:px-6 rounded-none data-[state=active]:bg-transparent data-[state=active]:shadow-none whitespace-nowrap text-xs sm:text-sm"
+                                className="min-w-[80px] flex-1 whitespace-nowrap rounded-none px-2 py-3 text-xs data-[state=active]:bg-transparent data-[state=active]:shadow-none sm:px-6 sm:py-4 sm:text-sm"
                             >
                                 Badges
                             </TabsTrigger>
                             <TabsTrigger
                                 value="relations"
-                                className="flex-1 min-w-[80px] py-3 sm:py-4 px-2 sm:px-6 rounded-none data-[state=active]:bg-transparent data-[state=active]:shadow-none whitespace-nowrap text-xs sm:text-sm"
+                                className="min-w-[80px] flex-1 whitespace-nowrap rounded-none px-2 py-3 text-xs data-[state=active]:bg-transparent data-[state=active]:shadow-none sm:px-6 sm:py-4 sm:text-sm"
                             >
                                 Relations
                             </TabsTrigger>
@@ -153,13 +153,13 @@ const ProfileContent = ({username}: { username: string }) => {
                                 <>
                                     <TabsTrigger
                                         value="books"
-                                        className="flex-1 min-w-[80px] py-3 sm:py-4 px-2 sm:px-6 rounded-none data-[state=active]:bg-transparent data-[state=active]:shadow-none whitespace-nowrap text-xs sm:text-sm"
+                                        className="min-w-[80px] flex-1 whitespace-nowrap rounded-none px-2 py-3 text-xs data-[state=active]:bg-transparent data-[state=active]:shadow-none sm:px-6 sm:py-4 sm:text-sm"
                                     >
                                         Livres
                                     </TabsTrigger>
                                     <TabsTrigger
                                         value="reviews"
-                                        className="flex-1 min-w-[80px] py-3 sm:py-4 px-2 sm:px-6 rounded-none data-[state=active]:bg-transparent data-[state=active]:shadow-none whitespace-nowrap text-xs sm:text-sm"
+                                        className="min-w-[80px] flex-1 whitespace-nowrap rounded-none px-2 py-3 text-xs data-[state=active]:bg-transparent data-[state=active]:shadow-none sm:px-6 sm:py-4 sm:text-sm"
                                     >
                                         Avis
                                     </TabsTrigger>

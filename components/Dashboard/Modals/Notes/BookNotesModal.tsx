@@ -70,14 +70,14 @@ const BookNotesModal = memo(({book, isOpen, setIsOpen, userId}: BookNotesProps) 
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogContent
-                className="max-w-7xl w-[95vw] h-[90vh] max-h-[900px] overflow-hidden flex flex-col bg-gradient-to-br from-slate-50 to-white border-0 shadow-2xl"
+                className="flex h-[90vh] max-h-[900px] w-[95vw] max-w-7xl flex-col overflow-hidden border-0 bg-gradient-to-br from-slate-50 to-white shadow-2xl"
             >
                 <DialogHeader>
                     <DialogTitle className="flex items-center gap-2">
-                        <BookOpen className="h-5 w-5"/>
+                        <BookOpen className="size-5"/>
                         <span className="truncate">Notes - {book.title}</span>
                     </DialogTitle>
-                    <DialogDescription className="mt-2 text-sm text-muted-foreground">
+                    <DialogDescription className="text-muted-foreground mt-2 text-sm">
                         Gérez vos notes pour le livre <strong>{book.title}</strong>. Vous pouvez créer, modifier ou
                         supprimer des notes, ainsi que filtrer et trier vos notes.
                     </DialogDescription>
@@ -145,8 +145,8 @@ const BookNotesModal = memo(({book, isOpen, setIsOpen, userId}: BookNotesProps) 
                     </AnimatePresence>
 
                     {loading ? (
-                        <div className="flex items-center justify-center h-full">
-                            <Loader2 className="h-6 w-6 animate-spin text-blue-500"/>
+                        <div className="flex h-full items-center justify-center">
+                            <Loader2 className="size-6 animate-spin text-blue-500"/>
                         </div>
                     ) : filteredAndSortedNotes.length > 0 ? (
                         <motion.div
@@ -154,7 +154,7 @@ const BookNotesModal = memo(({book, isOpen, setIsOpen, userId}: BookNotesProps) 
                             animate={{opacity: 1, y: 0}}
                             exit={{opacity: 0, y: 20}}
                             transition={{duration: 0.3}}
-                            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4"
+                            className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3"
                         >
                             <AnimatePresence
                                 initial={false}

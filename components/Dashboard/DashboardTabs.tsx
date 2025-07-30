@@ -37,27 +37,27 @@ const DashboardTabs = ({ openBookModal }: Props) => {
     <div className="relative">
       <Tabs defaultValue={booksStatus.hasBooks ? "library" : booksStatus.hasWishlist ? "wishlist" : "library"}
         className="w-full">
-        <TabsList className="grid w-full grid-cols-3 mb-6">
+        <TabsList className="mb-6 grid w-full grid-cols-3">
           <TabsTrigger value="library" disabled={!booksStatus.hasBooks}
             className="flex items-center space-x-2">
-            <Book className="h-4 w-4" />
+            <Book className="size-4" />
             <span>Ma bibliothèque</span>
           </TabsTrigger>
           <TabsTrigger value="wishlist" disabled={!booksStatus.hasWishlist}
             className="flex items-center space-x-2">
-            <Heart className="h-4 w-4" />
+            <Heart className="size-4" />
             <span>Ma wishlist</span>
           </TabsTrigger>
           <TabsTrigger value="reviews" disabled={!booksStatus.hasReviews}
             className="flex items-center space-x-2">
-            <Star className="h-4 w-4" />
+            <Star className="size-4" />
             <span>Mes avis</span>
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="library" className="space-y-4">
           {booksStatus.hasBooks ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+            <div className="grid grid-cols-1 items-start gap-4 md:grid-cols-2">
               {user.UserBook.map(userBook => (
                 <LibraryCard
                   key={userBook.id}
@@ -69,7 +69,7 @@ const DashboardTabs = ({ openBookModal }: Props) => {
           ) : (
             <Card>
               <CardContent className="flex flex-col items-center justify-center p-6">
-                <Book className="h-12 w-12 text-muted-foreground mb-2" />
+                <Book className="text-muted-foreground mb-2 size-12" />
                 <p className="text-muted-foreground">Votre bibliothèque est vide</p>
               </CardContent>
             </Card>
@@ -78,7 +78,7 @@ const DashboardTabs = ({ openBookModal }: Props) => {
 
         <TabsContent value="wishlist" className="space-y-4">
           {booksStatus.hasWishlist ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+            <div className="grid grid-cols-1 items-start gap-4 md:grid-cols-2">
               {user.UserBookWishlist.map(wishlistItem => (
                 <WishlistCard
                   key={wishlistItem.id}
@@ -90,7 +90,7 @@ const DashboardTabs = ({ openBookModal }: Props) => {
           ) : (
             <Card>
               <CardContent className="flex flex-col items-center justify-center p-6">
-                <Heart className="h-12 w-12 text-rose-300 mb-2" />
+                <Heart className="mb-2 size-12 text-rose-300" />
                 <p className="text-muted-foreground">Votre wishlist est vide</p>
               </CardContent>
             </Card>
@@ -111,7 +111,7 @@ const DashboardTabs = ({ openBookModal }: Props) => {
           ) : (
             <Card>
               <CardContent className="flex flex-col items-center justify-center p-6">
-                <Star className="h-12 w-12 text-muted-foreground mb-2" />
+                <Star className="text-muted-foreground mb-2 size-12" />
                 <p className="text-muted-foreground">Vous n&#39;avez pas encore écrit d&#39;avis</p>
               </CardContent>
             </Card>

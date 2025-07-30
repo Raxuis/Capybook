@@ -32,7 +32,7 @@ const DeleteChallengeDialog = memo(({
         <AlertDialog open={showDialog} onOpenChange={setShowDialog}>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle className="text-lg flex items-center gap-2">
+                    <AlertDialogTitle className="flex items-center gap-2 text-lg">
                         <Trash2 className="text-destructive"/>
                         Supprimer le challenge
                     </AlertDialogTitle>

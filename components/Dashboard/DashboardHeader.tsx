@@ -35,7 +35,7 @@ const DashboardHeader = memo(({showStatistics}: { showStatistics: boolean }) => 
     return (
         <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-                <Avatar className="h-16 w-16 border-2 border-primary">
+                <Avatar className="border-primary size-16 border-2">
                     <AvatarFallback className="bg-primary/10 text-primary font-medium">{userInitials}</AvatarFallback>
                 </Avatar>
                 <div>
@@ -48,12 +48,12 @@ const DashboardHeader = memo(({showStatistics}: { showStatistics: boolean }) => 
                 {
                     showStatistics ? (
                         <>
-                            <BookOpen className="h-4 w-4"/>
+                            <BookOpen className="size-4"/>
                             <span className="text-sm">Voir la bibliothèque</span>
                         </>
                     ) : (
                         <>
-                            <BarChart2 className="h-4 w-4"/>
+                            <BarChart2 className="size-4"/>
                             <span className="text-sm">Voir les statistiques</span>
                         </>
                     )

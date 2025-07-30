@@ -127,7 +127,7 @@ const LendingModal = ({
             <DialogContent className="sm:max-w-md">
                 <DialogHeader>
                     <DialogTitle className="flex items-center gap-2">
-                        <Users className="h-5 w-5 text-blue-600"/>
+                        <Users className="size-5 text-blue-600"/>
                         Prêter &#34;{book.title}&#34;
                     </DialogTitle>
                     <DialogDescription>
@@ -141,7 +141,7 @@ const LendingModal = ({
                         <Label htmlFor="search">Rechercher un utilisateur</Label>
                         <div className="relative">
                             <Search
-                                className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400"/>
+                                className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-gray-400"/>
                             <Input
                                 id="search"
                                 placeholder="Nom d'utilisateur, nom ou email..."
@@ -152,14 +152,14 @@ const LendingModal = ({
                             />
                             {isSearching && (
                                 <Loader2
-                                    className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 animate-spin text-gray-400"/>
+                                    className="absolute right-3 top-1/2 size-4 -translate-y-1/2 animate-spin text-gray-400"/>
                             )}
                         </div>
                     </div>
 
                     {/* Liste des résultats */}
                     {searchTerm && (
-                        <div className="max-h-48 overflow-y-auto border rounded-md">
+                        <div className="max-h-48 overflow-y-auto rounded-md border">
                             <AnimatePresence>
                                 {filteredFriends.length > 0 ? (
                                     filteredFriends.map((friend) => (
@@ -168,21 +168,21 @@ const LendingModal = ({
                                             initial={{opacity: 0, y: -10}}
                                             animate={{opacity: 1, y: 0}}
                                             exit={{opacity: 0, y: -10}}
-                                            className={`p-3 hover:bg-gray-50 cursor-pointer border-b last:border-b-0 transition-colors ${
-                                                selectedFriend?.id === friend.id ? 'bg-blue-50 border-blue-200' : ''
+                                            className={`cursor-pointer border-b p-3 transition-colors last:border-b-0 hover:bg-gray-50 ${
+                                                selectedFriend?.id === friend.id ? 'border-blue-200 bg-blue-50' : ''
                                             }`}
                                             onClick={() => handleFriendSelect(friend)}
                                         >
                                             <div className="flex items-center gap-3">
                                                 <div
-                                                    className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white text-sm font-medium">
+                                                    className="flex size-8 items-center justify-center rounded-full bg-gradient-to-br from-blue-400 to-blue-600 text-sm font-medium text-white">
                                                     {friend.name?.[0] || friend.username[0]}
                                                 </div>
-                                                <div className="flex-1 min-w-0">
-                                                    <p className="font-medium text-sm truncate">
+                                                <div className="min-w-0 flex-1">
+                                                    <p className="truncate text-sm font-medium">
                                                         {friend.name || friend.username}
                                                     </p>
-                                                    <p className="text-xs text-gray-500 truncate">
+                                                    <p className="truncate text-xs text-gray-500">
                                                         @{friend.username}
                                                     </p>
                                                 </div>
@@ -195,7 +195,7 @@ const LendingModal = ({
                                         </motion.div>
                                     ))
                                 ) : searchTerm.trim() && !isSearching ? (
-                                    <div className="p-4 text-center text-gray-500 text-sm">
+                                    <div className="p-4 text-center text-sm text-gray-500">
                                         Aucun utilisateur trouvé pour &#34;{searchTerm}&#34;
                                     </div>
                                 ) : null}
@@ -208,16 +208,16 @@ const LendingModal = ({
                         <motion.div
                             initial={{opacity: 0, scale: 0.95}}
                             animate={{opacity: 1, scale: 1}}
-                            className="p-3 bg-blue-50 border border-blue-200 rounded-md"
+                            className="rounded-md border border-blue-200 bg-blue-50 p-3"
                         >
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-3">
                                     <div
-                                        className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white text-sm font-medium">
+                                        className="flex size-8 items-center justify-center rounded-full bg-gradient-to-br from-blue-400 to-blue-600 text-sm font-medium text-white">
                                         {selectedFriend.name?.[0] || selectedFriend.username[0]}
                                     </div>
                                     <div>
-                                        <p className="font-medium text-sm">
+                                        <p className="text-sm font-medium">
                                             {selectedFriend.name || selectedFriend.username}
                                         </p>
                                         <p className="text-xs text-gray-600">
@@ -229,9 +229,9 @@ const LendingModal = ({
                                     variant="ghost"
                                     size="sm"
                                     onClick={() => setSelectedFriend(null)}
-                                    className="h-8 w-8 p-0"
+                                    className="size-8 p-0"
                                 >
-                                    <X className="h-4 w-4"/>
+                                    <X className="size-4"/>
                                 </Button>
                             </div>
                         </motion.div>
@@ -266,12 +266,12 @@ const LendingModal = ({
                     >
                         {loadingLend ? (
                             <>
-                                <Loader2 className="h-4 w-4 animate-spin mr-2"/>
+                                <Loader2 className="mr-2 size-4 animate-spin"/>
                                 Prêt en cours...
                             </>
                         ) : (
                             <>
-                                <Send className="h-4 w-4 mr-2"/>
+                                <Send className="mr-2 size-4"/>
                                 Prêter le livre
                             </>
                         )}

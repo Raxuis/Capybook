@@ -257,15 +257,15 @@ export default function AdminCrudPage({slug}: AdminCrudPageProps) {
 
     return (
         <div className="container mx-auto py-6">
-            <div className="flex items-center justify-between mb-6">
+            <div className="mb-6 flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                    <IconComponent className="h-6 w-6"/>
+                    <IconComponent className="size-6"/>
                     <h1 className="text-3xl font-bold">{config.title}</h1>
                     {
                         loading ? (
-                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+                            <div className="border-primary size-4 animate-spin rounded-full border-b-2"></div>
                         ) : (
-                            <span className="text-sm text-muted-foreground">
+                            <span className="text-muted-foreground text-sm">
                 ({data.length})
               </span>
                         )
@@ -281,7 +281,7 @@ export default function AdminCrudPage({slug}: AdminCrudPageProps) {
                             }}
                             disabled={!actions.create}
                         >
-                            <Plus className="h-4 w-4 mr-2"/>
+                            <Plus className="mr-2 size-4"/>
                             Ajouter
                         </Button>
                     </DialogTrigger>
@@ -297,7 +297,7 @@ export default function AdminCrudPage({slug}: AdminCrudPageProps) {
 
                         <Form {...form}>
                             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                     {config.fields.map(renderFormField)}
                                 </div>
 
@@ -322,7 +322,7 @@ export default function AdminCrudPage({slug}: AdminCrudPageProps) {
 
             <div>
                 {!actions.create && (
-                    <span className="text-sm text-red-500 mb-4">
+                    <span className="mb-4 text-sm text-red-500">
             Action de création non disponible
           </span>
                 )}
@@ -338,7 +338,7 @@ export default function AdminCrudPage({slug}: AdminCrudPageProps) {
                 <CardContent>
                     {loading ? (
                         <div className="flex justify-center py-8">
-                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                            <div className="border-primary size-8 animate-spin rounded-full border-b-2"></div>
                         </div>
                     ) : (
                         <Table>
@@ -368,7 +368,7 @@ export default function AdminCrudPage({slug}: AdminCrudPageProps) {
                                                     onClick={() => handleEdit(item)}
                                                     disabled={!actions.update || isPending}
                                                 >
-                                                    <Edit className="h-4 w-4"/>
+                                                    <Edit className="size-4"/>
                                                 </Button>
                                                 <AlertDialog>
                                                     <AlertDialogTrigger asChild>
@@ -377,7 +377,7 @@ export default function AdminCrudPage({slug}: AdminCrudPageProps) {
                                                             size="sm"
                                                             disabled={!actions.delete || isPending}
                                                         >
-                                                            <Trash2 className="h-4 w-4"/>
+                                                            <Trash2 className="size-4"/>
                                                         </Button>
                                                     </AlertDialogTrigger>
                                                     <AlertDialogContent>

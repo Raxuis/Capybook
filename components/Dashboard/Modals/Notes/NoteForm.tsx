@@ -47,7 +47,7 @@ export const NoteForm = ({
                     <div className="flex items-center justify-between">
                         <CardTitle className="text-lg">{title}</CardTitle>
                         <Button variant="ghost" size="sm" onClick={onCancel}>
-                            <X className="h-4 w-4"/>
+                            <X className="size-4"/>
                         </Button>
                     </div>
                 </CardHeader>
@@ -93,7 +93,7 @@ export const NoteForm = ({
                                                 placeholder="Écrivez votre note ici..."
                                                 {...field}
                                                 rows={4}
-                                                className={isEdit ? "bg-white/80 border-slate-200 resize-none" : ""}
+                                                className={isEdit ? "resize-none border-slate-200 bg-white/80" : ""}
                                             />
                                         </FormControl>
                                         <FormMessage/>
@@ -109,7 +109,7 @@ export const NoteForm = ({
                                         <FormItem className="w-28">
                                             <FormLabel>
                                                 Page
-                                                <span className="text-xs text-muted-foreground ml-1">
+                                                <span className="text-muted-foreground ml-1 text-xs">
                           (Optionnel)
                         </span>
                                             </FormLabel>
@@ -118,7 +118,7 @@ export const NoteForm = ({
                                                     type="number"
                                                     placeholder="Page"
                                                     {...field}
-                                                    className={isEdit ? "bg-white/80 border-slate-200" : ""}
+                                                    className={isEdit ? "border-slate-200 bg-white/80" : ""}
                                                 />
                                             </FormControl>
                                             <FormMessage/>
@@ -133,7 +133,7 @@ export const NoteForm = ({
                                         <FormItem className="flex-1">
                                             <FormLabel>
                                                 Chapitre
-                                                <span className="text-xs text-muted-foreground ml-1">
+                                                <span className="text-muted-foreground ml-1 text-xs">
                           (Optionnel)
                         </span>
                                             </FormLabel>
@@ -141,7 +141,7 @@ export const NoteForm = ({
                                                 <Input
                                                     placeholder="Nom du chapitre"
                                                     {...field}
-                                                    className={isEdit ? "bg-white/80 border-slate-200" : ""}
+                                                    className={isEdit ? "border-slate-200 bg-white/80" : ""}
                                                 />
                                             </FormControl>
                                             <FormMessage/>
@@ -157,7 +157,7 @@ export const NoteForm = ({
                                     <FormItem>
                                         <FormLabel>
                                             Tags
-                                            <span className="text-xs text-muted-foreground ml-1">
+                                            <span className="text-muted-foreground ml-1 text-xs">
                         (Optionnel)
                       </span>
                                         </FormLabel>
@@ -165,7 +165,7 @@ export const NoteForm = ({
                                             <Input
                                                 placeholder="Tags séparés par des virgules"
                                                 {...field}
-                                                className={isEdit ? "bg-white/80 border-slate-200" : ""}
+                                                className={isEdit ? "border-slate-200 bg-white/80" : ""}
                                             />
                                         </FormControl>
                                         <FormMessage/>
@@ -173,20 +173,20 @@ export const NoteForm = ({
                                 )}
                             />
 
-                            <div className="flex flex-col sm:flex-row gap-2">
+                            <div className="flex flex-col gap-2 sm:flex-row">
                                 <Button
                                     type="submit"
                                     disabled={loading}
-                                    className={`flex-1 ${isEdit ? 'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white' : ''}`}
+                                    className={`flex-1 ${isEdit ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700' : ''}`}
                                 >
                                     {loading ? (
                                         <>
-                                            <Loader2 className="h-4 w-4 mr-2 animate-spin"/>
+                                            <Loader2 className="mr-2 size-4 animate-spin"/>
                                             {submitText}...
                                         </>
                                     ) : (
                                         <>
-                                            <Save className="h-4 w-4 mr-2"/>
+                                            <Save className="mr-2 size-4"/>
                                             {submitText}
                                         </>
                                     )}
@@ -196,7 +196,7 @@ export const NoteForm = ({
                                         type="button"
                                         variant="outline"
                                         onClick={onCancel}
-                                        className="flex-1 sm:flex-none bg-white/80 border-slate-200"
+                                        className="flex-1 border-slate-200 bg-white/80 sm:flex-none"
                                     >
                                         Annuler
                                     </Button>

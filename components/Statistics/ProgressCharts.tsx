@@ -34,12 +34,12 @@ export const ProgressCharts = ({data}: ProgressChartsProps) => {
             <CardContent>
                 {
                     data.length === 0 ? (
-                        <div className="flex items-center justify-center h-full">
+                        <div className="flex h-full items-center justify-center">
                             <p className="text-gray-500">Aucune donnée disponible</p>
                         </div>
                     ) : (
                         <>
-                            <div className="flex items-center justify-center h-full">
+                            <div className="flex h-full items-center justify-center">
                                 <p className="text-gray-500">Pages lues et livres terminés au fil du temps</p>
                             </div>
                             <ResponsiveContainer width="100%" height={350}>

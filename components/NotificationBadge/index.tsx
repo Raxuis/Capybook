@@ -83,15 +83,15 @@ export default function BadgeNotification({
     if (!badge) return null;
 
     return (
-        <div className={`fixed top-4 right-4 max-w-sm z-50 transform transition-all duration-500 ease-in-out ${
+        <div className={`fixed right-4 top-4 z-50 max-w-sm transition-all duration-500 ease-in-out${
             isVisible ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'
         } ${isClosing ? 'translate-x-full opacity-0' : ''}`}>
             <div className="bg-card text-card-foreground rounded-lg border shadow-sm">
-                <div className="flex p-4 items-start">
+                <div className="flex items-start p-4">
                     {/* Icône du badge */}
-                    <div className="flex-shrink-0 bg-primary text-primary-foreground p-2 rounded-md mr-3">
+                    <div className="bg-primary text-primary-foreground mr-3 shrink-0 rounded-md p-2">
                         <div className="text-xl">
-                            {typeof badge.icon === 'string' ? badge.icon : badge.icon || <Award className="h-5 w-5"/>}
+                            {typeof badge.icon === 'string' ? badge.icon : badge.icon || <Award className="size-5"/>}
                         </div>
                     </div>
 
@@ -103,21 +103,21 @@ export default function BadgeNotification({
                             </h3>
                             <button
                                 onClick={handleClose}
-                                className="ml-4 text-muted-foreground hover:text-foreground focus:outline-none"
+                                className="text-muted-foreground hover:text-foreground ml-4 focus:outline-none"
                             >
-                                <X className="h-4 w-4"/>
+                                <X className="size-4"/>
                             </button>
                         </div>
-                        <p className="mt-1 text-xs text-muted-foreground">
+                        <p className="text-muted-foreground mt-1 text-xs">
                             {badge.ownerDescription}
                         </p>
                     </div>
                 </div>
 
                 {/* Barre de progression pour l'auto-fermeture */}
-                <div className="h-1 bg-muted">
+                <div className="bg-muted h-1">
                     <div
-                        className="h-full bg-primary animate-shrink"
+                        className="bg-primary animate-shrink h-full"
                         style={{
                             animationDuration: `${autoCloseDelay / 1000}s`
                         }}
