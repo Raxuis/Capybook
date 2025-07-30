@@ -4,7 +4,7 @@ import prisma from "@/utils/prisma";
 import {formatUsername} from "@/utils/format";
 import {auth} from "@/auth";
 import {BadgeCategory} from "@prisma/client";
-import {validateParams, withErrorHandling} from "@/utils/api-validation";
+import {validateParams, withErrorHandlingContextOnly} from "@/utils/api-validation";
 
 
 const paramsSchema = z.object({
@@ -78,10 +78,7 @@ interface ResponseData {
 async function handleGet(
     context: { params: { username: string } }
 ): Promise<NextResponse> {
-    const {
-        username
-    } = await validateParams(context.params, paramsSchema);
-    console.log(`Fetching profile for username: ${username}`);
+    const {username} = await validateParams(context.params, paramsSchema);
     const formattedUsername = formatUsername(username);
     const session = await auth();
 
@@ -241,4 +238,4 @@ async function handleGet(
     return NextResponse.json(responseData);
 }
 
-export const GET = withErrorHandling(handleGet);
+export const GET = withErrorHandlingContextOnly(handleGet);

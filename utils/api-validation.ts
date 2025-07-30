@@ -26,7 +26,7 @@ export async function validateParams<T>(
     schema: z.ZodSchema<T>
 ): Promise<T> {
     // Résoudre la Promise si nécessaire
-    const resolvedParams = await params;
+    const resolvedParams = await Promise.resolve(params);
 
     const result = schema.safeParse(resolvedParams);
     if (!result.success) {
@@ -95,6 +95,41 @@ export function withErrorHandling(handler: APIRouteHandler | SimpleRouteHandler)
     return async (request: NextRequest, context?: RouteContext): Promise<NextResponse> => {
         try {
             return await handler(request, context as RouteContext);
+        } catch (error) {
+            console.error('API route error:', error);
+
+            if (error instanceof ValidationError) {
+                return NextResponse.json(
+                    {error: error.message},
+                    {status: error.statusCode}
+                );
+            }
+
+            if (error instanceof Error) {
+                return NextResponse.json(
+                    {error: 'Internal server error'},
+                    {status: 500}
+                );
+            }
+
+            return NextResponse.json(
+                {error: 'Unknown error occurred'},
+                {status: 500}
+            );
+        }
+    };
+}
+
+type ContextOnlyHandler = (context: RouteContext) => Promise<NextResponse>;
+
+/**
+ * Wrapper pour gérer les erreurs dans les routes API Next.js
+ * Spécifiquement pour les handlers qui n'utilisent que le contexte
+ */
+export function withErrorHandlingContextOnly(handler: ContextOnlyHandler): APIRouteHandler {
+    return async (request: NextRequest, context: RouteContext): Promise<NextResponse> => {
+        try {
+            return await handler(context);
         } catch (error) {
             console.error('API route error:', error);
 
