@@ -13,8 +13,8 @@ import {
 import {getBookById, getUserBookByUserIdBookId} from "@/utils/database";
 
 const bodySchema = z.object({
-    bookId: z.string().uuid("L'ID du livre doit être un UUID valide"),
-    userId: z.string().uuid("L'ID utilisateur doit être un UUID valide"),
+    bookId: z.string().cuid("L'ID du livre doit être un CUID valide"),
+    userId: z.string().cuid("L'ID utilisateur doit être un CUID valide"),
     progress: z.number()
         .min(0, "Le progrès ne peut pas être négatif")
         .finite("Le progrès doit être un nombre fini"),

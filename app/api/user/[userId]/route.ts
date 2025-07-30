@@ -10,7 +10,10 @@ import {
 } from "@/utils/api-validation";
 
 const paramsSchema = z.object({
-    userId: z.string().uuid("userId must be a valid UUID"),
+    userId: z.string({
+        required_error: "L'ID utilisateur est requis",
+        invalid_type_error: "L'ID utilisateur doit être une chaîne de caractères"
+    }).cuid("L'ID utilisateur doit être un CUID valide"),
 });
 
 const putBodySchema = z.object({
@@ -27,7 +30,9 @@ async function handleGet(
     request: NextRequest,
     {params}: { params: Record<string, string> }
 ): Promise<NextResponse> {
-    const {userId} = validateParams(params, paramsSchema);
+    const {userId} = await validateParams(params, paramsSchema);
+
+    console.log('userId:', userId); // Pour débugger
 
     const user = await prisma.user.findUnique({
         where: {id: userId},
@@ -87,7 +92,7 @@ async function handlePut(
     request: NextRequest,
     {params}: { params: Record<string, string> }
 ): Promise<NextResponse> {
-    const {userId} = validateParams(params, paramsSchema);
+    const {userId} = await validateParams(params, paramsSchema);
     const {username, favoriteColor} = await validateBody(request, putBodySchema);
 
     const user = await prisma.user.findUnique({

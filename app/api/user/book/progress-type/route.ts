@@ -4,8 +4,8 @@ import prisma from "@/utils/prisma";
 import {validateBody, withErrorHandling, createResponse, createErrorResponse} from "@/utils/api-validation";
 
 const bodySchema = z.object({
-    bookId: z.string().uuid("L'ID du livre doit être un UUID valide"),
-    userId: z.string().uuid("L'ID utilisateur doit être un UUID valide"),
+    bookId: z.string().cuid("L'ID du livre doit être un CUID valide"),
+    userId: z.string().cuid("L'ID utilisateur doit être un CUID valide"),
     progressType: z.enum(['percentage', 'numberOfPages'], {
         errorMap: () => ({message: "Le type de progrès doit être 'percentage' ou 'numberOfPages'"})
     }),

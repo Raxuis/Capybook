@@ -5,7 +5,7 @@ import {validateSearchParams, withErrorHandling, createResponse, createErrorResp
 
 const searchUsersSchema = z.object({
     q: z.string().min(1, "Le terme de recherche est requis"),
-    excludeId: z.string().uuid("L'ID à exclure doit être un UUID valide").optional(),
+    excludeId: z.string().cuid("L'ID à exclure doit être un CUID valide").optional(),
     limit: z.string()
         .optional()
         .default("10")

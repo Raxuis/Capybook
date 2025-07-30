@@ -4,7 +4,7 @@ import prisma from "@/utils/prisma";
 import {validateParams, withErrorHandling, createResponse} from "@/utils/api-validation";
 
 const paramsSchema = z.object({
-    userId: z.string().uuid("L'ID utilisateur doit être un UUID valide"),
+    userId: z.string().cuid("L'ID utilisateur doit être un CUID valide"),
 });
 
 async function handleGet(

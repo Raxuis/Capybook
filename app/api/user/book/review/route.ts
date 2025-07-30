@@ -6,7 +6,7 @@ import {validateBody, withErrorHandling, createResponse, createErrorResponse} fr
 
 const bodySchema = z.object({
     bookKey: z.string().min(1, "La clé du livre est requise"),
-    userId: z.string().uuid("L'ID utilisateur doit être un UUID valide"),
+    userId: z.string().cuid("L'ID utilisateur doit être un CUID valide"),
     rating: z.number()
         .min(1, "La note doit être au minimum de 1")
         .max(5, "La note doit être au maximum de 5")
@@ -15,7 +15,7 @@ const bodySchema = z.object({
     privacy: z.enum(['PUBLIC', 'PRIVATE', 'FRIENDS', 'SPECIFIC_FRIEND'], {
         errorMap: () => ({message: "Le niveau de confidentialité doit être PUBLIC, PRIVATE, FRIENDS ou SPECIFIC_FRIEND"})
     }),
-    specificFriendId: z.string().uuid("L'ID de l'ami spécifique doit être un UUID valide").optional(),
+    specificFriendId: z.string().cuid("L'ID de l'ami spécifique doit être un CUID valide").optional(),
 });
 
 async function handlePost(
