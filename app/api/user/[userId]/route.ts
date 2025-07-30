@@ -20,8 +20,8 @@ const paramsSchema = z.object({
 const putBodySchema = z.object({
     username: z.string()
         .min(3, "Username must be at least 3 characters")
-        .max(50, "Username must be less than 50 characters")
-        .regex(/^[a-zA-Z0-9_]+$/, "Username can only contain letters, numbers and underscores"),
+        .max(15, "Username must be less than 15 characters")
+        .regex(/^[a-zA-Z0-9-]+$/, "Username can only contain letters, numbers, and hyphens"),
     favoriteColor: z.string()
         .min(1, "Favorite color is required")
         .max(30, "Favorite color must be less than 30 characters"),
