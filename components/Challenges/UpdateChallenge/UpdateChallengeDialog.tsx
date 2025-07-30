@@ -50,7 +50,7 @@ const UpdateChallengeDialog = memo(() => {
                     });
                     throw new Error('Erreur lors de la mise à jour du challenge');
                 }
-                if (response.data.badges.newBadgesCount > 0) {
+                if (response.data.badges && response.data.badges.newBadgesCount > 0) {
                     addBadges(response.data.badges.newBadges);
                 }
                 closeDialog();

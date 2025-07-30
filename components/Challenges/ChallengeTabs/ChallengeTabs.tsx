@@ -59,8 +59,7 @@ const ChallengeTabs = () => {
                         <Trophy className="h-12 w-12 text-muted-foreground mb-3"/>
                         <h3 className="text-lg font-medium mb-1">Pas encore de challenge terminé</h3>
                         <p className="text-muted-foreground max-w-md">
-                            Une fois que vous aurez complété vos challenges ou que leur date limite sera passée,
-                            ils
+                            Une fois que vous aurez complété vos challenges ou que leur date limite sera passée, ils
                             apparaîtront ici.
                         </p>
                     </div>

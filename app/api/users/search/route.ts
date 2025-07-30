@@ -8,9 +8,12 @@ const searchUsersSchema = z.object({
     excludeId: z.string().cuid("L'ID à exclure doit être un CUID valide").optional(),
     limit: z.string()
         .optional()
-        .default("10")
-        .transform((val) => parseInt(val))
-        .refine((val) => val > 0 && val <= 50, "La limite doit être entre 1 et 50"),
+        .transform((val) => val || "10")
+        .pipe(
+            z.string()
+                .transform((val) => parseInt(val, 10))
+                .refine((val) => !isNaN(val) && val > 0 && val <= 50, "La limite doit être un nombre entre 1 et 50")
+        ),
 });
 
 async function handleGet(
