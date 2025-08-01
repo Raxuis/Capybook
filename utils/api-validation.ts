@@ -9,10 +9,9 @@ export class ValidationError extends Error {
     }
 }
 
-// Types pour les handlers Next.js API
-type RouteParams = Record<string, string | string[]>;
-type RouteContext = { params: RouteParams };
-type APIRouteHandler = (request: NextRequest, context: RouteContext) => Promise<NextResponse>;
+export type RouteParams = Record<string, string | string[]>;
+export type RouteContext = { params: RouteParams };
+export type APIRouteHandler = (request: NextRequest, context: RouteContext) => Promise<NextResponse>;
 
 // Type plus flexible pour les handlers qui n'utilisent que des paramètres simples
 type SimpleRouteHandler = (request: NextRequest, context?: RouteContext) => Promise<NextResponse>;

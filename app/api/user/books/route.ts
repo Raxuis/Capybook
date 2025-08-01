@@ -1,7 +1,7 @@
 import {NextRequest, NextResponse} from 'next/server';
 import {z} from 'zod';
 import prisma from "@/utils/prisma";
-import {validateBody, validateParams, withErrorHandling} from "@/utils/api-validation";
+import {RouteContext, validateBody, validateParams, withErrorHandling} from "@/utils/api-validation";
 
 const UserBookSchema = z.object({
     userId: z.string(),
@@ -18,7 +18,7 @@ const UserBookSchema = z.object({
 async function handlePost(
     request: NextRequest
 ): Promise<NextResponse> {
-    const {userId, book} = validateBody(request, UserBookSchema);
+    const {userId, book} = await validateBody(request, UserBookSchema);
     const user = await prisma.user.findUnique({
         where: {id: userId}
     });
@@ -81,7 +81,7 @@ async function handlePost(
 }
 
 async function handleDelete(
-    context: { params: Record<string, string | string[]> }
+    context: RouteContext
 ): Promise<NextResponse> {
     const {userId, bookKey} = await validateParams(
         context.params,

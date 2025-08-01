@@ -1,16 +1,14 @@
 import {NextResponse} from 'next/server';
 import {z} from "zod";
 import prisma from "@/utils/prisma";
-import {validateParams, createResponse, withErrorHandlingContextOnly} from "@/utils/api-validation";
+import {validateParams, createResponse, withErrorHandlingContextOnly, RouteContext} from "@/utils/api-validation";
 
 const paramsSchema = z.object({
     userId: z.string().cuid("L'ID utilisateur doit être un CUID valide"),
 });
 
-async function handleGet(
-    {params}: { params: Record<string, string> }
-): Promise<NextResponse> {
-    const {userId} = await validateParams(params, paramsSchema);
+async function handleGet(context: RouteContext): Promise<NextResponse> {
+    const {userId} = await validateParams(context.params, paramsSchema);
 
     const following = await prisma.follow.findMany({
         where: {followerId: userId},

@@ -7,7 +7,8 @@ import {
     withErrorHandling,
     createResponse,
     createErrorResponse,
-    withErrorHandlingContextOnly
+    withErrorHandlingContextOnly,
+    RouteContext
 } from "@/utils/api-validation";
 
 const paramsSchema = z.object({
@@ -27,10 +28,8 @@ const putBodySchema = z.object({
         .max(30, "Favorite color must be less than 30 characters"),
 });
 
-async function handleGet(
-    {params}: { params: Record<string, string> }
-): Promise<NextResponse> {
-    const {userId} = await validateParams(params, paramsSchema);
+async function handleGet(context: RouteContext): Promise<NextResponse> {
+    const {userId} = await validateParams(context.params, paramsSchema);
 
     const user = await prisma.user.findUnique({
         where: {id: userId},
@@ -88,9 +87,9 @@ async function handleGet(
 
 async function handlePut(
     request: NextRequest,
-    {params}: { params: Record<string, string> }
+    context: RouteContext
 ): Promise<NextResponse> {
-    const {userId} = await validateParams(params, paramsSchema);
+    const {userId} = await validateParams(context.params, paramsSchema);
     const {username, favoriteColor} = await validateBody(request, putBodySchema);
 
     const user = await prisma.user.findUnique({
