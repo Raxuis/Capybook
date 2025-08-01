@@ -1,103 +1,91 @@
 import {z} from "zod";
-import {createZodRoute} from "next-zod-route";
-import {NextResponse} from 'next/server';
+import {NextRequest, NextResponse} from 'next/server';
 import prisma from "@/utils/prisma";
+import {
+    validateParams,
+    validateBody,
+    withErrorHandling,
+    createResponse,
+    createErrorResponse,
+    RouteContext
+} from "@/utils/api-validation";
 
 const bodySchema = z.object({
-    borrowerId: z.string(),
+    borrowerId: z.string().min(1, "L'ID de l'emprunteur est requis"),
 });
 
 const paramsSchema = z.object({
-    requestId: z.string(),
+    requestId: z.string().min(1, "L'ID de la demande est requis"),
 });
 
-export const PUT = createZodRoute()
-    .body(bodySchema)
-    .params(paramsSchema)
-    .handler(async (_, context) => {
-        const {borrowerId} = context.body;
-        const {requestId} = context.params;
+async function handlePut(
+    request: NextRequest,
+    context: RouteContext
+): Promise<NextResponse> {
+    const {borrowerId} = await validateBody(request, bodySchema);
+    const {requestId} = await validateParams(context.params, paramsSchema);
 
-        try {
-            const lendingRequest = await prisma.bookLending.findUnique({
-                where: {id: requestId},
-                include: {
-                    lender: true,
-                    borrower: true,
-                    book: true
-                }
-            });
-
-            if (!lendingRequest) {
-                return NextResponse.json(
-                    {error: "Demande de prêt non trouvée."},
-                    {status: 404}
-                );
-            }
-
-            if (lendingRequest.borrowerId !== borrowerId) {
-                return NextResponse.json(
-                    {error: "Vous n'êtes pas autorisé à refuser cette demande."},
-                    {status: 403}
-                );
-            }
-
-            if (lendingRequest.status !== 'PENDING') {
-                return NextResponse.json(
-                    {error: "Cette demande n'est plus en attente."},
-                    {status: 400}
-                );
-            }
-
-            const updatedLendingRequest = await prisma.bookLending.update({
-                where: {id: requestId},
-                data: {
-                    status: 'REJECTED',
-                    rejectedAt: new Date(),
-                },
-                include: {
-                    lender: {
-                        select: {
-                            id: true,
-                            name: true,
-                            username: true,
-                            image: true
-                        }
-                    },
-                    borrower: {
-                        select: {
-                            id: true,
-                            name: true,
-                            username: true,
-                            image: true
-                        }
-                    },
-                    book: {
-                        select: {
-                            id: true,
-                            key: true,
-                            title: true,
-                            authors: true,
-                            cover: true,
-                            numberOfPages: true
-                        }
-                    }
-                }
-            });
-
-            return NextResponse.json(
-                {
-                    message: "Demande refusée avec succès",
-                    data: updatedLendingRequest
-                },
-                {status: 200}
-            );
-
-        } catch (error) {
-            console.error('Erreur lors du refus de la demande:', error);
-            return NextResponse.json(
-                {error: "Erreur interne du serveur"},
-                {status: 500}
-            );
+    const lendingRequest = await prisma.bookLending.findUnique({
+        where: {id: requestId},
+        include: {
+            lender: true,
+            borrower: true,
+            book: true
         }
     });
+
+    if (!lendingRequest) {
+        return createErrorResponse("Demande de prêt non trouvée.", 404);
+    }
+
+    if (lendingRequest.borrowerId !== borrowerId) {
+        return createErrorResponse("Vous n'êtes pas autorisé à refuser cette demande.", 403);
+    }
+
+    if (lendingRequest.status !== 'PENDING') {
+        return createErrorResponse("Cette demande n'est plus en attente.", 400);
+    }
+
+    const updatedLendingRequest = await prisma.bookLending.update({
+        where: {id: requestId},
+        data: {
+            status: 'REJECTED',
+            rejectedAt: new Date(),
+        },
+        include: {
+            lender: {
+                select: {
+                    id: true,
+                    name: true,
+                    username: true,
+                    image: true
+                }
+            },
+            borrower: {
+                select: {
+                    id: true,
+                    name: true,
+                    username: true,
+                    image: true
+                }
+            },
+            book: {
+                select: {
+                    id: true,
+                    key: true,
+                    title: true,
+                    authors: true,
+                    cover: true,
+                    numberOfPages: true
+                }
+            }
+        }
+    });
+
+    return createResponse({
+        message: "Demande refusée avec succès",
+        data: updatedLendingRequest
+    });
+}
+
+export const PUT = withErrorHandling(handlePut);
