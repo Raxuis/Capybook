@@ -41,9 +41,9 @@ async function handleGet(
         return createErrorResponse('Non autorisé', 401);
     }
 
-    const {bookId} = validateParams(params, paramsSchema);
+    const {bookId} = await validateParams(params, paramsSchema);
 
-    const {search, tags: tagsParam, sortBy} = validateSearchParams(
+    const {search, tags: tagsParam, sortBy} = await validateSearchParams(
         new URL(request.url).searchParams,
         getSearchParamsSchema
     );

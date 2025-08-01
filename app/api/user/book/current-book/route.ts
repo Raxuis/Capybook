@@ -1,7 +1,7 @@
 import {z} from "zod";
-import {createZodRoute} from "next-zod-route";
-import {NextResponse} from 'next/server';
+import {NextRequest, NextResponse} from 'next/server';
 import prisma from "@/utils/prisma";
+import {validateBody, withErrorHandling, createResponse, createErrorResponse} from "@/utils/api-validation";
 
 const bodySchema = z.object({
     bookId: z.string(),
@@ -9,15 +9,15 @@ const bodySchema = z.object({
     isCurrentBook: z.boolean(),
 });
 
-export const PUT = createZodRoute().body(bodySchema).handler(async (_, context) => {
-    const {bookId, userId, isCurrentBook} = context.body;
+async function handlePut(request: NextRequest): Promise<NextResponse> {
+    const {bookId, userId, isCurrentBook} = await validateBody(request, bodySchema);
 
     const book = await prisma.book.findUnique({
         where: {id: bookId},
     });
 
     if (!book) {
-        return NextResponse.json({error: "No book with the corresponding id."}, {status: 404});
+        return createErrorResponse("No book with the corresponding id.", 404);
     }
 
     const userBook = await prisma.userBook.findFirst({
@@ -25,7 +25,7 @@ export const PUT = createZodRoute().body(bodySchema).handler(async (_, context) 
     });
 
     if (!userBook) {
-        return NextResponse.json({error: "User doesn't have this book yet."}, {status: 400});
+        return createErrorResponse("User doesn't have this book yet.", 400);
     }
 
     // Vérifie si l'utilisateur a déjà un `currentBook`
@@ -46,5 +46,7 @@ export const PUT = createZodRoute().body(bodySchema).handler(async (_, context) 
         data: {isCurrentBook},
     });
 
-    return NextResponse.json({data: updatedBook}, {status: 200});
-});
+    return createResponse({data: updatedBook});
+}
+
+export const PUT = withErrorHandling(handlePut);

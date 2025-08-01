@@ -38,7 +38,7 @@ async function handleGet(
         return createErrorResponse('Non autorisé', 401);
     }
 
-    const {bookId, noteId} = validateParams(params, paramsSchema);
+    const {bookId, noteId} = await validateParams(params, paramsSchema);
 
     const note = await prisma.userBookNotes.findFirst({
         where: {
@@ -131,7 +131,7 @@ async function handleDelete(
         return createErrorResponse('Non autorisé', 401);
     }
 
-    const {noteId} = validateParams(params, z.object({noteId: z.string()}));
+    const {noteId} = await validateParams(params, z.object({noteId: z.string()}));
     const {bookId} = await validateBody(request, deleteBodySchema);
 
     const existingNote = await prisma.userBookNotes.findFirst({
