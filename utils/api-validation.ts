@@ -1,4 +1,3 @@
-// utils/api-validation.ts
 import {NextRequest, NextResponse} from 'next/server';
 import {z} from 'zod';
 

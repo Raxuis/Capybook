@@ -6,14 +6,12 @@ import {validateSearchParams, withErrorHandling, createResponse, createErrorResp
 const searchUsersSchema = z.object({
     q: z.string().min(1, "Le terme de recherche est requis"),
     excludeId: z.string().cuid("L'ID à exclure doit être un CUID valide").optional(),
-    limit: z.string()
-        .optional()
-        .transform((val) => val || "10")
-        .pipe(
-            z.string()
-                .transform((val) => parseInt(val, 10))
-                .refine((val) => !isNaN(val) && val > 0 && val <= 50, "La limite doit être un nombre entre 1 et 50")
-        ),
+    limit: z.preprocess(
+        (val) => val || "10",
+        z.string()
+            .transform((val) => parseInt(val, 10))
+            .refine((val) => !isNaN(val) && val > 0 && val <= 50, "La limite doit être un nombre entre 1 et 50")
+    ),
 });
 
 async function handleGet(
