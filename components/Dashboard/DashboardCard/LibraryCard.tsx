@@ -132,22 +132,22 @@ const LibraryCard = ({userBook, openBookModal}: LibraryCardProps) => {
                     <CardTitle className="line-clamp-2 text-lg font-medium leading-tight">
                         {userBook.Book.title}
                     </CardTitle>
-                    <div className="flex items-center gap-1 shrink-0">
+                    <div className="flex shrink-0 items-center gap-1">
                         {isBookFinished(userBook) && !isLoaned && (
                             !bookReview ? (
                                 <Button
                                     variant="ghost"
                                     size="sm"
-                                    className="h-8 w-8 p-0 hover:bg-amber-50"
+                                    className="size-8 p-0 hover:bg-amber-50"
                                     onClick={handleReviewClick}
                                 >
-                                    <Star className="h-4 w-4 text-amber-500"/>
+                                    <Star className="size-4 text-amber-500"/>
                                     <span className="sr-only">Donner un avis</span>
                                 </Button>
                             ) : (
                                 <div
-                                    className="flex items-center gap-1 px-2 py-1 rounded-md bg-amber-50 text-amber-700">
-                                    <Star className="h-3 w-3 fill-current"/>
+                                    className="flex items-center gap-1 rounded-md bg-amber-50 px-2 py-1 text-amber-700">
+                                    <Star className="size-3 fill-current"/>
                                     <span className="text-xs font-medium">{bookReview.rating}/5</span>
                                 </div>
                             )
@@ -155,18 +155,18 @@ const LibraryCard = ({userBook, openBookModal}: LibraryCardProps) => {
                         <Button
                             variant="ghost"
                             size="sm"
-                            className="h-8 w-8 p-0 hover:bg-muted"
+                            className="hover:bg-muted size-8 p-0"
                             onClick={() => openBookModal(userBook.Book as BookType)}
                         >
-                            <Info className="h-4 w-4 text-muted-foreground"/>
+                            <Info className="text-muted-foreground size-4"/>
                             <span className="sr-only">Détails</span>
                         </Button>
                     </div>
                 </div>
 
                 <div className="flex items-center justify-between pt-2">
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <BookOpen className="h-4 w-4"/>
+                    <div className="text-muted-foreground flex items-center gap-2 text-sm">
+                        <BookOpen className="size-4"/>
                         <span className="line-clamp-1">
                             {userBook.Book.authors || "Auteur inconnu"}
                         </span>
@@ -177,25 +177,25 @@ const LibraryCard = ({userBook, openBookModal}: LibraryCardProps) => {
                             variant={statusConfig.badge.variant}
                             className={cn('flex items-center gap-1.5 text-xs transition-colors', statusConfig.badge.className)}
                         >
-                            <statusConfig.badge.icon className="h-3 w-3"/>
+                            <statusConfig.badge.icon className="size-3"/>
                             {statusConfig.badge.text}
                         </Badge>
                     )}
                 </div>
             </CardHeader>
 
-            <CardContent className="pt-0 space-y-4">
+            <CardContent className="space-y-4 pt-0">
                 {/* Information de prêt simplifiée */}
                 {(isLoaned || isPendingLoan) && lendingInfo && (
                     <div className={`
-                        rounded-lg border-l-4 pl-4 py-2
+                        rounded-lg border-l-4 py-2 pl-4
                         ${isPendingLoan
                         ? 'border-l-yellow-200 bg-yellow-50/30'
                         : 'border-l-orange-200 bg-orange-50/30'
                     }
                     `}>
                         <div className={`
-                            text-sm font-medium mb-1
+                            mb-1 text-sm font-medium
                             ${isPendingLoan ? 'text-yellow-800' : 'text-orange-800'}
                         `}>
                             {isPendingLoan
