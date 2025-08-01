@@ -80,7 +80,7 @@ async function handleDelete(
         return createErrorResponse("Non autorisé", 401);
     }
 
-    const {username} = validateParams(context.params, paramsSchema);
+    const {username} = await validateParams(context.params, paramsSchema);
     const formattedUsername = formatUsername(username);
 
     const targetUser = await prisma.user.findUnique({

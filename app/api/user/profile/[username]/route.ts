@@ -4,11 +4,16 @@ import prisma from "@/utils/prisma";
 import {formatUsername} from "@/utils/format";
 import {auth} from "@/auth";
 import {BadgeCategory} from "@prisma/client";
-import {validateParams, withErrorHandlingContextOnly} from "@/utils/api-validation";
-
+import {
+    validateParams,
+    withErrorHandlingContextOnly,
+    RouteContext,
+    createResponse,
+    createErrorResponse
+} from "@/utils/api-validation";
 
 const paramsSchema = z.object({
-    username: z.string(),
+    username: z.string().min(1, "Le nom d'utilisateur est requis"),
 });
 
 interface BookData {
@@ -75,10 +80,8 @@ interface ResponseData {
     isFollowing: boolean;
 }
 
-async function handleGet(
-    {params}: { params: { username: string } }
-): Promise<NextResponse> {
-    const {username} = await validateParams(params, paramsSchema);
+async function handleGet(context: RouteContext): Promise<NextResponse> {
+    const {username} = await validateParams(context.params, paramsSchema);
     const formattedUsername = formatUsername(username);
     const session = await auth();
 
@@ -172,7 +175,7 @@ async function handleGet(
     });
 
     if (!user) {
-        return NextResponse.json({error: 'User not found'}, {status: 404});
+        return createErrorResponse('User not found', 404);
     }
 
     const isOwner = session?.user?.email
@@ -235,7 +238,7 @@ async function handleGet(
         };
     }
 
-    return NextResponse.json(responseData);
+    return createResponse(responseData);
 }
 
 export const GET = withErrorHandlingContextOnly(handleGet);

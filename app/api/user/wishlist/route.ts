@@ -1,150 +1,135 @@
-import {createZodRoute} from 'next-zod-route';
-import {NextResponse} from 'next/server';
+import {NextRequest, NextResponse} from 'next/server';
 import {z} from 'zod';
 import prisma from "@/utils/prisma";
+import {
+    validateBody,
+    withErrorHandling,
+    createResponse,
+    createErrorResponse
+} from "@/utils/api-validation";
 
 const UserWishlistSchema = z.object({
-    userId: z.string(),
-    book: z.object(
-        {
-            key: z.string(),
-            title: z.string(),
-            author_name: z.array(z.string()).optional(),
-            cover_i: z.number().optional(),
-        }
-    ),
+    userId: z.string().min(1, "L'ID utilisateur est requis"),
+    book: z.object({
+        key: z.string().min(1, "La clé du livre est requise"),
+        title: z.string().min(1, "Le titre du livre est requis"),
+        author_name: z.array(z.string()).optional(),
+        cover_i: z.number().optional(),
+    })
 });
 
-export const POST = createZodRoute()
-    .body(UserWishlistSchema)
-    .handler(async (_, context) => {
-        try {
-            const {userId, book} = context.body;
+async function handlePost(request: NextRequest): Promise<NextResponse> {
+    const {userId, book} = await validateBody(request, UserWishlistSchema);
 
-            const user = await prisma.user.findUnique({
-                where: {id: userId}
-            });
+    // Vérifier que l'utilisateur existe
+    const user = await prisma.user.findUnique({
+        where: {id: userId}
+    });
 
-            if (!user) {
-                return NextResponse.json({error: 'User does not exist'}, {status: 400});
+    if (!user) {
+        return createErrorResponse('Utilisateur introuvable', 404);
+    }
+
+    // Chercher ou créer le livre
+    let newBook = await prisma.book.findUnique({
+        where: {key: book.key}
+    });
+
+    if (!newBook) {
+        const coverUrl = book.cover_i
+            ? `https://covers.openlibrary.org/b/id/${book.cover_i}-M.jpg`
+            : null;
+
+        newBook = await prisma.book.create({
+            data: {
+                key: book.key,
+                title: book.title,
+                authors: book.author_name || [],
+                cover: coverUrl
             }
+        });
+    }
 
-            if (!book) {
-                return NextResponse.json({error: 'Book is required'}, {status: 400});
+    // Vérifier si le livre est déjà dans la wishlist
+    const existingWishlistEntry = await prisma.userBookWishlist.findUnique({
+        where: {
+            userId_bookId: {
+                userId,
+                bookId: newBook.id
             }
-
-            let newBook = await prisma.book.findUnique({
-                where: {key: book.key}
-            });
-
-            if (!newBook) {
-                newBook = await prisma.book.create({
-                    data: {
-                        key: book.key,
-                        title: book.title,
-                        authors: book.author_name,
-                        cover: "https://covers.openlibrary.org/b/id/" + book.cover_i + "-M.jpg"
-                    }
-                });
-            }
-
-            const existingWishlistEntry = await prisma.userBookWishlist.findUnique({
-                where: {
-                    userId_bookId: {
-                        userId,
-                        bookId: newBook.id
-                    }
-                }
-            });
-
-            if (existingWishlistEntry) {
-                return NextResponse.json({error: 'User already added this book to wishlist'}, {status: 400});
-            }
-
-            await prisma.userBookWishlist.create({
-                data: {
-                    userId,
-                    bookId: newBook.id
-                }
-            });
-
-            return NextResponse.json(
-                {message: `User with id: ${userId} added book with id: ${newBook.id} to wishlist`},
-                {status: 201}
-            );
-        } catch (error) {
-            if (error instanceof z.ZodError) {
-                return NextResponse.json({error: error.issues}, {status: 400});
-            }
-            console.error("Unexpected error:", error);
-            return NextResponse.json({error: "Internal Server Error"}, {status: 500});
         }
     });
 
-export const DELETE = createZodRoute()
-    .handler(async (request) => {
-        try {
-            const data = await request.json();
-            const {error} = UserWishlistSchema.safeParse(data);
-            if (error) {
-                return NextResponse.json({error: error.errors}, {status: 400});
-            }
-            const {userId, book} = data;
+    if (existingWishlistEntry) {
+        return createErrorResponse('Ce livre est déjà dans votre liste de souhaits', 409);
+    }
 
-            const user = await prisma.user.findUnique({
-                where: {id: userId}
-            });
-
-            if (!user) {
-                return NextResponse.json({error: 'User does not exist'}, {status: 400});
-            }
-
-            if (!book || !book.key || !book.title) {
-                return NextResponse.json({error: 'Book is required'}, {status: 400});
-            }
-
-            let newBook = await prisma.book.findUnique({
-                where: {key: book.key}
-            });
-
-            if (!newBook) {
-                newBook = await prisma.book.create({
-                    data: {
-                        key: book.key,
-                        title: book.title,
-                        authors: book.author_name,
-                        cover: "https://covers.openlibrary.org/b/id/" + book.cover_i + "-M.jpg"
-                    }
-                });
-            }
-
-            const existingWishlistEntry = await prisma.userBookWishlist.findFirst({
-                where: {userId, bookId: newBook.id}
-            });
-
-            if (!existingWishlistEntry) {
-                return NextResponse.json({error: 'User does not have this book in wishlist'}, {status: 400});
-            }
-
-            const userBookEntry = await prisma.userBookWishlist.findFirst({
-                where: {userId, bookId: newBook.id}
-            });
-
-            if (userBookEntry) {
-                await prisma.userBookWishlist.delete({
-                    where: {id: userBookEntry.id}
-                });
-            }
-
-            return NextResponse.json(
-                {message: `User with id: ${userId} removed book with id: ${newBook.id} from wishlist`},
-                {status: 201}
-            );
-        } catch (error) {
-            if (error instanceof z.ZodError) {
-                return NextResponse.json({error: error.issues}, {status: 400});
-            }
-            console.error("Unexpected error:", error);
-            return NextResponse.json({error: "Internal Server Error"}, {status: 500});
+    // Ajouter le livre à la wishlist
+    await prisma.userBookWishlist.create({
+        data: {
+            userId,
+            bookId: newBook.id
         }
     });
+
+    return createResponse({
+        message: 'Livre ajouté à la liste de souhaits avec succès',
+        bookId: newBook.id,
+        userId: userId
+    }, 201);
+}
+
+async function handleDelete(request: NextRequest): Promise<NextResponse> {
+    const {userId, book} = await validateBody(request, UserWishlistSchema);
+
+    // Vérifier que l'utilisateur existe
+    const user = await prisma.user.findUnique({
+        where: {id: userId}
+    });
+
+    if (!user) {
+        return createErrorResponse('Utilisateur introuvable', 404);
+    }
+
+    // Chercher le livre
+    const existingBook = await prisma.book.findUnique({
+        where: {key: book.key}
+    });
+
+    if (!existingBook) {
+        return createErrorResponse('Livre introuvable', 404);
+    }
+
+    // Vérifier si le livre est dans la wishlist
+    const existingWishlistEntry = await prisma.userBookWishlist.findUnique({
+        where: {
+            userId_bookId: {
+                userId,
+                bookId: existingBook.id
+            }
+        }
+    });
+
+    if (!existingWishlistEntry) {
+        return createErrorResponse('Ce livre n\'est pas dans votre liste de souhaits', 404);
+    }
+
+    // Supprimer de la wishlist
+    await prisma.userBookWishlist.delete({
+        where: {
+            userId_bookId: {
+                userId,
+                bookId: existingBook.id
+            }
+        }
+    });
+
+    return createResponse({
+        message: 'Livre retiré de la liste de souhaits avec succès',
+        bookId: existingBook.id,
+        userId: userId
+    });
+}
+
+export const POST = withErrorHandling(handlePost);
+export const DELETE = withErrorHandling(handleDelete);
