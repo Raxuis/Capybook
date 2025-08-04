@@ -1,33 +1,33 @@
-import {createZodRoute} from "next-zod-route";
-import {NextResponse} from 'next/server';
+import {NextRequest, NextResponse} from 'next/server';
 import prisma from "@/utils/prisma";
 import {CreateChallengeSchema, BaseUpdateChallengeSchema} from "@/utils/zod";
-import z from "zod";
+import {z} from "zod";
 import {checkAndAssignBadges} from "@/utils/badges";
 import {updateReadingStats} from "@/utils/readingStats";
 import {Badge} from "@prisma/client";
+import {validateBody, withErrorHandling, createResponse, createErrorResponse} from "@/utils/api-validation";
 
 // A union of challenge types + user id
 const PostSchema = z.object({
     ...CreateChallengeSchema.shape,
     userId: z.string(),
-    deadline: z.preprocess((val) => new Date(val as string), z.date()),
+    deadline: z.coerce.date()
 });
 
-export const POST = createZodRoute().body(PostSchema).handler(async (_, context) => {
+async function handlePost(request: NextRequest): Promise<NextResponse> {
     const {
         type,
         userId,
         target,
         deadline
-    } = context.body;
+    } = await validateBody(request, PostSchema);
 
     const user = await prisma.user.findUnique({
         where: {id: userId}
-    })
+    });
 
     if (!user) {
-        return NextResponse.json({error: 'User does not exist'}, {status: 400});
+        return createErrorResponse('User does not exist', 400);
     }
 
     const existingGoal = await prisma.readingGoal.findFirst({
@@ -40,9 +40,9 @@ export const POST = createZodRoute().body(PostSchema).handler(async (_, context)
     });
 
     if (existingGoal) {
-        return NextResponse.json(
-            {error: "You already have an active goal of this type for this deadline."},
-            {status: 409}
+        return createErrorResponse(
+            "You already have an active goal of this type for this deadline.",
+            409
         );
     }
 
@@ -53,23 +53,24 @@ export const POST = createZodRoute().body(PostSchema).handler(async (_, context)
             target,
             deadline,
         }
-    })
+    });
+
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const {id, ...challengeWithoutId} = newChallenge;
 
-    return NextResponse.json({challenge: challengeWithoutId}, {status: 201});
-});
+    return createResponse({challenge: challengeWithoutId}, 201);
+}
 
 const PutBody = BaseUpdateChallengeSchema.extend({
     challengeId: z.string(),
     userId: z.string(),
-    deadline: z.preprocess((val) => new Date(val as string), z.date())
+    deadline: z.coerce.date()
 }).refine((data) => data.progress <= data.target, {
     message: "La progression ne peut pas dépasser la cible",
     path: ["progress"],
 });
 
-export const PUT = createZodRoute().body(PutBody).handler(async (_, context) => {
+async function handlePut(request: NextRequest): Promise<NextResponse> {
     const {
         challengeId,
         type,
@@ -77,18 +78,18 @@ export const PUT = createZodRoute().body(PutBody).handler(async (_, context) => 
         progress,
         deadline,
         userId
-    } = context.body;
+    } = await validateBody(request, PutBody);
 
     const challenge = await prisma.readingGoal.findUnique({
         where: {id: challengeId},
     });
 
     if (!challenge) {
-        return NextResponse.json({error: 'Challenge not found'}, {status: 404});
+        return createErrorResponse('Challenge not found', 404);
     }
 
     if (challenge.userId !== userId) {
-        return NextResponse.json({error: 'User does not own this challenge'}, {status: 403});
+        return createErrorResponse('User does not own this challenge', 403);
     }
 
     const wasCompleted = challenge.completedAt !== null;
@@ -109,7 +110,7 @@ export const PUT = createZodRoute().body(PutBody).handler(async (_, context) => 
     });
 
     if (!updatedChallenge) {
-        return NextResponse.json({error: 'Error while updating challenge'}, {status: 500});
+        return createErrorResponse('Error while updating challenge', 500);
     }
 
     // Mise à jour des statistiques de lecture si le progrès a augmenté
@@ -123,38 +124,31 @@ export const PUT = createZodRoute().body(PutBody).handler(async (_, context) => 
         newBadges = await checkAndAssignBadges(userId);
     }
 
-    return NextResponse.json({
+    return createResponse({
         challenge: updatedChallenge,
         badgesAwarded: newBadges.length > 0,
         newBadges
-    }, {status: 200});
-})
+    });
+}
 
 const DeleteSchema = z.object({
     challengeId: z.string(),
     userId: z.string()
-})
+});
 
-export const DELETE = createZodRoute().handler(async (request) => {
-    const data = await request.json();
-    const {error} = DeleteSchema.safeParse(data);
-
-    if (error) {
-        return NextResponse.json({error: error.errors}, {status: 400});
-    }
-
-    const {challengeId, userId} = data;
+async function handleDelete(request: NextRequest): Promise<NextResponse> {
+    const {challengeId, userId} = await validateBody(request, DeleteSchema);
 
     const challenge = await prisma.readingGoal.findUnique({
         where: {id: challengeId},
     });
 
     if (!challenge) {
-        return NextResponse.json({error: 'Challenge not found'}, {status: 404});
+        return createErrorResponse('Challenge not found', 404);
     }
 
     if (challenge.userId !== userId) {
-        return NextResponse.json({error: 'User does not own this challenge'}, {status: 403});
+        return createErrorResponse('User does not own this challenge', 403);
     }
 
     await prisma.readingGoal.delete({
@@ -163,5 +157,9 @@ export const DELETE = createZodRoute().handler(async (request) => {
         },
     });
 
-    return NextResponse.json({success: true}, {status: 200});
-});
+    return createResponse({success: true});
+}
+
+export const POST = withErrorHandling(handlePost);
+export const PUT = withErrorHandling(handlePut);
+export const DELETE = withErrorHandling(handleDelete);

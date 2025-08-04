@@ -37,7 +37,7 @@ export async function signUp(formData: unknown) {
         });
 
         return {message: `Utilisateur avec email : ${createdUser.email} est créé !`};
-    } catch (e) {
+    } catch {
         return {error: "Erreur lors de la création de l'utilisateur"};
     }
 }

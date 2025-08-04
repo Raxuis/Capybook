@@ -1,6 +1,6 @@
 import React, {memo, useMemo} from 'react';
-import {Badge} from "../types";
 import {formatBadgeCategory} from "@/utils/format";
+import {Badge} from "@/types/profile";
 
 interface BadgesTabProps {
     badges?: Badge[];
@@ -20,10 +20,10 @@ const BadgesTab = memo<BadgesTabProps>(({badges, isOwner}) => {
 
     if (!badges || badges.length === 0) {
         return (
-            <div className="text-center py-12">
-                <div className="text-4xl mb-4">🏆</div>
+            <div className="py-12 text-center">
+                <div className="mb-4 text-4xl">🏆</div>
                 <h3 className="text-xl font-semibold">Aucun badge pour le moment</h3>
-                <p className="text-gray-500 mt-2">Continuez à lire et à écrire des avis pour débloquer des badges.</p>
+                <p className="mt-2 text-gray-500">Continuez à lire et à écrire des avis pour débloquer des badges.</p>
             </div>
         );
     }
@@ -31,24 +31,24 @@ const BadgesTab = memo<BadgesTabProps>(({badges, isOwner}) => {
         <>
             {Object.entries(badgesByCategory).map(([category, categoryBadges]) => (
                 <div key={category} className="mb-8">
-                    <h2 className="text-lg sm:text-xl font-semibold mb-4 border-b pb-2">
+                    <h2 className="mb-4 border-b pb-2 text-lg font-semibold sm:text-xl">
                         {formatBadgeCategory(category)}
-                        <span className="text-sm text-gray-500 font-normal ml-2">
+                        <span className="ml-2 text-sm font-normal text-gray-500">
               ({categoryBadges.length})
             </span>
                     </h2>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4">
+                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-5">
                         {categoryBadges.map(badge => (
                             <div
                                 key={badge.id}
-                                className="flex flex-col items-center bg-white border border-gray-200 rounded-lg p-3 sm:p-4 shadow-sm hover:shadow-md transition-all"
+                                className="flex flex-col items-center rounded-lg border border-gray-200 bg-white p-3 shadow-sm transition-all hover:shadow-md sm:p-4"
                             >
-                                <div className="text-3xl sm:text-4xl mb-2 sm:mb-3">{badge.icon || '🏆'}</div>
-                                <div className="text-xs sm:text-sm font-medium text-center">{badge.name}</div>
-                                <div className="text-xs text-gray-500 mt-2 text-center line-clamp-2">
+                                <div className="mb-2 text-3xl sm:mb-3 sm:text-4xl">{badge.icon || '🏆'}</div>
+                                <div className="text-center text-xs font-medium sm:text-sm">{badge.name}</div>
+                                <div className="mt-2 line-clamp-2 text-center text-xs text-gray-500">
                                     {isOwner ? badge.ownerDescription : badge.publicDescription}
                                 </div>
-                                <div className="text-xs text-blue-600 mt-2 sm:mt-3">
+                                <div className="mt-2 text-xs text-blue-600 sm:mt-3">
                                     Obtenu le {new Date(badge.earnedAt).toLocaleDateString('fr-FR')}
                                 </div>
                             </div>

@@ -26,19 +26,19 @@ const ChallengeHeaderInfo = ({type}: Props) => {
         const titles: Record<string, JSX.Element> = {
             booksRead: (
                 <CardTitle className="flex items-center text-indigo-700">
-                    <BookOpen className="h-5 w-5 mr-2"/>
+                    <BookOpen className="mr-2 size-5"/>
                     Livres lus
                 </CardTitle>
             ),
             challengesCompleted: (
                 <CardTitle className="flex items-center text-emerald-700">
-                    <BarChart className="h-5 w-5 mr-2"/>
+                    <BarChart className="mr-2 size-5"/>
                     Challenges terminés
                 </CardTitle>
             ),
             inProgress: (
                 <CardTitle className="flex items-center text-amber-700">
-                    <Target className="h-5 w-5 mr-2"/>
+                    <Target className="mr-2 size-5"/>
                     En cours
                 </CardTitle>
             ),

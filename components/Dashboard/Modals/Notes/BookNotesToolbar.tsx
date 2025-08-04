@@ -21,9 +21,9 @@ export const BookNotesToolbar = ({
                                      loading,
                                  }: BookNotesToolbarProps) => {
     return (
-        <div className="flex flex-col sm:flex-row gap-2 pb-2 border-b">
-            <div className="flex-1 relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground"/>
+        <div className="flex flex-col gap-2 border-b pb-2 sm:flex-row">
+            <div className="relative flex-1">
+                <Search className="text-muted-foreground absolute left-3 top-1/2 size-4 -translate-y-1/2"/>
                 <Input
                     placeholder="Rechercher dans les notes..."
                     value={searchTerm}
@@ -31,13 +31,13 @@ export const BookNotesToolbar = ({
                     className="pl-10"
                 />
             </div>
-            <div className="flex gap-2 items-center">
+            <div className="flex items-center gap-2">
                 <Button
                     variant="outline"
                     size="sm"
                     onClick={onSortChange}
                 >
-                    <SortAsc className="h-4 w-4 mr-1"/>
+                    <SortAsc className="mr-1 size-4"/>
                     {sortBy === 'createdAt' ? 'Date' : 'Page'}
                 </Button>
                 <Button
@@ -46,7 +46,7 @@ export const BookNotesToolbar = ({
                     onClick={onCreateNote}
                     disabled={loading}
                 >
-                    <Plus className="h-4 w-4 mr-1"/>
+                    <Plus className="mr-1 size-4"/>
                     Nouvelle note
                 </Button>
             </div>

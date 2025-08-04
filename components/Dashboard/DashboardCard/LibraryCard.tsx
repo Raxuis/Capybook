@@ -9,6 +9,7 @@ import {useReviewModalStore} from "@/store/reviewModalStore";
 import {useUser} from "@/hooks/useUser";
 import {useBooks} from "@/hooks/useBooks";
 import {useCallback, useMemo} from "react";
+import {cn} from "@/lib/utils";
 
 type LibraryCardProps = {
     userBook: {
@@ -79,41 +80,41 @@ const LibraryCard = ({userBook, openBookModal}: LibraryCardProps) => {
                 return {
                     badge: {
                         text: 'Prêté',
-                        variant: 'outline' as const,
-                        className: 'bg-orange-50 text-orange-700 border-orange-200 hover:bg-orange-100',
+                        variant: 'secondary' as const,
+                        className: 'text-orange-700 bg-orange-50/80 border-0 hover:text-orange-800 hover:bg-orange-100',
                         icon: UserCheck
                     },
-                    cardClassName: 'border-orange-200 bg-orange-50/30'
+                    cardClassName: 'border-l-4 border-l-orange-200'
                 };
             case 'pending_loan':
                 return {
                     badge: {
                         text: 'Prêt en attente',
-                        variant: 'outline' as const,
-                        className: 'bg-yellow-50 text-yellow-700 border-yellow-200 hover:bg-yellow-100',
+                        variant: 'secondary' as const,
+                        className: 'text-yellow-700 bg-yellow-50/80 border-0 hover:text-yellow-800 hover:bg-yellow-100',
                         icon: Clock
                     },
-                    cardClassName: 'border-yellow-200 bg-yellow-50/30'
+                    cardClassName: 'border-l-4 border-l-yellow-200'
                 };
             case 'finished':
                 return {
                     badge: {
                         text: 'Terminé',
-                        variant: 'outline' as const,
-                        className: 'bg-green-50 text-green-700 border-green-200 hover:bg-green-100',
+                        variant: 'secondary' as const,
+                        className: 'text-green-700 bg-green-50/80 border-0 hover:text-green-800 hover:bg-green-100',
                         icon: CheckCircle
                     },
-                    cardClassName: 'border-green-200 bg-green-50/30'
+                    cardClassName: 'border-l-4 border-l-green-200'
                 };
             case 'current':
                 return {
                     badge: {
                         text: 'En cours',
-                        variant: 'outline' as const,
-                        className: 'bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100',
+                        variant: 'secondary' as const,
+                        className: 'text-blue-700 bg-blue-50/80 border-0 hover:text-blue-800 hover:bg-blue-100',
                         icon: Clock
                     },
-                    cardClassName: 'border-blue-200 bg-blue-50/30'
+                    cardClassName: 'border-l-4 border-l-blue-200'
                 };
             default:
                 return {
@@ -124,116 +125,115 @@ const LibraryCard = ({userBook, openBookModal}: LibraryCardProps) => {
     }, [bookStatus]);
 
     return (
-        <Card className={`overflow-hidden transition-all hover:shadow-md group ${statusConfig.cardClassName}`}>
-            <CardHeader className="p-4 pb-2 bg-primary/5 flex flex-row items-center justify-between space-y-0">
-                <CardTitle className="text-lg font-medium line-clamp-1">{userBook.Book.title}</CardTitle>
-                <div className="flex items-center space-x-2">
-                    {isBookFinished(userBook) && !isLoaned ?
-                        !bookReview ?
-                            (
+        <Card
+            className={cn('group overflow-hidden transition-all duration-200 hover:shadow-lg border-border/50', statusConfig.cardClassName)}>
+            <CardHeader className="pb-3">
+                <div className="flex items-start justify-between gap-3">
+                    <CardTitle className="line-clamp-2 text-lg font-medium leading-tight">
+                        {userBook.Book.title}
+                    </CardTitle>
+                    <div className="flex shrink-0 items-center gap-1">
+                        {isBookFinished(userBook) && !isLoaned && (
+                            !bookReview ? (
                                 <Button
                                     variant="ghost"
-                                    size="icon"
-                                    className="h-8 w-8 p-0 pt-0.5"
+                                    size="sm"
+                                    className="size-8 p-0 hover:bg-amber-50"
                                     onClick={handleReviewClick}
                                 >
-                                    <Star className="h-4 w-4 text-amber-500"/>
+                                    <Star className="size-4 text-amber-500"/>
                                     <span className="sr-only">Donner un avis</span>
                                 </Button>
                             ) : (
-                                <div className="flex items-center bg-white px-2 py-1 rounded-full mr-2">
-                                    <Star className="h-3 w-3 text-amber-500 mr-1 inline-block"/>
-                                    <span className="text-sm font-bold">{bookReview.rating}/5</span>
+                                <div
+                                    className="flex items-center gap-1 rounded-md bg-amber-50 px-2 py-1 text-amber-700">
+                                    <Star className="size-3 fill-current"/>
+                                    <span className="text-xs font-medium">{bookReview.rating}/5</span>
                                 </div>
-                            ) : null
-                    }
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 p-0 pt-0.5"
-                        onClick={() => openBookModal(userBook.Book as BookType)}
-                    >
-                        <Info className="h-4 w-4"/>
-                        <span className="sr-only">Détails</span>
-                    </Button>
+                            )
+                        )}
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            className="hover:bg-muted size-8 p-0"
+                            onClick={() => openBookModal(userBook.Book as BookType)}
+                        >
+                            <Info className="text-muted-foreground size-4"/>
+                            <span className="sr-only">Détails</span>
+                        </Button>
+                    </div>
                 </div>
-            </CardHeader>
-            <CardContent className="p-4 pt-3 space-y-4">
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center">
-                        <BookOpen className="h-4 w-4 mr-2 text-muted-foreground"/>
-                        <span className="text-sm text-muted-foreground">
-              {userBook.Book.authors || "Auteur inconnu"}
-            </span>
+
+                <div className="flex items-center justify-between pt-2">
+                    <div className="text-muted-foreground flex items-center gap-2 text-sm">
+                        <BookOpen className="size-4"/>
+                        <span className="line-clamp-1">
+                            {userBook.Book.authors || "Auteur inconnu"}
+                        </span>
                     </div>
 
-                    {/* Affichage du badge de statut */}
                     {statusConfig.badge && (
-                        <div
-                            className="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-2 items-end sm:items-center">
-                            <Badge
-                                variant={statusConfig.badge.variant}
-                                className={`${statusConfig.badge.className} cursor-default transition-colors flex items-center gap-1`}
-                            >
-                                <statusConfig.badge.icon className="h-3 w-3"/>
-                                {statusConfig.badge.text}
-                            </Badge>
-                        </div>
+                        <Badge
+                            variant={statusConfig.badge.variant}
+                            className={cn('flex items-center gap-1.5 text-xs transition-colors', statusConfig.badge.className)}
+                        >
+                            <statusConfig.badge.icon className="size-3"/>
+                            {statusConfig.badge.text}
+                        </Badge>
                     )}
                 </div>
+            </CardHeader>
 
-                {/* Informations supplémentaires pour les livres prêtés */}
-                {isLoaned && lendingInfo && (
-                    <div className="bg-orange-50 border border-orange-200 rounded-lg p-3 text-sm">
-                        <div className="flex items-center gap-2 text-orange-700">
-                            <UserCheck className="h-4 w-4"/>
-                            <span
-                                className="font-medium">Prêté à {lendingInfo.borrower.name || lendingInfo.borrower.username}</span>
+            <CardContent className="space-y-4 pt-0">
+                {/* Information de prêt simplifiée */}
+                {(isLoaned || isPendingLoan) && lendingInfo && (
+                    <div className={`
+                        rounded-lg border-l-4 py-2 pl-4
+                        ${isPendingLoan
+                        ? 'border-l-yellow-200 bg-yellow-50/30'
+                        : 'border-l-orange-200 bg-orange-50/30'
+                    }
+                    `}>
+                        <div className={`
+                            mb-1 text-sm font-medium
+                            ${isPendingLoan ? 'text-yellow-800' : 'text-orange-800'}
+                        `}>
+                            {isPendingLoan
+                                ? 'Demande de prêt en attente'
+                                : `Prêté à ${lendingInfo.borrower.name || lendingInfo.borrower.username}`
+                            }
                         </div>
                         {lendingInfo.acceptedAt && (
-                            <p className="text-orange-600 mt-1">
+                            <div className={`
+                                text-xs
+                                ${isPendingLoan ? 'text-yellow-600' : 'text-orange-600'}
+                            `}>
                                 Depuis le {new Date(lendingInfo.acceptedAt).toLocaleDateString('fr-FR')}
-                            </p>
+                            </div>
                         )}
                         {lendingInfo.dueDate && (
-                            <p className="text-orange-600 mt-1">
-                                À retourner le {new Date(lendingInfo.dueDate).toLocaleDateString('fr-FR')}
-                            </p>
+                            <div className="text-xs text-orange-600">
+                                Retour prévu le {new Date(lendingInfo.dueDate).toLocaleDateString('fr-FR')}
+                            </div>
                         )}
                     </div>
                 )}
 
-                {(isLoaned || isPendingLoan) && lendingInfo && (
-                    <div
-                        className={`${isPendingLoan ? 'bg-yellow-50 border-yellow-200' : 'bg-orange-50 border-orange-200'} border rounded-lg p-3 text-sm`}>
-                        <div
-                            className={`flex items-center gap-2 ${isPendingLoan ? 'text-yellow-700' : 'text-orange-700'}`}>
-                            <UserCheck className="h-4 w-4"/>
-                            <span className="font-medium">
-                    {isPendingLoan ? 'Demande de prêt en attente' : `Prêté à ${lendingInfo.borrower.name || lendingInfo.borrower.username}`}
-                </span>
-                        </div>
-                        {lendingInfo.acceptedAt && (
-                            <p className={`${isPendingLoan ? 'text-yellow-600' : 'text-orange-600'} mt-1`}>
-                                Depuis le {new Date(lendingInfo.acceptedAt).toLocaleDateString('fr-FR')}
-                            </p>
-                        )}
-                    </div>
-                )}
-
-                {/* Affichage du tracker de progression uniquement pour les livres en cours et non prêtés */}
+                {/* Tracker de progression */}
                 {userBook.isCurrentBook && !isLoaned && (
-                    (userBook.Book.numberOfPages || !userBook.Book.numberOfPages && userBook.progressType === "percentage") ? (
-                        <ProgressTracker
-                            book={userBook.Book as BookType}
-                            initialProgress={userBook.progress || 0}
-                        />
-                    ) : (
-                        <NoPageNumber
-                            bookId={userBook.Book.id}
-                            bookKey={userBook.Book.key}
-                        />
-                    )
+                    <div className="pt-2">
+                        {(userBook.Book.numberOfPages || (!userBook.Book.numberOfPages && userBook.progressType === "percentage")) ? (
+                            <ProgressTracker
+                                book={userBook.Book as BookType}
+                                initialProgress={userBook.progress || 0}
+                            />
+                        ) : (
+                            <NoPageNumber
+                                bookId={userBook.Book.id}
+                                bookKey={userBook.Book.key}
+                            />
+                        )}
+                    </div>
                 )}
             </CardContent>
         </Card>

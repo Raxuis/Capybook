@@ -17,7 +17,7 @@ const HeaderLinks = async ({headerElementsLength, handleSignOut}: Props) => {
             <>
                 <motion.button
                     onClick={handleSignOut}
-                    className="text-sm font-medium hover:text-primary transition-colors"
+                    className="hover:text-primary text-sm font-medium transition-colors"
                     whileHover={{scale: 1.1}}
                     initial={{opacity: 0, x: -20}}
                     animate={{opacity: 1, x: 0}}
@@ -27,7 +27,7 @@ const HeaderLinks = async ({headerElementsLength, handleSignOut}: Props) => {
                 </motion.button>
                 <motion.a
                     href={`/profile/@${user.username}`}
-                    className="text-sm font-medium hover:text-primary transition-colors"
+                    className="hover:text-primary text-sm font-medium transition-colors"
                     whileHover={{scale: 1.1}}
                     initial={{opacity: 0, x: -20}}
                     animate={{opacity: 1, x: 0}}
@@ -39,7 +39,7 @@ const HeaderLinks = async ({headerElementsLength, handleSignOut}: Props) => {
         ) : (
             <motion.a
                 href="/login"
-                className="text-sm font-medium hover:text-primary transition-colors"
+                className="hover:text-primary text-sm font-medium transition-colors"
                 whileHover={{scale: 1.1}}
                 initial={{opacity: 0, y: -20}}
                 animate={{opacity: 1, y: 0}}

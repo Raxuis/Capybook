@@ -4,13 +4,13 @@ import {Quote, Edit3, BookOpen, FileText} from 'lucide-react';
 export const getTypeIcon = (type: BookNoteType) => {
     switch (type) {
         case BookNoteType.QUOTE:
-            return <Quote className="h-4 w-4"/>;
+            return <Quote className="size-4"/>;
         case BookNoteType.THOUGHT:
-            return <Edit3 className="h-4 w-4"/>;
+            return <Edit3 className="size-4"/>;
         case BookNoteType.SUMMARY:
-            return <BookOpen className="h-4 w-4"/>;
+            return <BookOpen className="size-4"/>;
         default:
-            return <FileText className="h-4 w-4"/>;
+            return <FileText className="size-4"/>;
     }
 };
 

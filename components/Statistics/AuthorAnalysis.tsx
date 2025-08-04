@@ -21,12 +21,12 @@ export function AuthorAnalysis({data}: AuthorAnalysisProps) {
             <CardContent>
                 {
                     data.length === 0 ? (
-                        <div className="flex items-center justify-center h-full">
+                        <div className="flex h-full items-center justify-center">
                             <p className="text-gray-500">Aucune donnée disponible</p>
                         </div>
                     ) : (
                         <>
-                            <div className="flex items-center justify-center h-full">
+                            <div className="flex h-full items-center justify-center">
                                 <p className="text-gray-500">Nombre de livres lus par auteur</p>
                             </div>
                             <div className="h-[300px]">

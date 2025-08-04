@@ -185,15 +185,15 @@ const BookModal = ({
             }}>
             <Dialog open={isOpen || isAnimating} onOpenChange={(open) => !open && handleClose()}>
                 <DialogContent
-                    className="sm:max-w-md md:max-w-lg lg:max-w-xl overflow-y-auto max-h-[90vh] w-full"
+                    className="max-h-[90vh] w-full overflow-y-auto sm:max-w-md md:max-w-lg lg:max-w-xl"
                 >
                     <DialogHeader className="space-y-2">
                         <DialogTitle
-                            className="text-xl font-bold break-words">{book?.title || "Détails du livre"}</DialogTitle>
+                            className="break-words text-xl font-bold">{book?.title || "Détails du livre"}</DialogTitle>
                         {
                             isLoading ? (
                                 <>
-                                    <Skeleton className="h-4 w-full mb-1"/>
+                                    <Skeleton className="mb-1 h-4 w-full"/>
                                     <DialogDescription className="sr-only">
                                         Chargement...
                                     </DialogDescription>
@@ -201,7 +201,7 @@ const BookModal = ({
                             ) : book?.description ? (
                                 //   Limiting description max length to 200 characters
                                 <DialogDescription
-                                    className="text-sm text-gray-500 break-words overflow-hidden overflow-wrap-anywhere w-3/4">
+                                    className="overflow-wrap-anywhere w-3/4 overflow-hidden break-words text-sm text-gray-500">
                                     {book.description.length > 200
                                         ? book.description.substring(0, 200) + "..."
                                         : book.description}
@@ -214,10 +214,10 @@ const BookModal = ({
                         }
                     </DialogHeader>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                         {/* Image/Couverture */}
                         <div
-                            className="aspect-[2/3] relative bg-gray-100 rounded-md overflow-hidden max-h-96 mx-auto w-full sm:max-w-[200px]">
+                            className="relative mx-auto aspect-[2/3] max-h-96 w-full overflow-hidden rounded-md bg-gray-100 sm:max-w-[200px]">
                             {book?.cover ? (
                                 <Image
                                     src={book.cover}
@@ -228,26 +228,26 @@ const BookModal = ({
                                     loading="lazy"
                                 />
                             ) : (
-                                <div className="w-full h-full flex items-center justify-center">
-                                    <BookOpen className="h-16 w-16 text-gray-300"/>
+                                <div className="flex size-full items-center justify-center">
+                                    <BookOpen className="size-16 text-gray-300"/>
                                 </div>
                             )}
                         </div>
 
-                        <div className="md:col-span-2 space-y-4">
+                        <div className="space-y-4 md:col-span-2">
                             {/* Auteurs */}
                             {book?.authors && book.authors.length > 0 && (
                                 <div>
-                                    <h3 className="text-sm font-medium text-gray-500 mb-1">Auteur(s)</h3>
-                                    <p className="break-words flex-wrap">{formatList(book.authors)}</p>
+                                    <h3 className="mb-1 text-sm font-medium text-gray-500">Auteur(s)</h3>
+                                    <p className="flex-wrap break-words">{formatList(book.authors)}</p>
                                 </div>
                             )}
 
                             {/* Nombre de pages */}
                             {book?.numberOfPages && (
                                 <div>
-                                    <h3 className="text-sm font-medium text-gray-500 mb-1 flex items-center">
-                                        <FileText className="h-4 w-4 mr-1"/>
+                                    <h3 className="mb-1 flex items-center text-sm font-medium text-gray-500">
+                                        <FileText className="mr-1 size-4"/>
                                         Nombre de page <span>{book.numberOfPages > 1 && "s"}</span>
                                     </h3>
                                     <p>{book.numberOfPages} pages</p>
@@ -257,19 +257,19 @@ const BookModal = ({
                             {/* Genres/Sujets */}
                             {
                                 isLoading ? (
-                                    <Skeleton className="h-4 w-full mb-1"/>
+                                    <Skeleton className="mb-1 h-4 w-full"/>
                                 ) : book?.subjects && book.subjects.length === 0 ? (
                                     <p className="text-sm text-gray-500">Aucun genre disponible</p>
                                 ) : book?.subjects && book.subjects.length > 0 ? (
                                     <div>
-                                        <h3 className="text-sm font-medium text-gray-500 mb-1 flex items-center">
-                                            <Globe className="h-4 w-4 mr-1"/>
+                                        <h3 className="mb-1 flex items-center text-sm font-medium text-gray-500">
+                                            <Globe className="mr-1 size-4"/>
                                             Genres(s)
                                         </h3>
-                                        <div className="flex flex-wrap gap-1 mt-1 w-full">
+                                        <div className="mt-1 flex w-full flex-wrap gap-1">
                                             {book.subjects.slice(0, 5).map((subject, idx) => (
                                                 <Badge key={idx} variant="secondary"
-                                                       className="text-xs max-w-24 truncate">
+                                                       className="max-w-24 truncate text-xs">
                                                     {subject.length > 10 ? subject.substring(0, 10) + '...' : subject}
                                                 </Badge>
                                             ))}
@@ -286,28 +286,28 @@ const BookModal = ({
                                             {inLibrary && (
                                                 <Badge variant="outline"
                                                        className="bg-primary/10 text-primary flex items-center gap-1">
-                                                    <BookIcon className="h-3 w-3"/>
+                                                    <BookIcon className="size-3"/>
                                                     Dans ma bibliothèque
                                                 </Badge>
                                             )}
                                             {inWishlist && (
                                                 <Badge variant="outline"
-                                                       className="bg-rose-50 text-rose-600 flex items-center gap-1">
-                                                    <Heart className="h-3 w-3"/>
+                                                       className="flex items-center gap-1 bg-rose-50 text-rose-600">
+                                                    <Heart className="size-3"/>
                                                     Dans ma wishlist
                                                 </Badge>
                                             )}
                                             {isBookLoanedInstance && (
                                                 <Badge variant="outline"
-                                                       className="bg-orange-50 text-orange-700 border-orange-200 flex items-center gap-1">
-                                                    <UserCheck className="h-3 w-3"/>
+                                                       className="flex items-center gap-1 border-orange-200 bg-orange-50 text-orange-700">
+                                                    <UserCheck className="size-3"/>
                                                     Prêté
                                                 </Badge>
                                             )}
                                             {isPendingLoanInstance && (
                                                 <Badge variant="outline"
-                                                       className="bg-yellow-50 text-yellow-700 border-yellow-200 flex items-center gap-1">
-                                                    <Clock className="h-3 w-3"/>
+                                                       className="flex items-center gap-1 border-yellow-200 bg-yellow-50 text-yellow-700">
+                                                    <Clock className="size-3"/>
                                                     Prêt en attente
                                                 </Badge>
                                             )}
@@ -327,23 +327,23 @@ const BookModal = ({
                                         <div className="flex flex-wrap gap-2">
                                             {isCurrentBookInstance ? (
                                                 <Badge variant="outline"
-                                                       className="bg-indigo-100 text-indigo-600 flex items-center gap-1">
-                                                    <BookMarked className="h-3 w-3"/>
+                                                       className="flex items-center gap-1 bg-indigo-100 text-indigo-600">
+                                                    <BookMarked className="size-3"/>
                                                     En cours de lecture
                                                 </Badge>
                                             ) : inLibrary ?
                                                 isBookFinishedInstance ?
                                                     (
                                                         <Badge variant="outline"
-                                                               className="bg-green-100 text-green-600 flex items-center gap-1">
-                                                            <BookCopy className="h-3 w-3"/>
+                                                               className="flex items-center gap-1 bg-green-100 text-green-600">
+                                                            <BookCopy className="size-3"/>
                                                             Terminé
                                                         </Badge>
                                                     )
                                                     : (
                                                         <Badge variant="outline"
-                                                               className="text-gray-500 flex items-center gap-1">
-                                                            <BookCopy className="h-3 w-3"/>
+                                                               className="flex items-center gap-1 text-gray-500">
+                                                            <BookCopy className="size-3"/>
                                                             Non commencé
                                                         </Badge>
                                                     ) : null}
@@ -356,9 +356,9 @@ const BookModal = ({
 
                     {/* Informations de prêt */}
                     {(isBookLoanedInstance || isPendingLoanInstance) && lendingInfo && (
-                        <div className={`${isPendingLoanInstance ? 'bg-yellow-50 border-yellow-200' : 'bg-orange-50 border-orange-200'} border rounded-lg p-4 space-y-2`}>
+                        <div className={`${isPendingLoanInstance ? 'border-yellow-200 bg-yellow-50' : 'border-orange-200 bg-orange-50'} space-y-2 rounded-lg border p-4`}>
                             <div className={`flex items-center gap-2 ${isPendingLoanInstance ? 'text-yellow-700' : 'text-orange-700'}`}>
-                                <UserCheck className="h-4 w-4"/>
+                                <UserCheck className="size-4"/>
                                 <span className="font-medium">
                                     {isPendingLoanInstance
                                         ? 'Demande de prêt en attente'
@@ -379,19 +379,19 @@ const BookModal = ({
                         </div>
                     )}
 
-                    <DialogFooter className="flex flex-col sm:flex-row flex-wrap mt-4 sm:justify-start">
+                    <DialogFooter className="mt-4 flex flex-col flex-wrap sm:flex-row sm:justify-start">
                         {/* Bouton pour marquer comme en lecture */}
                         {(inLibrary && !isCurrentBookInstance && !isBookFinishedInstance && !isBookLoanedInstance && !isPendingLoanInstance) && (
                             <Button
                                 variant="outline"
-                                className="w-full sm:w-auto hover:bg-indigo-200 border-indigo-300 text-indigo-700"
+                                className="w-full border-indigo-300 text-indigo-700 hover:bg-indigo-200 sm:w-auto"
                                 onClick={handleToggleCurrentBook}
                                 disabled={loadingLibrary || loadingWishlist || loadingCurrentBook || loadingLending}
                             >
                                 {loadingCurrentBook ? (
-                                    <Loader2 className="h-4 w-4 animate-spin mr-2"/>
+                                    <Loader2 className="mr-2 size-4 animate-spin"/>
                                 ) : (
-                                    <BookMarked className="h-4 w-4 mr-2"/>
+                                    <BookMarked className="mr-2 size-4"/>
                                 )}
                                 Marquer comme en lecture
                             </Button>
@@ -401,14 +401,14 @@ const BookModal = ({
                         {(inLibrary && isCurrentBookInstance && !isBookLoanedInstance && !isPendingLoanInstance) && (
                             <Button
                                 variant="outline"
-                                className="w-full sm:w-auto hover:bg-gray-200 border-gray-300"
+                                className="w-full border-gray-300 hover:bg-gray-200 sm:w-auto"
                                 onClick={handleToggleCurrentBook}
                                 disabled={loadingLibrary || loadingWishlist || loadingCurrentBook || loadingLending}
                             >
                                 {loadingCurrentBook ? (
-                                    <Loader2 className="h-4 w-4 animate-spin mr-2"/>
+                                    <Loader2 className="mr-2 size-4 animate-spin"/>
                                 ) : (
-                                    <BookCopy className="h-4 w-4 mr-2"/>
+                                    <BookCopy className="mr-2 size-4"/>
                                 )}
                                 Marquer comme non commencé
                             </Button>
@@ -418,14 +418,14 @@ const BookModal = ({
                         {(inLibrary && !isBookLoanedInstance && !isPendingLoanInstance) && (
                             <Button
                                 variant="outline"
-                                className="w-full sm:w-auto hover:bg-blue-200 border-blue-300 text-blue-700"
+                                className="w-full border-blue-300 text-blue-700 hover:bg-blue-200 sm:w-auto"
                                 onClick={() => setIsLendingModalOpened(true)}
                                 disabled={loadingLibrary || loadingWishlist || loadingCurrentBook || loadingLending}
                             >
                                 {loadingLending ? (
-                                    <Loader2 className="h-4 w-4 animate-spin mr-2"/>
+                                    <Loader2 className="mr-2 size-4 animate-spin"/>
                                 ) : (
-                                    <Users className="h-4 w-4 mr-2"/>
+                                    <Users className="mr-2 size-4"/>
                                 )}
                                 Prêter ce livre
                             </Button>
@@ -435,14 +435,14 @@ const BookModal = ({
                         {(inLibrary && (isBookLoanedInstance || isPendingLoanInstance)) && (
                             <Button
                                 variant="outline"
-                                className="w-full sm:w-auto hover:bg-orange-200 border-orange-300 text-orange-700"
+                                className="w-full border-orange-300 text-orange-700 hover:bg-orange-200 sm:w-auto"
                                 onClick={handleCancelLending}
                                 disabled={loadingLibrary || loadingWishlist || loadingCurrentBook || loadingLending}
                             >
                                 {loadingLending ? (
-                                    <Loader2 className="h-4 w-4 animate-spin mr-2"/>
+                                    <Loader2 className="mr-2 size-4 animate-spin"/>
                                 ) : (
-                                    <UserCheck className="h-4 w-4 mr-2"/>
+                                    <UserCheck className="mr-2 size-4"/>
                                 )}
                                 {isPendingLoanInstance ? 'Annuler la demande' : 'Marquer comme rendu'}
                             </Button>
@@ -457,9 +457,9 @@ const BookModal = ({
                                 disabled={loadingLibrary || loadingWishlist || loadingCurrentBook}
                             >
                                 {loadingLibrary ? (
-                                    <Loader2 className="h-4 w-4 animate-spin mr-2"/>
+                                    <Loader2 className="mr-2 size-4 animate-spin"/>
                                 ) : (
-                                    <Trash2 className="h-4 w-4 mr-2"/>
+                                    <Trash2 className="mr-2 size-4"/>
                                 )}
                                 Retirer de ma bibliothèque
                             </Button>
@@ -474,9 +474,9 @@ const BookModal = ({
                                 disabled={loadingLibrary || loadingWishlist || loadingCurrentBook}
                             >
                                 {loadingWishlist ? (
-                                    <Loader2 className="h-4 w-4 animate-spin mr-2"/>
+                                    <Loader2 className="mr-2 size-4 animate-spin"/>
                                 ) : (
-                                    <Trash2 className="h-4 w-4 mr-2"/>
+                                    <Trash2 className="mr-2 size-4"/>
                                 )}
                                 Retirer de ma wishlist
                             </Button>
@@ -487,27 +487,27 @@ const BookModal = ({
                             <>
                                 <Button
                                     variant="outline"
-                                    className="w-full sm:w-auto hover:bg-green-300"
+                                    className="w-full hover:bg-green-300 sm:w-auto"
                                     onClick={handleToggleLibrary}
                                     disabled={loadingLibrary || loadingWishlist || loadingCurrentBook}
                                 >
                                     {loadingLibrary ? (
-                                        <Loader2 className="h-4 w-4 animate-spin mr-2"/>
+                                        <Loader2 className="mr-2 size-4 animate-spin"/>
                                     ) : (
-                                        <BookIcon className="h-4 w-4 mr-2"/>
+                                        <BookIcon className="mr-2 size-4"/>
                                     )}
                                     Ajouter à ma bibliothèque
                                 </Button>
                                 <Button
                                     variant="outline"
-                                    className="w-full sm:w-auto hover:bg-amber-300"
+                                    className="w-full hover:bg-amber-300 sm:w-auto"
                                     onClick={handleToggleWishlist}
                                     disabled={loadingLibrary || loadingWishlist || loadingCurrentBook}
                                 >
                                     {loadingWishlist ? (
-                                        <Loader2 className="h-4 w-4 animate-spin mr-2"/>
+                                        <Loader2 className="mr-2 size-4 animate-spin"/>
                                     ) : (
-                                        <Heart className="h-4 w-4 mr-2"/>
+                                        <Heart className="mr-2 size-4"/>
                                     )}
                                     Ajouter à ma wishlist
                                 </Button>
@@ -519,7 +519,7 @@ const BookModal = ({
                             onClick={() => setIsNotesModalOpened(true)}
                             variant="notes"
                         >
-                            <FileText className="h-4 w-4 mr-2"/>
+                            <FileText className="mr-2 size-4"/>
                             Voir les notes
                             <span className="text-xs text-gray-500">
                                 ({notesCount ? notesCount : 0})

@@ -6,12 +6,12 @@ import UpdateChallengeDialog from "@/components/Challenges/UpdateChallenge/Updat
 const ChallengeHeader = memo(() => {
     return (
         <>
-            <div className="flex sm:justify-between sm:items-center mb-4 max-sm:flex-col items-start w-full">
+            <div className="mb-4 flex w-full items-start max-sm:flex-col sm:items-center sm:justify-between">
                 <h1 className="text-2xl font-bold">Mes challenges de lecture</h1>
                 <CreateChallengeDialog/>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-3">
 
                 <ChallengeHeaderInfo type="booksRead"/>
                 <ChallengeHeaderInfo type="challengesCompleted"/>

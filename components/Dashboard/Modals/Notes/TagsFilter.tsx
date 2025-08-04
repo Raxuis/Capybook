@@ -19,7 +19,7 @@ export const TagsFilter = ({
     if (allTags.length === 0) return null;
 
     return (
-        <div className="flex flex-wrap gap-2 mt-2">
+        <div className="mt-2 flex flex-wrap gap-2">
             {allTags.map(tag => (
                 <Badge
                     key={tag}
@@ -27,7 +27,7 @@ export const TagsFilter = ({
                     className="cursor-pointer transition-colors"
                     onClick={() => onToggleTag(tag)}
                 >
-                    <Tag className="h-3 w-3 mr-1"/>
+                    <Tag className="mr-1 size-3"/>
                     {tag}
                 </Badge>
             ))}
@@ -38,7 +38,7 @@ export const TagsFilter = ({
                     onClick={onClearFilters}
                     className="h-6 px-2"
                 >
-                    <X className="h-3 w-3"/>
+                    <X className="size-3"/>
                 </Button>
             )}
         </div>

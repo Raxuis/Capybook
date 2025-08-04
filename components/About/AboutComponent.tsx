@@ -14,15 +14,15 @@ import {faqs, services, team, history} from "@/constants/about";
 
 const AboutComponent = () => {
     return (
-        <main className="min-h-screen mb-20">
+        <main className="mb-20 min-h-screen">
             {/* Hero Section */}
-            <section className="relative py-20 bg-gradient-to-br from-primary/10 to-background">
+            <section className="from-primary/10 to-background relative bg-gradient-to-br py-20">
                 <div className="container mx-auto px-4">
-                    <div className="max-w-3xl mx-auto text-center">
-                        <h1 className="text-4xl md:text-5xl font-bold mb-6">
+                    <div className="mx-auto max-w-3xl text-center">
+                        <h1 className="mb-6 text-4xl font-bold md:text-5xl">
                             À propos de Capybook
                         </h1>
-                        <p className="text-xl text-muted-foreground">
+                        <p className="text-muted-foreground text-xl">
                             Nous transformons la façon dont les lecteurs suivent et apprécient leurs lectures, un livre
                             à la fois.
                         </p>
@@ -33,10 +33,10 @@ const AboutComponent = () => {
             {/* Histoire et Mission */}
             <section className="py-16" id="history">
                 <div className="container mx-auto px-4">
-                    <div className="grid md:grid-cols-2 gap-12 items-center">
+                    <div className="grid items-center gap-12 md:grid-cols-2">
                         <div>
-                            <h2 className="text-3xl font-bold mb-6">{history.title}</h2>
-                            <p className="text-lg text-muted-foreground mb-6">
+                            <h2 className="mb-6 text-3xl font-bold">{history.title}</h2>
+                            <p className="text-muted-foreground mb-6 text-lg">
                                 {history.description}
                             </p>
                             <div className="space-y-4">
@@ -55,13 +55,13 @@ const AboutComponent = () => {
                                 }
                             </div>
                         </div>
-                        <div className="relative flex justify-center items-center">
+                        <div className="relative flex items-center justify-center">
                             <Image
                                 src={history.image}
                                 alt="Bibliothèque"
                                 width={600}
                                 height={400}
-                                className="rounded-3xl shadow-lg relative z-0"
+                                className="relative z-0 rounded-3xl shadow-lg"
                             />
                         </div>
                     </div>
@@ -69,22 +69,22 @@ const AboutComponent = () => {
             </section>
 
             {/* Services et Fonctionnalités */}
-            <section className="py-16 bg-gradient-to-br from-secondary/5 to-background" id="services">
+            <section className="from-secondary/5 to-background bg-gradient-to-br py-16" id="services">
                 <div className="container mx-auto px-4">
-                    <h2 className="text-3xl font-bold text-center mb-12">Nos Services</h2>
-                    <div className="grid md:grid-cols-3 gap-8">
+                    <h2 className="mb-12 text-center text-3xl font-bold">Nos Services</h2>
+                    <div className="grid gap-8 md:grid-cols-3">
                         {services.map((service, index) => (
                             <Card key={index}
-                                  className="relative overflow-hidden group hover:shadow-lg transition-shadow">
+                                  className="group relative overflow-hidden transition-shadow hover:shadow-lg">
                                 <CardContent className="p-6">
                                     <div
-                                        className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-primary/10 to-transparent rounded-bl-full transform translate-x-8 -translate-y-8"></div>
+                                        className="from-primary/10 absolute right-0 top-0 size-32 -translate-y-8 translate-x-8 rounded-bl-full bg-gradient-to-br to-transparent"></div>
                                     <div className="relative z-10">
                                         <div
-                                            className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
+                                            className="bg-primary/10 mb-4 flex size-12 items-center justify-center rounded-lg">
                                             {service.icon}
                                         </div>
-                                        <h3 className="text-xl font-semibold mb-3">{service.title}</h3>
+                                        <h3 className="mb-3 text-xl font-semibold">{service.title}</h3>
                                         <p className="text-muted-foreground">{service.description}</p>
                                     </div>
                                 </CardContent>
@@ -97,23 +97,23 @@ const AboutComponent = () => {
             {/* Notre Équipe */}
             <section className="py-16" id="team">
                 <div className="container mx-auto px-4">
-                    <div className="text-center mb-12">
-                        <h2 className="text-3xl font-bold mb-4">Notre Équipe</h2>
-                        <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+                    <div className="mb-12 text-center">
+                        <h2 className="mb-4 text-3xl font-bold">Notre Équipe</h2>
+                        <p className="text-muted-foreground mx-auto max-w-2xl text-xl">
                             Une équipe passionnée de lecteurs et de développeurs dédiés à créer la meilleure expérience
                             de lecture possible.
                         </p>
                     </div>
                     <div className="flex justify-center">
-                        <div className="text-center group">
+                        <div className="group text-center">
                             <div className="relative mb-8 inline-block">
                                 <motion.div
                                     initial={{ scale: 1 }}
                                     whileHover={{ scale: 1.03 }}
                                     whileTap={{ scale: 1 }}
                                     transition={{ type: "spring", stiffness: 300 }}
-                                    className="relative p-1 rounded-full bg-gradient-to-r from-[#673ab7] via-[#4caf50] to-[#00bcd4]">
-                                    <div className="relative rounded-full overflow-hidden w-[280px] h-[280px]">
+                                    className="relative rounded-full bg-gradient-to-r from-[#673ab7] via-[#4caf50] to-[#00bcd4] p-1">
+                                    <div className="relative size-[280px] overflow-hidden rounded-full">
                                         <Image
                                             src={team[0].image}
                                             alt={team[0].firstName + " " + team[0].lastName}
@@ -124,15 +124,15 @@ const AboutComponent = () => {
                                     </div>
                                 </motion.div>
                             </div>
-                            <h3 className="text-2xl font-semibold mb-2">
+                            <h3 className="mb-2 text-2xl font-semibold">
                                 {team[0].firstName + " " + team[0].lastName}
                             </h3>
-                            <p className="text-lg text-muted-foreground mb-2">
+                            <p className="text-muted-foreground mb-2 text-lg">
                                 {
                                     team[0].status
                                 }
                             </p>
-                            <p className="text-muted-foreground max-w-md mx-auto">
+                            <p className="text-muted-foreground mx-auto max-w-md">
                                 {
                                     team[0].description
                                 }
@@ -145,8 +145,8 @@ const AboutComponent = () => {
             {/* FAQ */}
             <section className="py-16" id="faq">
                 <div className="container mx-auto px-4">
-                    <div className="max-w-3xl mx-auto">
-                        <h2 className="text-3xl font-bold text-center mb-12">Questions Fréquentes</h2>
+                    <div className="mx-auto max-w-3xl">
+                        <h2 className="mb-12 text-center text-3xl font-bold">Questions Fréquentes</h2>
                         <Accordion type="single" collapsible className="w-full">
                             {faqs.map((faq, index) => (
                                 <AccordionItem key={index} value={`item-${index}`}>

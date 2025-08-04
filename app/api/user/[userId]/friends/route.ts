@@ -1,46 +1,52 @@
-import {createZodRoute} from 'next-zod-route';
 import {NextResponse} from 'next/server';
 import {z} from "zod";
 import prisma from "@/utils/prisma";
+import {
+    validateParams,
+    createResponse,
+    withErrorHandlingContextOnly,
+    NextJSContext
+} from "@/utils/api-validation";
 
 const paramsSchema = z.object({
-    userId: z.string(),
+    userId: z.string().cuid("L'ID utilisateur doit être un CUID valide"),
 });
 
-export const GET = createZodRoute()
-    .params(paramsSchema)
-    .handler(async (_, context) => {
-        const {userId} = context.params;
+async function handleGet(context: NextJSContext): Promise<NextResponse> {
+    const {userId} = await validateParams(context.params, paramsSchema);
 
-        const following = await prisma.follow.findMany({
-            where: {followerId: userId},
-            select: {followingId: true}
-        });
-
-        const followingIds = following.map(f => f.followingId);
-
-        const followers = await prisma.follow.findMany({
-            where: {followingId: userId},
-            select: {followerId: true}
-        });
-        const followerIds = followers.map(f => f.followerId);
-
-        const mutualFriendIds = followingIds.filter(fid => followerIds.includes(fid));
-
-        if (mutualFriendIds.length === 0) {
-            return NextResponse.json([], {status: 200});
-        }
-
-        const mutualFriends = await prisma.user.findMany({
-            where: {id: {in: mutualFriendIds}},
-            select: {
-                id: true,
-                email: true,
-                username: true,
-                name: true,
-                image: true,
-            }
-        });
-        
-        return NextResponse.json(mutualFriends, {status: 200});
+    const following = await prisma.follow.findMany({
+        where: {followerId: userId},
+        select: {followingId: true}
     });
+
+    const followingIds = following.map(f => f.followingId);
+
+    const followers = await prisma.follow.findMany({
+        where: {followingId: userId},
+        select: {followerId: true}
+    });
+
+    const followerIds = followers.map(f => f.followerId);
+
+    const mutualFriendIds = followingIds.filter(fid => followerIds.includes(fid));
+
+    if (mutualFriendIds.length === 0) {
+        return createResponse([]);
+    }
+
+    const mutualFriends = await prisma.user.findMany({
+        where: {id: {in: mutualFriendIds}},
+        select: {
+            id: true,
+            email: true,
+            username: true,
+            name: true,
+            image: true,
+        }
+    });
+
+    return createResponse(mutualFriends);
+}
+
+export const GET = withErrorHandlingContextOnly(handleGet);

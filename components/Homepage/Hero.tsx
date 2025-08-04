@@ -20,9 +20,9 @@ const Hero = () => {
 
   return (
     <section ref={heroRef}
-      className="relative py-20 overflow-hidden bg-gradient-to-br from-primary/10 to-background">
-      <div className="container mx-auto px-4 relative z-10">
-        <div className="grid md:grid-cols-2 md:gap-12 items-center">
+      className="from-primary/10 to-background relative overflow-hidden bg-gradient-to-br py-20">
+      <div className="container relative z-10 mx-auto px-4">
+        <div className="grid items-center md:grid-cols-2 md:gap-12">
           <motion.div
             className="space-y-6"
             style={{ y: heroTextY }}
@@ -31,13 +31,13 @@ const Hero = () => {
             variants={animations.staggerChildren}
           >
             <motion.h1
-              className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight"
+              className="text-4xl font-bold leading-tight md:text-5xl lg:text-6xl"
               variants={animations.fadeInUp}
             >
               Ne perdez plus le fil de vos lectures !
             </motion.h1>
             <motion.p
-              className="text-xl text-muted-foreground"
+              className="text-muted-foreground text-xl"
               variants={animations.fadeInUp}
             >
               Suivez votre progression facilement avec Capybook, l&#39;application qui
@@ -50,7 +50,7 @@ const Hero = () => {
             >
               <motion.div variants={animations.fadeInUp} whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}>
-                <Button size="lg" className="bg-secondary hover:bg-secondary/90 max-md:py-3 max-md:px-4"
+                <Button size="lg" className="bg-secondary hover:bg-secondary/90 max-md:px-4 max-md:py-3"
                   asChild>
                   <Link href="/book-shelf">
                     Commencer l&#39;aventure
@@ -60,11 +60,11 @@ const Hero = () => {
               <motion.div variants={animations.fadeInUp} whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}>
                 <Button size="lg" variant="outline"
-                  className="hover:bg-primary/10 hover:text-foreground hover:border-primary max-md:py-3 max-md:px-4"
+                  className="hover:bg-primary/10 hover:text-foreground hover:border-primary max-md:px-4 max-md:py-3"
                   asChild>
                   <Link href="/about">
                     En savoir plus
-                    <ChevronRight className="h-4 w-4" />
+                    <ChevronRight className="size-4" />
                   </Link>
                 </Button>
               </motion.div>
@@ -75,14 +75,14 @@ const Hero = () => {
             className="relative h-[500px] w-full"
           >
             <motion.div
-              className="relative h-[500px] flex items-center justify-center"
+              className="relative flex h-[500px] items-center justify-center"
               style={{ y: heroImgY }}
               initial={{ opacity: 0, x: 100 }}
               animate={heroInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 100 }}
               transition={{ duration: 0.8, ease: "easeOut" }}
             >
               <motion.div
-                className="relative z-10 flex items-center justify-center cursor-grab active:cursor-grabbing rounded-3xl"
+                className="relative z-10 flex cursor-grab items-center justify-center rounded-3xl active:cursor-grabbing"
                 whileHover={{
                   scale: 1.05,
                   rotate: -2,
@@ -139,7 +139,7 @@ const Hero = () => {
                   alt="Capybook App Mockup"
                   width={300}
                   height={900}
-                  className="object-contain rounded-3xl shadow-2xl border-8 border-white dark:border-gray-800 size-full pointer-events-none"
+                  className="pointer-events-none size-full rounded-3xl border-8 border-white object-contain shadow-2xl dark:border-gray-800"
                   priority
                 />
               </motion.div>

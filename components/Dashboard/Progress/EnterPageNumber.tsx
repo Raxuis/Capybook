@@ -42,7 +42,7 @@ export function PageNumberModal() {
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
                     <DialogTitle className="flex items-center gap-2">
-                        <FileText className="h-5 w-5"/> Nombre de pages
+                        <FileText className="size-5"/> Nombre de pages
                     </DialogTitle>
                     <DialogDescription>
                         Saisissez le nombre de pages de ce livre pour suivre votre progression.

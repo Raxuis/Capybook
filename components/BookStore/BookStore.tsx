@@ -35,8 +35,8 @@ const BookStore = () => {
     };
 
     return (
-        <div className="container max-w-6xl mx-auto px-4 pt-8 pb-28">
-            <motion.h1 className="text-3xl font-bold mb-3"
+        <div className="container mx-auto max-w-6xl px-4 pb-28 pt-8">
+            <motion.h1 className="mb-3 text-3xl font-bold"
                        initial={{opacity: 0, y: 20}}
                        animate={{opacity: 1, y: 0}}
                        transition={{duration: 0.6, ease: "easeInOut"}}
@@ -49,7 +49,7 @@ const BookStore = () => {
             >
                 <div
                     className={cn("flex items-center border rounded-lg px-3 transition-all", searchFocused ? 'ring-2 ring-primary shadow-sm' : 'border-gray-300')}>
-                    <Search className="h-5 w-5 text-gray-400 mr-2"/>
+                    <Search className="mr-2 size-5 text-gray-400"/>
                     <Input
                         value={search || ""}
                         onChange={(e) => {
@@ -59,25 +59,25 @@ const BookStore = () => {
                         onFocus={() => setSearchFocused(true)}
                         onBlur={() => setSearchFocused(false)}
                         placeholder="Recherchez un livre par titre, ISBN, auteur..."
-                        className="border-0 shadow-none focus-visible:ring-0 focus-visible:outline-none"
+                        className="border-0 shadow-none focus-visible:outline-none focus-visible:ring-0"
                     />
                 </div>
             </motion.div>
             {isError && (
-                <div className="mt-8 p-4 rounded-lg bg-red-50 text-red-600 flex items-center justify-center">
+                <div className="mt-8 flex items-center justify-center rounded-lg bg-red-50 p-4 text-red-600">
                     <p>Une erreur est survenue lors de la recherche. Veuillez réessayer.</p>
                 </div>
             )}
 
             {isLoading ? (
-                <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                     {[...Array(8)].map((_, index) => (
-                        <div key={index} className="border rounded-lg overflow-hidden">
+                        <div key={index} className="overflow-hidden rounded-lg border">
                             <Skeleton className="h-64 w-full"/>
                             <div className="p-4">
-                                <Skeleton className="h-6 w-3/4 mb-2"/>
-                                <Skeleton className="h-4 w-1/2 mb-4"/>
-                                <Skeleton className="h-4 w-full mb-2"/>
+                                <Skeleton className="mb-2 h-6 w-3/4"/>
+                                <Skeleton className="mb-4 h-4 w-1/2"/>
+                                <Skeleton className="mb-2 h-4 w-full"/>
                                 <Skeleton className="h-4 w-3/4"/>
                             </div>
                         </div>
@@ -85,7 +85,7 @@ const BookStore = () => {
                 </div>
             ) : books.length > 0 ? (
                 <>
-                    <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                         {books.map((book) => (
                             <BookCard
                                 key={book.key}
@@ -95,16 +95,16 @@ const BookStore = () => {
                         ))}
                     </div>
                     {totalPages > 1 && (
-                        <div className="mt-8 flex justify-center items-center gap-4">
+                        <div className="mt-8 flex items-center justify-center gap-4">
                             <Button
                                 variant="outline"
                                 size="icon"
                                 onClick={() => handlePageChange(currentPage - 1)}
                                 disabled={currentPage === 1}
                             >
-                                <ChevronLeft className="h-4 w-4"/>
+                                <ChevronLeft className="size-4"/>
                             </Button>
-                            <span className="text-sm text-muted-foreground">
+                            <span className="text-muted-foreground text-sm">
                                 Page {currentPage} sur {totalPages}
                             </span>
                             <Button
@@ -113,18 +113,18 @@ const BookStore = () => {
                                 onClick={() => handlePageChange(currentPage + 1)}
                                 disabled={currentPage === totalPages}
                             >
-                                <ChevronRight className="h-4 w-4"/>
+                                <ChevronRight className="size-4"/>
                             </Button>
                         </div>
                     )}
                 </>
             ) : (search || "").trim() !== "" ? (
                 <div className="mt-16 flex flex-col items-center justify-center text-center">
-                    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                        <Search className="h-8 w-8 text-gray-400"/>
+                    <div className="mb-4 flex size-16 items-center justify-center rounded-full bg-gray-100">
+                        <Search className="size-8 text-gray-400"/>
                     </div>
-                    <h3 className="text-xl font-semibold mb-2">Aucun livre trouvé</h3>
-                    <p className="text-gray-500 max-w-md">
+                    <h3 className="mb-2 text-xl font-semibold">Aucun livre trouvé</h3>
+                    <p className="max-w-md text-gray-500">
                         Aucun livre ne correspond à votre recherche &#34;{search}&#34;. Essayez avec un autre titre,
                         auteur ou
                         ISBN.
@@ -144,8 +144,8 @@ const BookStore = () => {
                                 hasAnimatedInitialPrompt.current = true;
                             }}
                         >
-                            <h3 className="text-xl font-semibold mb-2">Commencez votre recherche</h3>
-                            <p className="text-gray-500 max-w-md">
+                            <h3 className="mb-2 text-xl font-semibold">Commencez votre recherche</h3>
+                            <p className="max-w-md text-gray-500">
                                 Recherchez des livres par titre, auteur ou ISBN pour les ajouter à {" "}
                                 <Link href="/book-shelf" className="text-primary underline">
                                     votre bibliothèque
@@ -162,8 +162,8 @@ const BookStore = () => {
                             exit={{opacity: 0}}
                             transition={{duration: 0.3, ease: "easeInOut"}}
                         >
-                            <h3 className="text-xl font-semibold mb-2">Commencez votre recherche</h3>
-                            <p className="text-gray-500 max-w-md">
+                            <h3 className="mb-2 text-xl font-semibold">Commencez votre recherche</h3>
+                            <p className="max-w-md text-gray-500">
                                 Recherchez des livres par titre, auteur ou ISBN pour les ajouter à{" "}
                                 <Link href="/book-shelf" className="text-primary underline">
                                     votre bibliothèque

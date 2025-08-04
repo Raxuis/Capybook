@@ -1,25 +1,39 @@
-import {NextResponse} from "next/server";
+import {NextRequest, NextResponse} from "next/server";
 import prisma from "@/utils/prisma";
 import {z} from "zod";
-import {createZodRoute} from "next-zod-route";
+import {
+    validateBody,
+    withErrorHandling,
+    createResponse,
+    createErrorResponse
+} from "@/utils/api-validation";
 
 const bodySchema = z.object({
-    bookId: z.string(),
-    pageCount: z.number(),
+    bookId: z.string().min(1, "L'ID du livre est requis"),
+    pageCount: z.number().int().min(1, "Le nombre de pages doit être un entier positif"),
 });
-//FIXME: Type instantiation is excessively deep and possibly infinite.
-export const PUT = createZodRoute().body(bodySchema).handler(async (_, context) => {
-    try {
-        const {bookId, pageCount} = context.body;
 
-        const updatedBook = await prisma.book.update({
-            where: {id: bookId},
-            data: {numberOfPages: pageCount}
-        });
+async function handlePut(request: NextRequest): Promise<NextResponse> {
+    const {bookId, pageCount} = await validateBody(request, bodySchema);
 
-        return NextResponse.json({success: true, book: updatedBook}, {status: 200});
-    } catch (error) {
-        console.error("Error updating page count:", error);
-        return NextResponse.json({error: "Failed to update page count"}, {status: 500});
+    // Vérifier que le livre existe
+    const existingBook = await prisma.book.findUnique({
+        where: {id: bookId}
+    });
+
+    if (!existingBook) {
+        return createErrorResponse("Livre non trouvé", 404);
     }
-});
+
+    const updatedBook = await prisma.book.update({
+        where: {id: bookId},
+        data: {numberOfPages: pageCount}
+    });
+
+    return createResponse({
+        success: true,
+        book: updatedBook
+    });
+}
+
+export const PUT = withErrorHandling(handlePut);

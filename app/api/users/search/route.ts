@@ -1,75 +1,85 @@
-import {createZodRoute} from 'next-zod-route'
-import {z} from 'zod'
+import {NextRequest, NextResponse} from 'next/server';
+import {z} from 'zod';
 import prisma from "@/utils/prisma";
-import {NextResponse} from 'next/server'
+import {validateSearchParams, withErrorHandling, createResponse, createErrorResponse} from "@/utils/api-validation";
 
 const searchUsersSchema = z.object({
     q: z.string().min(1, "Le terme de recherche est requis"),
-    excludeId: z.string().optional()
-})
+    excludeId: z.string().cuid("L'ID à exclure doit être un CUID valide").optional(),
+    limit: z.coerce.number().int(
+        "La limite doit être un nombre entier"
+    ).min(1,
+        {message: "La limite doit être au moins 1"}
+    ).max(50, {
+        message: "La limite ne peut pas dépasser 50"
+    }).optional(),
+});
 
-export const GET = createZodRoute()
-    .query(searchUsersSchema)
-    .handler(async (_, context) => {
-        try {
-            const {q: searchTerm, excludeId} = context.query
+async function handleGet(
+    request: NextRequest
+): Promise<NextResponse> {
+    const {q: searchTerm, excludeId, limit} = validateSearchParams(
+        new URL(request.url).searchParams,
+        searchUsersSchema
+    );
 
-            // Construire les conditions de recherche
-            const searchConditions = {
-                OR: [
-                    {
-                        username: {
-                            contains: searchTerm,
-                            mode: 'insensitive' as const
-                        }
-                    },
-                    {
-                        name: {
-                            contains: searchTerm,
-                            mode: 'insensitive' as const
-                        }
-                    },
-                    {
-                        email: {
-                            contains: searchTerm,
-                            mode: 'insensitive' as const
-                        }
-                    }
-                ],
-                // Exclure l'utilisateur actuel si spécifié
-                ...(excludeId && {
-                    NOT: {
-                        id: excludeId
-                    }
-                })
-            }
+    if (searchTerm.trim().length < 2) {
+        return createErrorResponse("Le terme de recherche doit contenir au moins 2 caractères", 400);
+    }
 
-            // Rechercher les utilisateurs
-            const users = await prisma.user.findMany({
-                where: searchConditions,
-                select: {
-                    id: true,
-                    username: true,
-                    name: true,
-                    email: true,
-                    image: true
-                },
-                take: 10, // Limiter les résultats
-                orderBy: {
-                    username: 'asc'
+    const searchConditions = {
+        OR: [
+            {
+                username: {
+                    contains: searchTerm.trim(),
+                    mode: 'insensitive' as const
                 }
-            })
+            },
+            {
+                name: {
+                    contains: searchTerm.trim(),
+                    mode: 'insensitive' as const
+                }
+            },
+            {
+                email: {
+                    contains: searchTerm.trim(),
+                    mode: 'insensitive' as const
+                }
+            }
+        ],
+        // Exclure l'utilisateur actuel si spécifié
+        ...(excludeId && {
+            NOT: {
+                id: excludeId
+            }
+        })
+    };
 
-            return NextResponse.json({
-                users,
-                count: users.length
-            })
+    // Rechercher les utilisateurs
+    const users = await prisma.user.findMany({
+        where: searchConditions,
+        select: {
+            id: true,
+            username: true,
+            name: true,
+            email: true,
+            image: true,
+        },
+        ...(limit && {take: limit}),
+        orderBy: [
+            {username: 'asc'},
+            {name: 'asc'},
+        ],
+    });
 
-        } catch (error) {
-            console.error('Erreur lors de la recherche d\'utilisateurs:', error)
-            return NextResponse.json(
-                {error: 'Erreur lors de la recherche d\'utilisateurs'},
-                {status: 500}
-            )
-        }
-    })
+    return createResponse({
+        users,
+        count: users.length,
+        searchTerm: searchTerm.trim(),
+        hasMore: limit ? users.length === limit : false
+    });
+}
+
+// Export du handler avec gestion d'erreur
+export const GET = withErrorHandling(handleGet);

@@ -23,7 +23,7 @@ export const ShinyRotatingBorderButton = ({
                     top: ["50%", "0%", "50%", "100%", "50%"],
                     left: ["0%", "50%", "100%", "50%", "0%"],
                 }}
-                className="-translate-x-1/2 -translate-y-1/2 absolute z-10 size-8 transform-gpu blur-xs transition-transform duration-300 group-hover:scale-3"
+                className="blur-xs group-hover:scale-3 absolute z-10 size-8 -translate-x-1/2 -translate-y-1/2 transform-gpu transition-transform duration-300"
                 initial={{top: 0, left: 0}}
                 transition={{
                     duration: 3,
@@ -58,7 +58,7 @@ export const ShinyRotatingBorderButton = ({
                     "linear-gradient(90deg, #3BC4F2, #7A69F9, #F26378, #F5833F)",
                 ],
             }}
-            className="transform-gpu bg-clip-text text-neutral-600 text-sm tracking-tighter transition-colors duration-500 group-hover:text-transparent dark:text-neutral-200"
+            className="transform-gpu bg-clip-text text-sm tracking-tighter text-neutral-600 transition-colors duration-500 group-hover:text-transparent dark:text-neutral-200"
             transition={{
                 duration: 1,
                 ease: "linear",

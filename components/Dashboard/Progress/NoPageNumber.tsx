@@ -25,21 +25,21 @@ const NoPageNumber = ({bookId, bookKey}: {bookId: string, bookKey: string }) => 
 
     return (
         <>
-            <div className="flex flex-col text-muted-foreground text-sm ">
+            <div className="text-muted-foreground flex flex-col text-sm ">
                 <p className="flex items-center">
-                    <FileText className="h-4 w-4 mr-1"/> Nombre de pages indisponible
+                    <FileText className="mr-1 size-4"/> Nombre de pages indisponible
                 </p>
-                <p className="flex flex-flex-col pt-2">
+                <p className="flex-flex-col flex pt-2">
                     Que souhaitez-vous faire avec ce livre ?
                 </p>
                 <div className="flex flex-col space-y-2 pt-2">
                     <Button
                         variant="outline"
                         size="sm"
-                        className="text-sm hover:bg-primary/10 transition-colors"
+                        className="hover:bg-primary/10 text-sm transition-colors"
                         onClick={() => openModal(bookId, bookKey)}
                     >
-                        <BsInputCursorText className="h-3 w-3 mr-1"/>
+                        <BsInputCursorText className="mr-1 size-3"/>
                         Entrer le nombre de pages
                     </Button>
                     {
@@ -53,18 +53,18 @@ const NoPageNumber = ({bookId, bookKey}: {bookId: string, bookKey: string }) => 
                                     <Button
                                         variant="ghost"
                                         size="sm"
-                                        className="text-gray-500 hover:text-blue-500 transition-colors"
+                                        className="text-gray-500 transition-colors hover:text-blue-500"
                                         onClick={handleUpdate}
                                     >
-                                        <Check className="w-5 h-5"/>
+                                        <Check className="size-5"/>
                                     </Button>
                                     <Button
                                         variant="ghost"
                                         size="sm"
-                                        className="text-gray-500 hover:text-red-500 transition-colors"
+                                        className="text-gray-500 transition-colors hover:text-red-500"
                                         onClick={() => setIsSelectingUpdate(false)}
                                     >
-                                        <X className="w-5 h-5"/>
+                                        <X className="size-5"/>
                                     </Button>
                                 </div>
 
@@ -73,9 +73,9 @@ const NoPageNumber = ({bookId, bookKey}: {bookId: string, bookKey: string }) => 
                             <Button
                                 variant="outline"
                                 size="sm"
-                                className="text-sm hover:bg-secondary/10 transition-colors"
+                                className="hover:bg-secondary/10 text-sm transition-colors"
                                 onClick={() => setIsSelectingUpdate(true)}>
-                                <Percent className="h-3 w-3 mr-1"/>
+                                <Percent className="mr-1 size-3"/>
                                 Utiliser les pourcentages
                             </Button>
                         )

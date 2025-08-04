@@ -3,7 +3,18 @@ import ReviewsListLoading from "@/components/Reviews/ReviewsListLoading";
 import {Star} from "lucide-react";
 import ReviewCard from "@/components/Reviews/ReviewCard";
 
-const ReviewCards = ({reviews, isLoading, error}: { reviews?: Review[], isLoading: boolean, error: boolean }) => {
+const ReviewCards = (
+    {
+        tab,
+        reviews,
+        isLoading,
+        error
+    }: {
+        tab: "public" | "friends",
+        reviews?: Review[],
+        isLoading: boolean,
+        error: string | null
+    }) => {
     if (isLoading) {
         return <ReviewsListLoading/>;
     }
@@ -11,7 +22,7 @@ const ReviewCards = ({reviews, isLoading, error}: { reviews?: Review[], isLoadin
     if (error) {
         return (
             <div className="flex flex-col items-center justify-center space-y-4 py-12">
-                <Star className="h-12 w-12 text-destructive"/>
+                <Star className="text-destructive size-12"/>
                 <p className="text-destructive">{error}</p>
             </div>
         );
@@ -24,7 +35,7 @@ const ReviewCards = ({reviews, isLoading, error}: { reviews?: Review[], isLoadin
 
         return (
             <div className="flex flex-col items-center justify-center space-y-4 py-12">
-                <Star className="h-12 w-12 text-muted-foreground"/>
+                <Star className="text-muted-foreground size-12"/>
                 <p className="text-muted-foreground">{emptyMessage}</p>
             </div>
         );

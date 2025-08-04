@@ -256,7 +256,7 @@ async function getReadingStreakStats(userId: string) {
         currentStreak = 1;
 
         // Compter les jours consécutifs en arrière
-        let checkDate = yesterday;
+        const checkDate = yesterday;
         let index = hasReadToday ? 1 : 0;
 
         while (index < readingDays.length) {
@@ -285,7 +285,7 @@ async function getReadingStreakStats(userId: string) {
             currentStreak = 1;
 
             // Compter les jours consécutifs en arrière à partir d'hier
-            let checkDate = new Date(yesterday);
+            const checkDate = new Date(yesterday);
             checkDate.setDate(checkDate.getDate() - 1);
             let index = hasReadYesterday ? 1 : 0;
 

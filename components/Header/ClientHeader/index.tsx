@@ -53,7 +53,7 @@ export default function ClientHeader({user: initialUser, adminHeader = false}: C
                         : "bg-transparent py-4"
                 )}
             >
-                <div className="container mx-auto px-4 flex justify-between items-center">
+                <div className="container mx-auto flex items-center justify-between px-4">
                     <motion.div
                         whileHover={{scale: 1.05}}
                         transition={{type: "spring", stiffness: 300}}
@@ -62,7 +62,7 @@ export default function ClientHeader({user: initialUser, adminHeader = false}: C
                         <Link href="/" className="flex items-center gap-2">
                             <Image
                                 src="/icon.png"
-                                className="h-10 w-10 text-primary"
+                                className="text-primary size-10"
                                 width="42"
                                 height="42"
                                 alt="Capybook Logo"
@@ -74,7 +74,7 @@ export default function ClientHeader({user: initialUser, adminHeader = false}: C
                     <div className="flex items-center gap-4">
                         <motion.button
                             onClick={handleSignOut}
-                            className="text-sm font-medium hover:text-primary transition-colors"
+                            className="hover:text-primary text-sm font-medium transition-colors"
                             whileHover={{scale: 1.05}}
                         >
                             Déconnexion
@@ -116,7 +116,7 @@ export default function ClientHeader({user: initialUser, adminHeader = false}: C
                     <motion.button
                         key={item.link}
                         onClick={() => handleNavigation(item.link)}
-                        className="text-sm font-medium hover:text-primary transition-colors"
+                        className="hover:text-primary text-sm font-medium transition-colors"
                         whileHover={{scale: 1.05}}
                         initial={{opacity: 0, x: -20}}
                         animate={{opacity: 1, x: 0}}
@@ -132,7 +132,7 @@ export default function ClientHeader({user: initialUser, adminHeader = false}: C
                                 setIsMenuOpen(false);
                                 router.push(`/profile/@${currentUsername}`);
                             }}
-                            className="text-sm font-medium hover:text-primary transition-colors text-center"
+                            className="hover:text-primary text-center text-sm font-medium transition-colors"
                             whileHover={{scale: 1.05}}
                             initial={{opacity: 0, x: -20}}
                             animate={{opacity: 1, x: 0}}
@@ -147,7 +147,7 @@ export default function ClientHeader({user: initialUser, adminHeader = false}: C
                                         setIsMenuOpen(false);
                                         router.push("/admin");
                                     }}
-                                    className="text-sm font-medium hover:text-primary transition-colors text-center"
+                                    className="hover:text-primary text-center text-sm font-medium transition-colors"
                                     whileHover={{scale: 1.05}}
                                     initial={{opacity: 0, x: -20}}
                                     animate={{opacity: 1, x: 0}}
@@ -159,7 +159,7 @@ export default function ClientHeader({user: initialUser, adminHeader = false}: C
                         }
                         <motion.button
                             onClick={handleSignOut}
-                            className="text-sm font-medium hover:text-primary transition-colors"
+                            className="hover:text-primary text-sm font-medium transition-colors"
                             whileHover={{scale: 1.05}}
                             initial={{opacity: 0, x: -20}}
                             animate={{opacity: 1, x: 0}}
@@ -171,7 +171,7 @@ export default function ClientHeader({user: initialUser, adminHeader = false}: C
                 ) : (
                     <motion.a
                         href="/login"
-                        className="text-sm font-medium hover:text-primary transition-colors"
+                        className="hover:text-primary text-sm font-medium transition-colors"
                         whileHover={{scale: 1.05}}
                         initial={{opacity: 0, x: -20}}
                         animate={{opacity: 1, x: 0}}
@@ -194,12 +194,12 @@ export default function ClientHeader({user: initialUser, adminHeader = false}: C
                     : "bg-transparent py-4"
             )}
         >
-            <div className="container mx-auto px-4 flex justify-between items-center">
+            <div className="container mx-auto flex items-center justify-between px-4">
                 <motion.div whileHover={{scale: 1.05}} transition={{type: "spring", stiffness: 300}}>
                     <Link href="/" className="flex items-center gap-2">
                         <Image
                             src="/icon.png"
-                            className="h-10 w-10 text-primary"
+                            className="text-primary size-10"
                             width="42"
                             height="42"
                             alt="Capybook Logo"
@@ -209,14 +209,14 @@ export default function ClientHeader({user: initialUser, adminHeader = false}: C
                 </motion.div>
 
                 <button
-                    className="md:hidden p-2"
+                    className="p-2 md:hidden"
                     onClick={toggleMenu}
                     aria-label={isMenuOpen ? "Fermer le menu" : "Ouvrir le menu"}
                 >
-                    {isMenuOpen ? <X className="h-6 w-6"/> : <Menu className="h-6 w-6"/>}
+                    {isMenuOpen ? <X className="size-6"/> : <Menu className="size-6"/>}
                 </button>
 
-                <nav className="hidden md:flex items-center gap-6">
+                <nav className="hidden items-center gap-6 md:flex">
                     {renderNavButtons()}
                 </nav>
             </div>
@@ -228,7 +228,7 @@ export default function ClientHeader({user: initialUser, adminHeader = false}: C
                         animate={{scaleY: 1, opacity: 1}}
                         exit={{scaleY: 0, opacity: 0}}
                         transition={{duration: 0.2, ease: "easeOut"}}
-                        className="md:hidden absolute w-full bg-background border-b py-4 px-4 shadow-lg origin-top"
+                        className="bg-background absolute w-full origin-top border-b p-4 shadow-lg md:hidden"
                     >
                         <nav className="flex flex-col gap-4 text-center">{renderNavButtons()}</nav>
                     </motion.div>

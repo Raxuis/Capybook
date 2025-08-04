@@ -90,8 +90,8 @@ const UpdateChallengeForm = ({onSubmit, initialData, onCancel}: Props) => {
                                         <FormControl>
                                             <RadioGroupItem value="BOOKS"/>
                                         </FormControl>
-                                        <FormLabel className="font-normal flex items-center">
-                                            <Book className="w-4 h-4 mr-2"/>
+                                        <FormLabel className="flex items-center font-normal">
+                                            <Book className="mr-2 size-4"/>
                                             Nombre de livres
                                         </FormLabel>
                                     </FormItem>
@@ -99,8 +99,8 @@ const UpdateChallengeForm = ({onSubmit, initialData, onCancel}: Props) => {
                                         <FormControl>
                                             <RadioGroupItem value="PAGES"/>
                                         </FormControl>
-                                        <FormLabel className="font-normal flex items-center">
-                                            <FileText className="w-4 h-4 mr-2"/>
+                                        <FormLabel className="flex items-center font-normal">
+                                            <FileText className="mr-2 size-4"/>
                                             Nombre de pages
                                         </FormLabel>
                                     </FormItem>
@@ -108,8 +108,8 @@ const UpdateChallengeForm = ({onSubmit, initialData, onCancel}: Props) => {
                                         <FormControl>
                                             <RadioGroupItem value="TIME"/>
                                         </FormControl>
-                                        <FormLabel className="font-normal flex items-center">
-                                            <Clock className="w-4 h-4 mr-2"/>
+                                        <FormLabel className="flex items-center font-normal">
+                                            <Clock className="mr-2 size-4"/>
                                             Temps de lecture (en minutes)
                                         </FormLabel>
                                     </FormItem>
@@ -180,7 +180,7 @@ const UpdateChallengeForm = ({onSubmit, initialData, onCancel}: Props) => {
                                             ) : (
                                                 <span>Choisir une date</span>
                                             )}
-                                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50"/>
+                                            <CalendarIcon className="ml-auto size-4 opacity-50"/>
                                         </Button>
                                     </FormControl>
                                 </PopoverTrigger>
@@ -209,23 +209,23 @@ const UpdateChallengeForm = ({onSubmit, initialData, onCancel}: Props) => {
 
                 {/* Progress Visualization */}
                 <div className="mt-6">
-                    <h3 className="text-sm font-medium mb-2">Progression actuelle</h3>
-                    <div className="p-4 bg-slate-50 rounded-lg">
+                    <h3 className="mb-2 text-sm font-medium">Progression actuelle</h3>
+                    <div className="rounded-lg bg-slate-50 p-4">
                         {watchType === 'BOOKS' && (
                             <div className="flex flex-col items-center">
                                 <div
-                                    className="w-full flex flex-wrap gap-2 justify-center max-h-48 overflow-y-auto p-2">
+                                    className="flex max-h-48 w-full flex-wrap justify-center gap-2 overflow-y-auto p-2">
                                     {Array.from({length: Math.min(watchTarget, 30)}).map((_, index) => (
                                         <div
                                             key={index}
-                                            className={`relative w-12 h-16 rounded-sm border border-slate-300 shadow-sm transition-all duration-300 transform ${
+                                            className={`relative h-16 w-12 rounded-sm border border-slate-300 shadow-sm transition-all duration-300${
                                                 index < watchProgress
-                                                    ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white scale-105 shadow-md hover:rotate-1 rotate-0'
-                                                    : 'bg-white text-slate-400 hover:scale-105 hover:shadow-sm hover:rotate-2 rotate-1'
+                                                    ? 'rotate-0 scale-105 bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-md hover:rotate-1'
+                                                    : 'rotate-1 bg-white text-slate-400 hover:rotate-2 hover:scale-105 hover:shadow-sm'
                                             }`}
                                         >
                                             <div
-                                                className={`absolute left-0 top-0 bottom-0 w-1.5 rounded-l-sm ${
+                                                className={`absolute inset-y-0 left-0 w-1.5 rounded-l-sm ${
                                                     index < watchProgress
                                                         ? 'bg-purple-800'
                                                         : 'bg-slate-200'
@@ -233,19 +233,19 @@ const UpdateChallengeForm = ({onSubmit, initialData, onCancel}: Props) => {
                                             ></div>
 
                                             <div
-                                                className="absolute inset-0 flex flex-col justify-center items-center pl-3 pr-1">
+                                                className="absolute inset-0 flex flex-col items-center justify-center pl-3 pr-1">
                                                 <div
-                                                    className={`w-full h-0.5 rounded ${index < watchProgress ? 'bg-white/60' : 'bg-slate-200'} mb-1`}></div>
+                                                    className={`h-0.5 w-full rounded ${index < watchProgress ? 'bg-white/60' : 'bg-slate-200'} mb-1`}></div>
                                                 <div
-                                                    className={`w-2/3 h-0.5 rounded ${index < watchProgress ? 'bg-white/60' : 'bg-slate-200'} mb-1`}></div>
+                                                    className={`h-0.5 w-2/3 rounded ${index < watchProgress ? 'bg-white/60' : 'bg-slate-200'} mb-1`}></div>
                                                 <div
-                                                    className={`w-3/4 h-0.5 rounded ${index < watchProgress ? 'bg-white/60' : 'bg-slate-200'}`}></div>
+                                                    className={`h-0.5 w-3/4 rounded ${index < watchProgress ? 'bg-white/60' : 'bg-slate-200'}`}></div>
                                             </div>
 
                                             {index < watchProgress && (
                                                 <div
-                                                    className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-green-500 border-2 border-white flex items-center justify-center shadow-sm">
-                                                    <svg className="w-2 h-2 text-white" fill="none"
+                                                    className="absolute -right-1 -top-1 flex size-4 items-center justify-center rounded-full border-2 border-white bg-green-500 shadow-sm">
+                                                    <svg className="size-2 text-white" fill="none"
                                                          stroke="currentColor" viewBox="0 0 24 24"
                                                          xmlns="http://www.w3.org/2000/svg">
                                                         <path strokeLinecap="round" strokeLinejoin="round"
@@ -258,7 +258,7 @@ const UpdateChallengeForm = ({onSubmit, initialData, onCancel}: Props) => {
 
                                     {watchTarget > 30 && (
                                         <div
-                                            className="flex items-center justify-center w-12 h-16 text-slate-500 text-xs font-medium">
+                                            className="flex h-16 w-12 items-center justify-center text-xs font-medium text-slate-500">
                                             +{watchTarget - 30} livres
                                         </div>
                                     )}
@@ -294,23 +294,23 @@ const UpdateChallengeForm = ({onSubmit, initialData, onCancel}: Props) => {
                         {watchType === 'PAGES' && (
                             <div className="flex flex-col items-center">
                                 <div
-                                    className="relative w-36 h-48 bg-white rounded-md shadow-md overflow-hidden flex items-center justify-center">
+                                    className="relative flex h-48 w-36 items-center justify-center overflow-hidden rounded-md bg-white shadow-md">
                                     <div className="absolute inset-0 bg-gradient-to-br from-white to-slate-50"></div>
 
                                     <div
-                                        className="absolute inset-0 flex flex-col justify-start pt-5 space-y-3 px-3 z-10">
+                                        className="absolute inset-0 z-10 flex flex-col justify-start space-y-3 px-3 pt-5">
                                         {Array.from({length: 8}).map((_, i) => (
                                             <div
                                                 key={i}
-                                                className="w-full h-0.5 bg-slate-200 rounded"
+                                                className="h-0.5 w-full rounded bg-slate-200"
                                                 style={{opacity: 1 - (i * 0.05)}}
                                             ></div>
                                         ))}
                                     </div>
 
-                                    <div className="absolute top-0 right-0 w-8 h-8">
+                                    <div className="absolute right-0 top-0 size-8">
                                         <div
-                                            className="absolute top-0 right-0 w-8 h-8 bg-white shadow-md transform rotate-45 translate-x-4 -translate-y-4"
+                                            className="absolute right-0 top-0 size-8 -translate-y-4 translate-x-4 rotate-45 bg-white shadow-md"
                                             style={{
                                                 backgroundImage: 'linear-gradient(135deg, rgba(0,0,0,0.05) 0%, rgba(255,255,255,0.3) 100%)'
                                             }}
@@ -324,9 +324,9 @@ const UpdateChallengeForm = ({onSubmit, initialData, onCancel}: Props) => {
                                         )}
                                         style={{height: `${percentage}%`}}
                                     >
-                                        <div className="absolute -top-3 left-0 right-0 h-4 opacity-30">
+                                        <div className="absolute inset-x-0 -top-3 h-4 opacity-30">
                                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"
-                                                 preserveAspectRatio="none" className="w-full h-full">
+                                                 preserveAspectRatio="none" className="size-full">
                                                 <path
                                                     fill="white"
                                                     fillOpacity="1"
@@ -348,9 +348,9 @@ const UpdateChallengeForm = ({onSubmit, initialData, onCancel}: Props) => {
                                         </div>
                                     </div>
 
-                                    <div className="absolute bottom-3 right-3 flex items-center z-20">
+                                    <div className="absolute bottom-3 right-3 z-20 flex items-center">
                                         <div
-                                            className="px-2 py-1 rounded text-xs font-mono bg-white text-slate-800 shadow-md"
+                                            className="rounded bg-white px-2 py-1 font-mono text-xs text-slate-800 shadow-md"
                                         >
                                             <span className="font-bold">{watchProgress}</span>
                                             <span className="opacity-70"> / {watchTarget}</span>
@@ -362,7 +362,7 @@ const UpdateChallengeForm = ({onSubmit, initialData, onCancel}: Props) => {
                                     <div className="text-sm font-medium">
                                         {watchProgress} / {watchTarget} pages lues
                                     </div>
-                                    <div className="text-xs text-slate-500 mt-1">
+                                    <div className="mt-1 text-xs text-slate-500">
                                         {
                                             watchTarget - watchProgress > 0 ? (
                                                 <span>{watchTarget - watchProgress} page
@@ -383,11 +383,11 @@ const UpdateChallengeForm = ({onSubmit, initialData, onCancel}: Props) => {
 
                         {watchType === 'TIME' && (
                             <div className="flex flex-col items-center">
-                                <div className="relative w-40 h-40">
+                                <div className="relative size-40">
                                     <div
-                                        className="absolute inset-0 rounded-full bg-white shadow-md border border-slate-200"></div>
+                                        className="absolute inset-0 rounded-full border border-slate-200 bg-white shadow-md"></div>
 
-                                    <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100">
+                                    <svg className="absolute inset-0 size-full" viewBox="0 0 100 100">
                                         <circle
                                             cx="50"
                                             cy="50"
@@ -425,7 +425,7 @@ const UpdateChallengeForm = ({onSubmit, initialData, onCancel}: Props) => {
                                     </svg>
 
                                     <div className="absolute inset-0 flex items-center justify-center">
-                                        <div className="relative w-full h-full">
+                                        <div className="relative size-full">
                                             <div
                                                 className={cn(
                                                     "absolute top-1/2 left-1/2 w-1.5 h-14 bg-gradient-to-t rounded-full shadow-md transition-transform duration-500",
@@ -449,7 +449,7 @@ const UpdateChallengeForm = ({onSubmit, initialData, onCancel}: Props) => {
                                             ></div>
 
                                             <div
-                                                className="absolute top-1/2 left-1/2 w-4 h-4 bg-gradient-to-br from-slate-800 to-slate-600 rounded-full transform -translate-x-1/2 -translate-y-1/2 shadow-md border border-slate-700"></div>
+                                                className="absolute left-1/2 top-1/2 size-4 -translate-x-1/2 -translate-y-1/2 rounded-full border border-slate-700 bg-gradient-to-br from-slate-800 to-slate-600 shadow-md"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -469,7 +469,7 @@ const UpdateChallengeForm = ({onSubmit, initialData, onCancel}: Props) => {
                                             )
                                         }
                                     </div>
-                                    <div className="text-xs text-slate-500 mt-1">
+                                    <div className="mt-1 text-xs text-slate-500">
                                         {
                                             watchTarget - watchProgress > 0 ? (
                                                 <span>{watchTarget - watchProgress} minute
@@ -485,7 +485,7 @@ const UpdateChallengeForm = ({onSubmit, initialData, onCancel}: Props) => {
                             </div>
                         )}
 
-                        <div className="w-full bg-slate-200 rounded-full h-2 mt-4">
+                        <div className="mt-4 h-2 w-full rounded-full bg-slate-200">
                             <div
                                 className={cn(
                                     "bg-gradient-to-r h-2 rounded-full",
@@ -494,7 +494,7 @@ const UpdateChallengeForm = ({onSubmit, initialData, onCancel}: Props) => {
                                 style={{width: `${percentage}%`}}
                             ></div>
                         </div>
-                        <div className="text-center text-sm mt-1 text-slate-600">
+                        <div className="mt-1 text-center text-sm text-slate-600">
                             {percentage.toFixed(0)}% complété
                         </div>
                     </div>
@@ -502,7 +502,7 @@ const UpdateChallengeForm = ({onSubmit, initialData, onCancel}: Props) => {
 
                 <div className="flex justify-end space-x-2">
                     <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting}
-                            className="hover:bg-black/10 transition-colors">
+                            className="transition-colors hover:bg-black/10">
                         Annuler
                     </Button>
                     <Button

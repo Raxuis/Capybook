@@ -47,7 +47,7 @@ export async function updateReadingStats(userId: string, goalType: GoalType, pro
 
         case 'BOOKS':
             // Pour les livres terminés, mettre à jour ReadingProgress
-            let readingProgress = await prisma.readingProgress.findUnique({
+            const readingProgress = await prisma.readingProgress.findUnique({
                 where: { readingDayId: readingDay.id }
             });
 

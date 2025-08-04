@@ -8,37 +8,37 @@ import {formatList} from "@/utils/format";
 type WishlistCardProps = {
     wishlistItem: {
         Book: BookType;
-        createdAt: string;
+        createdAt: Date;
     };
     openBookModal: (book: BookType) => void;
 };
 
 const WishlistCard = ({wishlistItem, openBookModal}: WishlistCardProps) => {
     return (
-        <Card className="overflow-hidden transition-all hover:shadow-md border-rose-100 hover:border-rose-200">
-            <CardHeader className="p-4 pb-2 bg-rose-50 flex flex-row items-center justify-between space-y-0">
-                <CardTitle className="text-lg font-medium line-clamp-1">{wishlistItem.Book.title}</CardTitle>
+        <Card className="overflow-hidden border-rose-100 transition-all hover:border-rose-200 hover:shadow-md">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 bg-rose-50 p-4 pb-2">
+                <CardTitle className="line-clamp-1 text-lg font-medium">{wishlistItem.Book.title}</CardTitle>
                 <Button
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8 p-0 pt-0.5"
+                    className="size-8 p-0 pt-0.5"
                     onClick={() => openBookModal(wishlistItem.Book as BookType)}
                 >
-                    <Info className="h-4 w-4"/>
+                    <Info className="size-4"/>
                     <span className="sr-only">Détails</span>
                 </Button>
             </CardHeader>
-            <CardContent className="p-4 pt-2 flex items-center justify-between space-x-2">
+            <CardContent className="flex items-center justify-between space-x-2 p-4 pt-2">
                 <div className="flex items-center">
-                    <BookOpen className="h-4 w-4 mr-2 text-muted-foreground"/>
-                    <span className="text-sm text-muted-foreground">
+                    <BookOpen className="text-muted-foreground mr-2 size-4"/>
+                    <span className="text-muted-foreground text-sm">
             {formatList(wishlistItem.Book.authors) || "Auteur(s) inconnu(s)"}
           </span>
                 </div>
                 <div className="flex items-center">
                     <Badge
-                        className="text-xs text-center bg-rose-100 hover:bg-rose-200 cursor-default text-rose-700 rounded-full">
-                        Souhaité depuis le {new Date(wishlistItem.createdAt).toLocaleDateString()}
+                        className="cursor-default rounded-full bg-rose-100 text-center text-xs text-rose-700 hover:bg-rose-200">
+                        Souhaité depuis le {wishlistItem.createdAt.toLocaleDateString()}
                     </Badge>
                 </div>
             </CardContent>

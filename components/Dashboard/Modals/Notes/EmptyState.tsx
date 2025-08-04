@@ -9,8 +9,8 @@ interface EmptyStateProps {
 
 export const EmptyState: React.FC<EmptyStateProps> = ({hasFilters, onCreateNote}) => {
     return (
-        <div className="text-center py-8 text-muted-foreground">
-            <StickyNote className="h-12 w-12 mx-auto mb-3 opacity-50"/>
+        <div className="text-muted-foreground py-8 text-center">
+            <StickyNote className="mx-auto mb-3 size-12 opacity-50"/>
             <p>
                 {hasFilters
                     ? "Aucune note ne correspond à vos critères"
@@ -21,7 +21,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({hasFilters, onCreateNote}
                 className="mt-3"
                 onClick={onCreateNote}
             >
-                <Plus className="h-4 w-4 mr-2"/>
+                <Plus className="mr-2 size-4"/>
                 Créer votre première note
             </Button>
         </div>

@@ -93,8 +93,8 @@ const CreateChallengeForm = memo(() => {
                                         <FormControl>
                                             <RadioGroupItem value="BOOKS"/>
                                         </FormControl>
-                                        <FormLabel className="font-normal cursor-pointer flex items-center">
-                                            <BookOpen className="h-4 w-4 mr-2"/>
+                                        <FormLabel className="flex cursor-pointer items-center font-normal">
+                                            <BookOpen className="mr-2 size-4"/>
                                             Livres
                                         </FormLabel>
                                     </FormItem>
@@ -103,8 +103,8 @@ const CreateChallengeForm = memo(() => {
                                         <FormControl>
                                             <RadioGroupItem value="PAGES"/>
                                         </FormControl>
-                                        <FormLabel className="font-normal cursor-pointer flex items-center">
-                                            <Calendar className="h-4 w-4 mr-2"/>
+                                        <FormLabel className="flex cursor-pointer items-center font-normal">
+                                            <Calendar className="mr-2 size-4"/>
                                             Pages
                                         </FormLabel>
                                     </FormItem>
@@ -113,8 +113,8 @@ const CreateChallengeForm = memo(() => {
                                         <FormControl>
                                             <RadioGroupItem value="TIME"/>
                                         </FormControl>
-                                        <FormLabel className="font-normal cursor-pointer flex items-center">
-                                            <Clock className="h-4 w-4 mr-2"/>
+                                        <FormLabel className="flex cursor-pointer items-center font-normal">
+                                            <Clock className="mr-2 size-4"/>
                                             Temps (min)
                                         </FormLabel>
                                     </FormItem>
@@ -130,7 +130,7 @@ const CreateChallengeForm = memo(() => {
                     render={({field}) => (
                         <FormItem>
                             <FormLabel className="flex items-center">
-                                <Target className="w-4 h-4 mr-1"/>
+                                <Target className="mr-1 size-4"/>
                                 Objectif
                             </FormLabel>
                             <FormControl>
@@ -156,7 +156,7 @@ const CreateChallengeForm = memo(() => {
                     render={({field}) => (
                         <FormItem className="flex flex-col">
                             <FormLabel className="flex items-center">
-                                <TbBell className="w-4 h-4 mr-1"/>
+                                <TbBell className="mr-1 size-4"/>
                                 Date limite
                             </FormLabel>
                             <Popover>
@@ -174,7 +174,7 @@ const CreateChallengeForm = memo(() => {
                                             ) : (
                                                 <span>Sélectionner une date</span>
                                             )}
-                                            <Calendar className="ml-auto h-4 w-4 opacity-50"/>
+                                            <Calendar className="ml-auto size-4 opacity-50"/>
                                         </Button>
                                     </FormControl>
                                 </PopoverTrigger>
@@ -211,7 +211,7 @@ const CreateChallengeForm = memo(() => {
 
                 <DialogFooter>
                     <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}
-                            className="hover:bg-black/10 transition-colors">
+                            className="transition-colors hover:bg-black/10">
                         Annuler
                     </Button>
                     <Button type="submit">Créer le challenge</Button>

@@ -174,11 +174,11 @@ export function ColorPicker({
                     className={cn('w-[200px] justify-start text-left font-normal', className)}
                 >
                     <div
-                        className="w-4 h-4 rounded-full mr-2 shadow-sm"
+                        className="mr-2 size-4 rounded-full shadow-sm"
                         style={{backgroundColor: colorInput}}
                     />
-                    <span className="flex-grow">{trimColorString(colorInput)}</span>
-                    <ChevronDown className="h-4 w-4 opacity-50"/>
+                    <span className="grow">{trimColorString(colorInput)}</span>
+                    <ChevronDown className="size-4 opacity-50"/>
                 </Button>
             </PopoverTrigger>
             <PopoverContent className="w-[240px] p-3">
@@ -190,7 +190,7 @@ export function ColorPicker({
                     className="space-y-3"
                 >
                     <motion.div
-                        className="w-full h-40 rounded-lg cursor-crosshair relative overflow-hidden"
+                        className="relative h-40 w-full cursor-crosshair overflow-hidden rounded-lg"
                         style={{
                             background: `
                 linear-gradient(to top, rgba(0, 0, 0, 1), transparent),
@@ -201,7 +201,7 @@ export function ColorPicker({
                         onClick={handleSaturationLightnessChange}
                     >
                         <motion.div
-                            className="w-4 h-4 rounded-full border-2 border-white absolute shadow-md"
+                            className="absolute size-4 rounded-full border-2 border-white shadow-md"
                             style={{
                                 left: `${hsl[1]}%`,
                                 top: `${100 - hsl[2]}%`,
@@ -217,7 +217,7 @@ export function ColorPicker({
                         max="360"
                         value={hsl[0]}
                         onChange={(e) => handleHueChange(Number(e.target.value))}
-                        className="w-full h-3 rounded-full appearance-none cursor-pointer"
+                        className="h-3 w-full cursor-pointer appearance-none rounded-full"
                         style={{
                             background: `linear-gradient(to right, 
                 hsl(0, 100%, 50%), hsl(60, 100%, 50%), hsl(120, 100%, 50%), 
@@ -236,11 +236,11 @@ export function ColorPicker({
                             type="text"
                             value={colorInput}
                             onChange={handleColorInputChange}
-                            className="flex-grow bg-white border border-gray-300 rounded-md text-sm h-8 px-2"
+                            className="h-8 grow rounded-md border border-gray-300 bg-white px-2 text-sm"
                             placeholder="#RRGGBB or hsl(h, s%, l%)"
                         />
                         <motion.div
-                            className="w-8 h-8 rounded-md shadow-sm"
+                            className="size-8 rounded-md shadow-sm"
                             style={{backgroundColor: colorInput}}
                             whileHover={{scale: 1.1}}
                             whileTap={{scale: 0.9}}
@@ -251,7 +251,7 @@ export function ColorPicker({
                             {colorPresets.map((preset) => (
                                 <motion.button
                                     key={preset}
-                                    className="w-8 h-8 rounded-full relative"
+                                    className="relative size-8 rounded-full"
                                     style={{backgroundColor: preset}}
                                     onClick={() => handleColorChange(preset)}
                                     whileHover={{scale: 1.2, zIndex: 1}}
@@ -264,7 +264,7 @@ export function ColorPicker({
                                             exit={{scale: 0}}
                                             transition={{duration: 0.2}}
                                         >
-                                            <Check className="w-4 h-4 text-white absolute inset-0 m-auto"/>
+                                            <Check className="absolute inset-0 m-auto size-4 text-white"/>
                                         </motion.div>
                                     )}
                                 </motion.button>

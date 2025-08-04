@@ -14,7 +14,8 @@ export type Review = {
     id: string;
     rating: number;
     feedback: string | null;
-    createdAt: string;
+    createdAt: Date;
+    privacy: "PUBLIC" | "PRIVATE" | "FRIENDS" | "SPECIFIC_FRIEND";
     User: {
         username: string;
         image: string | null;
@@ -67,8 +68,7 @@ export default function ReviewList({page = "1"}: ReviewListProps) {
                 // Convert null ratings to 0 to match the Review type definition
                 const reviewsWithNonNullRatings = reviewsData.reviews.map(review => ({
                     ...review,
-                    rating: review.rating ?? 0,
-                    createdAt: review.createdAt.toString()
+                    rating: review.rating ?? 0
                 }));
                 setData({...reviewsData, reviews: reviewsWithNonNullRatings});
             } catch (err) {
@@ -99,7 +99,7 @@ export default function ReviewList({page = "1"}: ReviewListProps) {
                     <TabsTrigger value="public" className="flex items-center gap-2">
                         Publique
                         {counts && (
-                            <span className="ml-1 rounded-full bg-muted px-2 py-0.5 text-xs font-medium">
+                            <span className="bg-muted ml-1 rounded-full px-2 py-0.5 text-xs font-medium">
                                 {counts.publicCount}
                             </span>
                         )}
@@ -107,7 +107,7 @@ export default function ReviewList({page = "1"}: ReviewListProps) {
                     <TabsTrigger value="friends" className="flex items-center gap-2">
                         Amis
                         {counts && (
-                            <span className="ml-1 rounded-full bg-muted px-2 py-0.5 text-xs font-medium">
+                            <span className="bg-muted ml-1 rounded-full px-2 py-0.5 text-xs font-medium">
                                 {counts.friendsCount}
                             </span>
                         )}
@@ -115,11 +115,19 @@ export default function ReviewList({page = "1"}: ReviewListProps) {
                 </TabsList>
 
                 <TabsContent value="public" className="mt-6">
-                    <ReviewCards reviews={data?.reviews} isLoading={isLoading} error={error}/>
+                    <ReviewCards
+                        tab={tab}
+                        reviews={data?.reviews}
+                        isLoading={isLoading}
+                        error={error}/>
                 </TabsContent>
 
                 <TabsContent value="friends" className="mt-6">
-                    <ReviewCards reviews={data?.reviews} isLoading={isLoading} error={error}/>
+                    <ReviewCards
+                        tab={tab}
+                        reviews={data?.reviews}
+                        isLoading={isLoading}
+                        error={error}/>
                 </TabsContent>
             </Tabs>
 

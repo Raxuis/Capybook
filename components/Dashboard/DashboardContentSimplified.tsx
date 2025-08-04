@@ -18,8 +18,8 @@ export default function DashboardContentSimplified() {
 
   if (!user && (isLoading || isValidating)) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen p-4">
-        <Loader2 className="h-8 w-8 animate-spin text-primary mb-2" />
+      <div className="flex min-h-screen flex-col items-center justify-center p-4">
+        <Loader2 className="text-primary mb-2 size-8 animate-spin" />
         <p className="text-muted-foreground">Chargement des données...</p>
       </div>
     );
@@ -27,8 +27,8 @@ export default function DashboardContentSimplified() {
 
   if (isError) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen p-4">
-        <AlertCircle className="h-8 w-8 text-destructive mb-2" />
+      <div className="flex min-h-screen flex-col items-center justify-center p-4">
+        <AlertCircle className="text-destructive mb-2 size-8" />
         <p className="font-medium">Erreur lors du chargement des données</p>
         <p className="text-muted-foreground mt-1">Veuillez réessayer ultérieurement</p>
       </div>
@@ -36,8 +36,8 @@ export default function DashboardContentSimplified() {
   }
 
   if (!user) return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-4">
-      <AlertCircle className="h-8 w-8 text-amber-500 mb-2" />
+    <div className="flex min-h-screen flex-col items-center justify-center p-4">
+      <AlertCircle className="mb-2 size-8 text-amber-500" />
       <p className="font-medium">Utilisateur non trouvé</p>
     </div>
   );

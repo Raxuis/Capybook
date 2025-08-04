@@ -69,25 +69,25 @@ export function ReviewPrivacyModal({isOpen, onClose, onSubmit, userId}: PrivacyM
             value: "PUBLIC",
             label: "Public",
             description: "Visible par tous les utilisateurs",
-            icon: <Globe className="w-5 h-5"/>
+            icon: <Globe className="size-5"/>
         },
         {
             value: "PRIVATE",
             description: "Accessible uniquement par lien privé",
             label: "Privé",
-            icon: <Lock className="w-5 h-5"/>
+            icon: <Lock className="size-5"/>
         },
         {
             value: "FRIENDS",
             label: "Amis",
             description: "Visible par tous vos amis",
-            icon: <Users className="w-5 h-5"/>
+            icon: <Users className="size-5"/>
         },
         {
             value: "SPECIFIC_FRIEND",
             label: "Ami spécifique",
             description: "Visible par un ami en particulier",
-            icon: <User className="w-5 h-5"/>
+            icon: <User className="size-5"/>
         }
     ];
 
@@ -114,12 +114,12 @@ export function ReviewPrivacyModal({isOpen, onClose, onSubmit, userId}: PrivacyM
                                 <div className="flex-1">
                                     <Label
                                         htmlFor={option.value}
-                                        className="flex items-center gap-2 font-medium cursor-pointer"
+                                        className="flex cursor-pointer items-center gap-2 font-medium"
                                     >
                                         {option.icon}
                                         {option.label}
                                     </Label>
-                                    <p className="text-sm text-muted-foreground mt-1">
+                                    <p className="text-muted-foreground mt-1 text-sm">
                                         {option.description}
                                     </p>
                                 </div>
@@ -131,9 +131,9 @@ export function ReviewPrivacyModal({isOpen, onClose, onSubmit, userId}: PrivacyM
                         <div className="space-y-2">
                             <Label>Sélectionner un ami</Label>
                             {isLoadingFriends ? (
-                                <div className="text-sm text-muted-foreground">Chargement de vos amis...</div>
+                                <div className="text-muted-foreground text-sm">Chargement de vos amis...</div>
                             ) : friends.length === 0 ? (
-                                <div className="text-sm text-muted-foreground">
+                                <div className="text-muted-foreground text-sm">
                                     Vous n&#39;avez pas encore d&#39;amis. Ajoutez des amis pour utiliser cette option.
                                 </div>
                             ) : (
@@ -154,13 +154,13 @@ export function ReviewPrivacyModal({isOpen, onClose, onSubmit, userId}: PrivacyM
                     )}
 
                     {privacy === "FRIENDS" && friends.length === 0 && !isLoadingFriends && (
-                        <div className="text-sm text-muted-foreground p-3 bg-muted rounded-md">
+                        <div className="text-muted-foreground bg-muted rounded-md p-3 text-sm">
                             Vous n&#39;avez pas encore d&#39;amis. Votre avis sera visible uniquement par vous.
                         </div>
                     )}
 
                     {privacy === "PRIVATE" && (
-                        <div className="text-sm text-muted-foreground p-3 bg-muted rounded-md">
+                        <div className="text-muted-foreground bg-muted rounded-md p-3 text-sm">
                             Un lien privé sera généré que vous pourrez partager avec qui vous voulez.
                         </div>
                     )}

@@ -79,11 +79,11 @@ const DailyBookCard = ({dailyBook}: { dailyBook: DailyBookData }) => {
             animate="visible"
             className="relative"
         >
-            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            <div className="pointer-events-none absolute inset-0 overflow-hidden">
                 {[...Array(8)].map((_, i) => (
                     <motion.div
                         key={i}
-                        className="absolute w-1 h-1 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full"
+                        className="absolute size-1 rounded-full bg-gradient-to-r from-blue-400 to-purple-400"
                         style={{
                             left: `${10 + i * 12}%`,
                             top: `${20 + (i % 3) * 30}%`,
@@ -103,10 +103,10 @@ const DailyBookCard = ({dailyBook}: { dailyBook: DailyBookData }) => {
             </div>
 
             <Card
-                className="bg-white/80 backdrop-blur-sm border-0 shadow-2xl hover:shadow-3xl transition-all duration-500 overflow-hidden">
+                className="hover:shadow-3xl overflow-hidden border-0 bg-white/80 shadow-2xl backdrop-blur-sm transition-all duration-500">
                 <motion.div variants={itemVariants}>
                     <CardHeader
-                        className="bg-primary text-white relative overflow-hidden">
+                        className="bg-primary relative overflow-hidden text-white">
                         <div className="flex items-start justify-between">
                             <div className="flex-1">
                                 <motion.div
@@ -114,7 +114,7 @@ const DailyBookCard = ({dailyBook}: { dailyBook: DailyBookData }) => {
                                     animate={{opacity: 1, x: 0}}
                                     transition={{delay: 0.3}}
                                 >
-                                    <CardTitle className="text-2xl font-bold mb-2 leading-tight">
+                                    <CardTitle className="mb-2 text-2xl font-bold leading-tight">
                                         {dailyBook.title}
                                     </CardTitle>
                                     <CardDescription className="text-blue-100">
@@ -129,10 +129,10 @@ const DailyBookCard = ({dailyBook}: { dailyBook: DailyBookData }) => {
 
                 <CardContent className="p-6">
                     <motion.div variants={itemVariants}>
-                        <div className="flex flex-col lg:flex-row gap-8">
-                            <div className="flex-shrink-0 self-center lg:self-start">
+                        <div className="flex flex-col gap-8 lg:flex-row">
+                            <div className="shrink-0 self-center lg:self-start">
                                 <motion.div
-                                    className="relative group"
+                                    className="group relative"
                                     whileHover={{scale: 1.05}}
                                     transition={{type: "spring", stiffness: 200}}
                                 >
@@ -140,8 +140,8 @@ const DailyBookCard = ({dailyBook}: { dailyBook: DailyBookData }) => {
                                         <div className="relative">
                                             {!imageLoaded && (
                                                 <div
-                                                    className="absolute inset-0 bg-gradient-to-br from-gray-200 to-gray-300 rounded-lg animate-pulse">
-                                                    <div className="flex items-center justify-center h-full">
+                                                    className="absolute inset-0 animate-pulse rounded-lg bg-gradient-to-br from-gray-200 to-gray-300">
+                                                    <div className="flex h-full items-center justify-center">
                                                         <motion.div
                                                             animate={{
                                                                 rotate: [0, 360],
@@ -149,7 +149,7 @@ const DailyBookCard = ({dailyBook}: { dailyBook: DailyBookData }) => {
                                                             }}
                                                             transition={{duration: 2, repeat: Infinity, ease: "linear"}}
                                                         >
-                                                            <Sparkles className="w-8 h-8 text-gray-400"/>
+                                                            <Sparkles className="size-8 text-gray-400"/>
                                                         </motion.div>
                                                     </div>
                                                 </div>
@@ -158,7 +158,7 @@ const DailyBookCard = ({dailyBook}: { dailyBook: DailyBookData }) => {
                                             <motion.img
                                                 src={dailyBook.cover}
                                                 alt={dailyBook.title}
-                                                className={`w-48 h-64 object-cover rounded-lg shadow-xl transition-opacity duration-500 ${
+                                                className={`h-64 w-48 rounded-lg object-cover shadow-xl transition-opacity duration-500 ${
                                                     imageLoaded ? "opacity-100" : "opacity-0"
                                                 }`}
                                                 onLoad={() => setImageLoaded(true)}
@@ -170,11 +170,11 @@ const DailyBookCard = ({dailyBook}: { dailyBook: DailyBookData }) => {
                                             />
 
                                             <div
-                                                className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                                <div className="absolute bottom-2 left-2 right-2">
-                                                    <div className="bg-white/90 rounded-lg p-2 backdrop-blur-sm">
+                                                className="absolute inset-0 rounded-lg bg-gradient-to-t from-black/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                                                <div className="absolute inset-x-2 bottom-2">
+                                                    <div className="rounded-lg bg-white/90 p-2 backdrop-blur-sm">
                                                         <div className="flex items-center justify-center space-x-1">
-                                                            <Star className="w-4 h-4 text-yellow-500 fill-current"/>
+                                                            <Star className="size-4 fill-current text-yellow-500"/>
                                                             <span className="text-xs font-medium">Livre du jour</span>
                                                         </div>
                                                     </div>
@@ -183,10 +183,10 @@ const DailyBookCard = ({dailyBook}: { dailyBook: DailyBookData }) => {
                                         </div>
                                     ) : (
                                         <div
-                                            className="w-48 h-64 bg-gradient-to-br from-gray-200 to-gray-300 rounded-lg flex items-center justify-center">
+                                            className="flex h-64 w-48 items-center justify-center rounded-lg bg-gradient-to-br from-gray-200 to-gray-300">
                                             <div className="text-center">
-                                                <BookOpen className="w-12 h-12 text-gray-400 mx-auto mb-2"/>
-                                                <span className="text-gray-500 text-sm">Pas de couverture</span>
+                                                <BookOpen className="mx-auto mb-2 size-12 text-gray-400"/>
+                                                <span className="text-sm text-gray-500">Pas de couverture</span>
                                             </div>
                                         </div>
                                     )}
@@ -195,8 +195,8 @@ const DailyBookCard = ({dailyBook}: { dailyBook: DailyBookData }) => {
                             <div className="flex-1 space-y-6">
                                 {dailyBook.authors && dailyBook.authors.length > 0 && (
                                     <motion.div variants={itemVariants}>
-                                        <div className="flex items-center space-x-2 mb-3">
-                                            <Users className="w-5 h-5 text-primary"/>
+                                        <div className="mb-3 flex items-center space-x-2">
+                                            <Users className="text-primary size-5"/>
                                             <h3 className="font-semibold text-gray-800">
                                                 {dailyBook.authors.length > 1 ? "Auteurs" : "Auteur"}
                                             </h3>
@@ -209,7 +209,7 @@ const DailyBookCard = ({dailyBook}: { dailyBook: DailyBookData }) => {
                                                     whileHover={{scale: 1.01}}
                                                 >
                                                     <Badge
-                                                        className="bg-primary text-primary-foreground hover:bg-primary/90 transition-colors cursor-default"
+                                                        className="bg-primary text-primary-foreground hover:bg-primary/90 cursor-default transition-colors"
                                                     >
                                                         {author}
                                                     </Badge>
@@ -220,10 +220,10 @@ const DailyBookCard = ({dailyBook}: { dailyBook: DailyBookData }) => {
                                 )}
 
                                 <motion.div variants={itemVariants}>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                         {dailyBook.numberOfPages && (
-                                            <div className="flex items-center space-x-2 p-3 bg-gray-50 rounded-lg">
-                                                <FileText className="w-4 h-4 text-gray-600"/>
+                                            <div className="flex items-center space-x-2 rounded-lg bg-gray-50 p-3">
+                                                <FileText className="size-4 text-gray-600"/>
                                                 <span className="text-sm font-medium text-gray-800">
                                                     {dailyBook.numberOfPages} pages
                                                   </span>
@@ -231,8 +231,8 @@ const DailyBookCard = ({dailyBook}: { dailyBook: DailyBookData }) => {
                                         )}
 
                                         {dailyBook.publishYear && (
-                                            <div className="flex items-center space-x-2 p-3 bg-gray-50 rounded-lg">
-                                                <Calendar className="w-4 h-4 text-gray-600"/>
+                                            <div className="flex items-center space-x-2 rounded-lg bg-gray-50 p-3">
+                                                <Calendar className="size-4 text-gray-600"/>
                                                 <span className="text-sm font-medium text-gray-800">
                                                     Publié en {dailyBook.publishYear}
                                                   </span>
@@ -243,11 +243,11 @@ const DailyBookCard = ({dailyBook}: { dailyBook: DailyBookData }) => {
 
                                 {dailyBook.subjects && dailyBook.subjects.length > 0 && (
                                     <motion.div variants={itemVariants}>
-                                        <h3 className="font-semibold text-gray-800 mb-3 flex items-center space-x-2">
-                                            <Sparkles className="w-5 h-5 text-primary"/>
+                                        <h3 className="mb-3 flex items-center space-x-2 font-semibold text-gray-800">
+                                            <Sparkles className="text-primary size-5"/>
                                             <span>Genres</span>
                                         </h3>
-                                        <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto px-1">
+                                        <div className="flex max-h-32 flex-wrap gap-2 overflow-y-auto px-1">
                                             {dailyBook.subjects.slice(0, 10).map((subject, index) => (
                                                 <motion.div
                                                     key={index}
@@ -257,7 +257,7 @@ const DailyBookCard = ({dailyBook}: { dailyBook: DailyBookData }) => {
                                                 >
                                                     <Badge
                                                         variant="outline"
-                                                        className="text-xs hover:bg-primary/50 hover:border-primary/20 transition-colors cursor-default"
+                                                        className="hover:bg-primary/50 hover:border-primary/20 cursor-default text-xs transition-colors"
                                                     >
                                                         {subject}
                                                     </Badge>
@@ -267,7 +267,7 @@ const DailyBookCard = ({dailyBook}: { dailyBook: DailyBookData }) => {
                                                 <motion.div variants={badgeVariants}>
                                                     <Badge
                                                         variant="outline"
-                                                        className="text-xs bg-primary/50 hover:bg-primary/50 hover:border-primary/20 transition-colors cursor-default"
+                                                        className="bg-primary/50 hover:bg-primary/50 hover:border-primary/20 cursor-default text-xs transition-colors"
                                                     >
                                                         +{dailyBook.subjects.length - 10} autres
                                                     </Badge>
@@ -284,7 +284,7 @@ const DailyBookCard = ({dailyBook}: { dailyBook: DailyBookData }) => {
                 <CardFooter className="bg-gradient-to-r from-gray-50 to-blue-50 p-6">
                     <motion.div variants={itemVariants} className="w-full space-y-4">
                         <motion.p
-                            className="text-sm text-gray-600 text-center leading-relaxed"
+                            className="text-center text-sm leading-relaxed text-gray-600"
                             initial={{opacity: 0}}
                             animate={{opacity: 1}}
                             transition={{delay: 0.5}}
@@ -300,12 +300,12 @@ const DailyBookCard = ({dailyBook}: { dailyBook: DailyBookData }) => {
                         >
                             <Button
                                 variant="default"
-                                className="w-full flex items-center justify-center"
+                                className="flex w-full items-center justify-center"
                                 onClick={() => {
                                     window.open(`https://openlibrary.org${dailyBook.key}`, "_blank");
                                 }}
                             >
-                                <ExternalLink className="w-4 h-4 mr-2"/>
+                                <ExternalLink className="mr-2 size-4"/>
                                 Découvrir sur Open Library
                             </Button>
                         </motion.div>
