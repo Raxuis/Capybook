@@ -8,7 +8,7 @@ import {
     validateBody,
     withErrorHandling,
     createResponse,
-    createErrorResponse
+    createErrorResponse, RouteContext
 } from "@/utils/api-validation";
 
 const paramsSchema = z.object({
@@ -72,7 +72,7 @@ async function handlePost(
 }
 
 async function handleDelete(
-    context: { params: Record<string, string | string[]> }
+    context: RouteContext
 ): Promise<NextResponse> {
     const session = await auth();
 

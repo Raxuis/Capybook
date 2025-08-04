@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 };
 
 type Props = {
-    searchParams: { page?: string };
+    searchParams: Promise<{ page?: string }>;
 };
 
 export default function ReviewsPage({searchParams}: Props) {
