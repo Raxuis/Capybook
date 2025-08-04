@@ -120,7 +120,14 @@ const DashboardTabs = ({openBookModal}: Props) => {
                             {user.BookReview.map(review => (
                                 <ReviewCard
                                     key={review.id}
-                                    review={review}
+                                    review={{
+                                        ...review,
+                                        User: {
+                                            username: user.username,
+                                            image: user.image,
+                                            favoriteColor: user.favoriteColor ?? "#3b82f6",
+                                        },
+                                    }}
                                     openBookModal={openBookModal}
                                 />
                             ))}

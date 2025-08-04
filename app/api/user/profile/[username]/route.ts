@@ -7,7 +7,7 @@ import {BadgeCategory} from "@prisma/client";
 import {
     validateParams,
     withErrorHandlingContextOnly,
-    RouteContext,
+    NextJSContext,
     createResponse,
     createErrorResponse
 } from "@/utils/api-validation";
@@ -80,7 +80,7 @@ interface ResponseData {
     isFollowing: boolean;
 }
 
-async function handleGet(context: RouteContext): Promise<NextResponse> {
+async function handleGet(context: NextJSContext): Promise<NextResponse> {
     const {username} = await validateParams(context.params, paramsSchema);
     const formattedUsername = formatUsername(username);
     const session = await auth();

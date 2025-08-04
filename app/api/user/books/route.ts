@@ -1,7 +1,7 @@
 import {NextRequest, NextResponse} from 'next/server';
 import {z} from 'zod';
 import prisma from "@/utils/prisma";
-import {RouteContext, validateBody, validateParams, withErrorHandling} from "@/utils/api-validation";
+import {NextJSContext, validateBody, validateParams, withErrorHandling} from "@/utils/api-validation";
 
 const UserBookSchema = z.object({
     userId: z.string(),
@@ -81,7 +81,8 @@ async function handlePost(
 }
 
 async function handleDelete(
-    context: RouteContext
+    _: NextRequest,
+    context: NextJSContext
 ): Promise<NextResponse> {
     const {userId, bookKey} = await validateParams(
         context.params,

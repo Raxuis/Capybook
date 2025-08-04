@@ -73,6 +73,7 @@ async function handlePost(
 }
 
 async function handleDelete(
+    _: NextRequest,
     context: NextJSContext
 ): Promise<NextResponse> {
     const session = await auth();

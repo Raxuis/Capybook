@@ -116,14 +116,14 @@ export function withErrorHandling(handler: APIRouteHandler): APIRouteHandler {
     };
 }
 
-type ContextOnlyHandler = (context: RouteContext) => Promise<NextResponse>;
+type ContextOnlyHandler = (context: NextJSContext) => Promise<NextResponse>;
 
 /**
  * Wrapper pour gérer les erreurs dans les routes API Next.js
  * Spécifiquement pour les handlers qui n'utilisent que le contexte
  */
-export function withErrorHandlingContextOnly(handler: ContextOnlyHandler): (request: NextRequest, context: RouteContext) => Promise<NextResponse> {
-    return async (request: NextRequest, context: RouteContext): Promise<NextResponse> => {
+export function withErrorHandlingContextOnly(handler: ContextOnlyHandler): (request: NextRequest, context: NextJSContext) => Promise<NextResponse> {
+    return async (request: NextRequest, context: NextJSContext): Promise<NextResponse> => {
         try {
             return await handler(context);
         } catch (error) {

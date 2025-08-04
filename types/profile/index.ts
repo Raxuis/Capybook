@@ -35,7 +35,7 @@ export type ProfileData = {
             id: string;
             rating: number | null;
             feedback: string | null;
-            createdAt: string;
+            createdAt: Date;
             privacy: "PUBLIC" | "PRIVATE" | "FRIENDS" | "SPECIFIC_FRIEND";
             privateLink: string;
             SpecificFriend: {

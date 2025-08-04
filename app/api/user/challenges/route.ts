@@ -11,7 +11,7 @@ import {validateBody, withErrorHandling, createResponse, createErrorResponse} fr
 const PostSchema = z.object({
     ...CreateChallengeSchema.shape,
     userId: z.string(),
-    deadline: z.preprocess((val) => new Date(val as string), z.date()),
+    deadline: z.coerce.date()
 });
 
 async function handlePost(request: NextRequest): Promise<NextResponse> {
@@ -64,7 +64,7 @@ async function handlePost(request: NextRequest): Promise<NextResponse> {
 const PutBody = BaseUpdateChallengeSchema.extend({
     challengeId: z.string(),
     userId: z.string(),
-    deadline: z.preprocess((val) => new Date(val as string), z.date())
+    deadline: z.coerce.date()
 }).refine((data) => data.progress <= data.target, {
     message: "La progression ne peut pas dépasser la cible",
     path: ["progress"],

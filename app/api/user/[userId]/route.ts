@@ -8,7 +8,7 @@ import {
     createResponse,
     createErrorResponse,
     withErrorHandlingContextOnly,
-    RouteContext, NextJSContext
+    NextJSContext
 } from "@/utils/api-validation";
 
 const paramsSchema = z.object({
@@ -28,7 +28,7 @@ const putBodySchema = z.object({
         .max(30, "Favorite color must be less than 30 characters"),
 });
 
-async function handleGet(context: RouteContext): Promise<NextResponse> {
+async function handleGet(context: NextJSContext): Promise<NextResponse> {
     const {userId} = await validateParams(context.params, paramsSchema);
 
     const user = await prisma.user.findUnique({
