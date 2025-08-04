@@ -9,25 +9,11 @@ import {formatDistanceToNow} from "date-fns";
 import {fr} from "date-fns/locale";
 import {cn} from "@/lib/utils";
 import {getPrivacyConfig} from "@/utils/reviews";
+import {Review} from "@/components/Reviews/ReviewList";
 
 type ReviewCardProps = {
-    review: {
-        id: string;
-        rating: number;
-        feedback: string | null;
-        privacy: "PUBLIC" | "PRIVATE" | "FRIENDS" | "SPECIFIC_FRIEND";
-        createdAt: string;
-        User: {
-            username: string;
-            image: string | null;
-            favoriteColor: string | null;
-        };
-        Book: {
-            title: string;
-            cover: string | null;
-        };
-    };
-    index: number;
+    review: Review
+    index?: number;
 };
 
 const ReviewCard = ({review, index}: ReviewCardProps) => {
@@ -46,7 +32,7 @@ const ReviewCard = ({review, index}: ReviewCardProps) => {
         <motion.div
             initial={{opacity: 0, y: 20}}
             animate={{opacity: 1, y: 0}}
-            transition={{duration: 0.3, delay: index * 0.1}}
+            transition={{duration: 0.3, delay: index ? index * 0.1 : 0}}
             whileHover={{scale: 1.02}}
             className="group"
         >
@@ -75,7 +61,7 @@ const ReviewCard = ({review, index}: ReviewCardProps) => {
                                     privacyConfig.className
                                 )}
                             >
-                                <PrivacyIcon className="size-3" />
+                                <PrivacyIcon className="size-3"/>
                                 {privacyConfig.label}
                             </Badge>
                             <div className="flex items-center space-x-1">
@@ -96,7 +82,7 @@ const ReviewCard = ({review, index}: ReviewCardProps) => {
 
                     <div className="text-muted-foreground flex items-center justify-between text-xs">
                         <span>
-                            {formatDistanceToNow(new Date(review.createdAt), {
+                            {formatDistanceToNow(review.createdAt, {
                                 addSuffix: true,
                                 locale: fr
                             })}

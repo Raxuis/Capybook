@@ -9,18 +9,19 @@ export class ValidationError extends Error {
 }
 
 export type RouteParams = Record<string, string | string[]>;
-export type RouteContext = { params: RouteParams };
-export type APIRouteHandler = (request: NextRequest, context: RouteContext) => Promise<NextResponse>;
 
-// Type plus flexible pour les handlers qui n'utilisent que des paramètres simples
-type SimpleRouteHandler = (request: NextRequest, context?: RouteContext) => Promise<NextResponse>;
+export type NextJSContext = { params: Promise<{ [key: string]: string | string[] }> };
+
+export type RouteContext = { params: RouteParams };
+
+export type APIRouteHandler = (request: NextRequest, context: NextJSContext) => Promise<NextResponse>;
 
 /**
  * Valide les paramètres d'URL avec un schéma Zod
  * Gère automatiquement les paramètres asynchrones de Next.js 13+
  */
 export async function validateParams<T>(
-    params: RouteParams | Promise<RouteParams>,
+    params: RouteParams | Promise<RouteParams> | Promise<{ [key: string]: string | string[] }>,
     schema: z.ZodSchema<T>
 ): Promise<T> {
     // Résoudre la Promise si nécessaire
@@ -85,14 +86,11 @@ export function validateSearchParams<T>(searchParams: URLSearchParams, schema: z
 
 /**
  * Wrapper pour gérer les erreurs dans les routes API Next.js
- * Supporte à la fois les handlers avec et sans contexte
  */
-export function withErrorHandling(handler: APIRouteHandler): APIRouteHandler;
-export function withErrorHandling(handler: SimpleRouteHandler): SimpleRouteHandler;
-export function withErrorHandling(handler: APIRouteHandler | SimpleRouteHandler) {
-    return async (request: NextRequest, context?: RouteContext): Promise<NextResponse> => {
+export function withErrorHandling(handler: APIRouteHandler): APIRouteHandler {
+    return async (request: NextRequest, context: NextJSContext): Promise<NextResponse> => {
         try {
-            return await handler(request, context as RouteContext);
+            return await handler(request, context);
         } catch (error) {
             console.error('API route error:', error);
 
@@ -124,7 +122,7 @@ type ContextOnlyHandler = (context: RouteContext) => Promise<NextResponse>;
  * Wrapper pour gérer les erreurs dans les routes API Next.js
  * Spécifiquement pour les handlers qui n'utilisent que le contexte
  */
-export function withErrorHandlingContextOnly(handler: ContextOnlyHandler): APIRouteHandler {
+export function withErrorHandlingContextOnly(handler: ContextOnlyHandler): (request: NextRequest, context: RouteContext) => Promise<NextResponse> {
     return async (request: NextRequest, context: RouteContext): Promise<NextResponse> => {
         try {
             return await handler(context);

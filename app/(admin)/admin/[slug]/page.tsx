@@ -1,4 +1,5 @@
-import AdminCrudPage, {EntitySlug} from '@/components/admin/AdminCrudPage';
+import AdminCrudPage from '@/components/admin/AdminCrudPage';
+import {EntitySlug} from '@/types/admin/crud';
 import {redirect} from "next/navigation";
 import {tabs} from "@/components/admin/sidebar/tabs";
 
@@ -17,5 +18,5 @@ export default async function Page(props: {
         redirect("/admin");
     }
 
-    return <AdminCrudPage slug={slug as EntitySlug} />;
+    return <AdminCrudPage slug={slug as EntitySlug}/>;
 }

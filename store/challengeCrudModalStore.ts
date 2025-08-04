@@ -59,7 +59,7 @@ export const useChallengeCrudModalStore = create<ChallengeModalStore>((set) => (
         isDialogOpen: false
     }),
 
-    setDialogOpen: (isOpen) => set((state) => ({
+    setDialogOpen: (isOpen) => set(() => ({
         isDialogOpen: isOpen,
     })),
 }));

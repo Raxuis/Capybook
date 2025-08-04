@@ -10,7 +10,7 @@ import {
     validateSearchParams,
     withErrorHandling,
     createResponse,
-    createErrorResponse
+    createErrorResponse, NextJSContext
 } from "@/utils/api-validation";
 
 const paramsSchema = z.object({
@@ -33,7 +33,7 @@ const getSearchParamsSchema = z.object({
 
 async function handleGet(
     request: NextRequest,
-    {params}: { params: Record<string, string> }
+    context: NextJSContext
 ): Promise<NextResponse> {
     const session = await auth();
 
@@ -41,14 +41,14 @@ async function handleGet(
         return createErrorResponse('Non autorisé', 401);
     }
 
-    const {bookId} = await validateParams(params, paramsSchema);
+    const {bookId} = await validateParams(context.params, paramsSchema);
 
-    const {search, tags: tagsParam, sortBy} = await validateSearchParams(
+    const {search, tags: tagsParam, sortBy} = validateSearchParams(
         new URL(request.url).searchParams,
         getSearchParamsSchema
     );
 
-    const tags = tagsParam.split(',').filter(Boolean);
+    const tags = tagsParam?.split(',').filter(Boolean);
 
     // Typage explicite pour Prisma
     const whereCondition: Prisma.UserBookNotesWhereInput = {
@@ -64,7 +64,7 @@ async function handleGet(
     }
 
     // Filtrage par tags
-    if (tags.length > 0) {
+    if (tags && tags.length > 0) {
         whereCondition.tags = {
             hasSome: tags,
         };
@@ -106,7 +106,7 @@ async function handleGet(
 
 async function handlePost(
     request: NextRequest,
-    {params}: { params: Record<string, string> }
+    context: NextJSContext
 ): Promise<NextResponse> {
     const session = await auth();
 
@@ -114,7 +114,7 @@ async function handlePost(
         return createErrorResponse('Non autorisé', 401);
     }
 
-    const {bookId} = validateParams(params, paramsSchema);
+    const {bookId} = await validateParams(context.params, paramsSchema);
     const {note, page, chapter, tags, type} = await validateBody(request, postBodySchema);
 
     // Vérifier que le livre existe

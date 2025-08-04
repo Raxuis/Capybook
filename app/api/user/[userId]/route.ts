@@ -8,7 +8,7 @@ import {
     createResponse,
     createErrorResponse,
     withErrorHandlingContextOnly,
-    RouteContext
+    RouteContext, NextJSContext
 } from "@/utils/api-validation";
 
 const paramsSchema = z.object({
@@ -87,7 +87,7 @@ async function handleGet(context: RouteContext): Promise<NextResponse> {
 
 async function handlePut(
     request: NextRequest,
-    context: RouteContext
+    context: NextJSContext
 ): Promise<NextResponse> {
     const {userId} = await validateParams(context.params, paramsSchema);
     const {username, favoriteColor} = await validateBody(request, putBodySchema);

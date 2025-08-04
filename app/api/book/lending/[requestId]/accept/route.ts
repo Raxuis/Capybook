@@ -6,8 +6,7 @@ import {
     validateBody,
     withErrorHandling,
     createResponse,
-    createErrorResponse,
-    RouteContext
+    createErrorResponse
 } from "@/utils/api-validation";
 
 const bodySchema = z.object({
@@ -20,7 +19,7 @@ const paramsSchema = z.object({
 
 async function handlePut(
     request: NextRequest,
-    context: RouteContext
+    context: { params: Promise<{ [key: string]: string | string[] }> }
 ): Promise<NextResponse> {
     const {borrowerId} = await validateBody(request, bodySchema);
     const {requestId} = await validateParams(context.params, paramsSchema);

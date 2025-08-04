@@ -3,7 +3,18 @@ import ReviewsListLoading from "@/components/Reviews/ReviewsListLoading";
 import {Star} from "lucide-react";
 import ReviewCard from "@/components/Reviews/ReviewCard";
 
-const ReviewCards = ({reviews, isLoading, error}: { reviews?: Review[], isLoading: boolean, error: boolean }) => {
+const ReviewCards = (
+    {
+        tab,
+        reviews,
+        isLoading,
+        error
+    }: {
+        tab: "public" | "friends",
+        reviews?: Review[],
+        isLoading: boolean,
+        error: string | null
+    }) => {
     if (isLoading) {
         return <ReviewsListLoading/>;
     }

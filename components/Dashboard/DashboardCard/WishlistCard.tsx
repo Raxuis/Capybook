@@ -8,7 +8,7 @@ import {formatList} from "@/utils/format";
 type WishlistCardProps = {
     wishlistItem: {
         Book: BookType;
-        createdAt: string;
+        createdAt: Date;
     };
     openBookModal: (book: BookType) => void;
 };
@@ -38,7 +38,7 @@ const WishlistCard = ({wishlistItem, openBookModal}: WishlistCardProps) => {
                 <div className="flex items-center">
                     <Badge
                         className="cursor-default rounded-full bg-rose-100 text-center text-xs text-rose-700 hover:bg-rose-200">
-                        Souhaité depuis le {new Date(wishlistItem.createdAt).toLocaleDateString()}
+                        Souhaité depuis le {wishlistItem.createdAt.toLocaleDateString()}
                     </Badge>
                 </div>
             </CardContent>

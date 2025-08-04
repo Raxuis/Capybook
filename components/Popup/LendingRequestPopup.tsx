@@ -48,16 +48,15 @@ const LendingRequestPopup = ({
             setActionType(null);
         }
     };
-
-    const formatDate = (dateString: string) => {
-        return new Date(dateString).toLocaleDateString('fr-FR', {
+    const formatDateFromDateTime = (date: Date) => {
+        return date.toLocaleDateString('fr-FR', {
             day: 'numeric',
             month: 'long',
             year: 'numeric',
             hour: '2-digit',
             minute: '2-digit'
         });
-    };
+    }
 
     const isActionLoading = isLoading || actionType !== null;
 
@@ -153,7 +152,7 @@ const LendingRequestPopup = ({
                         {/* Request Date */}
                         <div className="flex items-center text-sm text-gray-500">
                             <Clock size={14} className="mr-1"/>
-                            Demandé le {formatDate(request.requestedAt as string)}
+                            Demandé le {formatDateFromDateTime(request.requestedAt)}
                         </div>
                     </div>
 

@@ -8,7 +8,7 @@ import {
     validateBody,
     withErrorHandling,
     createResponse,
-    createErrorResponse
+    createErrorResponse, NextJSContext
 } from "@/utils/api-validation";
 
 const paramsSchema = z.object({
@@ -29,8 +29,8 @@ const deleteBodySchema = z.object({
 });
 
 async function handleGet(
-    request: NextRequest,
-    {params}: { params: Record<string, string> }
+    _: NextRequest,
+    context: NextJSContext
 ): Promise<NextResponse> {
     const session = await auth();
 
@@ -38,7 +38,7 @@ async function handleGet(
         return createErrorResponse('Non autorisé', 401);
     }
 
-    const {bookId, noteId} = await validateParams(params, paramsSchema);
+    const {bookId, noteId} = await validateParams(context.params, paramsSchema);
 
     const note = await prisma.userBookNotes.findFirst({
         where: {
@@ -70,7 +70,7 @@ async function handleGet(
 
 async function handlePut(
     request: NextRequest,
-    {params}: { params: Record<string, string> }
+    context: NextJSContext
 ): Promise<NextResponse> {
     const session = await auth();
 
@@ -78,7 +78,7 @@ async function handlePut(
         return createErrorResponse('Non autorisé', 401);
     }
 
-    const {bookId, noteId} = validateParams(params, paramsSchema);
+    const {bookId, noteId} = await validateParams(context.params, paramsSchema);
     const {note, page, chapter, tags, type} = await validateBody(request, putBodySchema);
 
     const existingNote = await prisma.userBookNotes.findFirst({
@@ -123,7 +123,7 @@ async function handlePut(
 
 async function handleDelete(
     request: NextRequest,
-    {params}: { params: Record<string, string> }
+    context: NextJSContext
 ): Promise<NextResponse> {
     const session = await auth();
 
@@ -131,7 +131,7 @@ async function handleDelete(
         return createErrorResponse('Non autorisé', 401);
     }
 
-    const {noteId} = await validateParams(params, z.object({noteId: z.string()}));
+    const {noteId} = await validateParams(context.params, z.object({noteId: z.string()}));
     const {bookId} = await validateBody(request, deleteBodySchema);
 
     const existingNote = await prisma.userBookNotes.findFirst({

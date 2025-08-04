@@ -7,7 +7,7 @@ import {
     withErrorHandling,
     createResponse,
     createErrorResponse,
-    RouteContext
+    NextJSContext
 } from "@/utils/api-validation";
 
 const bodySchema = z.object({
@@ -20,7 +20,7 @@ const paramsSchema = z.object({
 
 async function handlePut(
     request: NextRequest,
-    context: RouteContext
+    context: NextJSContext
 ): Promise<NextResponse> {
     const {lenderId} = await validateBody(request, bodySchema);
     const {requestId} = await validateParams(context.params, paramsSchema);

@@ -183,7 +183,7 @@ model BookReview {
   id               String   @id @default(cuid())
   userId           String
   bookId           String
-  rating           Int?
+  rating           Int // Note de 1 à 5
   feedback         String?
   privacy          Privacy  @default(PUBLIC) // "PUBLIC", "PRIVATE", "FRIENDS", "SPECIFIC_FRIEND"
   privateLink      String?  @unique // For PRIVATE reviews
