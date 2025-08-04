@@ -12,9 +12,11 @@ export const metadata: Metadata = {
     description: "Le tableau de bord de Capybook",
 };
 
-export default async function BookShelf({searchParams}: {
-    searchParams: { view?: string };
-}) {
+interface PageProps {
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}
+
+export default async function BookShelf({searchParams}: PageProps) {
     const session = await auth();
     const params = await searchParams;
     const {view} = params;
