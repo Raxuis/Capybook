@@ -47,7 +47,7 @@ export const BookActions = ({
     const isAnyLoading = loadingLibrary || loadingWishlist || loadingCurrentBook || loadingLending;
 
     return (
-        <div className="mt-4 flex flex-col flex-wrap sm:flex-row sm:justify-start gap-2">
+        <div className="mt-4 flex flex-col flex-wrap gap-2 sm:flex-row sm:justify-start">
             {/* Marquer comme en lecture */}
             {(inLibrary && !isCurrentBookInstance && !isBookFinishedInstance && !isBookLoanedInstance && !isPendingLoanInstance) && (
                 <Button
