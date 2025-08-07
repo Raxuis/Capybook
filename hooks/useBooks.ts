@@ -243,12 +243,12 @@ export function useBooks(bookName?: string | null, page: number = 1) {
             // Trouver le prêt actif pour ce livre
             const activeLending = user.lentBooks?.find(
                 lending => lending.book.key === bookKey &&
-                    lending.status === 'ACCEPTED' &&
+                    // lending.status === 'ACCEPTED' &&
                     !lending.returnedAt
             );
 
             if (activeLending) {
-                await api.put(`/book/lending/${activeLending.id}/return`, {
+                await api.put(`/book/lending/${activeLending.id}/cancel`, {
                     lenderId: user.id
                 });
                 await refreshUser();

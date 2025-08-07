@@ -126,7 +126,11 @@ const LibraryCard = ({userBook, openBookModal}: LibraryCardProps) => {
 
     return (
         <Card
-            className={cn('group overflow-hidden transition-all duration-200 hover:shadow-lg border-border/50', statusConfig.cardClassName)}>
+            className={cn(
+                'group overflow-hidden transition-all duration-200 hover:shadow-lg border-border/50 h-full flex flex-col',
+                statusConfig.cardClassName
+            )}
+        >
             <CardHeader className="pb-3">
                 <div className="flex items-start justify-between gap-3">
                     <CardTitle className="line-clamp-2 text-lg font-medium leading-tight">

@@ -39,7 +39,6 @@ export const useBookNotes = ({userId, bookId}: UseBookNotesProps): UseBookNotesR
             const response = await fetch(`/api/user/${userId}/book/${bookId}/notes${queryString}`);
 
             if (!response.ok) {
-                console.log(`Erreur lors du chargement des notes: ${response.statusText}`);
                 throw new Error('Erreur lors du chargement des notes');
             }
 
@@ -61,7 +60,6 @@ export const useBookNotes = ({userId, bookId}: UseBookNotesProps): UseBookNotesR
         try {
             setLoading(true);
             const payload = createNotePayload(noteData);
-            console.log('Création de la note avec les données:', payload);
             const response = await fetch(`/api/user/${userId}/book/${bookId}/notes`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
@@ -69,7 +67,6 @@ export const useBookNotes = ({userId, bookId}: UseBookNotesProps): UseBookNotesR
             });
 
             if (!response.ok) {
-                console.log(`Erreur lors de la création de la note: ${response.statusText}`);
                 throw new Error('Erreur lors de la création de la note');
             }
 
@@ -99,7 +96,6 @@ export const useBookNotes = ({userId, bookId}: UseBookNotesProps): UseBookNotesR
         try {
             setLoading(true);
             const payload = createNotePayload(noteData);
-            console.log('Mise à jour de la note avec les données:', payload);
             const response = await fetch(`/api/user/${userId}/book/${bookId}/notes/${noteId}`, {
                 method: 'PUT',
                 headers: {'Content-Type': 'application/json'},

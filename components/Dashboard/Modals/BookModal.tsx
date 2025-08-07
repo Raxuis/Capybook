@@ -9,7 +9,20 @@ import {
 } from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
 import {Badge} from "@/components/ui/badge";
-import {Book as BookIcon, Heart, Trash2, BookOpen, Globe, Loader2, BookMarked, BookCopy, FileText, Users, UserCheck, Clock} from "lucide-react";
+import {
+    Book as BookIcon,
+    Heart,
+    Trash2,
+    BookOpen,
+    Globe,
+    Loader2,
+    BookMarked,
+    BookCopy,
+    FileText,
+    Users,
+    UserCheck,
+    Clock
+} from "lucide-react";
 import Image from "next/image";
 import {useBooks} from "@/hooks/useBooks";
 import {useUser} from "@/hooks/useUser";
@@ -356,8 +369,10 @@ const BookModal = ({
 
                     {/* Informations de prêt */}
                     {(isBookLoanedInstance || isPendingLoanInstance) && lendingInfo && (
-                        <div className={`${isPendingLoanInstance ? 'border-yellow-200 bg-yellow-50' : 'border-orange-200 bg-orange-50'} space-y-2 rounded-lg border p-4`}>
-                            <div className={`flex items-center gap-2 ${isPendingLoanInstance ? 'text-yellow-700' : 'text-orange-700'}`}>
+                        <div
+                            className={`${isPendingLoanInstance ? 'border-yellow-200 bg-yellow-50' : 'border-orange-200 bg-orange-50'} space-y-2 rounded-lg border p-4`}>
+                            <div
+                                className={`flex items-center gap-2 ${isPendingLoanInstance ? 'text-yellow-700' : 'text-orange-700'}`}>
                                 <UserCheck className="size-4"/>
                                 <span className="font-medium">
                                     {isPendingLoanInstance
