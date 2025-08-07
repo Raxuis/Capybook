@@ -128,44 +128,46 @@ const ProfileContent = ({username}: { username: string }) => {
 
             <div className="mb-32 overflow-hidden rounded-xl bg-white shadow-md">
                 <Tabs defaultValue="overview" value={activeTab} onValueChange={handleTabChange} className="w-full">
-                    <div className="scrollbar-hide overflow-hidden border-b">
-                        <TabsList className="flex w-full min-w-max bg-transparent p-0">
-                            <TabsTrigger
-                                value="overview"
-                                className="min-w-[100px] flex-1 whitespace-nowrap rounded-none px-2 py-3 text-xs data-[state=active]:bg-transparent data-[state=active]:shadow-none sm:px-6 sm:py-4 sm:text-sm"
-                            >
-                                <span className="hidden sm:inline">Vue d&#39;ensemble</span>
-                                <span className="sm:hidden">Aperçu</span>
-                            </TabsTrigger>
-                            <TabsTrigger
-                                value="badges"
-                                className="min-w-[80px] flex-1 whitespace-nowrap rounded-none px-2 py-3 text-xs data-[state=active]:bg-transparent data-[state=active]:shadow-none sm:px-6 sm:py-4 sm:text-sm"
-                            >
-                                Badges
-                            </TabsTrigger>
-                            <TabsTrigger
-                                value="relations"
-                                className="min-w-[80px] flex-1 whitespace-nowrap rounded-none px-2 py-3 text-xs data-[state=active]:bg-transparent data-[state=active]:shadow-none sm:px-6 sm:py-4 sm:text-sm"
-                            >
-                                Relations
-                            </TabsTrigger>
-                            {isOwner && detailedData && (
-                                <>
-                                    <TabsTrigger
-                                        value="books"
-                                        className="min-w-[80px] flex-1 whitespace-nowrap rounded-none px-2 py-3 text-xs data-[state=active]:bg-transparent data-[state=active]:shadow-none sm:px-6 sm:py-4 sm:text-sm"
-                                    >
-                                        Livres
-                                    </TabsTrigger>
-                                    <TabsTrigger
-                                        value="reviews"
-                                        className="min-w-[80px] flex-1 whitespace-nowrap rounded-none px-2 py-3 text-xs data-[state=active]:bg-transparent data-[state=active]:shadow-none sm:px-6 sm:py-4 sm:text-sm"
-                                    >
-                                        Avis
-                                    </TabsTrigger>
-                                </>
-                            )}
-                        </TabsList>
+                    <div className="overflow-hidden border-b">
+                        <div className="overflow-x-auto overflow-y-hidden">
+                            <TabsList className="flex w-max min-w-full bg-transparent p-0">
+                                <TabsTrigger
+                                    value="overview"
+                                    className="min-w-[100px] shrink-0 whitespace-nowrap rounded-none px-2 py-3 text-xs data-[state=active]:bg-transparent data-[state=active]:shadow-none sm:px-6 sm:py-4 sm:text-sm"
+                                >
+                                    <span className="hidden sm:inline">Vue d&#39;ensemble</span>
+                                    <span className="sm:hidden">Aperçu</span>
+                                </TabsTrigger>
+                                <TabsTrigger
+                                    value="badges"
+                                    className="min-w-[80px] shrink-0 whitespace-nowrap rounded-none px-2 py-3 text-xs data-[state=active]:bg-transparent data-[state=active]:shadow-none sm:px-6 sm:py-4 sm:text-sm"
+                                >
+                                    Badges
+                                </TabsTrigger>
+                                <TabsTrigger
+                                    value="relations"
+                                    className="min-w-[80px] shrink-0 whitespace-nowrap rounded-none px-2 py-3 text-xs data-[state=active]:bg-transparent data-[state=active]:shadow-none sm:px-6 sm:py-4 sm:text-sm"
+                                >
+                                    Relations
+                                </TabsTrigger>
+                                {isOwner && detailedData && (
+                                    <>
+                                        <TabsTrigger
+                                            value="books"
+                                            className="min-w-[80px] shrink-0 whitespace-nowrap rounded-none px-2 py-3 text-xs data-[state=active]:bg-transparent data-[state=active]:shadow-none sm:px-6 sm:py-4 sm:text-sm"
+                                        >
+                                            Livres
+                                        </TabsTrigger>
+                                        <TabsTrigger
+                                            value="reviews"
+                                            className="min-w-[80px] shrink-0 whitespace-nowrap rounded-none px-2 py-3 text-xs data-[state=active]:bg-transparent data-[state=active]:shadow-none sm:px-6 sm:py-4 sm:text-sm"
+                                        >
+                                            Avis
+                                        </TabsTrigger>
+                                    </>
+                                )}
+                            </TabsList>
+                        </div>
                     </div>
 
                     <TabsContent value="overview" className="p-4 sm:p-6">
