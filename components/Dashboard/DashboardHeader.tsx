@@ -33,7 +33,7 @@ const DashboardHeader = memo(({showStatistics}: { showStatistics: boolean }) => 
     if (!user) return null;
 
     return (
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between max-md:flex-col max-md:items-start max-md:space-y-4">
             <div className="flex items-center space-x-4">
                 <Avatar className="border-primary size-16 border-2">
                     <AvatarFallback className="bg-primary/10 text-primary font-medium">{userInitials}</AvatarFallback>

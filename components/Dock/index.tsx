@@ -6,11 +6,12 @@ import {dockRoutes} from "@/constants/dock";
 
 export function Dock() {
     return (
-        <div className="fixed bottom-5 left-1/2 z-50 mx-auto max-w-full -translate-x-1/2 transform-gpu pt-4">
-            <div className="relative">
+        <div className="fixed bottom-5 left-1/2 z-50 w-full max-w-screen-sm -translate-x-1/2 transform-gpu px-4 pt-4">
+            <div className="relative w-full">
                 <div
-                    className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-[72px] max-w-full rounded-3xl border border-gray-200/60 bg-gray-200/60 shadow-sm dark:border-gray-600/60 dark:bg-gray-800/60"/>
-                <div className="flex items-end overflow-x-auto rounded-3xl pl-2">
+                    className="pointer-events-none absolute inset-x-0 bottom-0 z-10 min-h-[72px] max-sm:min-h-[52px] rounded-3xl border border-gray-200/60 bg-gray-200/60 shadow-sm dark:border-gray-600/60 dark:bg-gray-800/60"/>
+                <div
+                    className="flex w-full flex-wrap items-end justify-center gap-x-0 overflow-visible rounded-3xl">
                     {
                         dockRoutes.map((route) => (
                             <AppIcon
@@ -46,11 +47,11 @@ function AppIcon({
             <Link href={link}>
                 <Tooltip>
                     <TooltipTrigger>
-                        <div className="group z-20 grid w-fit cursor-pointer place-items-center p-2 pl-0">
+                        <div className="group z-20 grid w-fit cursor-pointer place-items-center p-2 pb-0 max-sm:p-1">
                             <div
                                 className={cn(
-                                    "pointer-events-none z-20 inline size-14 transform-gpu overflow-hidden rounded-2xl bg-white shadow-inner transition-all duration-200 group-hover:size-[4rem] group-hover:shadow-sm dark:bg-gray-800",
-                                    withoutBackground ? "p-2" : "",
+                                    "pointer-events-none z-20 inline size-14 max-sm:size-10 transform-gpu overflow-hidden rounded-2xl max-sm:rounded-xl bg-white shadow-inner transition-all duration-200 group-hover:size-[4rem] max-sm:group-hover:size-12 group-hover:shadow-sm dark:bg-gray-800",
+                                    withoutBackground ? "p-2 max-sm:p-1" : "",
                                 )}
                             >
                                 <Image
