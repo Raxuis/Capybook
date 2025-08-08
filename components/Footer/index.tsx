@@ -1,6 +1,6 @@
-import React from 'react';
 import {footer} from "@/constants/footer";
 import Image from "next/image";
+import {Link} from "next-view-transitions";
 
 const Footer = () => {
     const currentYear = new Date().getFullYear();
@@ -10,7 +10,7 @@ const Footer = () => {
             className="bg-gradient-to-br from-slate-50 to-slate-100 pb-32 pt-16 dark:from-slate-900 dark:to-slate-800">
             <div className="container mx-auto px-4">
                 <div className="mb-12 flex flex-col items-center justify-between md:flex-row">
-                <div className="mb-8 max-w-md md:mb-0">
+                    <div className="mb-8 max-w-md md:mb-0">
                         <div className="mb-4 flex items-center gap-2">
                             <Image
                                 src={footer.iconUrl}
@@ -33,7 +33,7 @@ const Footer = () => {
                                 index === self.findIndex((i) => i.label === item.label)
                             )
                             .map((item, index) => (
-                                <a
+                                <Link
                                     key={index}
                                     href={item.href}
                                     className="group flex items-center transition-all duration-300"
@@ -47,7 +47,7 @@ const Footer = () => {
                                         className="group-hover:text-primary text-sm font-medium text-slate-700 transition-colors duration-300 dark:text-slate-200">
                                         {item.label}
                                     </span>
-                                </a>
+                                </Link>
                             ))}
                     </div>
                 </div>
