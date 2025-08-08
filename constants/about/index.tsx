@@ -40,7 +40,8 @@ const team = [
         lastName: "Raclot",
         role: "CEO",
         status: "Junior Full Stack Developer",
-        description: " Passionné par la technologie et la lecture, Raphaël a créé Capybook pour révolutionner la façon dont nous suivons et apprécions nos lectures."
+        description: " Passionné par la technologie et la lecture, Raphaël a créé Capybook pour révolutionner la façon dont nous suivons et apprécions nos lectures.",
+        link: "https://www.linkedin.com/in/raphael-raclot/"
     }
 ]
 

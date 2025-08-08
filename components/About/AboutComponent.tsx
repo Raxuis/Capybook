@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/accordion";
 import {Card, CardContent} from "@/components/ui/card";
 import {faqs, services, team, history} from "@/constants/about";
+import Link from "next/link";
 
 
 const AboutComponent = () => {
@@ -108,12 +109,18 @@ const AboutComponent = () => {
                         <div className="group text-center">
                             <div className="relative mb-8 inline-block">
                                 <motion.div
-                                    initial={{ scale: 1 }}
-                                    whileHover={{ scale: 1.03 }}
-                                    whileTap={{ scale: 1 }}
-                                    transition={{ type: "spring", stiffness: 300 }}
+                                    initial={{scale: 1}}
+                                    whileHover={{scale: 1.03}}
+                                    whileTap={{scale: 1}}
+                                    transition={{type: "spring", stiffness: 300}}
                                     className="relative rounded-full bg-gradient-to-r from-[#673ab7] via-[#4caf50] to-[#00bcd4] p-1">
-                                    <div className="relative size-[280px] overflow-hidden rounded-full">
+                                    <Link
+                                        className="relative size-[280px] overflow-hidden rounded-full block"
+                                        href={team[0].link}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        aria-label={team[0].firstName + " " + team[0].lastName}
+                                    >
                                         <Image
                                             src={team[0].image}
                                             alt={team[0].firstName + " " + team[0].lastName}
@@ -121,28 +128,19 @@ const AboutComponent = () => {
                                             height={280}
                                             className="rounded-full"
                                         />
-                                    </div>
+                                    </Link>
                                 </motion.div>
                             </div>
-                            <h3 className="mb-2 text-2xl font-semibold">
-                                {team[0].firstName + " " + team[0].lastName}
-                            </h3>
-                            <p className="text-muted-foreground mb-2 text-lg">
-                                {
-                                    team[0].status
-                                }
-                            </p>
-                            <p className="text-muted-foreground mx-auto max-w-md">
-                                {
-                                    team[0].description
-                                }
-                            </p>
+                            <h3 className="mb-2 text-2xl font-semibold">{team[0].firstName + " " + team[0].lastName}</h3>
+                            <p className="text-muted-foreground mb-2 text-lg">{team[0].status}</p>
+                            <p className="text-muted-foreground mx-auto max-w-md">{team[0].description}</p>
                         </div>
                     </div>
                 </div>
             </section>
 
-            {/* FAQ */}
+            {/* FAQ */
+            }
             <section className="py-16" id="faq">
                 <div className="container mx-auto px-4">
                     <div className="mx-auto max-w-3xl">
@@ -159,7 +157,8 @@ const AboutComponent = () => {
                 </div>
             </section>
         </main>
-    );
+    )
+        ;
 };
 
 export default AboutComponent;
