@@ -10,7 +10,7 @@
     "eslint": "eslint ./components",
     "eslint:debug": "eslint ./components --debug",
     "eslint:fix": "eslint ./components --fix",
-    "vercel-build": "prisma generate && prisma migrate deploy && next build",
+    "vercel-build": "prisma generate && prisma migrate deploy && node prisma/seed-badges.js && next build",
     "seed-badges": "node prisma/seed-badges.js"
   },
   "dependencies": {
