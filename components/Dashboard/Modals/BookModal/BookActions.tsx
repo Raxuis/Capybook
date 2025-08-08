@@ -85,8 +85,8 @@ export const BookActions = ({
             {/* Prêter le livre */}
             {(inLibrary && !isBookLoanedInstance && !isPendingLoanInstance) && (
                 <Button
-                    variant="outline"
-                    className="w-full border-blue-300 text-blue-700 hover:bg-blue-200 sm:w-auto"
+                    variant="info"
+                    className="w-full sm:w-auto"
                     onClick={() => setIsLendingModalOpened(true)}
                     disabled={isAnyLoading}
                 >
