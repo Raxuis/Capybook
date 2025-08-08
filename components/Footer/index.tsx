@@ -38,6 +38,7 @@ const Footer = () => {
                                     href={item.href}
                                     className="group flex items-center transition-all duration-300"
                                     target={item.external ? "_blank" : "_self"}
+                                    aria-label={item.label}
                                 >
                                     <div
                                         className="group-hover:text-primary mr-2 rounded-full bg-white p-2 shadow-sm transition-all duration-300 group-hover:scale-110 group-hover:shadow-md dark:bg-slate-800">
