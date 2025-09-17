@@ -17,8 +17,10 @@ const publicRoutes = ['/about', '/register', '/login']
 export default async function middleware(req: NextRequest) {
     const path = req.nextUrl.pathname
     const user = await getToken({req, secret: process.env.AUTH_SECRET})
+    console.log("user in middleware", user)
+    console.log("secret", process.env.AUTH_SECRET);
 
-    const isProtectedRoute = protectedRoutes.includes(path)
+    const isProtectedRoute = protectedRoutes.some(route => path.startsWith(route));
     const isPublicRoute = publicRoutes.includes(path)
     const isAdminRoute = path.startsWith('/admin')
 

@@ -1,8 +1,9 @@
 import {auth} from "@/auth";
 import ClientHydration from "@/hydratation/ClientHydratation";
 import ChallengesContent from "@/components/Challenges/ChallengesContent";
+import {Metadata} from "next";
 
-export const metadata = {
+export const metadata: Metadata = {
     title: "Capybook Challenges",
     description: "Mes challenges de lecture",
 };
