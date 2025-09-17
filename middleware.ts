@@ -16,9 +16,9 @@ const publicRoutes = ['/about', '/register', '/login']
 
 export default async function middleware(req: NextRequest) {
     const path = req.nextUrl.pathname
-    const user = await getToken({req, secret: process.env.AUTH_SECRET})
+    const user = await getToken({req, secret: process.env.NEXT_AUTH_SECRET})
     console.log("user in middleware", user)
-    console.log("secret", process.env.AUTH_SECRET);
+    console.log("secret", process.env.NEXT_AUTH_SECRET);
 
     const isProtectedRoute = protectedRoutes.some(route => path.startsWith(route));
     const isPublicRoute = publicRoutes.includes(path)
