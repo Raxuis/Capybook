@@ -1,7 +1,7 @@
 import {NextRequest, NextResponse} from 'next/server';
 import {z} from 'zod';
 import prisma from "@/utils/prisma";
-import {NextJSContext, validateBody, validateParams, withErrorHandling} from "@/utils/api-validation";
+import {validateBody, withErrorHandling} from "@/utils/api-validation";
 
 const UserBookSchema = z.object({
     userId: z.string(),
@@ -12,6 +12,13 @@ const UserBookSchema = z.object({
         cover_i: z.number().optional(),
         number_of_pages: z.number().nullable().optional(),
         genres: z.array(z.string()).optional(),
+    }),
+});
+
+const DeleteUserBookSchema = z.object({
+    userId: z.string(),
+    book: z.object({
+        key: z.string(),
     }),
 });
 
@@ -81,20 +88,9 @@ async function handlePost(
 }
 
 async function handleDelete(
-    _: NextRequest,
-    context: NextJSContext
+    request: NextRequest
 ): Promise<NextResponse> {
-    const {userId, bookKey} = await validateParams(
-        context.params,
-        z.object({
-            userId: z.string(),
-            bookKey: z.string()
-        })
-    );
-
-    if (!userId || !bookKey) {
-        return NextResponse.json({error: 'User ID and Book Key are required'}, {status: 400});
-    }
+    const {userId, book} = await validateBody(request, DeleteUserBookSchema);
 
     const user = await prisma.user.findUnique({
         where: {id: userId}
@@ -104,16 +100,16 @@ async function handleDelete(
         return NextResponse.json({error: 'User does not exist'}, {status: 400});
     }
 
-    const book = await prisma.book.findUnique({
-        where: {key: bookKey}
+    const bookRecord = await prisma.book.findUnique({
+        where: {key: book.key}
     });
 
-    if (!book) {
+    if (!bookRecord) {
         return NextResponse.json({error: 'Book does not exist'}, {status: 400});
     }
 
     const userBookEntry = await prisma.userBook.findFirst({
-        where: {userId, bookId: book.id}
+        where: {userId, bookId: bookRecord.id}
     });
 
     if (!userBookEntry) {
@@ -126,8 +122,8 @@ async function handleDelete(
 
     return NextResponse.json(
         {
-            message: `User with id: ${userId} removed book with key: ${bookKey} and title: ${book.title}`
-        }, {status: 201});
+            message: `User with id: ${userId} removed book with key: ${book.key} and title: ${bookRecord.title}`
+        }, {status: 200});
 }
 
 export const POST = withErrorHandling(handlePost);
