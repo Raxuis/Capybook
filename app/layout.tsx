@@ -9,6 +9,7 @@ import {NuqsAdapter} from "nuqs/adapters/next/app";
 import {ViewTransitions} from "next-view-transitions";
 import NextTopLoader from "nextjs-toploader";
 import {Toaster} from "@/components/ui/toaster";
+import {getServerUrl} from "@/utils/get-server-url";
 
 const inter = Inter({
     variable: "--font-inter",
@@ -24,6 +25,7 @@ const manrope = Manrope({
 export const metadata: Metadata = {
     title: "CapyBook 📕🦫",
     description: "La façon la plus simple de suivre votre progression en lecture.",
+    metadataBase: new URL(getServerUrl())
 };
 
 export default function RootLayout({
