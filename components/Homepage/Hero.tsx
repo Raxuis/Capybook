@@ -22,7 +22,7 @@ const Hero = () => {
         }
         window.addEventListener("resize", handleResize);
         return () => window.removeEventListener("resize", handleResize);
-    }, []);
+    }, [isMobile]);
 
     const heroInView = useInView(heroRef, {once: false, margin: "-30%"});
 
