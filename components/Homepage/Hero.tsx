@@ -1,6 +1,6 @@
 "use client";
 
-import React, {useRef} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {motion, useInView, useScroll, useTransform} from "motion/react";
 import {animations} from "@/constants";
 import {Button} from "@/components/ui/button";
@@ -12,7 +12,17 @@ const Hero = () => {
     const {scrollYProgress} = useScroll();
     const heroRef = useRef(null);
 
-    const isMobile = typeof window !== "undefined" && window.innerWidth <= 768;
+    const isMobile = useState(typeof window !== "undefined" && window.innerWidth <= 768);
+
+    useEffect(() => {
+        const handleResize = () => {
+            if (typeof window !== "undefined") {
+                isMobile[1](window.innerWidth <= 768);
+            }
+        }
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
 
     const heroInView = useInView(heroRef, {once: false, margin: "-30%"});
 
