@@ -12,12 +12,14 @@ const Hero = () => {
     const {scrollYProgress} = useScroll();
     const heroRef = useRef(null);
 
-    const isMobile = useState(typeof window !== "undefined" && window.innerWidth <= 768);
+    const [isMobile, setIsMobile] = useState(
+        typeof window !== "undefined" && window.innerWidth <= 768
+    );
 
     useEffect(() => {
         const handleResize = () => {
             if (typeof window !== "undefined") {
-                isMobile[1](window.innerWidth <= 768);
+                setIsMobile(window.innerWidth <= 768);
             }
         }
         window.addEventListener("resize", handleResize);
@@ -87,7 +89,7 @@ const Hero = () => {
                         ref={heroRef}
                     >
                         <motion.div
-                            className="relative flex h-[300px] sm:h-[400px] md:h-[500px] items-center justify-center"
+                            className="relative flex h-[300px] select-none items-center justify-center sm:h-[400px] md:h-[500px]"
                             style={{y: heroImgY}}
                             initial={{opacity: 0, x: 100}}
                             animate={heroInView ? {opacity: 1, x: 0} : {opacity: 0, x: 100}}
