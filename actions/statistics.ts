@@ -2,6 +2,7 @@
 
 import prisma from "@/utils/prisma";
 import {currentUser} from "@/actions/auth/current-user";
+import {PERTINENT_BOOK_SUBJECTS} from "@/constants/subjects";
 
 export async function getAllDashboardStats() {
     const user = await currentUser();
@@ -76,6 +77,11 @@ async function getGenreAnalysis(userId: string) {
         where: {
             bookId: {
                 in: bookIds
+            },
+            genre: {
+                name: {
+                    in: PERTINENT_BOOK_SUBJECTS
+                }
             }
         },
         include: {
@@ -86,6 +92,7 @@ async function getGenreAnalysis(userId: string) {
     const genreCount: Record<string, number> = {};
     bookGenres.forEach(bg => {
         const genreName = bg.genre.name;
+        if (!genreName) return;
         genreCount[genreName] = (genreCount[genreName] || 0) + 1;
     });
 
