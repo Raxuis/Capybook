@@ -1,6 +1,5 @@
 import type {Metadata} from "next";
 import {Inter, Manrope} from "next/font/google";
-import "./globals.css";
 import React from "react";
 import {SessionProvider} from "next-auth/react";
 import {SWRProvider} from "@/providers/swr-providers";
@@ -10,6 +9,7 @@ import {ViewTransitions} from "next-view-transitions";
 import NextTopLoader from "nextjs-toploader";
 import {Toaster} from "@/components/ui/toaster";
 import {getServerUrl} from "@/utils/get-server-url";
+import "./globals.css";
 
 const inter = Inter({
     variable: "--font-inter",
@@ -25,7 +25,19 @@ const manrope = Manrope({
 export const metadata: Metadata = {
     title: "CapyBook 📕🦫",
     description: "La façon la plus simple de suivre votre progression en lecture.",
-    metadataBase: new URL(getServerUrl())
+    metadataBase: new URL(getServerUrl()),
+    manifest: "/manifest.json",
+    appleWebApp: {
+        capable: true,
+        statusBarStyle: "default",
+        title: "Capybook",
+    },
+    applicationName: "Capybook",
+    keywords: ["lecture", "livres", "reading", "books", "tracker"],
+    icons: {
+        icon: "/web-app-manifest-192x192.png",
+        apple: "/web-app-manifest-192x192.png",
+    },
 };
 
 export default function RootLayout({
@@ -34,13 +46,13 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
+        <html lang="fr">
+        <body className={`${inter.variable} ${manrope.variable} antialiased`}>
         <SessionProvider>
             <SWRProvider>
                 <BadgeQueueProvider>
                     <NuqsAdapter>
                         <ViewTransitions>
-                            <html lang="en">
-                            <body className={`${inter.variable} ${manrope.variable} antialiased`}>
                             {children}
                             <NextTopLoader
                                 color="#7a31c0"
@@ -54,12 +66,12 @@ export default function RootLayout({
                                 shadow="0 0 10px #2299DD,0 0 5px #2299DD"
                             />
                             <Toaster/>
-                            </body>
-                            </html>
                         </ViewTransitions>
                     </NuqsAdapter>
                 </BadgeQueueProvider>
             </SWRProvider>
         </SessionProvider>
+        </body>
+        </html>
     );
 }

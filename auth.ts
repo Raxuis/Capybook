@@ -7,6 +7,7 @@ import {SignInSchema} from "@/utils/zod";
 import bcrypt from "bcryptjs";
 
 export const {handlers, signIn, auth} = NextAuth({
+    trustHost: true,
     adapter: PrismaAdapter(prisma),
     secret: process.env.NEXTAUTH_SECRET,
     session: {

@@ -14,6 +14,8 @@ const protectedRoutes = [
 
 const publicRoutes = ['/about', '/register', '/login']
 
+const pwaFiles = ['/manifest.json', '/sw.js', '/workbox'];
+
 export default async function middleware(req: NextRequest) {
     const path = req.nextUrl.pathname
     const user = await getToken({
@@ -25,6 +27,10 @@ export default async function middleware(req: NextRequest) {
     const isProtectedRoute = protectedRoutes.some(route => path.startsWith(route));
     const isPublicRoute = publicRoutes.includes(path)
     const isAdminRoute = path.startsWith('/admin')
+
+    if (pwaFiles.includes(path)) {
+        return NextResponse.next();
+    }
 
     // Redirect to /login if the user is not authenticated
     if (isProtectedRoute && !user) {

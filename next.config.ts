@@ -1,49 +1,42 @@
 import {withSentryConfig} from "@sentry/nextjs";
 import type {NextConfig} from "next";
+import createPWA from "@ducanh2912/next-pwa";
+
+const isProd = process.env.NODE_ENV === "production";
+
+const withPWA = createPWA({
+    dest: "public",
+    disable: !isProd,
+    register: true,
+    cacheOnFrontEndNav: true,
+    aggressiveFrontEndNavCaching: true,
+    reloadOnOnline: true,
+    workboxOptions: {
+        disableDevLogs: true,
+    },
+});
 
 const nextConfig: NextConfig = {
     images: {
         remotePatterns: [
             {
-                protocol: 'https',
-                hostname: 'covers.openlibrary.org',
+                protocol: "https",
+                hostname: "covers.openlibrary.org",
             },
             {
                 protocol: "https",
-                hostname: "images.unsplash.com"
-            }
+                hostname: "images.unsplash.com",
+            },
         ],
     },
 };
 
-export default withSentryConfig(nextConfig, {
-// For all available options, see:
-// https://www.npmjs.com/package/@sentry/webpack-plugin#options
-
+export default withSentryConfig(withPWA(nextConfig), {
     org: "capybook",
     project: "capybook",
-
-// Only print logs for uploading source maps in CI
     silent: !process.env.CI,
-
-// For all available options, see:
-// https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
-
-// Upload a larger set of source maps for prettier stack traces (increases build time)
     widenClientFileUpload: true,
-
-// Route browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers.
-// This can increase your server load as well as your hosting bill.
-// Note: Check that the configured route will not match with your Next.js middleware, otherwise reporting of client-
-// side errors will fail.
-    tunnelRoute: true, // Generates a random route for each build (recommended)
-
-// Automatically tree-shake Sentry logger statements to reduce bundle size
-    disableLogger: true,
-
-// Enables automatic instrumentation of Vercel Cron Monitors. (Does not yet work with App Router route handlers.)
-// See the following for more information:
-// https://docs.sentry.io/product/crons/
-// https://vercel.com/docs/cron-jobs
+    tunnelRoute: true,
+    disableLogger: isProd,
     automaticVercelMonitors: true,
 });
