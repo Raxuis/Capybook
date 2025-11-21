@@ -6,7 +6,7 @@ const isProd = process.env.NODE_ENV === "production";
 
 const pwa = withPWA({
     dest: "public",
-    disable: false,
+    disable: !isProd,
     register: true,
     skipWaiting: true,
 });
