@@ -1,6 +1,5 @@
 import type {Metadata} from "next";
 import {Inter, Manrope} from "next/font/google";
-import "./globals.css";
 import React from "react";
 import {SessionProvider} from "next-auth/react";
 import {SWRProvider} from "@/providers/swr-providers";
@@ -10,6 +9,9 @@ import {ViewTransitions} from "next-view-transitions";
 import NextTopLoader from "nextjs-toploader";
 import {Toaster} from "@/components/ui/toaster";
 import {getServerUrl} from "@/utils/get-server-url";
+import Head from "next/head";
+import "./globals.css";
+
 
 const inter = Inter({
     variable: "--font-inter",
@@ -39,6 +41,10 @@ export default function RootLayout({
                 <BadgeQueueProvider>
                     <NuqsAdapter>
                         <ViewTransitions>
+                            <Head>
+                                <meta name="apple-mobile-web-app-title" content="Capybook"/>
+                                <link rel="manifest" href="/manifest.json"/>
+                            </Head>
                             <html lang="en">
                             <body className={`${inter.variable} ${manrope.variable} antialiased`}>
                             {children}
