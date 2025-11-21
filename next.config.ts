@@ -1,17 +1,22 @@
 import {withSentryConfig} from "@sentry/nextjs";
 import type {NextConfig} from "next";
-import withPWA from "next-pwa";
+import createPWA from "@ducanh2912/next-pwa";
 
 const isProd = process.env.NODE_ENV === "production";
 
-const pwa = withPWA({
+const withPWA = createPWA({
     dest: "public",
     disable: !isProd,
     register: true,
-    skipWaiting: true,
+    cacheOnFrontEndNav: true,
+    aggressiveFrontEndNavCaching: true,
+    reloadOnOnline: true,
+    workboxOptions: {
+        disableDevLogs: true,
+    },
 });
 
-const nextConfig = pwa({
+const nextConfig: NextConfig = {
     images: {
         remotePatterns: [
             {
@@ -24,9 +29,9 @@ const nextConfig = pwa({
             },
         ],
     },
-}) as NextConfig; // ✅ THIS fixes TS2322
+};
 
-export default withSentryConfig(nextConfig, {
+export default withSentryConfig(withPWA(nextConfig), {
     org: "capybook",
     project: "capybook",
     silent: !process.env.CI,
