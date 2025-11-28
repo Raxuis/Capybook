@@ -8,6 +8,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "type-check": "tsc --noEmit",
     "postinstall": "prisma generate",
     "test": "vitest",
     "test:unit": "vitest run",
