@@ -22,6 +22,8 @@ model User {
   password      String? // Keeping for credentials-based login
   emailVerified DateTime?
   image         String?
+  favoriteColor String    @default("#3b82f6")
+  role          Role      @default(USER) // USER, ADMIN, MODERATOR
   accounts      Account[]
   sessions      Session[]
 
@@ -31,6 +33,21 @@ model User {
   UserBook         UserBook[]
   BookReview       BookReview[]
   UserBookWishlist UserBookWishlist[]
+  ReadingGoal      ReadingGoal[]
+  UserBadge        UserBadge[]
+  ReadingProgress  ReadingProgress[]
+  ReadingDay       ReadingDay[]
+
+  followers Follow[] @relation("following")
+  following Follow[] @relation("followers")
+
+  specificFriendReviews BookReview[]    @relation("SpecificFriendReviews")
+  UserBookNotes         UserBookNotes[]
+
+  lentBooks     BookLending[] @relation("LenderUser") // Livres prêtés par cet utilisateur
+  borrowedBooks BookLending[] @relation("BorrowerUser") // Livres empruntés par cet utilisateur
+
+  dailyBookViews DailyBookView[]
 }
 
 model Account {
@@ -77,12 +94,32 @@ model UserBook {
   userId        String
   bookId        String
   isCurrentBook Boolean   @default(false)
+  progressType  String?   @default("percentage")
   progress      Int       @default(0)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   finishedAt    DateTime?
-  User          User      @relation(fields: [userId], references: [id])
-  Book          Book      @relation(fields: [bookId], references: [id])
+  User          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Book          Book      @relation(fields: [bookId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, bookId])
+}
+
+model UserBookNotes {
+  id        String       @id @default(cuid())
+  userId    String
+  bookId    String
+  note      String
+  page      Int?
+  chapter   Int?
+  tags      String[]     @default([])
+  type      BookNoteType @default(NOTE)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  User      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Book      Book         @relation(fields: [bookId], references: [id], onDelete: Cascade)
+
+  // Aucun @@unique ici pour permettre plusieurs notes par livre
 }
 
 model UserBookWishlist {
@@ -91,8 +128,10 @@ model UserBookWishlist {
   bookId    String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  User      User     @relation(fields: [userId], references: [id])
-  Book      Book     @relation(fields: [bookId], references: [id])
+  User      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Book      Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, bookId])
 }
 
 model Book {
@@ -101,23 +140,224 @@ model Book {
   title            String
   authors          String[]
   cover            String?
+  numberOfPages    Int?
   createdAt        DateTime           @default(now())
   updatedAt        DateTime           @updatedAt
   UserBook         UserBook[]
   BookReview       BookReview[]
   UserBookWishlist UserBookWishlist[]
+  BookGenre        BookGenre[]
+  UserBookNotes    UserBookNotes[]
+  BookLending      BookLending[]
+}
+
+model DailyBook {
+  id        String   @id @default(cuid())
+  bookKey   String // Key Open Library (ex: "/works/OL45804W")
+  date      DateTime @db.Date
+  isActive  Boolean  @default(true) // Permet de désactiver un livre du jour
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([date])
+  @@index([date, isActive])
+  @@index([bookKey])
+}
+
+model DailyBookView {
+  id       String   @id @default(cuid())
+  userId   String
+  bookKey  String
+  viewedAt DateTime @default(now())
+  date     DateTime @db.Date // Date à laquelle le livre était proposé
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, bookKey, date])
+  @@index([userId, viewedAt])
+  @@index([date])
+  @@index([bookKey])
 }
 
 model BookReview {
-  id        String   @id @default(cuid())
-  userId    String
-  bookId    String
-  rating    Int?
-  feedback  String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  User      User     @relation(fields: [userId], references: [id])
-  Book      Book     @relation(fields: [bookId], references: [id])
+  id               String   @id @default(cuid())
+  userId           String
+  bookId           String
+  rating           Int // Note de 1 à 5
+  feedback         String?
+  privacy          Privacy  @default(PUBLIC) // "PUBLIC", "PRIVATE", "FRIENDS", "SPECIFIC_FRIEND"
+  privateLink      String?  @unique // For PRIVATE reviews
+  specificFriendId String? // For SPECIFIC_FRIEND reviews
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  User             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Book             Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  SpecificFriend   User?    @relation("SpecificFriendReviews", fields: [specificFriendId], references: [id], onDelete: SetNull)
 
   @@unique([userId, bookId])
+}
+
+model BookLending {
+  id           String        @id @default(cuid())
+  lenderId     String // Utilisateur qui prête le livre
+  borrowerId   String // Utilisateur qui emprunte le livre
+  bookId       String
+  status       LendingStatus @default(PENDING)
+  message      String? // Message optionnel lors de la demande
+  requestedAt  DateTime      @default(now())
+  acceptedAt   DateTime?
+  rejectedAt   DateTime?
+  returnedAt   DateTime?
+  dueDate      DateTime?
+  reminderSent Boolean       @default(false) // Pour savoir si un rappel a été envoyé
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  lender   User @relation("LenderUser", fields: [lenderId], references: [id], onDelete: Cascade)
+  borrower User @relation("BorrowerUser", fields: [borrowerId], references: [id], onDelete: Cascade)
+  book     Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
+
+  @@unique([borrowerId, bookId, status])
+  @@index([lenderId, status])
+  @@index([borrowerId, status])
+  @@index([bookId, status])
+}
+
+model ReadingGoal {
+  id          String    @id @default(cuid())
+  userId      String
+  target      Int // Nombre de livres ou pages à lire
+  type        GoalType // "BOOKS" ou "PAGES" ou "TIME"
+  deadline    DateTime // Date limite pour l'objectif
+  progress    Int       @default(0) // Avancement de l'utilisateur
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  completedAt DateTime?
+  User        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Badge {
+  id                String        @id @default(cuid())
+  name              String        @unique
+  ownerDescription  String
+  publicDescription String
+  category          BadgeCategory
+  requirement       Int // Nombre requis pour obtenir le badge (ex: 10 livres)
+  icon              String? // Chemin ou identifiant de l'icône du badge
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  UserBadge         UserBadge[]
+}
+
+model UserBadge {
+  id       String   @id @default(cuid())
+  userId   String
+  badgeId  String
+  earnedAt DateTime @default(now())
+  User     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Badge    Badge    @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, badgeId])
+}
+
+model ReadingProgress {
+  id             String     @id @default(cuid())
+  userId         String
+  readingDayId   String     @unique
+  date           DateTime
+  pagesRead      Int
+  booksCompleted Int
+  user           User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  readingDay     ReadingDay @relation(fields: [readingDayId], references: [id])
+}
+
+model ReadingDay {
+  id              String           @id @default(cuid())
+  userId          String
+  date            DateTime         @default(now()) @db.Date
+  minutesRead     Int              @default(0)
+  pagesRead       Int              @default(0)
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  readingProgress ReadingProgress?
+
+  @@unique([userId, date])
+}
+
+model BookGenre {
+  id        String   @id @default(cuid())
+  bookId    String
+  genreId   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  book      Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  genre     Genre    @relation(fields: [genreId], references: [id], onDelete: Cascade)
+
+  @@unique([bookId, genreId])
+}
+
+model Follow {
+  id          String   @id @default(cuid())
+  followerId  String // The user who follows
+  followingId String // The user being followed
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  follower  User @relation("followers", fields: [followerId], references: [id], onDelete: Cascade)
+  following User @relation("following", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followingId]) // Prevents duplicate follows
+}
+
+enum Role {
+  USER
+  ADMIN
+  MODERATOR
+}
+
+enum GoalType {
+  BOOKS
+  PAGES
+  TIME
+}
+
+enum BadgeCategory {
+  BOOKS_READ // Nombre de livres lus
+  PAGES_READ // Nombre de pages lues
+  REVIEWS_WRITTEN // Nombre de critiques écrites
+  GOALS_COMPLETED // Nombre d'objectifs atteints
+  READING_STREAK // Jours consécutifs de lecture
+  GENRE_EXPLORER // Diversité des genres lus
+  SPECIAL // Badges spéciaux ou événementiels
+  LENDING // Nouveaux badges liés au prêt (optionnel)
+}
+
+enum Privacy {
+  PUBLIC
+  PRIVATE
+  FRIENDS
+  SPECIFIC_FRIEND
+}
+
+model Genre {
+  id        String      @id @default(cuid())
+  name      String      @unique
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  books     BookGenre[]
+}
+
+enum BookNoteType {
+  NOTE
+  QUOTE
+  SUMMARY
+  THOUGHT
+}
+
+enum LendingStatus {
+  PENDING // En attente d'acceptation
+  ACCEPTED // Accepté, livre prêté
+  REJECTED // Rejeté par le prêteur
+  RETURNED // Livre retourné
+  OVERDUE // En retard (optionnel, peut être calculé)
+  CANCELLED // Annulé (par le demandeur avant acceptation)
 }

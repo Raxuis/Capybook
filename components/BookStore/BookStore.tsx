@@ -1,162 +1,179 @@
 "use client";
-import {useEffect, useState} from "react";
+import {useState, useRef} from "react";
 import {useBooks} from "@/hooks/useBooks";
 import {useQueryState} from "nuqs";
 import {Input} from "@/components/ui/input";
 import {useDebounce} from "@uidotdev/usehooks";
 import BookCard from "@/components/BookStore/BookCard";
-import {Search, Barcode} from "lucide-react";
+import {Search, ChevronLeft, ChevronRight} from "lucide-react";
 import {Skeleton} from "@/components/ui/skeleton";
 import {Link} from "next-view-transitions";
-import ReviewBookModal from "@/components/BookStore/Modals/ReviewBookModal";
-import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
+import {Button} from "@/components/ui/button";
+import {cn} from "@/lib/utils";
+import {motion, AnimatePresence} from "motion/react";
 
-interface BookStoreProps {
-    userId: string | null;
-}
-
-const BookStore = ({userId}: BookStoreProps) => {
+const BookStore = () => {
     const [search, setSearch] = useQueryState("search", {defaultValue: ""});
-    const [searchType, setSearchType] = useQueryState("type", {defaultValue: ""});
+    const [page, setPage] = useQueryState("page", {defaultValue: "1"});
     const debouncedSearch = useDebounce(search, 500);
     const {
         books,
         isError,
         isLoading,
-    } = useBooks(debouncedSearch, userId ?? undefined, searchType);
+        totalPages,
+        currentPage
+    } = useBooks(debouncedSearch, parseInt(page));
+
     const [searchFocused, setSearchFocused] = useState<boolean>(false);
 
-    const handleSearchTypeChange = (value: string): void => {
-        setSearchType(value);
-        setSearch("");
+    const hasAnimatedInitialPrompt = useRef<boolean>(false);
+
+    const handlePageChange = (newPage: number) => {
+        if (newPage >= 1 && newPage <= totalPages) {
+            setPage(newPage.toString());
+        }
     };
 
-    useEffect(() => {
-        if (searchType === "isbn") {
-            setSearchType("isbn");
-        } else {
-            setSearchType("general");
-        }
-    }, [searchType, setSearchType]);
-
     return (
-        <div className="container max-w-6xl mx-auto px-4 py-8">
-            <h1 className="text-3xl font-bold mb-6">
+        <div className="container mx-auto max-w-6xl px-4 pb-28 pt-8">
+            <motion.h1 className="mb-3 text-3xl font-bold"
+                       initial={{opacity: 0, y: 20}}
+                       animate={{opacity: 1, y: 0}}
+                       transition={{duration: 0.6, ease: "easeInOut"}}
+            >
                 Parcourir les livres
-            </h1>
-
-            <Tabs defaultValue="general" value={searchType} onValueChange={handleSearchTypeChange} className="mb-6">
-                <TabsList className="grid w-full max-w-md grid-cols-2">
-                    <TabsTrigger value="general">Titre / Auteur</TabsTrigger>
-                    <TabsTrigger value="isbn">ISBN</TabsTrigger>
-                </TabsList>
-
-                <TabsContent value="general" className="mt-4">
-                    <div className="relative">
-                        <div
-                            className={`flex items-center border rounded-lg px-3 transition-all ${searchFocused ? 'ring-2 ring-primary shadow-sm' : 'border-gray-300'}`}>
-                            <Search className="h-5 w-5 text-gray-400 mr-2"/>
-                            <Input
-                                value={search || ""}
-                                onChange={(e) => setSearch(e.target.value)}
-                                onFocus={() => setSearchFocused(true)}
-                                onBlur={() => setSearchFocused(false)}
-                                placeholder="Recherchez un livre par titre, auteur..."
-                                className="border-0 shadow-none focus-visible:ring-0 focus-visible:outline-none"
-                            />
-                        </div>
-                    </div>
-                </TabsContent>
-
-                <TabsContent value="isbn" className="mt-4">
-                    <div className="relative">
-                        <div
-                            className={`flex items-center border rounded-lg px-3 transition-all ${searchFocused ? 'ring-2 ring-primary shadow-sm' : 'border-gray-300'}`}>
-                            <Barcode className="h-5 w-5 text-gray-400 mr-2"/>
-                            <Input
-                                value={search || ""}
-                                onChange={(e) => {
-                                    setSearch(e.target.value.replace(/[^0-9\-]/g, ''))
-                                }}
-                                onFocus={() => setSearchFocused(true)}
-                                onBlur={() => setSearchFocused(false)}
-                                placeholder="Entrez un ISBN (ex: 978-3-16-148410-0)"
-                                className="border-0 shadow-none focus-visible:ring-0 focus-visible:outline-none"
-                                inputMode="numeric"
-                            />
-                        </div>
-                        <p className="text-xs text-gray-500 mt-1 ml-1">
-                            Format: ISBN-10 ou ISBN-13 (avec ou sans tirets)
-                        </p>
-                    </div>
-                </TabsContent>
-            </Tabs>
-
+            </motion.h1>
+            <motion.div className="relative" initial={{opacity: 0, y: 20}}
+                        animate={{opacity: 1, y: 0}}
+                        transition={{duration: 0.6, ease: "easeIn"}}
+            >
+                <div
+                    className={cn("flex items-center border rounded-lg px-3 transition-all", searchFocused ? 'ring-2 ring-primary shadow-sm' : 'border-gray-300')}>
+                    <Search className="mr-2 size-5 text-gray-400"/>
+                    <Input
+                        value={search || ""}
+                        onChange={(e) => {
+                            setSearch(e.target.value);
+                            setPage("1"); // Réinitialiser la page lors d'une nouvelle recherche
+                        }}
+                        onFocus={() => setSearchFocused(true)}
+                        onBlur={() => setSearchFocused(false)}
+                        placeholder="Recherchez un livre par titre, ISBN, auteur..."
+                        className="border-0 shadow-none focus-visible:outline-none focus-visible:ring-0"
+                    />
+                </div>
+            </motion.div>
             {isError && (
-                <div className="mt-8 p-4 rounded-lg bg-red-50 text-red-600 flex items-center justify-center">
+                <div className="mt-8 flex items-center justify-center rounded-lg bg-red-50 p-4 text-red-600">
                     <p>Une erreur est survenue lors de la recherche. Veuillez réessayer.</p>
                 </div>
             )}
 
             {isLoading ? (
-                <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                     {[...Array(8)].map((_, index) => (
-                        <div key={index} className="border rounded-lg overflow-hidden">
+                        <div key={index} className="overflow-hidden rounded-lg border">
                             <Skeleton className="h-64 w-full"/>
                             <div className="p-4">
-                                <Skeleton className="h-6 w-3/4 mb-2"/>
-                                <Skeleton className="h-4 w-1/2 mb-4"/>
-                                <Skeleton className="h-4 w-full mb-2"/>
+                                <Skeleton className="mb-2 h-6 w-3/4"/>
+                                <Skeleton className="mb-4 h-4 w-1/2"/>
+                                <Skeleton className="mb-2 h-4 w-full"/>
                                 <Skeleton className="h-4 w-3/4"/>
                             </div>
                         </div>
                     ))}
                 </div>
             ) : books.length > 0 ? (
-                <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                    {books.map((book) => (
-                        <BookCard
-                            key={book.key}
-                            book={book}
-                            debouncedBookName={debouncedSearch || ""}
-                            userId={userId}
-                        />
-                    ))}
-                </div>
+                <>
+                    <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                        {books.map((book) => (
+                            <BookCard
+                                key={book.key}
+                                book={book}
+                                debouncedBookName={debouncedSearch || ""}
+                            />
+                        ))}
+                    </div>
+                    {totalPages > 1 && (
+                        <div className="mt-8 flex items-center justify-center gap-4">
+                            <Button
+                                variant="outline"
+                                size="icon"
+                                onClick={() => handlePageChange(currentPage - 1)}
+                                disabled={currentPage === 1}
+                            >
+                                <ChevronLeft className="size-4"/>
+                            </Button>
+                            <span className="text-muted-foreground text-sm">
+                                Page {currentPage} sur {totalPages}
+                            </span>
+                            <Button
+                                variant="outline"
+                                size="icon"
+                                onClick={() => handlePageChange(currentPage + 1)}
+                                disabled={currentPage === totalPages}
+                            >
+                                <ChevronRight className="size-4"/>
+                            </Button>
+                        </div>
+                    )}
+                </>
             ) : (search || "").trim() !== "" ? (
                 <div className="mt-16 flex flex-col items-center justify-center text-center">
-                    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                        {searchType === "isbn" ?
-                            <Barcode className="h-8 w-8 text-gray-400"/> :
-                            <Search className="h-8 w-8 text-gray-400"/>
-                        }
+                    <div className="mb-4 flex size-16 items-center justify-center rounded-full bg-gray-100">
+                        <Search className="size-8 text-gray-400"/>
                     </div>
-                    <h3 className="text-xl font-semibold mb-2">Aucun livre trouvé</h3>
-                    <p className="text-gray-500 max-w-md">
-                        {searchType === "isbn" ?
-                            `Aucun livre ne correspond à l'ISBN "${search}". Vérifiez que le format est correct.` :
-                            `Aucun livre ne correspond à votre recherche "${search}". Essayez avec un autre titre ou auteur.`
-                        }
+                    <h3 className="mb-2 text-xl font-semibold">Aucun livre trouvé</h3>
+                    <p className="max-w-md text-gray-500">
+                        Aucun livre ne correspond à votre recherche &#34;{search}&#34;. Essayez avec un autre titre,
+                        auteur ou
+                        ISBN.
                     </p>
                 </div>
             ) : (
-                <div className="mt-16 flex flex-col items-center justify-center text-center">
-                    <h3 className="text-xl font-semibold mb-2">Commencez votre recherche</h3>
-                    <p className="text-gray-500 max-w-md">
-                        {searchType === "isbn" ?
-                            "Entrez un ISBN pour trouver un livre spécifique." :
-                            "Recherchez des livres par titre ou auteur pour les ajouter à "
-                        }
-                        {searchType !== "isbn" && (
-                            <Link href="/book-shelf" className="text-primary underline">
-                                votre bibliothèque
-                            </Link>
-                        )}
-                        {searchType !== "isbn" && "."}
-                    </p>
-                </div>
+                <AnimatePresence mode="wait">
+                    {search.trim() === "" && books.length === 0 && !isLoading && !isError && !hasAnimatedInitialPrompt.current && (
+                        <motion.div
+                            key="initial-prompt"
+                            className="mt-16 flex flex-col items-center justify-center text-center"
+                            initial={{opacity: 0, y: 20}}
+                            animate={{opacity: 1, y: 0}}
+                            exit={{opacity: 0, y: 10}}
+                            transition={{duration: 0.6, delay: 0.3, ease: "easeInOut"}}
+                            onAnimationComplete={() => {
+                                hasAnimatedInitialPrompt.current = true;
+                            }}
+                        >
+                            <h3 className="mb-2 text-xl font-semibold">Commencez votre recherche</h3>
+                            <p className="max-w-md text-gray-500">
+                                Recherchez des livres par titre, auteur ou ISBN pour les ajouter à {" "}
+                                <Link href="/book-shelf" className="text-primary underline">
+                                    votre bibliothèque
+                                </Link>
+                                .
+                            </p>
+                        </motion.div>
+                    )}
+                    {search.trim() === "" && books.length === 0 && !isLoading && !isError && hasAnimatedInitialPrompt.current && (
+                        <motion.div
+                            className="mt-16 flex flex-col items-center justify-center text-center"
+                            initial={{opacity: 0}}
+                            animate={{opacity: 1}}
+                            exit={{opacity: 0}}
+                            transition={{duration: 0.3, ease: "easeInOut"}}
+                        >
+                            <h3 className="mb-2 text-xl font-semibold">Commencez votre recherche</h3>
+                            <p className="max-w-md text-gray-500">
+                                Recherchez des livres par titre, auteur ou ISBN pour les ajouter à{" "}
+                                <Link href="/book-shelf" className="text-primary underline">
+                                    votre bibliothèque
+                                </Link>
+                                .
+                            </p>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             )}
-            <ReviewBookModal userId={userId}/>
         </div>
     );
 };

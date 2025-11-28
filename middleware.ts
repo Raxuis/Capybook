@@ -1,26 +1,65 @@
-import {auth} from "@/auth";
-import {NextResponse} from "next/server";
+import {NextRequest, NextResponse} from 'next/server'
+import {getToken} from 'next-auth/jwt'
 
-const publicPathRegex = /^(?!\/(api|_next\/static|_next\/image|favicon\.ico|sitemap\.xml|robots\.txt)).*$/;
+const protectedRoutes = [
+    '/book-shelf',
+    '/book-store',
+    '/reviews',
+    '/challenges',
+    '/statistics',
+    '/profile',
+    '/private-review',
+    '/daily-book'
+]
 
-export default auth(async (req) => {
-    const path = req.nextUrl.pathname;
-    const user = req.auth?.user;
+const publicRoutes = ['/about', '/register', '/login']
 
-    if (path.startsWith("/api/"))
+const pwaFiles = ['/manifest.json', '/sw.js', '/workbox'];
+
+export default async function middleware(req: NextRequest) {
+    const path = req.nextUrl.pathname
+    const user = await getToken({
+        req,
+        secret: process.env.NEXTAUTH_SECRET,
+        secureCookie: process.env.NODE_ENV === 'production',
+    })
+
+    const isProtectedRoute = protectedRoutes.some(route => path.startsWith(route));
+    const isPublicRoute = publicRoutes.includes(path)
+    const isAdminRoute = path.startsWith('/admin')
+
+    if (pwaFiles.includes(path)) {
         return NextResponse.next();
+    }
 
-    if (!publicPathRegex.test(path))
-        return NextResponse.next();
+    // Redirect to /login if the user is not authenticated
+    if (isProtectedRoute && !user) {
+        return NextResponse.redirect(new URL('/login', req.nextUrl))
+    }
 
-    if (user && (path === "/login" || path === "/register"))
-        return NextResponse.redirect(new URL("/", req.nextUrl.origin));
+    // Redirect to / if the user is not an admin
+    if (isAdminRoute) {
+        if (!user) {
+            return NextResponse.redirect(new URL('/login', req.nextUrl))
+        }
 
-    // Public routes that don't require authentication
-    const publicRoutes = ["/", "/login", "/register", "/about"];
+        if (user.role !== 'ADMIN') {
+            return NextResponse.redirect(new URL('/', req.nextUrl))
+        }
+    }
 
-    if (!user && !publicRoutes.includes(path))
-        return NextResponse.redirect(new URL("/login", req.nextUrl.origin));
+    // Redirect authenticated users away from public routes
+    if (
+        isPublicRoute &&
+        user &&
+        !req.nextUrl.pathname.startsWith('/about')
+    ) {
+        return NextResponse.redirect(new URL('/', req.nextUrl))
+    }
 
-    return NextResponse.next();
-});
+    return NextResponse.next()
+}
+
+export const config = {
+    matcher: ['/((?!_next/static|_next/image|.*\\.png$).*)'],
+}

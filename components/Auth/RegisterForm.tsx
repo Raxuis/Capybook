@@ -14,7 +14,8 @@ import {useToast} from "@/hooks/use-toast";
 import {LoaderCircleIcon} from "lucide-react";
 import {useState} from "react";
 import {useRouter} from "nextjs-toploader/app";
-import {signUp} from "@/actions/auth";
+import {signUp} from "@/actions/auth/auth";
+import ColorPicker from "@/components/ui/color-picker";
 
 export default function RegisterForm() {
     const {toast} = useToast();
@@ -26,7 +27,8 @@ export default function RegisterForm() {
         defaultValues: {
             username: "",
             email: "",
-            password: ""
+            password: "",
+            favoriteColor: "#3b82f6"
         },
     });
 
@@ -76,19 +78,19 @@ export default function RegisterForm() {
     }
 
     return (
-        <Card className="p-4 max-w-xl mx-auto w-full mt-20">
+        <Card className="mx-auto mt-20 w-full max-w-xl p-4">
             <div className="flex flex-col items-center gap-2">
                 <div
                     className="flex size-11 shrink-0 items-center justify-center rounded-full border"
                     aria-hidden="true"
                 >
-                    <Image src="/icon.png" alt="livre track icon" width={100} height={100} className="p-1"/>
+                    <Image src="/icon.png" alt="Capybook icon" width={100} height={100} className="p-1"/>
                 </div>
                 <CardHeader>
                     <CardTitle className="sm:text-center">
                         Créer un compte sur {" "}
                         <span className="font-extrabold underline">
-                            Livre Track
+                            Capybook
                         </span>
                     </CardTitle>
                     <CardDescription className="sm:text-center">
@@ -100,6 +102,22 @@ export default function RegisterForm() {
             <CardContent>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                        <FormField
+                            control={form.control}
+                            name="favoriteColor"
+                            render={({field}) => (
+                                <FormItem className="flex flex-col">
+                                    <FormLabel>Couleur préférée</FormLabel>
+                                    <FormControl>
+                                        <ColorPicker
+                                            color={field.value || "#3b82f6"}
+                                            action={(color) => field.onChange(color)}
+                                            className="w-full"
+                                        />
+                                    </FormControl>
+                                    <FormMessage/>
+                                </FormItem>
+                            )}/>
                         <FormField
                             control={form.control}
                             name="username"
@@ -157,9 +175,9 @@ export default function RegisterForm() {
                 </Form>
             </CardContent>
             <CardFooter>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-muted-foreground text-sm">
                     Déjà un compte ? Connectez vous {" "}
-                    <Link href="/login" className="text-sm underline hover:no-underline text-black">
+                    <Link href="/login" className="text-sm text-black underline hover:no-underline">
                         ici
                     </Link>
                     .

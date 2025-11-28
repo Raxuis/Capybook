@@ -6,8 +6,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SignInSchema } from "@/utils/zod";
-import { login } from "@/actions/auth";
-import { useAuth } from "@/hooks/useAuth";
+import { login } from "@/actions/auth/auth";
 import { LoaderCircleIcon } from "lucide-react";
 import {
     Form,
@@ -27,7 +26,6 @@ export default function LoginForm() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const router = useRouter();
-    const { setAuthenticated } = useAuth();
 
     const form = useForm<z.infer<typeof SignInSchema>>({
         resolver: zodResolver(SignInSchema),
@@ -46,18 +44,18 @@ export default function LoginForm() {
         if (response?.error) {
             setErrorMessage(response.error);
         } else {
-            setAuthenticated(true);
             router.push("/book-shelf");
+            router.refresh();
         }
 
         setIsSubmitting(false);
     }
 
     return (
-        <Card className="p-4 max-w-xl mx-auto w-full mt-20">
+        <Card className="mx-auto mt-20 w-full max-w-xl p-4">
             <div className="flex flex-col items-center gap-2">
                 <div className="flex size-11 shrink-0 items-center justify-center rounded-full border" aria-hidden="true">
-                    <Image src="/icon.png" alt="Livre Track Icon" width={100} height={100} className="p-1"/>
+                    <Image src="/icon.png" alt="Capybook Icon" width={100} height={100} className="p-1"/>
                 </div>
                 <CardHeader>
                     <CardTitle className="sm:text-center">De retour ?</CardTitle>
@@ -98,7 +96,7 @@ export default function LoginForm() {
                             )}
                         />
 
-                        {errorMessage && <p className="text-red-500 text-sm">{errorMessage}</p>}
+                        {errorMessage && <p className="text-sm text-red-500">{errorMessage}</p>}
 
                         <Button type="submit" className="w-full" disabled={isSubmitting}>
                             {isSubmitting && <LoaderCircleIcon className="-ms-1 animate-spin" size={16} aria-hidden="true"/>}
@@ -109,9 +107,9 @@ export default function LoginForm() {
             </CardContent>
 
             <CardFooter>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-muted-foreground text-sm">
                     Pas encore de compte ? Créez en un {" "}
-                    <Link href="/register" className="text-sm underline hover:no-underline text-black">
+                    <Link href="/register" className="text-sm text-black underline hover:no-underline">
                         ici
                     </Link>
                     .

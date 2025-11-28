@@ -1,106 +1,57 @@
 import {fetcher} from "@/utils/fetcher";
-import useSWR, {mutate} from "swr";
+import useSWR from "swr";
 import {useDebounce} from "@uidotdev/usehooks";
 import {useUser} from "@/hooks/useUser";
 import axios from "axios";
 import {useMemo, useCallback} from "react";
-import {Book, OpenLibraryISBNBook} from "@/types";
+import {Book, MoreInfoBook} from "@/types";
+import {api} from "@/utils/api";
+import {SWR_CONFIG} from "@/constants/SWR";
+import {PERTINENT_BOOK_SUBJECTS} from "@/constants/subjects";
 
-
-export type OpenLibraryResponse = {
+type OpenLibraryResponse = {
     docs: Book[];
-    numFound?: number;
-    start?: number;
-    numFoundExact?: boolean;
+    numFound: number;
+    start: number;
 };
 
-export type OpenLibraryISBNResponse = {
-    [key: string]: OpenLibraryISBNBook;
-};
-
-
-export interface ApiInstance {
-    post: <TData = unknown, TResponse = unknown>(url: string, data?: TData) => Promise<TResponse>;
-    delete: <TResponse = unknown>(url: string, config?: { data?: unknown }) => Promise<TResponse>;
-    put: <TData = unknown, TResponse = unknown>(url: string, data?: TData) => Promise<TResponse>;
-}
-
-export interface BookSets {
-    libraryKeys: Set<string>;
-    wishlistKeys: Set<string>;
-    currentBookKeys: Set<string>;
-    finishedBookKeys: Set<string>;
-    reviewedKeys: Set<string>;
-}
-
-export interface UseBooksResult {
-    books: Book[];
-    isLoading: boolean;
-    isError: boolean;
-    isUserLoading: boolean;
-    isBookFinished: (bookKey: string) => boolean;
-    isInLibrary: (bookKey: string) => boolean;
-    isInWishlist: (bookKey: string) => boolean;
-    isCurrentBook: (bookKey: string) => boolean;
-    isReviewed: (bookKey: string) => boolean;
-    toggleLibrary: (book: Book) => Promise<void>;
-    toggleWishlist: (book: Book) => Promise<void>;
-    toggleCurrentBook: (book: Book) => Promise<void>;
-}
-
-const api: ApiInstance = axios.create({
-    baseURL: "/api",
-    headers: {
-        "Content-Type": "application/json",
-    },
-});
-
-export function useBooks(
-    bookName?: string | null,
-    userId?: string,
-    searchType: string = 'general'
-): UseBooksResult {
-    const debouncedBookName = useDebounce<string | null | undefined>(bookName, 500);
-    const {user, isLoading: isUserLoading} = useUser(userId);
+export function useBooks(bookName?: string | null, page: number = 1) {
+    const debouncedBookName = useDebounce(bookName, 500);
+    const {user, isLoading: isUserLoading, refreshUser} = useUser();
 
     const shouldFetch = Boolean(debouncedBookName);
+    const pageSize = 20; // Nombre de livres par page
 
-    const getApiUrl = (): string | null => {
-        if (!shouldFetch || !debouncedBookName) return null;
+    const apiUrl = shouldFetch && debouncedBookName
+        ? `https://openlibrary.org/search.json?q=${encodeURIComponent(debouncedBookName)}&page=${page}&limit=${pageSize}`
+        : null;
 
-        if (searchType === 'isbn') {
-            const cleanIsbn = debouncedBookName.replace(/-/g, '');
-            return `https://openlibrary.org/api/books?bibkeys=ISBN:${cleanIsbn}&format=json&jscmd=data`;
-        } else {
-            return `https://openlibrary.org/search.json?q=${encodeURIComponent(debouncedBookName)}`;
-        }
-    };
-
-    const apiUrl = getApiUrl();
-
-    const {data, error, isLoading} = useSWR<OpenLibraryResponse | OpenLibraryISBNResponse>(
+    const {data, error, isLoading} = useSWR<OpenLibraryResponse>(
         apiUrl,
         fetcher,
-        {
-            revalidateOnFocus: false,
-            dedupingInterval: 60000, // 1 minute
-        }
+        SWR_CONFIG
     );
 
-    const bookSets = useMemo<BookSets>(() => {
+    const bookSets = useMemo(() => {
         if (!user) return {
-            libraryKeys: new Set<string>(),
-            wishlistKeys: new Set<string>(),
-            currentBookKeys: new Set<string>(),
-            finishedBookKeys: new Set<string>(),
-            reviewedKeys: new Set<string>()
+            libraryKeys: new Set(),
+            wishlistKeys: new Set(),
+            currentBookKeys: new Set(),
+            finishedBookKeys: new Set(),
+            reviewedKeys: new Set(),
+            lentBookKeys: new Set(),
+            pendingLentBookKeys: new Set(),
+            notesCounts: new Map()
         };
 
-        const libraryKeys = new Set<string>();
-        const wishlistKeys = new Set<string>();
-        const currentBookKeys = new Set<string>();
-        const finishedBookKeys = new Set<string>();
-        const reviewedKeys = new Set<string>();
+        const libraryKeys = new Set();
+        const wishlistKeys = new Set();
+        const currentBookKeys = new Set();
+        const finishedBookKeys = new Set();
+        const reviewedKeys = new Set();
+        const lentBookKeys = new Set();
+        const pendingLentBookKeys = new Set();
+        const notesCounts = new Map();
 
         user.UserBook.forEach((ub) => {
             libraryKeys.add(ub.Book.key);
@@ -118,103 +69,251 @@ export function useBooks(
             });
         }
 
-        return {libraryKeys, wishlistKeys, currentBookKeys, finishedBookKeys, reviewedKeys};
+        // Gérer les livres prêtés (lentBooks)
+        if (user.lentBooks) {
+            user.lentBooks.forEach((lending) => {
+                if (lending.status === 'ACCEPTED' && !lending.returnedAt) {
+                    lentBookKeys.add(lending.book.key);
+                } else if (lending.status === 'PENDING' && !lending.returnedAt) {
+                    pendingLentBookKeys.add(lending.book.key);
+                }
+            });
+        }
+
+        // Compter les notes pour chaque livre
+        if (user.UserBookNotes) {
+            user.UserBookNotes.forEach((note) => {
+                const bookKey = note.Book.key;
+                const currentCount = notesCounts.get(bookKey) || 0;
+                notesCounts.set(bookKey, currentCount + 1);
+            });
+        }
+
+        return {
+            libraryKeys,
+            wishlistKeys,
+            currentBookKeys,
+            finishedBookKeys,
+            reviewedKeys,
+            lentBookKeys,
+            pendingLentBookKeys,
+            notesCounts
+        };
     }, [user]);
 
-    const isInLibrary = useCallback((bookKey: string): boolean => bookSets.libraryKeys.has(bookKey), [bookSets.libraryKeys]);
-    const isInWishlist = useCallback((bookKey: string): boolean => bookSets.wishlistKeys.has(bookKey), [bookSets.wishlistKeys]);
-    const isReviewed = useCallback((bookKey: string): boolean => bookSets.reviewedKeys.has(bookKey), [bookSets.reviewedKeys]);
-    const isCurrentBook = useCallback((bookKey: string): boolean => bookSets.currentBookKeys.has(bookKey), [bookSets.currentBookKeys]);
-    const isBookFinished = useCallback((bookKey: string): boolean => bookSets.finishedBookKeys.has(bookKey), [bookSets.finishedBookKeys]);
+    const isInLibrary = useCallback((bookKey: string) => bookSets.libraryKeys.has(bookKey), [bookSets.libraryKeys]);
+    const isInWishlist = useCallback((bookKey: string) => bookSets.wishlistKeys.has(bookKey), [bookSets.wishlistKeys]);
+    const isReviewed = useCallback((bookKey: string) => bookSets.reviewedKeys.has(bookKey), [bookSets.reviewedKeys]);
+    const isCurrentBook = useCallback((bookKey: string) => bookSets.currentBookKeys.has(bookKey), [bookSets.currentBookKeys]);
+    const isBookFinished = useCallback((bookKey: string) => bookSets.finishedBookKeys.has(bookKey), [bookSets.finishedBookKeys]);
+    const isBookLoaned = useCallback((bookKey: string) => bookSets.lentBookKeys.has(bookKey), [bookSets.lentBookKeys]);
+    const isBookPendingLoan = useCallback((bookKey: string) => bookSets.pendingLentBookKeys.has(bookKey), [bookSets.pendingLentBookKeys]);
+    const getNotesCount = useCallback((bookKey: string) => bookSets.notesCounts.get(bookKey) || 0, [bookSets.notesCounts]);
 
-    const mutateUser = useCallback(async (): Promise<void> => {
-        if (userId) await mutate(`/api/user/${userId}`);
-    }, [userId]);
+    const getBookNumberOfPages = useCallback(async (bookKey: string): Promise<number | null> => {
+        try {
+            const response = await axios.get(`https://openlibrary.org${bookKey}/editions.json`);
+            const editions = response.data.entries;
 
-    const toggleLibrary = useCallback(async (book: Book): Promise<void> => {
-        if (!userId) return;
+            for (const edition of editions) {
+                if (edition.number_of_pages) {
+                    return edition.number_of_pages;
+                }
+            }
+            return null;
+        } catch (error) {
+            console.error("Erreur lors de la récupération du nombre de pages:", error);
+            return null;
+        }
+    }, []);
+
+    const getBookGenres = useCallback(async (bookKey: string): Promise<string[] | null> => {
+        try {
+            const response = await axios.get(`https://openlibrary.org${bookKey}.json`);
+            const data = response.data;
+            const subjects: string[] = data.subjects || [];
+
+            const filteredSubjects = subjects.filter(subject =>
+                PERTINENT_BOOK_SUBJECTS.some(pertinent =>
+                    subject.toLowerCase().includes(pertinent.toLowerCase())
+                )
+            );
+
+            return filteredSubjects.length > 0 ? filteredSubjects : subjects.slice(0, 5); // fallback: les 5 premiers
+        } catch (error) {
+            console.error("Erreur lors de la récupération des genres:", error);
+            return null;
+        }
+    }, []);
+
+    const toggleLibrary = useCallback(async (book: Book | MoreInfoBook) => {
+        if (!user?.id) return;
         try {
             if (isInLibrary(book.key)) {
-                await api.delete("/user/books", {data: {userId, book}});
+                await api.delete("/user/books", {
+                    data: {
+                        userId: user.id, book
+                    }
+                });
             } else {
                 if (isInWishlist(book.key)) {
-                    await api.delete("/user/wishlist", {data: {userId, book}});
+                    await api.delete("/user/wishlist", {data: {userId: user.id, book}});
                 }
-                await api.post("/user/books", {userId, book});
+
+                let number_of_pages = null;
+
+                if ('number_of_pages' in book && book.number_of_pages) {
+                    number_of_pages = book.number_of_pages;
+                } else if ('numberOfPages' in book && book.numberOfPages) {
+                    number_of_pages = book.numberOfPages;
+                } else {
+                    number_of_pages = await getBookNumberOfPages(book.key);
+                }
+
+                const genres = await getBookGenres(book.key);
+
+                await api.post("/user/books", {
+                    userId: user.id,
+                    book: {
+                        ...book,
+                        number_of_pages,
+                        genres
+                    }
+                });
             }
-            await mutateUser();
+            await refreshUser();
         } catch (error) {
             console.error("Erreur lors de la modification de la bibliothèque:", error);
         }
-    }, [userId, isInLibrary, isInWishlist, mutateUser]);
+    }, [user?.id, isInLibrary, refreshUser, isInWishlist, getBookGenres, getBookNumberOfPages]);
 
-    const toggleWishlist = useCallback(async (book: Book): Promise<void> => {
-        if (!userId) return;
+    const toggleWishlist = useCallback(async (book: Book) => {
+        if (!user?.id) return;
         try {
             if (isInWishlist(book.key)) {
-                await api.delete("/user/wishlist", {data: {userId, book}});
+                await api.delete("/user/wishlist", {data: {userId: user.id, book}});
             } else {
                 if (isInLibrary(book.key)) {
-                    await api.delete("/user/books", {data: {userId, book}});
+                    await api.delete("/user/books", {data: {userId: user.id, book}});
                 }
-                await api.post("/user/wishlist", {userId, book});
+                await api.post("/user/wishlist", {userId: user.id, book});
             }
-            await mutateUser();
+            await refreshUser();
         } catch (error) {
             console.error("Erreur lors de la modification de la wishlist:", error);
         }
-    }, [userId, isInWishlist, isInLibrary, mutateUser]);
+    }, [user, isInWishlist, isInLibrary, refreshUser]);
 
-    const toggleCurrentBook = useCallback(async (book: Book): Promise<void> => {
-        if (!userId) return;
+    const toggleCurrentBook = useCallback(async (book: Book | MoreInfoBook) => {
+        if (!user?.id) return;
         try {
             const currentBook = user?.UserBook.find((ub) => ub.Book.key === book.key);
             if (currentBook && book) {
                 await api.put("/user/book/current-book", {
-                    userId,
+                    userId: user.id,
                     bookId: book.id,
                     isCurrentBook: !currentBook.isCurrentBook
                 });
             }
-            await mutateUser();
+            await refreshUser();
         } catch (error) {
             console.error("Erreur lors de la modification du livre actuel:", error);
         }
-    }, [userId, user, mutateUser]);
+    }, [user, refreshUser]);
 
-    const books = useMemo<Book[]>(() => {
-        if (!data) return [];
-
-        if (searchType === 'general') {
-            return ((data as OpenLibraryResponse).docs || []);
+    const lendBook = useCallback(async (book: Book | MoreInfoBook, borrowerId: string, message?: string) => {
+        if (!user?.id) return;
+        try {
+            await api.post("/book/lending", {
+                lenderId: user.id,
+                borrowerId,
+                bookId: book.id,
+                message
+            });
+            await refreshUser();
+        } catch (error) {
+            console.error("Erreur lors du prêt du livre:", error);
+            throw error;
         }
+    }, [user, refreshUser]);
 
-        const isbnData = data as OpenLibraryISBNResponse;
-        const results: Book[] = [];
+    const cancelLending = useCallback(async (bookKey: string) => {
+        if (!user?.id) return;
+        try {
+            // Trouver le prêt actif pour ce livre
+            const activeLending = user.lentBooks?.find(
+                lending => lending.book.key === bookKey &&
+                    // lending.status === 'ACCEPTED' &&
+                    !lending.returnedAt
+            );
 
-        for (const key in isbnData) {
-            if (isbnData.hasOwnProperty(key)) {
-                const book = isbnData[key];
-                const isbn = key.replace('ISBN:', '');
-
-                results.push({
-                    id: isbn,
-                    key: `OLID:${isbn}`,
-                    title: book.title,
-                    author_name: book.authors?.map((a) => a.name) || ["Auteur inconnu"],
-                    first_publish_year: book.publish_date ? new Date(book.publish_date).getFullYear() : undefined,
-                    cover_i: book.cover?.medium ?
-                        parseInt(book.cover.medium.replace('https://covers.openlibrary.org/b/id/', '').replace('-M.jpg', '')) :
-                        undefined,
-                    cover: book.cover?.medium || undefined,
-                    language: book.languages?.map((l) => l.key.replace('/languages/', '')) || undefined,
-                    isbn: [isbn],
+            if (activeLending) {
+                await api.put(`/book/lending/${activeLending.id}/cancel`, {
+                    lenderId: user.id
                 });
+                await refreshUser();
             }
+        } catch (error) {
+            console.error("Erreur lors de l'annulation du prêt:", error);
+            throw error;
         }
+    }, [user, refreshUser]);
 
-        return results;
-    }, [data, searchType]);
+    const updateBookProgress = useCallback(async (bookKey: string, progress: number) => {
+        if (!user?.id) return;
+        try {
+            const userBook = user?.UserBook.find((ub) => ub.Book.key === bookKey);
+            if (userBook) {
+                const response = await api.put("/user/book/progress", {
+                    userId: user.id,
+                    bookId: userBook.Book.id,
+                    progress
+                });
+                await refreshUser();
+                return response;
+            } else {
+                console.warn("No user book found");
+            }
+        } catch (error) {
+            console.error("Erreur lors de la mise à jour de la progression:", error);
+        }
+    }, [user, refreshUser]);
+
+    const updateBookPageCount = useCallback(async (bookId: string, pageCount: number) => {
+        if (!user?.id) return;
+        try {
+            await api.put("/book/page-count", {
+                bookId,
+                pageCount
+            });
+            await refreshUser();
+        } catch (error) {
+            console.error("Erreur lors de la mise à jour du nombre de pages:", error);
+        }
+    }, [user, refreshUser]);
+
+    const updateBookProgressType = useCallback(async (bookKey: string, progressType: 'page' | 'percentage') => {
+        if (!user?.id) return;
+        try {
+            const userBook = user?.UserBook.find((ub) => ub.Book.key === bookKey);
+            if (userBook) {
+                await api.put("/user/book/progress-type", {
+                    userId: user.id,
+                    bookId: userBook.Book.id,
+                    progressType
+                });
+                await refreshUser();
+            } else {
+                console.warn("No user book found");
+            }
+        } catch (error) {
+            console.error("Erreur lors de la mise à jour du type de progression:", error);
+        }
+    }, [user, refreshUser]);
+
+    const books = useMemo(() => data?.docs || [], [data]);
+    const totalBooks = data?.numFound || 0;
+    const totalPages = Math.ceil(totalBooks / pageSize);
 
     return {
         books,
@@ -226,8 +325,19 @@ export function useBooks(
         isInWishlist,
         isCurrentBook,
         isReviewed,
+        isBookLoaned,
+        isBookPendingLoan,
+        getNotesCount,
         toggleLibrary,
         toggleWishlist,
         toggleCurrentBook,
+        lendBook,
+        cancelLending,
+        updateBookProgress,
+        updateBookPageCount,
+        updateBookProgressType,
+        totalBooks,
+        totalPages,
+        currentPage: page
     };
 }

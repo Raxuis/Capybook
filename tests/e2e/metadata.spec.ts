@@ -6,13 +6,13 @@ test.describe('Metadata', () => {
     await page.goto(ROUTES.HOME, { waitUntil: 'domcontentloaded' });
 
     // Check document title
-    await expect(page).toHaveTitle(/Livre Track/);
+    await expect(page).toHaveTitle(/Capybook/);
 
     // Check meta description
     const metaDescription = page.locator('meta[name="description"]');
     await expect(metaDescription).toHaveAttribute(
       'content',
-      /La façon la plus simple de suivre votre progression en lecture/,
+      /Capybook|compagnon de lecture|progression en lecture/,
     );
   });
 
@@ -22,7 +22,7 @@ test.describe('Metadata', () => {
     // Check for Open Graph title (if implemented)
     const ogTitle = page.locator('meta[property="og:title"]');
     if (await ogTitle.count() > 0) {
-      await expect(ogTitle).toHaveAttribute('content', /Livre Track/);
+      await expect(ogTitle).toHaveAttribute('content', /Capybook/);
     }
 
     // Check for Open Graph description (if implemented)
@@ -30,7 +30,7 @@ test.describe('Metadata', () => {
     if (await ogDescription.count() > 0) {
       await expect(ogDescription).toHaveAttribute(
         'content',
-        /La façon la plus simple/,
+        /Capybook|compagnon de lecture/,
       );
     }
   });
@@ -61,7 +61,7 @@ test.describe('Metadata', () => {
     const html = await page.content();
 
     // Check that title is in the HTML
-    expect(html).toContain('Livre Track');
+    expect(html).toMatch(/Capybook|CapyBook/);
 
     // Check that description meta tag exists
     expect(html).toMatch(/<meta[^>]*name=["']description["'][^>]*>/i);
@@ -71,6 +71,6 @@ test.describe('Metadata', () => {
     await page.goto(ROUTES.HOME, { waitUntil: 'domcontentloaded' });
 
     const html = page.locator('html');
-    await expect(html).toHaveAttribute('lang', 'en');
+    await expect(html).toHaveAttribute('lang', 'fr');
   });
 });

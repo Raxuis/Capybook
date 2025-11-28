@@ -1,23 +1,33 @@
-import useSWR from "swr";
 import {fetcher} from "@/utils/fetcher";
 import {Prisma} from "@prisma/client";
-import {useMemo} from "react";
+import {useCallback, useEffect, useState} from "react";
+import useSWR from "swr";
+import {useUserStore} from "@/store/useUserStore";
 
 export type UserWithRelations = Prisma.UserGetPayload<{
     include: {
-        UserBook: {
-            include: {
-                Book: true
-            }
-        },
-        UserBookWishlist: {
-            include: {
-                Book: true
-            }
-        },
+        UserBook: { include: { Book: true } },
+        UserBookWishlist: { include: { Book: true } },
         BookReview: {
             include: {
-                Book: true
+                Book: true,
+                SpecificFriend: true
+            }
+        },
+        UserBookNotes: { include: { Book: true } },
+        ReadingGoal: true,
+        UserBadge: { include: { Badge: true } },
+        lentBooks: {
+            include: {
+                book: true,
+                borrower: true
+            }
+        },
+        borrowedBooks: {
+            include: {
+                book: true,
+                lender: true,
+                borrower: true,
             }
         }
     }
@@ -26,14 +36,14 @@ export type UserWithRelations = Prisma.UserGetPayload<{
 const SWR_CONFIG = {
     revalidateOnFocus: false,
     revalidateOnReconnect: false,
+    revalidateIfStale: true,
     dedupingInterval: 60000,
-    keepPreviousData: true
+    keepPreviousData: false
 };
 
-export function useUser(userId?: string) {
-    const swrKey = useMemo(() =>
-            userId ? `/api/user/${userId}` : null,
-        [userId]);
+export function useUser() {
+    const userId = useUserStore((state) => state.userId);
+    const swrKey = userId ? `/api/user/${userId}` : null;
 
     const {data, error, isLoading, isValidating, mutate} = useSWR<UserWithRelations>(
         swrKey,
@@ -41,15 +51,23 @@ export function useUser(userId?: string) {
         SWR_CONFIG
     );
 
-    const refreshUser = useMemo(() => async () => {
+    const [isInitializing, setIsInitializing] = useState(true);
+
+    useEffect(() => {
+        if (userId !== undefined) {
+            setIsInitializing(false);
+        }
+    }, [userId]);
+
+    const refreshUser = useCallback(async () => {
         if (swrKey) await mutate();
     }, [mutate, swrKey]);
 
-    return useMemo(() => ({
+    return {
         user: data,
-        isLoading,
+        isLoading: isLoading || isInitializing,
         isValidating,
         isError: Boolean(error),
-        refreshUser
-    }), [data, error, isLoading, isValidating, refreshUser]);
+        refreshUser,
+    };
 }

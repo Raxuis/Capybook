@@ -1,7 +1,7 @@
 import {z} from "zod";
-import {createZodRoute} from "next-zod-route";
-import {NextResponse} from 'next/server';
+import {NextRequest, NextResponse} from 'next/server';
 import prisma from "@/utils/prisma";
+import {validateBody, withErrorHandling, createResponse, createErrorResponse} from "@/utils/api-validation";
 
 const bodySchema = z.object({
     bookId: z.string(),
@@ -9,38 +9,23 @@ const bodySchema = z.object({
     isCurrentBook: z.boolean(),
 });
 
-export const PUT = createZodRoute().body(bodySchema).handler(async (request, context) => {
-    const {bookId, userId, isCurrentBook} = context.body;
-    console.log("Received body:", context.body);
+async function handlePut(request: NextRequest): Promise<NextResponse> {
+    const {bookId, userId, isCurrentBook} = await validateBody(request, bodySchema);
 
-    if (!bookId) {
-        return NextResponse.json({error: "Book id is required"}, {status: 400});
-    }
-
-    if (!userId) {
-        return NextResponse.json({error: "User id is required"}, {status: 400});
-    }
-
-    if (isCurrentBook === undefined) {
-        return NextResponse.json({error: "Progress is required"}, {status: 400});
-    }
-
-    // Vérifie si le livre existe
     const book = await prisma.book.findUnique({
         where: {id: bookId},
     });
 
     if (!book) {
-        return NextResponse.json({error: "No book with the corresponding id."}, {status: 404});
+        return createErrorResponse("No book with the corresponding id.", 404);
     }
 
-    // Vérifie si l'utilisateur possède déjà ce livre
     const userBook = await prisma.userBook.findFirst({
         where: {bookId, userId},
     });
 
     if (!userBook) {
-        return NextResponse.json({error: "User doesn't have this book yet."}, {status: 400});
+        return createErrorResponse("User doesn't have this book yet.", 400);
     }
 
     // Vérifie si l'utilisateur a déjà un `currentBook`
@@ -48,18 +33,20 @@ export const PUT = createZodRoute().body(bodySchema).handler(async (request, con
         where: {userId, isCurrentBook: true},
     });
 
-    // Si l'utilisateur veut activer `isCurrentBook`, on désactive l'ancien livre en tant que "currentBook"
+    // Si l'utilisateur veut activer `isCurrentBook', on désactive l'ancien livre en tant que "currentBook".
     if (isCurrentBook && existingCurrentBook) {
         await prisma.userBook.update({
             where: {id: existingCurrentBook.id},
             data: {isCurrentBook: false},
         });
     }
-    
+
     const updatedBook = await prisma.userBook.update({
         where: {id: userBook.id},
         data: {isCurrentBook},
     });
 
-    return NextResponse.json({data: updatedBook}, {status: 200});
-});
+    return createResponse({data: updatedBook});
+}
+
+export const PUT = withErrorHandling(handlePut);

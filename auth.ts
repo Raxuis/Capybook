@@ -6,9 +6,10 @@ import {ZodError} from "zod";
 import {SignInSchema} from "@/utils/zod";
 import bcrypt from "bcryptjs";
 
-export const {handlers, signIn, signOut, auth} = NextAuth({
+export const {handlers, signIn, auth} = NextAuth({
+    trustHost: true,
     adapter: PrismaAdapter(prisma),
-    trustHost: true, // Allow localhost for testing
+    secret: process.env.NEXTAUTH_SECRET,
     session: {
         strategy: "jwt",
         maxAge: 30 * 24 * 60 * 60,
@@ -22,14 +23,23 @@ export const {handlers, signIn, signOut, auth} = NextAuth({
             authorize: async (credentials) => {
                 try {
                     const {email, password} = await SignInSchema.parseAsync(credentials);
-                    const user = await prisma.user.findUnique({where: {email}});
+                    const user = await prisma.user.findUnique({
+                        where: {email},
+                        select: {id: true, email: true, name: true, username: true, password: true, role: true}
+                    });
 
                     if (!user || !user.password) throw new Error("Invalid credentials");
 
                     const passwordMatch = await bcrypt.compare(password, user.password);
                     if (!passwordMatch) throw new Error("Invalid credentials");
 
-                    return user;
+                    return {
+                        id: user.id,
+                        email: user.email,
+                        name: user.name,
+                        username: user.username,
+                        role: user.role,
+                    };
                 } catch (error) {
                     if (error instanceof ZodError) return null;
                     return null;
@@ -41,24 +51,32 @@ export const {handlers, signIn, signOut, auth} = NextAuth({
         async session({session, token}) {
             if (token) {
                 session.user = {
-                    id: token.sub as string,
+                    id: token.id as string,
                     email: token.email as string,
+                    username: token.username as string,
                     name: token.name as string,
-                    emailVerified: null
+                    role: token.role as string,
+                    emailVerified: null,
                 };
             }
             return session;
         },
-        async jwt({token, user}) {
+        async jwt({token, user, trigger, session}) {
+            if (trigger === "update" && session) {
+                return {...token, ...session.user};
+            }
+
             if (user) {
-                token.id = user.id;
+                token.id = user.id as string;
                 token.email = user.email;
+                token.username = user.username ?? "No name";
                 token.name = user.name;
+                token.role = user.role ?? "USER";
             }
             return token;
         },
-        authorized: async ({auth}) => {
-            return !!auth
+        async authorized({auth}) {
+            return !!auth;
         },
     },
     pages: {

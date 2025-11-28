@@ -1,83 +1,92 @@
-import React from 'react';
-import {motion} from "motion/react";
-import {BookOpen} from "lucide-react";
+import {footer} from "@/constants/footer";
+import Image from "next/image";
+import {Link} from "next-view-transitions";
 
 const Footer = () => {
-    return (
-        <motion.footer
-            className="py-12 bg-muted"
-            initial={{opacity: 0}}
-            animate={{opacity: 1}}
-            transition={{duration: 0.8, delay: 0.5}}
-        >
-            <div className="container mx-auto px-4">
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-                    <motion.div
-                        className="space-y-4"
-                        initial={{opacity: 0, y: 20}}
-                        animate={{opacity: 1, y: 0}}
-                        transition={{delay: 0.1, duration: 0.6}}
-                    >
-                        <div className="flex items-center gap-2">
-                            <BookOpen className="h-6 w-6 text-primary"/>
-                            <span className="text-lg font-bold">LivreTrack</span>
-                        </div>
-                        <p className="text-sm text-muted-foreground">
-                            Transformez votre expérience de lecture avec notre application de suivi et
-                            d&#39;analyse.
-                        </p>
-                    </motion.div>
+    const currentYear = new Date().getFullYear();
 
-                    {[
-                        {
-                            title: "Produit",
-                            links: ["Fonctionnalités", "Témoignages", "Tarifs", "FAQ"]
-                        },
-                        {
-                            title: "Entreprise",
-                            links: ["À propos", "Blog", "Carrières", "Presse"]
-                        },
-                        {
-                            title: "Ressources",
-                            links: ["Support", "Tutoriels", "Documentation", "Contact"]
-                        }
-                    ].map((category, index) => (
-                        <motion.div
-                            key={category.title}
-                            className="space-y-4"
-                            initial={{opacity: 0, y: 20}}
-                            animate={{opacity: 1, y: 0}}
-                            transition={{delay: 0.1 * (index + 1), duration: 0.6}}
-                        >
-                            <h4 className="font-semibold">{category.title}</h4>
-                            <ul className="space-y-2">
-                                {category.links.map((link) => (
-                                    <motion.li key={link} whileHover={{x: 5}}>
-                                        <a
-                                            href="#"
-                                            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                                        >
-                                            {link}
-                                        </a>
-                                    </motion.li>
-                                ))}
-                            </ul>
-                        </motion.div>
-                    ))}
+    return (
+        <footer
+            className="bg-gradient-to-br from-slate-50 to-slate-100 pb-32 pt-16 dark:from-slate-900 dark:to-slate-800">
+            <div className="container mx-auto px-4">
+                <div className="mb-12 flex flex-col items-center justify-between md:flex-row">
+                    <div className="mb-8 max-w-md md:mb-0">
+                        <div className="mb-4 flex items-center gap-2">
+                            <Image
+                                src={footer.iconUrl}
+                                className="text-primary size-10"
+                                width="42"
+                                height="42"
+                                alt={footer.title}
+                            />
+                            <span className="text-2xl font-bold tracking-tight">{footer.title}</span>
+                        </div>
+                        <p className="text-md text-slate-600 dark:text-slate-300">
+                            {footer.description}
+                        </p>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-x-8 gap-y-6">
+                        {footer.links
+                            .filter((item, index, self) =>
+                                (item.isAvailable ?? true) &&
+                                index === self.findIndex((i) => i.label === item.label)
+                            )
+                            .map((item, index) => (
+                                <Link
+                                    key={index}
+                                    href={item.href}
+                                    className="group flex items-center transition-all duration-300"
+                                    target={item.external ? "_blank" : "_self"}
+                                    aria-label={item.label}
+                                >
+                                    <div
+                                        className="group-hover:text-primary mr-2 rounded-full bg-white p-2 shadow-sm transition-all duration-300 group-hover:scale-110 group-hover:shadow-md dark:bg-slate-800">
+                                        {item.icon}
+                                    </div>
+                                    <span
+                                        className="group-hover:text-primary text-sm font-medium text-slate-700 transition-colors duration-300 dark:text-slate-200">
+                                        {item.label}
+                                    </span>
+                                </Link>
+                            ))}
+                    </div>
                 </div>
 
-                <motion.div
-                    className="mt-12 pt-8 border-t flex flex-col sm:flex-row justify-between items-center"
-                    initial={{opacity: 0}}
-                    animate={{opacity: 1}}
-                    transition={{delay: 0.5, duration: 0.8}}
-                >
-                    <p className="text-sm text-muted-foreground">
-                        © {new Date().getFullYear()} LivreTrack. Tous droits réservés.
+                <div
+                    className="flex flex-col items-center justify-between border-t border-slate-200 pt-8 md:flex-row dark:border-slate-700">
+                    <p className="mb-4 text-sm text-slate-500 md:mb-0 dark:text-slate-400">
+                        © {currentYear} Capybook. Tous droits réservés.
                     </p>
-                </motion.div>
+                    {
+                        footer.socialNetworksLinks
+                            .filter((social, index, self) =>
+                                social.isAvailable &&
+                                index === self.findIndex((s) => s.type === social.type)
+                            ).length > 0 && (
+                            <div className="flex space-x-6">
+                                {
+                                    footer.socialNetworksLinks
+                                        .filter((social, index, self) =>
+                                            social.isAvailable &&
+                                            index === self.findIndex((s) => s.type === social.type)
+                                        )
+                                        .map((social) => (
+                                            <a
+                                                key={social.type}
+                                                href={social.url}
+                                                className="hover:text-primary text-sm text-slate-500 transition-colors duration-300"
+                                            >
+                                                {social.type}
+                                            </a>
+                                        ))
+                                }
+                            </div>
+                        )
+                    }
+                </div>
             </div>
-        </motion.footer>
+        </footer>
     );
 };
 

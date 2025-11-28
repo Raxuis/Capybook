@@ -16,7 +16,7 @@ test.describe('Homepage', () => {
     await page.goto(ROUTES.HOME, { waitUntil: 'domcontentloaded' });
 
     // Check the page title from metadata
-    await expect(page).toHaveTitle(/Livre Track/, { timeout: 5000 });
+    await expect(page).toHaveTitle(/Capybook/, { timeout: 5000 });
   });
 
   test('should have correct metadata', async ({ page }) => {
@@ -26,7 +26,7 @@ test.describe('Homepage', () => {
     const metaDescription = page.locator('meta[name="description"]');
     await expect(metaDescription).toHaveAttribute(
       'content',
-      /La façon la plus simple de suivre votre progression en lecture/,
+      /Capybook|compagnon de lecture/,
       { timeout: 5000 },
     );
 
