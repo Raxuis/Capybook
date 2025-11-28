@@ -16,7 +16,10 @@ export default auth(async (req) => {
     if (user && (path === "/login" || path === "/register"))
         return NextResponse.redirect(new URL("/", req.nextUrl.origin));
 
-    if (!user && path !== "/" && path !== "/login" && path !== "/register")
+    // Public routes that don't require authentication
+    const publicRoutes = ["/", "/login", "/register", "/about"];
+
+    if (!user && !publicRoutes.includes(path))
         return NextResponse.redirect(new URL("/login", req.nextUrl.origin));
 
     return NextResponse.next();
