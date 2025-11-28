@@ -12,6 +12,10 @@
 
 # testing
 /coverage
+/test-results/
+/playwright-report/
+/playwright/.cache/
+*.spec.ts.snap
 
 # next.js
 /.next/
@@ -39,3 +43,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# PWA
+/public/sw.js
+/public/swe-worker-*.js
+/public/workbox-*.js
+/public/worker-*.js
+/public/fallback-*.html
+/public/manifest.webmanifest
+/public/icons/*
