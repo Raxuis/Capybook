@@ -12,6 +12,8 @@ const nextConfig: NextConfig = {
                 hostname: "images.unsplash.com"
             }
         ],
+        // Disable image optimization in test/development to avoid issues
+        unoptimized: process.env.NODE_ENV === 'test' || process.env.NEXT_IMAGE_UNOPTIMIZED === 'true',
     },
 
 };

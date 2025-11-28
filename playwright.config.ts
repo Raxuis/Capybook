@@ -112,6 +112,7 @@ export default defineConfig({
     env: {
       AUTH_URL: 'http://localhost:3000',
       NODE_ENV: 'development',
+      NEXT_IMAGE_UNOPTIMIZED: 'true', // Disable image optimization for faster tests
       ...(process.env.DATABASE_URL && { DATABASE_URL: process.env.DATABASE_URL }),
       ...(process.env.NEXTAUTH_SECRET && { NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET }),
       ...(process.env.NEXTAUTH_URL && { NEXTAUTH_URL: process.env.NEXTAUTH_URL }),
