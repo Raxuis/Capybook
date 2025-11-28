@@ -1,4 +1,4 @@
-import React, {ReactNode} from 'react';
+import React, {memo, ReactNode} from 'react';
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip";
 import {cn} from "@/lib/utils";
 
@@ -10,7 +10,7 @@ type Props = {
     asChild?: boolean;
 }
 
-const SimplifiedTooltip = ({children, tooltipContent, triggerClassName, contentClassName, asChild}: Props) => {
+const SimplifiedTooltip = memo(({children, tooltipContent, triggerClassName, contentClassName, asChild}: Props) => {
     return (
         <TooltipProvider>
             <Tooltip>
@@ -23,6 +23,8 @@ const SimplifiedTooltip = ({children, tooltipContent, triggerClassName, contentC
             </Tooltip>
         </TooltipProvider>
     );
-};
+});
+
+SimplifiedTooltip.displayName = 'SimplifiedTooltip';
 
 export default SimplifiedTooltip;

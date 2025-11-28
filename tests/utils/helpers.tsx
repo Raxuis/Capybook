@@ -1,4 +1,4 @@
-import { Page, expect } from '@playwright/test';
+import { Page } from '@playwright/test';
 import { ReactElement } from 'react';
 import { render, RenderOptions } from '@testing-library/react';
 import { SessionProvider } from 'next-auth/react';
@@ -40,16 +40,22 @@ interface AllTheProvidersProps {
 }
 
 function AllTheProviders({ children }: AllTheProvidersProps) {
+  // Mock session matching the Session type from next-auth.d.ts
   const mockSession = {
     user: {
+      id: 'test-user-id',
       name: 'Test User',
       email: 'test@example.com',
+      username: 'testuser',
+      role: 'USER' as const,
+      image: null,
+      emailVerified: null,
     },
     expires: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
   };
 
   return (
-    <SessionProvider session={mockSession}>
+    <SessionProvider session={mockSession as Parameters<typeof SessionProvider>[0]['session']}>
       <SWRConfig value={{ provider: () => new Map(), dedupingInterval: 0 }}>
         {children}
       </SWRConfig>

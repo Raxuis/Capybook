@@ -19,7 +19,7 @@ const testimonials: Testimonial[] = [
         rating:
             5,
         content:
-            "Depuis que j'utilise LivreTrack, je lis deux fois plus qu'avant. Les statistiques me motivent vraiment à atteindre mes objectifs de lecture.",
+            "Depuis que j'utilise Capybook, je lis deux fois plus qu'avant. Les statistiques me motivent vraiment à atteindre mes objectifs de lecture.",
         time: "8mois",
         gender: "male"
     },
@@ -45,7 +45,7 @@ const testimonials: Testimonial[] = [
         rating:
             5,
         content:
-            "Interface intuitive et fonctionnalités complètes. LivreTrack est devenu mon compagnon de lecture au quotidien.",
+            "Interface intuitive et fonctionnalités complètes. Capybook est devenu mon compagnon de lecture au quotidien.",
         time: "5mois",
         gender: "male"
     },

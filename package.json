@@ -1,13 +1,17 @@
 {
   "name": "capybook",
-  "version": "1.0.0",
+  "version": "3.0.0",
   "private": true,
-  "type": "module",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "eslint": "eslint ./components",
+    "eslint:debug": "eslint ./components --debug",
+    "eslint:fix": "eslint ./components --fix",
+    "vercel-build": "prisma generate && prisma migrate deploy && node prisma/seed-badges.js && next build",
+    "seed-badges": "node prisma/seed-badges.js",
     "type-check": "tsc --noEmit",
     "postinstall": "prisma generate",
     "test": "vitest",
@@ -33,8 +37,12 @@
     "@radix-ui/react-dialog": "^1.1.15",
     "@radix-ui/react-dropdown-menu": "^2.1.16",
     "@radix-ui/react-hover-card": "^1.1.15",
+    "@radix-ui/react-icons": "^1.3.2",
     "@radix-ui/react-label": "^2.1.8",
+    "@radix-ui/react-popover": "^1.1.15",
+    "@radix-ui/react-progress": "^1.1.8",
     "@radix-ui/react-radio-group": "^1.3.8",
+    "@radix-ui/react-scroll-area": "^1.2.10",
     "@radix-ui/react-select": "^2.2.6",
     "@radix-ui/react-separator": "^1.1.8",
     "@radix-ui/react-slider": "^1.3.6",
@@ -43,9 +51,12 @@
     "@radix-ui/react-toast": "^1.2.15",
     "@radix-ui/react-toggle": "^1.1.10",
     "@radix-ui/react-tooltip": "^1.2.8",
+    "@sentry/nextjs": "^9.47.1",
+    "@types/canvas-confetti": "^1.9.0",
     "@uidotdev/usehooks": "^2.4.1",
     "axios": "^1.13.2",
     "bcryptjs": "^3.0.3",
+    "canvas-confetti": "^1.9.4",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "1.0.0",
@@ -54,6 +65,7 @@
     "motion": "^12.23.24",
     "next": "15.4.7",
     "next-auth": "5.0.0-beta.25",
+    "next-pwa": "^5.6.0",
     "next-themes": "^0.4.6",
     "next-view-transitions": "^0.3.4",
     "next-zod-route": "^0.1.4",
@@ -61,12 +73,15 @@
     "nuqs": "^2.8.1",
     "pg": "^8.16.3",
     "react": "^19.2.0",
+    "react-aria-components": "^1.13.0",
     "react-day-picker": "8.10.1",
     "react-dom": "^19.2.0",
     "react-hook-form": "^7.66.1",
     "react-icons": "^5.5.0",
     "react-twc": "^1.5.1",
     "recharts": "^2.15.4",
+    "require-in-the-middle": "^7.5.2",
+    "import-in-the-middle": "^2.0.0",
     "sonner": "^1.7.4",
     "swr": "^2.3.6",
     "tailwind-merge": "^3.4.0",
@@ -76,11 +91,13 @@
     "zustand": "^5.0.8"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3.3.1",
+    "@ducanh2912/next-pwa": "^10.2.9",
+    "@eslint/eslintrc": "^3.3.3",
     "@playwright/test": "^1.57.0",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
+    "@types/next-pwa": "^5.6.9",
     "@types/node": "^20.19.25",
     "@types/pg": "^8.15.6",
     "@types/react": "^19.2.7",
@@ -91,6 +108,7 @@
     "eslint": "^9.39.1",
     "eslint-config-next": "15.1.0",
     "eslint-plugin-playwright": "^2.3.0",
+    "eslint-plugin-tailwindcss": "^3.18.2",
     "eslint-plugin-testing-library": "^7.13.5",
     "happy-dom": "^20.0.11",
     "jsdom": "^27.2.0",
@@ -100,5 +118,20 @@
     "tailwindcss": "^3.4.18",
     "typescript": "^5.9.3",
     "vitest": "^4.0.14"
-  }
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@prisma/client",
+      "@prisma/engines",
+      "esbuild",
+      "prisma",
+      "sharp"
+    ],
+    "overrides": {
+      "import-in-the-middle": "^1.15.0"
+    }
+  },
+  "trustedDependencies": [
+    "unrs-resolver"
+  ]
 }

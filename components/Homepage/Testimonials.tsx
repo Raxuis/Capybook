@@ -1,3 +1,5 @@
+"use client";
+
 import React, {useEffect, useRef, useState} from 'react';
 import {motion, useInView} from "motion/react";
 import {animations, testimonials} from "@/constants";
@@ -43,30 +45,30 @@ const Testimonials = () => {
 
     return (
         <section ref={testimonialsRef} id="témoignages"
-                 className="py-20 bg-gradient-to-br from-primary/5 to-background">
+                 className="from-primary/5 to-background bg-gradient-to-br py-20">
             <div className="container mx-auto px-4">
                 <motion.div
-                    className="text-center mb-16"
+                    className="mb-16 text-center"
                     initial="hidden"
                     animate={testimonialsInView ? "visible" : "hidden"}
                     variants={animations.staggerChildren}
                 >
                     <motion.h2
-                        className="text-3xl md:text-4xl font-bold mb-4"
+                        className="mb-4 text-3xl font-bold md:text-4xl"
                         variants={animations.fadeInUp}
                     >
                         Ce que disent nos utilisateurs / utilisatrices
                     </motion.h2>
                     <motion.p
-                        className="text-xl text-muted-foreground max-w-2xl mx-auto"
+                        className="text-muted-foreground mx-auto max-w-2xl text-xl"
                         variants={animations.fadeInUp}
                     >
-                        Découvrez comment LivreTrack a transformé les habitudes de lecture de nos utilisateurs
+                        Découvrez comment Capybook a transformé les habitudes de lecture de nos utilisateurs
                         et utilisatrices.
                     </motion.p>
                 </motion.div>
 
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
+                <div className="grid grid-cols-1 gap-8 md:grid-cols-12">
                     {/* Featured testimonial */}
                     <motion.div
                         className="md:col-span-6 lg:col-span-5"
@@ -76,13 +78,13 @@ const Testimonials = () => {
                         whileHover={{scale: 1.01}}
                     >
                         <motion.div
-                            className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-8 h-full flex flex-col relative overflow-hidden"
+                            className="relative flex h-full flex-col overflow-hidden rounded-3xl bg-white p-8 shadow-xl dark:bg-gray-800"
                             variants={animations.mainTestimonialCardHover}
                             initial="rest"
                             whileHover="hover"
                         >
                             <motion.div
-                                className="absolute -top-6 -left-6 text-primary/10"
+                                className="text-primary/10 absolute -left-6 -top-6"
                                 animate={{
                                     rotate: [0, 10, 0],
                                     scale: [1, 1.1, 1]
@@ -96,32 +98,32 @@ const Testimonials = () => {
                                 <Quote size={120}/>
                             </motion.div>
                             <div className="relative z-10">
-                                <div className="flex flex-col items-center gap-4 mb-6">
+                                <div className="mb-6 flex flex-col items-center gap-4">
                                     <div className="relative">
                                         <motion.div
-                                            className="rounded-full overflow-hidden w-20 h-20 bg-gradient-to-br from-primary/30 to-primary p-1"
+                                            className="from-primary/30 to-primary size-20 overflow-hidden rounded-full bg-gradient-to-br p-1"
                                             whileHover={{scale: 1.05}}
                                             transition={{type: "spring", stiffness: 300}}
                                         >
-                                            <div className="w-full h-full rounded-full overflow-hidden">
+                                            <div className="size-full overflow-hidden rounded-full">
                                                 <Image
                                                     src={userTestimonials[activeTestimonialIndex].avatar}
                                                     alt={userTestimonials[activeTestimonialIndex].name}
                                                     width={80}
                                                     height={80}
-                                                    className="rounded-full object-cover w-full h-full"
+                                                    className="size-full rounded-full object-cover"
                                                 />
                                             </div>
                                         </motion.div>
                                         <motion.div
-                                            className="absolute -right-1 -bottom-1 bg-primary text-white rounded-full p-1"
+                                            className="bg-primary absolute -bottom-1 -right-1 rounded-full p-1 text-white"
                                             whileHover={{rotate: 15}}
                                         >
                                             <BookOpen size={16}/>
                                         </motion.div>
                                     </div>
                                     <div className="text-center">
-                                        <p className="font-semibold text-lg">
+                                        <p className="text-lg font-semibold">
                                             {
                                                 userTestimonials[activeTestimonialIndex].name
                                             }
@@ -129,23 +131,23 @@ const Testimonials = () => {
                                         <div className="flex items-center justify-center">
                                             {Array.from({length: userTestimonials[activeTestimonialIndex].rating}).map((_, i) => (
                                                 <Star key={i}
-                                                      className="w-3 h-3 text-yellow-400 fill-yellow-400"/>
+                                                      className="size-3 fill-yellow-400 text-yellow-400"/>
                                             ))}
                                         </div>
                                     </div>
                                     <motion.div
-                                        className="relative bg-primary/5 rounded-xl p-4 mt-2"
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        transition={{ delay: 0.3, duration: 0.8 }}
+                                        className="bg-primary/5 relative mt-2 rounded-xl p-4"
+                                        initial={{opacity: 0}}
+                                        animate={{opacity: 1}}
+                                        transition={{delay: 0.3, duration: 0.8}}
                                     >
                                         <p className="text-lg italic">
                                             {userTestimonials[activeTestimonialIndex].content}
                                         </p>
                                         <div
-                                            className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-gray-800 border w-48 sm:w-36 h-8 flex items-center justify-center rounded-full"
+                                            className="absolute left-1/2 top-0 flex h-8 w-48 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border bg-white sm:w-36 dark:bg-gray-800"
                                         >
-                                            <p className="text-xs text-primary font-medium">
+                                            <p className="text-primary text-xs font-medium">
                                                 {userTestimonials[activeTestimonialIndex].gender === "male"
                                                     ? "Utilisateur"
                                                     : userTestimonials[activeTestimonialIndex].gender === "female"
@@ -161,7 +163,7 @@ const Testimonials = () => {
                     </motion.div>
 
                     {/* Testimonial grid */}
-                    <div className="md:col-span-6 lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:col-span-6 lg:col-span-7">
                         {userTestimonials.map((testimonial, index) => (
                             <motion.div
                                 key={testimonial.id}
@@ -180,29 +182,29 @@ const Testimonials = () => {
                                 transition={{type: "spring", stiffness: 200}}
                             >
                                 <Card
-                                    className="h-full backdrop-blur-sm bg-white/90 dark:bg-gray-800/90 border border-primary/10 hover:border-primary/30 transition-colors">
+                                    className="border-primary/10 hover:border-primary/30 h-full border bg-white/90 backdrop-blur-sm transition-colors dark:bg-gray-800/90">
                                     <CardHeader className="pb-4">
-                                        <div className="flex justify-between items-start">
+                                        <div className="flex items-start justify-between">
                                             <div className="flex items-center gap-3">
                                                 <div className="relative">
                                                     <div
-                                                        className="rounded-full overflow-hidden w-12 h-12 bg-gradient-to-br from-primary/20 to-primary/40 p-0.5">
+                                                        className="from-primary/20 to-primary/40 size-12 overflow-hidden rounded-full bg-gradient-to-br p-0.5">
                                                         <Image
                                                             src={testimonial.avatar}
                                                             alt={testimonial.name}
                                                             width={48}
                                                             height={48}
-                                                            className="rounded-full object-cover w-full h-full"
+                                                            className="size-full rounded-full object-cover"
                                                         />
                                                     </div>
                                                 </div>
                                                 <div>
                                                     <CardTitle
                                                         className="text-base">{testimonial.name}</CardTitle>
-                                                    <div className="flex items-center mt-1">
+                                                    <div className="mt-1 flex items-center">
                                                         {Array.from({length: testimonial.rating}).map((_, i) => (
                                                             <Star key={i}
-                                                                  className="w-3 h-3 text-yellow-400 fill-yellow-400"/>
+                                                                  className="size-3 fill-yellow-400 text-yellow-400"/>
                                                         ))}
                                                     </div>
                                                 </div>
@@ -218,12 +220,12 @@ const Testimonials = () => {
                                                     repeatType: "reverse"
                                                 }}
                                             >
-                                                <Quote className="h-8 w-8 text-primary/30"/>
+                                                <Quote className="text-primary/30 size-8"/>
                                             </motion.div>
                                         </div>
                                     </CardHeader>
                                     <CardContent>
-                                        <p className="text-sm text-muted-foreground leading-relaxed">{testimonial.content}</p>
+                                        <p className="text-muted-foreground text-sm leading-relaxed">{testimonial.content}</p>
                                     </CardContent>
                                 </Card>
                             </motion.div>

@@ -58,7 +58,7 @@ function Toast({
     return (
         <ToastPrimitives.Root className={cn(toastVariants({variant}), className)} {...props}>
             <div className="flex w-full items-start gap-3">
-                {icon && <span className="flex-shrink-0 mt-0.5">{icon}</span>}
+                {icon && <span className="mt-0.5 shrink-0">{icon}</span>}
                 <div className="flex-1">{children}</div>
             </div>
         </ToastPrimitives.Root>
