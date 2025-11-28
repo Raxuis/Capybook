@@ -2,13 +2,13 @@ name: CI
 
 on:
   push:
-    branches: [main, master, develop]
+    branches: [ main, master, develop ]
   pull_request:
-    branches: [main, master, develop]
+    branches: [ main, master, develop ]
 
 env:
   NODE_VERSION: '20'
-  PNPM_VERSION: '8'
+  PNPM_VERSION: '10'
 
 jobs:
   lint-and-typecheck:
@@ -193,7 +193,7 @@ jobs:
   ci-status:
     name: CI Status
     runs-on: ubuntu-latest
-    needs: [lint-and-typecheck, unit-tests, e2e-tests, build]
+    needs: [ lint-and-typecheck, unit-tests, e2e-tests, build ]
     if: always()
 
     steps:
