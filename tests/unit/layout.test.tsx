@@ -19,7 +19,7 @@ vi.mock('next/font/google', () => ({
 // Mock next-view-transitions
 vi.mock('next-view-transitions', () => ({
   ViewTransitions: ({ children }: { children: React.ReactNode }) => (
-    <div data-testid="view-transitions">{children}</div>
+    <>{children}</>
   ),
   Link: ({ children, href, ...props }: any) => (
     <a href={href} {...props}>
@@ -31,7 +31,7 @@ vi.mock('next-view-transitions', () => ({
 // Mock nuqs
 vi.mock('nuqs/adapters/next/app', () => ({
   NuqsAdapter: ({ children }: { children: React.ReactNode }) => (
-    <div data-testid="nuqs-adapter">{children}</div>
+    <>{children}</>
   ),
 }));
 
@@ -40,10 +40,25 @@ vi.mock('nextjs-toploader', () => ({
   default: () => <div data-testid="top-loader">TopLoader</div>,
 }));
 
+// Mock Header component
+vi.mock('@/components/Header', () => ({
+  default: () => <header data-testid="header">Header</header>,
+}));
+
+// Mock Dock component
+vi.mock('@/components/Dock', () => ({
+  default: () => <div data-testid="dock">Dock</div>,
+}));
+
+// Mock Toaster component
+vi.mock('@/components/ui/toaster', () => ({
+  Toaster: () => <div data-testid="toaster">Toaster</div>,
+}));
+
 // Mock SWRProvider
 vi.mock('@/providers/swr-providers', () => ({
   SWRProvider: ({ children }: { children: React.ReactNode }) => (
-    <div data-testid="swr-provider">{children}</div>
+    <>{children}</>
   ),
 }));
 
@@ -74,7 +89,7 @@ vi.mock('next/navigation', () => ({
 // Mock next-auth/react (needed by Header and SessionProvider)
 vi.mock('next-auth/react', () => ({
   SessionProvider: ({ children }: { children: React.ReactNode }) => (
-    <div data-testid="session-provider">{children}</div>
+    <>{children}</>
   ),
   useSession: () => ({
     data: null,
@@ -92,7 +107,13 @@ describe('RootLayout', () => {
     );
 
     // Check that main structure is rendered
+    // The children should be rendered within the layout
     expect(screen.getByText('Test Content')).toBeInTheDocument();
+
+    // Verify the layout structure components
+    expect(screen.getByTestId('header')).toBeInTheDocument();
+    expect(screen.getByTestId('dock')).toBeInTheDocument();
+    expect(screen.getByTestId('toaster')).toBeInTheDocument();
   });
 
   it('should include Header component', () => {
