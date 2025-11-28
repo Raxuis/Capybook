@@ -31,11 +31,8 @@ const nextConfig: NextConfig = {
         // Disable image optimization in test/development to avoid issues
         unoptimized: process.env.NODE_ENV === 'test' || process.env.NEXT_IMAGE_UNOPTIMIZED === 'true',
     },
-    // Fix require-in-the-middle version conflict
-    serverExternalPackages: ['require-in-the-middle'],
-    experimental: {
-        serverComponentsExternalPackages: ['require-in-the-middle'],
-    },
+    // Fix require-in-the-middle and import-in-the-middle version conflicts with Sentry
+    serverExternalPackages: ['require-in-the-middle', 'import-in-the-middle'],
 };
 
 export default withSentryConfig(withPWA(nextConfig), {

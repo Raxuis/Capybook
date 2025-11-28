@@ -1,12 +1,14 @@
-import { test as setup } from '@playwright/test';
 import { TEST_USER } from '../fixtures/test-users';
 import prisma from '@/utils/prisma';
 import { saltAndHashPassword } from '@/utils/password';
 
 /**
  * Global setup: Create test user before running E2E tests
+ *
+ * This function is called by Playwright before all tests run.
+ * It should export an async function that Playwright will execute.
  */
-setup('create test user', async () => {
+async function globalSetup() {
   // Only run if DATABASE_URL is set
   if (!process.env.DATABASE_URL) {
     console.warn('[global-setup] DATABASE_URL not set, skipping test user creation');
@@ -55,4 +57,6 @@ setup('create test user', async () => {
   } finally {
     await prisma.$disconnect();
   }
-});
+}
+
+export default globalSetup;

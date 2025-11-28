@@ -48,8 +48,17 @@ const LendingRequestPopup = ({
             setActionType(null);
         }
     };
-    const formatDateFromDateTime = (date: Date) => {
-        return date.toLocaleDateString('fr-FR', {
+    const formatDateFromDateTime = (date: Date | string) => {
+        // Convert string to Date if needed (dates from API/database are often strings)
+        const dateObj = typeof date === 'string' ? new Date(date) : date;
+
+        // Check if date is valid
+        if (!(dateObj instanceof Date) || isNaN(dateObj.getTime())) {
+            return 'Date invalide';
+        }
+
+        // Use toLocaleString to include both date and time
+        return dateObj.toLocaleString('fr-FR', {
             day: 'numeric',
             month: 'long',
             year: 'numeric',
