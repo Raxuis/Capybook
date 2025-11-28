@@ -13,28 +13,54 @@ import { defineConfig, devices } from '@playwright/test';
  */
 export default defineConfig({
   testDir: './tests/e2e',
+
+  /* Maximum time one test can run for. */
+  timeout: 30 * 1000,
+
   /* Run tests in files in parallel */
   fullyParallel: true,
+
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
+
   /* Retry on CI only */
-  retries: process.env.CI ? 1 : 0,
+  retries: process.env.CI ? 2 : 0,
+
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
+
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: [
-    ['html'],
-    ['list'],
-  ],
+  reporter: process.env.CI
+    ? [
+        ['html'],
+        ['github'],
+        ['json', { outputFile: 'test-results/results.json' }],
+      ]
+    : [
+        ['html'],
+        ['list'],
+      ],
+
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
     baseURL: process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000',
+
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: 'retain-on-failure',
-    /* Increase timeout for SSR loads */
-    actionTimeout: 10000,
-    navigationTimeout: 30000,
+    trace: process.env.CI ? 'on-first-retry' : 'retain-on-failure',
+
+    /* Screenshot on failure */
+    screenshot: process.env.CI ? 'only-on-failure' : 'off',
+
+    /* Video on failure in CI */
+    video: process.env.CI ? 'retain-on-failure' : 'off',
+
+    /* Timeouts */
+    actionTimeout: 15 * 1000,
+    navigationTimeout: 30 * 1000,
+
+    /* Viewport */
+    viewport: { width: 1280, height: 720 },
   },
 
   /* Configure projects for major browsers */
@@ -81,11 +107,18 @@ export default defineConfig({
     url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000,
-    stdout: 'ignore',
+    stdout: process.env.CI ? 'pipe' : 'ignore',
     stderr: 'pipe',
     env: {
       AUTH_URL: 'http://localhost:3000',
       NODE_ENV: 'development',
+      ...(process.env.DATABASE_URL && { DATABASE_URL: process.env.DATABASE_URL }),
+      ...(process.env.NEXTAUTH_SECRET && { NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET }),
+      ...(process.env.NEXTAUTH_URL && { NEXTAUTH_URL: process.env.NEXTAUTH_URL }),
     },
   },
+
+  /* Global setup and teardown */
+  // globalSetup: require.resolve('./tests/e2e/global-setup.ts'),
+  // globalTeardown: require.resolve('./tests/e2e/global-teardown.ts'),
 });

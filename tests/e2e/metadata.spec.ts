@@ -3,7 +3,7 @@ import { ROUTES } from '../utils/test-urls';
 
 test.describe('Metadata', () => {
   test('should have correct homepage metadata', async ({ page }) => {
-    await page.goto(ROUTES.HOME);
+    await page.goto(ROUTES.HOME, { waitUntil: 'domcontentloaded' });
 
     // Check document title
     await expect(page).toHaveTitle(/Livre Track/);
@@ -17,7 +17,7 @@ test.describe('Metadata', () => {
   });
 
   test('should have correct Open Graph tags', async ({ page }) => {
-    await page.goto(ROUTES.HOME);
+    await page.goto(ROUTES.HOME, { waitUntil: 'domcontentloaded' });
 
     // Check for Open Graph title (if implemented)
     const ogTitle = page.locator('meta[property="og:title"]');
@@ -36,7 +36,7 @@ test.describe('Metadata', () => {
   });
 
   test('should have correct viewport meta tag', async ({ page }) => {
-    await page.goto(ROUTES.HOME);
+    await page.goto(ROUTES.HOME, { waitUntil: 'domcontentloaded' });
 
     const viewport = page.locator('meta[name="viewport"]');
     await expect(viewport).toHaveAttribute(
@@ -46,7 +46,7 @@ test.describe('Metadata', () => {
   });
 
   test('should have correct charset', async ({ page }) => {
-    await page.goto(ROUTES.HOME);
+    await page.goto(ROUTES.HOME, { waitUntil: 'domcontentloaded' });
 
     const charset = page.locator('meta[charset]');
     await expect(charset).toHaveAttribute('charset', 'utf-8');
@@ -55,7 +55,7 @@ test.describe('Metadata', () => {
   test('should validate metadata from generateMetadata function', async ({
     page,
   }) => {
-    await page.goto(ROUTES.HOME);
+    await page.goto(ROUTES.HOME, { waitUntil: 'domcontentloaded' });
 
     // Get the full HTML to check metadata
     const html = await page.content();
@@ -68,7 +68,7 @@ test.describe('Metadata', () => {
   });
 
   test('should have correct lang attribute', async ({ page }) => {
-    await page.goto(ROUTES.HOME);
+    await page.goto(ROUTES.HOME, { waitUntil: 'domcontentloaded' });
 
     const html = page.locator('html');
     await expect(html).toHaveAttribute('lang', 'en');
