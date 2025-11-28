@@ -1,97 +1,107 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { renderHook, waitFor } from '@testing-library/react';
-import { useAuth } from '@/hooks/useAuth';
+import { renderHook } from '@testing-library/react';
+import { useUser } from '@/hooks/useUser';
 
-// Mock next-auth/react
-let mockSessionData: any = null;
-vi.mock('next-auth/react', () => ({
-  useSession: () => ({
-    data: mockSessionData,
-    status: mockSessionData ? 'authenticated' : 'unauthenticated',
-  }),
+// Mock SWR
+const mockMutate = vi.fn();
+let mockSWRReturn = {
+  data: null,
+  error: null,
+  isLoading: false,
+  isValidating: false,
+  mutate: mockMutate,
+};
+
+vi.mock('swr', () => ({
+  default: vi.fn(() => mockSWRReturn),
 }));
 
 // Mock zustand store
-let mockIsAuthenticated = false;
-const mockSetAuthenticated = vi.fn((value: boolean) => {
-  mockIsAuthenticated = value;
-});
+let mockUserId: string | undefined = 'test-user-id';
 
-vi.mock('@/store/userStore', () => ({
-  userStore: vi.fn((selector: (state: any) => any) => {
+vi.mock('@/store/useUserStore', () => ({
+  useUserStore: vi.fn((selector: (state: any) => any) => {
     const state = {
-      isAuthenticated: mockIsAuthenticated,
-      setAuthenticated: mockSetAuthenticated,
+      userId: mockUserId,
+      setUserId: vi.fn(),
     };
     return selector(state);
   }),
 }));
 
-describe('useAuth Hook', () => {
+// Mock fetcher
+vi.mock('@/utils/fetcher', () => ({
+  fetcher: vi.fn(),
+}));
+
+describe('useUser Hook', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockIsAuthenticated = false;
-    mockSessionData = null;
+    mockUserId = 'test-user-id';
+    mockSWRReturn = {
+      data: null,
+      error: null,
+      isLoading: false,
+      isValidating: false,
+      mutate: mockMutate,
+    };
   });
 
-  it('should return authentication state', () => {
-    mockSessionData = null;
+  it('should return user data structure', () => {
+    const { result } = renderHook(() => useUser());
 
-    const { result } = renderHook(() => useAuth());
-
-    expect(result.current).toHaveProperty('isAuthenticated');
-    expect(result.current).toHaveProperty('setAuthenticated');
+    expect(result.current).toHaveProperty('user');
+    expect(result.current).toHaveProperty('isLoading');
+    expect(result.current).toHaveProperty('isValidating');
+    expect(result.current).toHaveProperty('isError');
+    expect(result.current).toHaveProperty('refreshUser');
   });
 
-  it('should set authenticated to true when session exists', async () => {
-    mockSessionData = {
-      user: {
-        name: 'Test User',
-        email: 'test@example.com',
-      },
-      expires: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+  it('should handle loading state', () => {
+    mockSWRReturn = {
+      data: null,
+      error: null,
+      isLoading: true,
+      isValidating: false,
+      mutate: mockMutate,
     };
 
-    renderHook(() => useAuth());
+    const { result } = renderHook(() => useUser());
 
-    await waitFor(() => {
-      expect(mockSetAuthenticated).toHaveBeenCalledWith(true);
-    });
+    // isLoading should be true initially due to isInitializing
+    expect(result.current.isLoading).toBe(true);
   });
 
-  it('should set authenticated to false when session is null', async () => {
-    mockSessionData = null;
-
-    renderHook(() => useAuth());
-
-    await waitFor(() => {
-      expect(mockSetAuthenticated).toHaveBeenCalledWith(false);
-    });
-  });
-
-  it('should update authentication state when session changes', async () => {
-    // Initially no session
-    mockSessionData = null;
-
-    const { rerender } = renderHook(() => useAuth());
-
-    await waitFor(() => {
-      expect(mockSetAuthenticated).toHaveBeenCalledWith(false);
-    });
-
-    // Session appears
-    mockSessionData = {
-      user: {
-        name: 'Test User',
-        email: 'test@example.com',
-      },
-      expires: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+  it('should handle error state', () => {
+    mockSWRReturn = {
+      data: null,
+      error: new Error('Failed to fetch'),
+      isLoading: false,
+      isValidating: false,
+      mutate: mockMutate,
     };
 
-    rerender();
+    const { result } = renderHook(() => useUser());
 
-    await waitFor(() => {
-      expect(mockSetAuthenticated).toHaveBeenCalledWith(true);
-    });
+    expect(result.current.isError).toBe(true);
+  });
+
+  it('should provide refreshUser function', async () => {
+    const { result } = renderHook(() => useUser());
+
+    expect(typeof result.current.refreshUser).toBe('function');
+
+    await result.current.refreshUser();
+
+    expect(mockMutate).toHaveBeenCalled();
+  });
+
+  it('should handle undefined userId', () => {
+    mockUserId = undefined;
+
+    const { result } = renderHook(() => useUser());
+
+    // When userId is undefined, swrKey is null, so SWR returns null for data
+    expect(result.current.user).toBeNull();
   });
 });

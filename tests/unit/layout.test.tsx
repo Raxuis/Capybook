@@ -110,23 +110,9 @@ describe('RootLayout', () => {
     // The children should be rendered within the layout
     expect(screen.getByText('Test Content')).toBeInTheDocument();
 
-    // Verify the layout structure components
-    expect(screen.getByTestId('header')).toBeInTheDocument();
-    expect(screen.getByTestId('dock')).toBeInTheDocument();
+    // Verify the layout structure components (root layout only has Toaster and TopLoader)
     expect(screen.getByTestId('toaster')).toBeInTheDocument();
-  });
-
-  it('should include Header component', () => {
-    render(
-      <RootLayout>
-        <div>Test Content</div>
-      </RootLayout>,
-    );
-
-    // Header should be rendered (adjust selector based on your Header component)
-    // This is a placeholder - adjust based on your actual Header implementation
-    const body = document.body;
-    expect(body).toBeInTheDocument();
+    expect(screen.getByTestId('top-loader')).toBeInTheDocument();
   });
 
   it('should render with correct HTML structure', () => {
@@ -140,6 +126,7 @@ describe('RootLayout', () => {
     const html = document.documentElement;
     expect(html).toBeInTheDocument();
     expect(html.tagName).toBe('HTML');
+    expect(html.getAttribute('lang')).toBe('fr');
   });
 
   it('should apply correct font classes', () => {
@@ -150,7 +137,23 @@ describe('RootLayout', () => {
     );
 
     const body = document.body;
-    // Check for font variable classes (adjust based on your actual classes)
-    expect(body.className).toBeTruthy();
+    // Check for font variable classes
+    expect(body.className).toContain('--font-inter');
+    expect(body.className).toContain('--font-manrope');
+    expect(body.className).toContain('antialiased');
+  });
+
+  it('should render children within providers', () => {
+    render(
+      <RootLayout>
+        <div>Test Content</div>
+      </RootLayout>,
+    );
+
+    // Children should be rendered
+    expect(screen.getByText('Test Content')).toBeInTheDocument();
+
+    // Providers should be present (mocked)
+    expect(screen.getByTestId('toaster')).toBeInTheDocument();
   });
 });
