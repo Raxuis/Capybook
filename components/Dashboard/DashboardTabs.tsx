@@ -8,6 +8,7 @@ import {useUser} from "@/hooks/useUser";
 import LibraryCard from "@/components/Dashboard/DashboardCard/LibraryCard";
 import WishlistCard from "@/components/Dashboard/DashboardCard/WishlistCard";
 import ReviewCard from "@/components/Dashboard/DashboardCard/ReviewCard";
+import {CardSkeleton} from "@/components/common";
 
 type Props = {
     openBookModal: (book: BookType) => void;
@@ -15,7 +16,7 @@ type Props = {
 
 const DashboardTabs = ({openBookModal}: Props) => {
 
-    const {user} = useUser();
+    const {user, isLoading, isValidating} = useUser();
 
     const booksStatus = useMemo(() => {
         if (!user) return {
@@ -30,7 +31,38 @@ const DashboardTabs = ({openBookModal}: Props) => {
         }
     }, [user?.UserBook, user?.UserBookWishlist, user?.BookReview]);
 
-    if (!user) return null;
+    const isUserLoading = isLoading || isValidating || !user;
+
+    if (isUserLoading) {
+        return (
+            <div className="relative">
+                <Tabs defaultValue="library" className="w-full">
+                    <TabsList className="mb-6 grid w-full grid-cols-3">
+                        <TabsTrigger value="library" className="flex items-center space-x-2">
+                            <Book className="size-4"/>
+                            <span>Ma bibliothèque</span>
+                        </TabsTrigger>
+                        <TabsTrigger value="wishlist" className="flex items-center space-x-2">
+                            <Heart className="size-4"/>
+                            <span>Ma wishlist</span>
+                        </TabsTrigger>
+                        <TabsTrigger value="reviews" className="flex items-center space-x-2">
+                            <Star className="size-4"/>
+                            <span>Mes avis</span>
+                        </TabsTrigger>
+                    </TabsList>
+
+                    <TabsContent value="library" className="space-y-4">
+                        <div className="grid grid-cols-1 items-start gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                            {[...Array(6)].map((_, i) => (
+                                <CardSkeleton key={i} variant="library" />
+                            ))}
+                        </div>
+                    </TabsContent>
+                </Tabs>
+            </div>
+        );
+    }
 
 
     return (
