@@ -5,12 +5,13 @@ import {useQueryState} from "nuqs";
 import {Input} from "@/components/ui/input";
 import {useDebounce} from "@uidotdev/usehooks";
 import BookCard from "@/components/BookStore/BookCard";
-import {Search, ChevronLeft, ChevronRight} from "lucide-react";
+import {Search, ChevronLeft, ChevronRight, BookOpen} from "lucide-react";
 import {Skeleton} from "@/components/ui/skeleton";
 import {Link} from "next-view-transitions";
 import {Button} from "@/components/ui/button";
 import {cn} from "@/lib/utils";
 import {motion, AnimatePresence} from "motion/react";
+import {LoadingState, ErrorState, EmptyState} from "@/components/common";
 
 const BookStore = () => {
     const [search, setSearch] = useQueryState("search", {defaultValue: ""});
@@ -64,9 +65,12 @@ const BookStore = () => {
                 </div>
             </motion.div>
             {isError && (
-                <div className="mt-8 flex items-center justify-center rounded-lg bg-red-50 p-4 text-red-600">
-                    <p>Une erreur est survenue lors de la recherche. Veuillez réessayer.</p>
-                </div>
+                <ErrorState
+                    title="Erreur de recherche"
+                    message="Une erreur est survenue lors de la recherche. Veuillez réessayer."
+                    onRetry={() => window.location.reload()}
+                    className="mt-8"
+                />
             )}
 
             {isLoading ? (
@@ -119,57 +123,36 @@ const BookStore = () => {
                     )}
                 </>
             ) : (search || "").trim() !== "" ? (
-                <div className="mt-16 flex flex-col items-center justify-center text-center">
-                    <div className="mb-4 flex size-16 items-center justify-center rounded-full bg-gray-100">
-                        <Search className="size-8 text-gray-400"/>
-                    </div>
-                    <h3 className="mb-2 text-xl font-semibold">Aucun livre trouvé</h3>
-                    <p className="max-w-md text-gray-500">
-                        Aucun livre ne correspond à votre recherche &#34;{search}&#34;. Essayez avec un autre titre,
-                        auteur ou
-                        ISBN.
-                    </p>
-                </div>
+                <EmptyState
+                    icon={Search}
+                    title="Aucun livre trouvé"
+                    message={`Aucun livre ne correspond à votre recherche "${search}". Essayez avec un autre titre, auteur ou ISBN.`}
+                    className="mt-8"
+                />
             ) : (
                 <AnimatePresence mode="wait">
-                    {search.trim() === "" && books.length === 0 && !isLoading && !isError && !hasAnimatedInitialPrompt.current && (
+                    {search.trim() === "" && books.length === 0 && !isLoading && !isError && (
                         <motion.div
                             key="initial-prompt"
-                            className="mt-16 flex flex-col items-center justify-center text-center"
+                            className="mt-8"
                             initial={{opacity: 0, y: 20}}
                             animate={{opacity: 1, y: 0}}
                             exit={{opacity: 0, y: 10}}
                             transition={{duration: 0.6, delay: 0.3, ease: "easeInOut"}}
-                            onAnimationComplete={() => {
-                                hasAnimatedInitialPrompt.current = true;
-                            }}
                         >
-                            <h3 className="mb-2 text-xl font-semibold">Commencez votre recherche</h3>
-                            <p className="max-w-md text-gray-500">
-                                Recherchez des livres par titre, auteur ou ISBN pour les ajouter à {" "}
-                                <Link href="/book-shelf" className="text-primary underline">
-                                    votre bibliothèque
-                                </Link>
-                                .
-                            </p>
-                        </motion.div>
-                    )}
-                    {search.trim() === "" && books.length === 0 && !isLoading && !isError && hasAnimatedInitialPrompt.current && (
-                        <motion.div
-                            className="mt-16 flex flex-col items-center justify-center text-center"
-                            initial={{opacity: 0}}
-                            animate={{opacity: 1}}
-                            exit={{opacity: 0}}
-                            transition={{duration: 0.3, ease: "easeInOut"}}
-                        >
-                            <h3 className="mb-2 text-xl font-semibold">Commencez votre recherche</h3>
-                            <p className="max-w-md text-gray-500">
-                                Recherchez des livres par titre, auteur ou ISBN pour les ajouter à{" "}
-                                <Link href="/book-shelf" className="text-primary underline">
-                                    votre bibliothèque
-                                </Link>
-                                .
-                            </p>
+                            <EmptyState
+                                icon={BookOpen}
+                                title="Commencez votre recherche"
+                                message={
+                                    <>
+                                        Recherchez des livres par titre, auteur ou ISBN pour les ajouter à{" "}
+                                        <Link href="/book-shelf" className="text-primary underline hover:text-primary/80">
+                                            votre bibliothèque
+                                        </Link>
+                                        .
+                                    </>
+                                }
+                            />
                         </motion.div>
                     )}
                 </AnimatePresence>

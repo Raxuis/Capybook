@@ -5,8 +5,8 @@ import useSWR from "swr";
 import {formatUsername} from "@/lib/helpers/format";
 import {fetcher} from "@/lib/helpers/api";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
-import {Loader2} from "lucide-react";
 import EditProfileModal from "@/components/Profile/EditProfile/EditProfileModal";
+import {LoadingState, ErrorState} from "@/components/common";
 import {SWR_CONFIG} from "@/constants/SWR";
 import {ProfileData} from "@/types/profile";
 import ProfileHeader from "./ProfileHeader";
@@ -96,19 +96,21 @@ const ProfileContent = ({username}: { username: string }) => {
 
     if (isLoading) {
         return (
-            <div className="flex min-h-screen flex-col items-center justify-center p-4">
-                <Loader2 className="text-primary mb-2 size-8 animate-spin"/>
-                <p className="text-muted-foreground">Chargement des données...</p>
-            </div>
+            <LoadingState
+                message="Chargement des données..."
+                className="min-h-screen"
+            />
         );
     }
 
     if (error || !data) {
         return (
-            <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-red-700 shadow-sm">
-                <h3 className="font-semibold">Impossible de charger le profil</h3>
-                <p className="text-sm">Veuillez réessayer ultérieurement ou vérifier l&#39;URL.</p>
-            </div>
+            <ErrorState
+                title="Impossible de charger le profil"
+                message="Veuillez réessayer ultérieurement ou vérifier l'URL."
+                onRetry={() => mutate()}
+                className="min-h-screen"
+            />
         );
     }
 

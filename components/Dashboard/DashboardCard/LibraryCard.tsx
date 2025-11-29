@@ -10,6 +10,7 @@ import {useUser} from "@/hooks/useUser";
 import {useBooks} from "@/hooks/useBooks";
 import {useCallback, useMemo} from "react";
 import {cn} from "@/lib/utils";
+import Image from "next/image";
 
 type LibraryCardProps = {
     userBook: {
@@ -124,99 +125,130 @@ const LibraryCard = ({userBook, openBookModal}: LibraryCardProps) => {
         }
     }, [bookStatus]);
 
+    const bookCoverUrl = userBook.Book.cover
+        ? userBook.Book.cover
+        : userBook.Book.cover_i
+            ? `https://covers.openlibrary.org/b/id/${userBook.Book.cover_i}-M.jpg`
+            : null;
+
     return (
         <Card
             className={cn(
-                'group overflow-hidden transition-all duration-200 hover:shadow-lg border-border/50 h-full flex flex-col',
+                'group relative overflow-hidden transition-all duration-300 hover:shadow-xl border-border/60 bg-gradient-to-br from-card to-card/95 h-full flex flex-col',
                 statusConfig.cardClassName
             )}
         >
-            <CardHeader className="pb-3">
-                <div className="flex items-start justify-between gap-3">
-                    <CardTitle className="line-clamp-2 text-lg font-medium leading-tight">
+            {/* Book Cover Section */}
+            <div className="relative h-48 w-full overflow-hidden bg-gradient-to-br from-slate-100 to-slate-200">
+                {bookCoverUrl ? (
+                    <Image
+                        src={bookCoverUrl}
+                        alt={userBook.Book.title}
+                        fill
+                        className="object-cover transition-transform duration-500 group-hover:scale-105"
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                    />
+                ) : (
+                    <div className="flex h-full w-full items-center justify-center">
+                        <BookOpen className="size-16 text-slate-300" />
+                    </div>
+                )}
+                {/* Gradient overlay for better text readability */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
+
+                {/* Action buttons overlay */}
+                <div className="absolute right-2 top-2 flex gap-1.5 opacity-0 transition-opacity group-hover:opacity-100">
+                    {isBookFinished(userBook) && !isLoaned && (
+                        !bookReview ? (
+                            <Button
+                                variant="secondary"
+                                size="sm"
+                                className="size-8 bg-white/90 backdrop-blur-sm p-0 shadow-md hover:bg-white hover:scale-110 transition-transform"
+                                onClick={handleReviewClick}
+                            >
+                                <Star className="size-4 text-amber-500"/>
+                                <span className="sr-only">Donner un avis</span>
+                            </Button>
+                        ) : (
+                            <div className="flex items-center gap-1 rounded-md bg-white/90 backdrop-blur-sm px-2.5 py-1.5 shadow-md">
+                                <Star className="size-3.5 fill-amber-500 text-amber-500"/>
+                                <span className="text-xs font-semibold text-slate-700">{bookReview.rating}/5</span>
+                            </div>
+                        )
+                    )}
+                    <Button
+                        variant="secondary"
+                        size="sm"
+                        className="size-8 bg-white/90 backdrop-blur-sm p-0 shadow-md hover:bg-white hover:scale-110 transition-transform"
+                        onClick={() => openBookModal(userBook.Book as BookType)}
+                    >
+                        <Info className="size-4 text-slate-700"/>
+                        <span className="sr-only">Détails</span>
+                    </Button>
+                </div>
+            </div>
+
+            <CardHeader className="pb-3 pt-4">
+                <div className="space-y-2.5">
+                    <CardTitle className="line-clamp-2 text-lg font-semibold leading-snug text-slate-900 group-hover:text-primary transition-colors">
                         {userBook.Book.title}
                     </CardTitle>
-                    <div className="flex shrink-0 items-center gap-1">
-                        {isBookFinished(userBook) && !isLoaned && (
-                            !bookReview ? (
-                                <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    className="size-8 p-0 hover:bg-amber-50"
-                                    onClick={handleReviewClick}
-                                >
-                                    <Star className="size-4 text-amber-500"/>
-                                    <span className="sr-only">Donner un avis</span>
-                                </Button>
-                            ) : (
-                                <div
-                                    className="flex items-center gap-1 rounded-md bg-amber-50 px-2 py-1 text-amber-700">
-                                    <Star className="size-3 fill-current"/>
-                                    <span className="text-xs font-medium">{bookReview.rating}/5</span>
-                                </div>
-                            )
-                        )}
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            className="hover:bg-muted size-8 p-0"
-                            onClick={() => openBookModal(userBook.Book as BookType)}
-                        >
-                            <Info className="text-muted-foreground size-4"/>
-                            <span className="sr-only">Détails</span>
-                        </Button>
-                    </div>
-                </div>
 
-                <div className="flex items-center justify-between pt-2">
-                    <div className="text-muted-foreground flex items-center gap-2 text-sm">
-                        <BookOpen className="size-4"/>
-                        <span className="line-clamp-1">
-                            {userBook.Book.authors || "Auteur inconnu"}
+                    <div className="flex items-center gap-2 text-sm text-slate-600">
+                        <BookOpen className="size-3.5 shrink-0"/>
+                        <span className="line-clamp-1 font-medium">
+                            {Array.isArray(userBook.Book.authors)
+                                ? userBook.Book.authors.join(", ")
+                                : userBook.Book.authors || "Auteur inconnu"}
                         </span>
                     </div>
 
                     {statusConfig.badge && (
-                        <Badge
-                            variant={statusConfig.badge.variant}
-                            className={cn('flex items-center gap-1.5 text-xs transition-colors', statusConfig.badge.className)}
-                        >
-                            <statusConfig.badge.icon className="size-3"/>
-                            {statusConfig.badge.text}
-                        </Badge>
+                        <div className="pt-1">
+                            <Badge
+                                variant={statusConfig.badge.variant}
+                                className={cn(
+                                    'inline-flex items-center gap-1.5 text-xs font-medium transition-colors shadow-sm',
+                                    statusConfig.badge.className
+                                )}
+                            >
+                                <statusConfig.badge.icon className="size-3"/>
+                                {statusConfig.badge.text}
+                            </Badge>
+                        </div>
                     )}
                 </div>
             </CardHeader>
 
-            <CardContent className="space-y-4 pt-0">
+            <CardContent className="space-y-3 pt-0 pb-4">
                 {/* Information de prêt simplifiée */}
                 {(isLoaned || isPendingLoan) && lendingInfo && (
-                    <div className={`
-                        rounded-lg border-l-4 py-2 pl-4
-                        ${isPendingLoan
-                        ? 'border-l-yellow-200 bg-yellow-50/30'
-                        : 'border-l-orange-200 bg-orange-50/30'
-                    }
-                    `}>
-                        <div className={`
-                            mb-1 text-sm font-medium
-                            ${isPendingLoan ? 'text-yellow-800' : 'text-orange-800'}
-                        `}>
+                    <div className={cn(
+                        "rounded-lg border-l-4 py-2.5 pl-4 pr-3 shadow-sm",
+                        isPendingLoan
+                            ? 'border-l-yellow-300 bg-gradient-to-r from-yellow-50/80 to-yellow-50/40'
+                            : 'border-l-orange-300 bg-gradient-to-r from-orange-50/80 to-orange-50/40'
+                    )}>
+                        <div className={cn(
+                            "mb-1 flex items-center gap-1.5 text-sm font-semibold",
+                            isPendingLoan ? 'text-yellow-800' : 'text-orange-800'
+                        )}>
+                            <UserCheck className="size-3.5" />
                             {isPendingLoan
                                 ? 'Demande de prêt en attente'
                                 : `Prêté à ${lendingInfo.borrower.name || lendingInfo.borrower.username}`
                             }
                         </div>
                         {lendingInfo.acceptedAt && (
-                            <div className={`
-                                text-xs
-                                ${isPendingLoan ? 'text-yellow-600' : 'text-orange-600'}
-                            `}>
+                            <div className={cn(
+                                "text-xs font-medium",
+                                isPendingLoan ? 'text-yellow-700/80' : 'text-orange-700/80'
+                            )}>
                                 Depuis le {new Date(lendingInfo.acceptedAt).toLocaleDateString('fr-FR')}
                             </div>
                         )}
                         {lendingInfo.dueDate && (
-                            <div className="text-xs text-orange-600">
+                            <div className="text-xs font-medium text-orange-700/80">
                                 Retour prévu le {new Date(lendingInfo.dueDate).toLocaleDateString('fr-FR')}
                             </div>
                         )}
@@ -225,7 +257,7 @@ const LibraryCard = ({userBook, openBookModal}: LibraryCardProps) => {
 
                 {/* Tracker de progression */}
                 {userBook.isCurrentBook && !isLoaned && (
-                    <div className="pt-2">
+                    <div className="pt-1">
                         {(userBook.Book.numberOfPages || (!userBook.Book.numberOfPages && userBook.progressType === "percentage")) ? (
                             <ProgressTracker
                                 book={userBook.Book as BookType}
