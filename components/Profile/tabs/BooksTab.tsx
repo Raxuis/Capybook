@@ -20,14 +20,14 @@ const BooksTab = memo<BooksTabProps>(({books}) => {
         );
     }
     return (
-        <div className="divide-y divide-border">
+        <div className="flex flex-col gap-4">
             {books.map((bookData, index) => (
                 <motion.div
                     key={bookData.id}
-                    initial={{opacity: 0, x: -20}}
-                    animate={{opacity: 1, x: 0}}
+                    initial={{opacity: 0, y: 20}}
+                    animate={{opacity: 1, y: 0}}
                     transition={{duration: 0.3, delay: index * 0.05}}
-                    whileHover={{x: 4}}
+                    whileHover={{y: -2}}
                     className="flex flex-wrap items-center rounded-lg border border-border bg-card p-3 shadow-sm transition-all hover:shadow-md sm:flex-nowrap sm:py-4 sm:px-4"
                 >
                     <div className="mr-3 rounded-lg bg-primary/10 p-2 sm:mr-4 sm:p-3">
