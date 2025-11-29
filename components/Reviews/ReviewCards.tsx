@@ -1,7 +1,8 @@
 import {type Review} from "./ReviewList";
 import ReviewsListLoading from "@/components/Reviews/ReviewsListLoading";
-import {Star} from "lucide-react";
 import ReviewCard from "@/components/Reviews/ReviewCard";
+import {EmptyState, ErrorState} from "@/components/common";
+import {Star, Users} from "lucide-react";
 
 const ReviewCards = (
     {
@@ -21,27 +22,38 @@ const ReviewCards = (
 
     if (error) {
         return (
-            <div className="flex flex-col items-center justify-center space-y-4 py-12">
-                <Star className="text-destructive size-12"/>
-                <p className="text-destructive">{error}</p>
-            </div>
+            <ErrorState
+                title="Erreur lors du chargement"
+                message={error}
+                onRetry={() => window.location.reload()}
+            />
         );
     }
 
     if (!reviews || reviews.length === 0) {
-        const emptyMessage = tab === "public"
-            ? "Aucun avis public pour le moment"
-            : "Aucun avis d'amis pour le moment";
+        const emptyConfig = tab === "public"
+            ? {
+                icon: Star,
+                title: "Aucun avis public",
+                message: "Il n'y a pas encore d'avis publics disponibles. Soyez le premier à partager votre opinion !"
+            }
+            : {
+                icon: Users,
+                title: "Aucun avis d'amis",
+                message: "Vos amis n'ont pas encore partagé d'avis. Encouragez-les à donner leur opinion sur les livres qu'ils ont lus !"
+            };
 
         return (
-            <div className="flex flex-col items-center justify-center space-y-4 py-12">
-                <Star className="text-muted-foreground size-12"/>
-                <p className="text-muted-foreground">{emptyMessage}</p>
-            </div>
+            <EmptyState
+                icon={emptyConfig.icon}
+                title={emptyConfig.title}
+                message={emptyConfig.message}
+            />
         );
     }
+
     return (
-        <div className="grid gap-4">
+        <div className="space-y-4">
             {reviews.map((review, index) => (
                 <ReviewCard key={review.id} review={review} index={index}/>
             ))}
