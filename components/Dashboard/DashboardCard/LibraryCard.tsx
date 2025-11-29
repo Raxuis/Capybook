@@ -149,7 +149,8 @@ const LibraryCard = ({userBook, openBookModal}: LibraryCardProps) => {
                             sizes="(max-width: 768px) 100vw, 50vw"
                         />
                         {/* Subtle vignette */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent pointer-events-none" />
+                        <div
+                            className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent pointer-events-none"/>
                     </>
                 ) : (
                     <BookCoverPlaceholder
@@ -166,13 +167,14 @@ const LibraryCard = ({userBook, openBookModal}: LibraryCardProps) => {
                         "flex items-center gap-1.5 text-[10px] font-medium",
                         statusConfig.badge.className
                     )}>
-                        <statusConfig.badge.icon className="size-2.5" />
+                        <statusConfig.badge.icon className="size-2.5"/>
                         <span>{statusConfig.badge.text}</span>
                     </div>
                 )}
 
                 {/* Action buttons - more subtle */}
-                <div className="absolute right-3 top-3 flex gap-2 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+                <div
+                    className="absolute right-3 top-3 flex gap-2 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
                     {isBookFinished(userBook) && !isLoaned && (
                         !bookReview ? (
                             <Button
@@ -185,7 +187,8 @@ const LibraryCard = ({userBook, openBookModal}: LibraryCardProps) => {
                                 <span className="sr-only">Donner un avis</span>
                             </Button>
                         ) : (
-                            <div className="flex items-center gap-1 rounded-md bg-white/95 backdrop-blur-sm px-2 py-1 shadow-sm border border-slate-200/50">
+                            <div
+                                className="flex items-center gap-1 rounded-md bg-white/95 backdrop-blur-sm px-2 py-1 shadow-sm border border-slate-200/50">
                                 <Star className="size-3 fill-amber-500 text-amber-500"/>
                                 <span className="text-xs font-semibold text-slate-700">{bookReview.rating}</span>
                             </div>
@@ -205,7 +208,8 @@ const LibraryCard = ({userBook, openBookModal}: LibraryCardProps) => {
 
             <CardHeader className="pb-2.5 pt-3.5 px-4">
                 <div className="space-y-2">
-                    <CardTitle className="line-clamp-2 text-base font-semibold leading-tight text-slate-900 group-hover:text-slate-700 transition-colors">
+                    <CardTitle
+                        className="line-clamp-2 text-base font-semibold leading-tight text-slate-900 group-hover:text-slate-700 transition-colors">
                         {userBook.Book.title}
                     </CardTitle>
 
@@ -221,7 +225,7 @@ const LibraryCard = ({userBook, openBookModal}: LibraryCardProps) => {
             </CardHeader>
 
             <CardContent className="space-y-2.5 pt-0 pb-4 px-4">
-                {/* Information de prêt - more compact */}
+                {/* Information de prêt — plus compacte */}
                 {(isLoaned || isPendingLoan) && lendingInfo && (
                     <div className={cn(
                         "rounded border-l-2 py-2 px-3 text-xs",
@@ -233,7 +237,7 @@ const LibraryCard = ({userBook, openBookModal}: LibraryCardProps) => {
                             "flex items-center gap-1.5 font-medium mb-0.5",
                             isPendingLoan ? 'text-yellow-700' : 'text-orange-700'
                         )}>
-                            <UserCheck className="size-3" />
+                            <UserCheck className="size-3"/>
                             {isPendingLoan
                                 ? 'Prêt en attente'
                                 : `Prêté à ${lendingInfo.borrower.name || lendingInfo.borrower.username}`
@@ -241,7 +245,10 @@ const LibraryCard = ({userBook, openBookModal}: LibraryCardProps) => {
                         </div>
                         {lendingInfo.acceptedAt && (
                             <div className="text-[10px] text-slate-600">
-                                Depuis {new Date(lendingInfo.acceptedAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}
+                                Depuis {new Date(lendingInfo.acceptedAt).toLocaleDateString('fr-FR', {
+                                day: 'numeric',
+                                month: 'short'
+                            })}
                             </div>
                         )}
                     </div>
