@@ -5,7 +5,7 @@ import { useRouter } from 'nextjs-toploader/app';
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { SignInSchema } from "@/utils/zod";
+import { SignInSchema } from "@/lib/validators";
 import { login } from "@/actions/auth/auth";
 import { LoaderCircleIcon } from "lucide-react";
 import {

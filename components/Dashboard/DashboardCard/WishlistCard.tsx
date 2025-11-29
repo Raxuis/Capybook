@@ -3,14 +3,33 @@ import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
 import {Badge} from "@/components/ui/badge";
 import {Book as BookType} from "@/types";
-import {formatList} from "@/utils/format";
+import {formatList} from "@/lib/helpers/format";
 
 type WishlistCardProps = {
     wishlistItem: {
         Book: BookType;
-        createdAt: Date;
+        createdAt: Date | string;
     };
     openBookModal: (book: BookType) => void;
+};
+
+/**
+ * Safely formats a date to a localized date string
+ * Handles both Date objects and date strings from JSON
+ */
+const formatDate = (date: Date | string): string => {
+    const dateObj = typeof date === 'string' ? new Date(date) : date;
+
+    // Check if date is valid
+    if (isNaN(dateObj.getTime())) {
+        return 'Date invalide';
+    }
+
+    return dateObj.toLocaleDateString('fr-FR', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+    });
 };
 
 const WishlistCard = ({wishlistItem, openBookModal}: WishlistCardProps) => {
@@ -38,7 +57,7 @@ const WishlistCard = ({wishlistItem, openBookModal}: WishlistCardProps) => {
                 <div className="flex items-center">
                     <Badge
                         className="cursor-default rounded-full bg-rose-100 text-center text-xs text-rose-700 hover:bg-rose-200">
-                        Souhaité depuis le {wishlistItem.createdAt.toLocaleDateString()}
+                        Souhaité depuis le {formatDate(wishlistItem.createdAt)}
                     </Badge>
                 </div>
             </CardContent>

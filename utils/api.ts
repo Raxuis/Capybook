@@ -1,8 +1,6 @@
-import axios from "axios";
+/**
+ * @deprecated Use @/lib/helpers/api instead
+ * This file is kept for backward compatibility during migration
+ */
 
-export const api = axios.create({
-    baseURL: "/api",
-    headers: {
-        "Content-Type": "application/json",
-    },
-});
+export { api } from "@/lib/helpers/api";

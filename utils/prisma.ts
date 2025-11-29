@@ -1,9 +1,6 @@
-import {PrismaClient} from "@prisma/client";
+/**
+ * @deprecated Use @/lib/db/prisma instead
+ * This file is kept for backward compatibility during migration
+ */
 
-const globalForPrisma = global as unknown as { prisma: PrismaClient };
-
-const client = globalForPrisma.prisma || new PrismaClient();
-
-export default client
-
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = client;
+export { default } from "@/lib/db/prisma";

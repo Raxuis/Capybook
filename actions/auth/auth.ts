@@ -1,9 +1,9 @@
 "use server";
 
 import {signIn} from "@/auth";
-import {SignInSchema, SignUpSchema} from "@/utils/zod";
-import prisma from "@/utils/prisma";
-import {saltAndHashPassword} from "@/utils/password";
+import {SignInSchema, SignUpSchema} from "@/lib/validators";
+import prisma from "@/lib/db/prisma";
+import {hashPassword} from "@/lib/helpers/password";
 
 export async function signUp(formData: unknown) {
     try {
@@ -25,7 +25,7 @@ export async function signUp(formData: unknown) {
             return {error: "Le nom d'utilisateur est déjà pris"};
         }
 
-        const hashedPassword = await saltAndHashPassword(password);
+        const hashedPassword = await hashPassword(password);
 
         const createdUser = await prisma.user.create({
             data: {
