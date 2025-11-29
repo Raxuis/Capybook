@@ -91,71 +91,22 @@ export default function ReviewList({page = "1"}: ReviewListProps) {
             }
         }
     };
-
-    const currentTabCount = tab === "public" ? counts?.publicCount : counts?.friendsCount;
-    const totalCount = (counts?.publicCount || 0) + (counts?.friendsCount || 0);
-
     return (
         <div className="space-y-6">
-            {/* Stats Summary */}
-            {counts && totalCount > 0 && (
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                    <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-                        <div className="flex items-center gap-3">
-                            <div className="flex size-10 items-center justify-center rounded-lg bg-amber-100">
-                                <span className="text-lg">⭐</span>
-                            </div>
-                            <div>
-                                <p className="text-xs font-medium text-slate-500">Total d'avis</p>
-                                <p className="text-xl font-bold text-slate-900">{totalCount}</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-                        <div className="flex items-center gap-3">
-                            <div className="flex size-10 items-center justify-center rounded-lg bg-blue-100">
-                                <span className="text-lg">🌐</span>
-                            </div>
-                            <div>
-                                <p className="text-xs font-medium text-slate-500">Avis publics</p>
-                                <p className="text-xl font-bold text-slate-900">{counts.publicCount}</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-                        <div className="flex items-center gap-3">
-                            <div className="flex size-10 items-center justify-center rounded-lg bg-rose-100">
-                                <span className="text-lg">👥</span>
-                            </div>
-                            <div>
-                                <p className="text-xs font-medium text-slate-500">Avis d'amis</p>
-                                <p className="text-xl font-bold text-slate-900">{counts.friendsCount}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
-
             <Tabs value={tab} onValueChange={handleTabChange} className="w-full">
-                <TabsList className="grid w-full grid-cols-2 bg-slate-100/50 p-1">
-                    <TabsTrigger
-                        value="public"
-                        className="flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:shadow-sm"
-                    >
+                <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="public" className="flex items-center gap-2">
                         <span>Publique</span>
                         {counts && (
-                            <span className="ml-1 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-700">
+                            <span className="bg-muted ml-1 rounded-full px-2 py-0.5 text-xs font-medium">
                                 {counts.publicCount}
                             </span>
                         )}
                     </TabsTrigger>
-                    <TabsTrigger
-                        value="friends"
-                        className="flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:shadow-sm"
-                    >
+                    <TabsTrigger value="friends" className="flex items-center gap-2">
                         <span>Amis</span>
                         {counts && (
-                            <span className="ml-1 rounded-full bg-blue-100 px-2 py-0.5 text-xs font-semibold text-blue-700">
+                            <span className="bg-muted ml-1 rounded-full px-2 py-0.5 text-xs font-medium">
                                 {counts.friendsCount}
                             </span>
                         )}
@@ -163,11 +114,6 @@ export default function ReviewList({page = "1"}: ReviewListProps) {
                 </TabsList>
 
                 <TabsContent value="public" className="mt-6">
-                    {data && data.reviews.length > 0 && (
-                        <div className="mb-4 text-sm text-slate-600">
-                            Affichage de <span className="font-semibold text-slate-900">{data.reviews.length}</span> avis sur <span className="font-semibold text-slate-900">{currentTabCount}</span>
-                        </div>
-                    )}
                     <ReviewCards
                         tab={tab}
                         reviews={data?.reviews}
@@ -176,11 +122,6 @@ export default function ReviewList({page = "1"}: ReviewListProps) {
                 </TabsContent>
 
                 <TabsContent value="friends" className="mt-6">
-                    {data && data.reviews.length > 0 && (
-                        <div className="mb-4 text-sm text-slate-600">
-                            Affichage de <span className="font-semibold text-slate-900">{data.reviews.length}</span> avis sur <span className="font-semibold text-slate-900">{currentTabCount}</span>
-                        </div>
-                    )}
                     <ReviewCards
                         tab={tab}
                         reviews={data?.reviews}

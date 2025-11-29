@@ -1,7 +1,7 @@
 "use client";
 
 import {motion} from "motion/react";
-import {Star, BookOpen, MessageSquare} from "lucide-react";
+import {Star, BookOpen} from "lucide-react";
 import {Card, CardContent} from "@/components/ui/card";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 import {Badge} from "@/components/ui/badge";
@@ -41,27 +41,27 @@ const ReviewCard = ({review, index}: ReviewCardProps) => {
             transition={{duration: 0.3, delay: index ? index * 0.05 : 0}}
             className="group"
         >
-            <Card className="overflow-hidden border border-slate-200 bg-white transition-all duration-200 hover:border-slate-300 hover:shadow-md">
+            <Card className="overflow-hidden border border-slate-200 bg-white transition-all duration-200 hover:border-slate-300 hover:shadow-md hover:-translate-y-0.5">
                 <CardContent className="p-0">
-                    <div className="flex gap-4 p-5">
+                    <div className="flex gap-4 p-4">
                         {/* Book Cover */}
                         <Link
-                            href={`/profile/${review.User.username}`}
+                            href={`/book-store?search=${encodeURIComponent(review.Book.title)}`}
                             className="shrink-0"
                         >
-                            <div className="relative h-32 w-24 overflow-hidden rounded-lg border border-slate-200/60 bg-slate-50 transition-transform duration-200 group-hover:scale-105">
+                            <div className="relative h-28 w-20 overflow-hidden rounded border border-slate-200/50 bg-slate-50 transition-transform duration-200 group-hover:scale-105">
                                 {bookCoverUrl ? (
                                     <Image
                                         src={bookCoverUrl}
                                         alt={review.Book.title}
                                         fill
                                         className="object-cover"
-                                        sizes="96px"
+                                        sizes="80px"
                                     />
                                 ) : (
                                     <BookCoverPlaceholder
                                         title={review.Book.title}
-                                        variant="amber"
+                                        variant="default"
                                         className="p-2"
                                     />
                                 )}
@@ -69,12 +69,12 @@ const ReviewCard = ({review, index}: ReviewCardProps) => {
                         </Link>
 
                         {/* Content */}
-                        <div className="flex min-w-0 flex-1 flex-col gap-3">
+                        <div className="flex min-w-0 flex-1 flex-col gap-2.5">
                             {/* Header */}
                             <div className="flex items-start justify-between gap-3">
-                                <div className="flex min-w-0 flex-1 items-center gap-3">
+                                <div className="flex min-w-0 flex-1 items-center gap-2.5">
                                     <Link href={`/profile/${review.User.username}`}>
-                                        <Avatar className="size-10 border-2 border-slate-200 transition-transform duration-200 hover:scale-110">
+                                        <Avatar className="size-9 border border-slate-200">
                                             <AvatarImage src={review.User.image || undefined}/>
                                             <AvatarFallback
                                                 className="text-xs font-semibold"
@@ -105,10 +105,10 @@ const ReviewCard = ({review, index}: ReviewCardProps) => {
                                 </div>
 
                                 {/* Rating & Privacy */}
-                                <div className="flex shrink-0 flex-col items-end gap-2">
-                                    <div className="flex items-center gap-1.5 rounded-lg border border-amber-200/60 bg-amber-50/50 px-2.5 py-1.5">
-                                        <Star className="size-3.5 fill-amber-500 text-amber-500"/>
-                                        <span className="text-sm font-bold text-amber-700">{review.rating}</span>
+                                <div className="flex shrink-0 flex-col items-end gap-1.5">
+                                    <div className="flex items-center gap-1 rounded border border-amber-200/60 bg-amber-50/50 px-2 py-1">
+                                        <Star className="size-3 fill-amber-500 text-amber-500"/>
+                                        <span className="text-xs font-semibold text-amber-700">{review.rating}</span>
                                     </div>
                                     <Badge
                                         variant={privacyConfig.variant}
@@ -125,12 +125,8 @@ const ReviewCard = ({review, index}: ReviewCardProps) => {
 
                             {/* Review Content */}
                             {review.feedback && (
-                                <div className="rounded-lg border border-slate-100 bg-slate-50/50 p-3">
-                                    <div className="mb-1.5 flex items-center gap-1.5">
-                                        <MessageSquare className="size-3 text-slate-400"/>
-                                        <span className="text-xs font-medium text-slate-500">Commentaire</span>
-                                    </div>
-                                    <p className="text-sm leading-relaxed text-slate-700 line-clamp-3">
+                                <div className="rounded border border-slate-100 bg-slate-50/50 p-2.5">
+                                    <p className="text-xs leading-relaxed text-slate-700 line-clamp-3">
                                         {review.feedback}
                                     </p>
                                 </div>
