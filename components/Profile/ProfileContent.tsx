@@ -9,6 +9,8 @@ import EditProfileModal from "@/components/Profile/EditProfile/EditProfileModal"
 import {LoadingState, ErrorState} from "@/components/common";
 import {SWR_CONFIG} from "@/constants/SWR";
 import {ProfileData} from "@/types/profile";
+import {useUser} from "@/hooks/useUser";
+import {motion, AnimatePresence} from "motion/react";
 import ProfileHeader from "./ProfileHeader";
 import OverviewTab from "./tabs/OverviewTab";
 import BadgesTab from "./tabs/BadgesTab";
@@ -18,6 +20,7 @@ import ReviewsTab from "./tabs/ReviewsTab";
 
 const ProfileContent = ({username}: { username: string }) => {
     const router = useRouter();
+    const {user: currentUser} = useUser();
     const [isFollowingOrUnfollowing, setIsFollowingOrUnfollowing] = useState(false);
     const [activeTab, setActiveTab] = useState("overview");
     const [isModalOpen, setModalOpen] = useState(false);
@@ -128,27 +131,32 @@ const ProfileContent = ({username}: { username: string }) => {
                 onFollowToggle={handleFollowToggle}
             />
 
-            <div className="mb-32 overflow-hidden rounded-xl bg-white shadow-md">
+            <motion.div
+                initial={{opacity: 0, y: 20}}
+                animate={{opacity: 1, y: 0}}
+                transition={{duration: 0.5, delay: 0.2}}
+                className="mb-32 overflow-hidden rounded-xl bg-card border shadow-lg"
+            >
                 <Tabs defaultValue="overview" value={activeTab} onValueChange={handleTabChange} className="w-full">
-                    <div className="overflow-hidden border-b">
+                    <div className="overflow-hidden border-b border-border">
                         <div className="overflow-x-auto overflow-y-hidden">
                             <TabsList className="flex w-max min-w-full bg-transparent p-0">
                                 <TabsTrigger
                                     value="overview"
-                                    className="min-w-[100px] shrink-0 whitespace-nowrap rounded-none px-2 py-3 text-xs data-[state=active]:bg-transparent data-[state=active]:shadow-none sm:px-6 sm:py-4 sm:text-sm"
+                                    className="min-w-[100px] shrink-0 whitespace-nowrap rounded-none px-2 py-3 text-xs font-medium transition-all data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary sm:px-6 sm:py-4 sm:text-sm"
                                 >
                                     <span className="hidden sm:inline">Vue d&#39;ensemble</span>
                                     <span className="sm:hidden">Aperçu</span>
                                 </TabsTrigger>
                                 <TabsTrigger
                                     value="badges"
-                                    className="min-w-[80px] shrink-0 whitespace-nowrap rounded-none px-2 py-3 text-xs data-[state=active]:bg-transparent data-[state=active]:shadow-none sm:px-6 sm:py-4 sm:text-sm"
+                                    className="min-w-[80px] shrink-0 whitespace-nowrap rounded-none px-2 py-3 text-xs font-medium transition-all text-muted-foreground data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary sm:px-6 sm:py-4 sm:text-sm"
                                 >
                                     Badges
                                 </TabsTrigger>
                                 <TabsTrigger
                                     value="relations"
-                                    className="min-w-[80px] shrink-0 whitespace-nowrap rounded-none px-2 py-3 text-xs data-[state=active]:bg-transparent data-[state=active]:shadow-none sm:px-6 sm:py-4 sm:text-sm"
+                                    className="min-w-[80px] shrink-0 whitespace-nowrap rounded-none px-2 py-3 text-xs font-medium transition-all text-muted-foreground data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary sm:px-6 sm:py-4 sm:text-sm"
                                 >
                                     Relations
                                 </TabsTrigger>
@@ -156,13 +164,13 @@ const ProfileContent = ({username}: { username: string }) => {
                                     <>
                                         <TabsTrigger
                                             value="books"
-                                            className="min-w-[80px] shrink-0 whitespace-nowrap rounded-none px-2 py-3 text-xs data-[state=active]:bg-transparent data-[state=active]:shadow-none sm:px-6 sm:py-4 sm:text-sm"
+                                            className="min-w-[80px] shrink-0 whitespace-nowrap rounded-none px-2 py-3 text-xs font-medium transition-all text-muted-foreground data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary sm:px-6 sm:py-4 sm:text-sm"
                                         >
                                             Livres
                                         </TabsTrigger>
                                         <TabsTrigger
                                             value="reviews"
-                                            className="min-w-[80px] shrink-0 whitespace-nowrap rounded-none px-2 py-3 text-xs data-[state=active]:bg-transparent data-[state=active]:shadow-none sm:px-6 sm:py-4 sm:text-sm"
+                                            className="min-w-[80px] shrink-0 whitespace-nowrap rounded-none px-2 py-3 text-xs font-medium transition-all text-muted-foreground data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary sm:px-6 sm:py-4 sm:text-sm"
                                         >
                                             Avis
                                         </TabsTrigger>
@@ -172,37 +180,79 @@ const ProfileContent = ({username}: { username: string }) => {
                         </div>
                     </div>
 
-                    <TabsContent value="overview" className="p-4 sm:p-6">
-                        <OverviewTab
-                            stats={stats}
-                            badges={badges}
-                            detailedData={detailedData}
-                            isOwner={isOwner}
-                            onTabChange={handleTabChange}
-                        />
-                    </TabsContent>
+                    <AnimatePresence mode="wait">
+                        <TabsContent value="overview" className="p-4 sm:p-6" key="overview">
+                            <motion.div
+                                initial={{opacity: 0, x: -20}}
+                                animate={{opacity: 1, x: 0}}
+                                exit={{opacity: 0, x: 20}}
+                                transition={{duration: 0.3}}
+                            >
+                                <OverviewTab
+                                    stats={stats}
+                                    badges={badges}
+                                    detailedData={detailedData}
+                                    isOwner={isOwner}
+                                    onTabChange={handleTabChange}
+                                />
+                            </motion.div>
+                        </TabsContent>
 
-                    <TabsContent value="badges" className="p-4 sm:p-6">
-                        <BadgesTab badges={badges} isOwner={isOwner}/>
-                    </TabsContent>
+                        <TabsContent value="badges" className="p-4 sm:p-6" key="badges">
+                            <motion.div
+                                initial={{opacity: 0, x: -20}}
+                                animate={{opacity: 1, x: 0}}
+                                exit={{opacity: 0, x: 20}}
+                                transition={{duration: 0.3}}
+                            >
+                                <BadgesTab badges={badges} isOwner={isOwner}/>
+                            </motion.div>
+                        </TabsContent>
 
-                    <TabsContent value="relations" className="p-4 sm:p-6">
-                        <RelationsTab followers={followers} following={following}/>
-                    </TabsContent>
+                        <TabsContent value="relations" className="p-4 sm:p-6" key="relations">
+                            <motion.div
+                                initial={{opacity: 0, x: -20}}
+                                animate={{opacity: 1, x: 0}}
+                                exit={{opacity: 0, x: 20}}
+                                transition={{duration: 0.3}}
+                            >
+                                <RelationsTab
+                                    followers={followers}
+                                    following={following}
+                                    isOwner={isOwner}
+                                    currentUserId={currentUser?.id}
+                                />
+                            </motion.div>
+                        </TabsContent>
 
-                    {isOwner && detailedData && (
-                        <>
-                            <TabsContent value="books" className="p-4 sm:p-6">
-                                <BooksTab books={detailedData.books}/>
-                            </TabsContent>
+                        {isOwner && detailedData && (
+                            <>
+                                <TabsContent value="books" className="p-4 sm:p-6" key="books">
+                                    <motion.div
+                                        initial={{opacity: 0, x: -20}}
+                                        animate={{opacity: 1, x: 0}}
+                                        exit={{opacity: 0, x: 20}}
+                                        transition={{duration: 0.3}}
+                                    >
+                                        <BooksTab books={detailedData.books}/>
+                                    </motion.div>
+                                </TabsContent>
 
-                            <TabsContent value="reviews" className="p-4 sm:p-6">
-                                <ReviewsTab reviews={detailedData.reviews}/>
-                            </TabsContent>
-                        </>
-                    )}
+                                <TabsContent value="reviews" className="p-4 sm:p-6" key="reviews">
+                                    <motion.div
+                                        initial={{opacity: 0, x: -20}}
+                                        animate={{opacity: 1, x: 0}}
+                                        exit={{opacity: 0, x: 20}}
+                                        transition={{duration: 0.3}}
+                                    >
+                                        <ReviewsTab reviews={detailedData.reviews}/>
+                                    </motion.div>
+                                </TabsContent>
+                            </>
+                        )}
+                    </AnimatePresence>
                 </Tabs>
-            </div>
+            </motion.div>
 
             {isOwner && detailedData && (
                 <EditProfileModal
