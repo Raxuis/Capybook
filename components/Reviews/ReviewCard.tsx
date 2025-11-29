@@ -74,7 +74,7 @@ const ReviewCard = ({review, index}: ReviewCardProps) => {
                             <div className="flex items-start justify-between gap-3">
                                 <div className="flex min-w-0 flex-1 items-center gap-2.5">
                                     <Link href={`/profile/${review.User.username}`}>
-                                        <Avatar className="size-9 border border-slate-200">
+                                        <Avatar className="size-9 border border-slate-200 transition-transform duration-200 hover:scale-110 active:scale-95">
                                             <AvatarImage src={review.User.image || undefined}/>
                                             <AvatarFallback
                                                 className="text-xs font-semibold"

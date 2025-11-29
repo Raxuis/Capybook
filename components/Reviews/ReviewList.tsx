@@ -91,6 +91,8 @@ export default function ReviewList({page = "1"}: ReviewListProps) {
             }
         }
     };
+
+    // const currentTabCount = tab === "public" ? counts?.publicCount : counts?.friendsCount;
     return (
         <div className="space-y-6">
             <Tabs value={tab} onValueChange={handleTabChange} className="w-full">
