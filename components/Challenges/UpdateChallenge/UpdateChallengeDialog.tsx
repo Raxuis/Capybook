@@ -10,7 +10,7 @@ import {
 import UpdateChallengeForm from './UpdateChallengeForm';
 import {useToast} from "@/hooks/use-toast";
 import z from "zod";
-import {UpdateChallengeSchema} from "@/utils/zod";
+import {UpdateChallengeSchema} from "@/lib/validators";
 import {useChallenges} from "@/hooks/useChallenges";
 import {useBadgeQueue} from "@/Context/BadgeQueueContext";
 

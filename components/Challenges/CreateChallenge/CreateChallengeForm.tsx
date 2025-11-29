@@ -13,7 +13,7 @@ import {fr} from "date-fns/locale";
 import {Calendar as CalendarComponent} from "@/components/ui/calendar";
 import {DialogFooter} from "@/components/ui/dialog";
 import z from "zod";
-import {CreateChallengeSchema} from "@/utils/zod";
+import {CreateChallengeSchema} from "@/lib/validators";
 import {useChallenges} from "@/hooks/useChallenges";
 import {memo} from "react";
 import {useChallengeCrudModalStore} from "@/store/challengeCrudModalStore";

@@ -9,7 +9,7 @@ import {BookNoteType} from '@prisma/client';
 import {getTypeIcon, getTypeColorAll, getTypeBackgroundColor, getTypeAccentColor} from '@/utils/bookNotes';
 import {useCopyToClipboard} from "@/hooks/use-copy-to-clipboard";
 import {useToast} from "@/hooks/use-toast";
-import {formatBookNoteType} from "@/utils/format";
+import {formatBookNoteType} from "@/lib/helpers/format";
 
 interface NoteCardProps {
     note: ApiNote;

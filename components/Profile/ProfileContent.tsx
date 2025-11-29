@@ -2,8 +2,8 @@
 import React, {useEffect, useState, useCallback, useMemo} from 'react';
 import {useRouter} from "nextjs-toploader/app";
 import useSWR from "swr";
-import {formatUsername} from "@/utils/format";
-import {fetcher} from "@/utils/fetcher";
+import {formatUsername} from "@/lib/helpers/format";
+import {fetcher} from "@/lib/helpers/api";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {Loader2} from "lucide-react";
 import EditProfileModal from "@/components/Profile/EditProfile/EditProfileModal";

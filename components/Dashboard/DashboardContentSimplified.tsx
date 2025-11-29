@@ -5,7 +5,7 @@ import {useUser} from "@/hooks/useUser";
 import {Loader2, AlertCircle} from "lucide-react";
 import DashboardStats from "@/components/Dashboard/DashboardStats";
 import DashboardTabs from "@/components/Dashboard/DashboardTabs";
-import {fetchMoreBookInfos} from "@/actions/book";
+import {fetchMoreBookInfos} from "@/lib/services/book";
 import {MoreInfoBook, Book as BookType} from "@/types";
 import ReviewBookModal from "@/components/BookStore/Modals/ReviewBookModal";
 import BookModal from "@/components/Dashboard/Modals/BookModal/BookModal";

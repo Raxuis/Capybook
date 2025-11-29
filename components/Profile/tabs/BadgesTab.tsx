@@ -1,5 +1,5 @@
 import React, {memo, useMemo} from 'react';
-import {formatBadgeCategory} from "@/utils/format";
+import {formatBadgeCategory} from "@/lib/helpers/format";
 import {Badge} from "@/types/profile";
 
 interface BadgesTabProps {

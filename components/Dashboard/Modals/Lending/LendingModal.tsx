@@ -17,7 +17,7 @@ import {useState, useEffect, useMemo, useCallback} from "react";
 import {motion, AnimatePresence} from "motion/react";
 import {MoreInfoBook} from "@/types";
 import {useUser} from "@/hooks/useUser";
-import {api} from "@/utils/api";
+import {api} from "@/lib/helpers/api";
 
 interface LendingModalProps {
     book: MoreInfoBook;

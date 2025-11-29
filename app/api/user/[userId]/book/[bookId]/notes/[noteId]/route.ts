@@ -1,5 +1,5 @@
 import {NextRequest, NextResponse} from 'next/server';
-import prisma from "@/utils/prisma";
+import prisma from "@/lib/db/prisma";
 import {auth} from "@/auth";
 import {BookNoteType} from '@prisma/client';
 import {z} from 'zod';

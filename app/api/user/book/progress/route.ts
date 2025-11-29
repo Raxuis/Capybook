@@ -1,6 +1,6 @@
 import {NextRequest, NextResponse} from 'next/server';
 import {z} from "zod";
-import prisma from "@/utils/prisma";
+import prisma from "@/lib/db/prisma";
 import {checkAndAssignBadges} from "@/utils/badges";
 import {Badge} from "@prisma/client";
 import {

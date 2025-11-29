@@ -1,8 +1,8 @@
 "use server"
 
 import axios from "axios";
-import {fetchMoreBookInfos} from "./book";
-import prisma from "@/utils/prisma";
+import {fetchMoreBookInfos} from "@/lib/services/book";
+import prisma from "@/lib/db/prisma";
 
 interface OpenLibrarySearchResult {
     docs: Array<{

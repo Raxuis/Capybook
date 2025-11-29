@@ -1,6 +1,6 @@
 "use server";
 
-import prisma from "@/utils/prisma";
+import prisma from "@/lib/db/prisma";
 import {currentUser} from "@/actions/auth/current-user";
 import {PERTINENT_BOOK_SUBJECTS} from "@/constants/subjects";
 

@@ -1,7 +1,7 @@
 import {Badge} from "@/components/ui/badge";
 import {Skeleton} from "@/components/ui/skeleton";
 import {FileText, Globe} from "lucide-react";
-import {formatList} from "@/utils/format";
+import {formatList} from "@/lib/helpers/format";
 import {BookInfoProps} from "@/types/bookModal";
 
 export const BookInfo = ({book, isLoading}: BookInfoProps) => {

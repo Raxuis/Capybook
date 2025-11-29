@@ -1,4 +1,4 @@
-import prisma from "@/utils/prisma";
+import prisma from "@/lib/db/prisma";
 import {ValidationError} from "@/utils/api-validation";
 import type {Prisma} from '@prisma/client';
 

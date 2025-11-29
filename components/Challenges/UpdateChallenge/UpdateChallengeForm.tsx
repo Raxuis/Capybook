@@ -15,7 +15,7 @@ import {cn} from '@/lib/utils';
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useToast} from "@/hooks/use-toast";
 import {ModalData} from "@/store/challengeCrudModalStore";
-import {UpdateChallengeSchema} from "@/utils/zod";
+import {UpdateChallengeSchema} from "@/lib/validators";
 import {useUser} from "@/hooks/useUser";
 
 type Props = {

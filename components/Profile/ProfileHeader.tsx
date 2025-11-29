@@ -2,7 +2,7 @@ import React, {memo, useMemo} from 'react';
 import {User, Calendar, PenTool, UserPlus, UserMinus, Loader2} from "lucide-react";
 import {Button, buttonVariants} from "@/components/ui/button";
 import {cn} from "@/lib/utils";
-import {generateGradientClasses} from "@/utils/color";
+import {generateGradientClasses} from "@/lib/helpers/color";
 import {User as UserType, Badge} from "@/types/profile";
 
 interface ProfileHeaderProps {
