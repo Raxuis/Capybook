@@ -53,7 +53,7 @@ export interface UseBooksReturn {
   toggleCurrentBook: (book: Book | MoreInfoBook) => Promise<void>;
   lendBook: (book: Book | MoreInfoBook, borrowerId: string, message?: string) => Promise<void>;
   cancelLending: (bookKey: string) => Promise<void>;
-  updateBookProgress: (bookKey: string, progress: number) => Promise<void>;
+  updateBookProgress: (bookKey: string, progress: number) => Promise<{ status: number; data: { badges?: { newBadgesCount: number; newBadges: unknown[] } } } | void>;
   updateBookPageCount: (bookId: string, pageCount: number) => Promise<void>;
   updateBookProgressType: (bookKey: string, progressType: 'page' | 'percentage') => Promise<void>;
   totalBooks: number;
@@ -381,12 +381,13 @@ export function useBooks(bookName?: string | null, page: number = 1): UseBooksRe
       try {
         const userBook = user?.UserBook.find((ub) => ub.Book.key === bookKey);
         if (userBook) {
-          await api.put("/user/book/progress", {
+          const response = await api.put("/user/book/progress", {
             userId: user.id,
             bookId: userBook.Book.id,
             progress,
           });
           await refreshUser();
+          return response;
         } else {
           console.warn("No user book found");
         }

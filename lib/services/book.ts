@@ -15,7 +15,8 @@ type MoreInfoAPIResponse = {
 export async function fetchMoreBookInfos(bookKey: string): Promise<MoreInfoBook | { error: string }> {
   try {
     const response: MoreInfoAPIResponse = await getBook(bookKey);
-    response.data.numberOfPages = await getNumberOfPages(bookKey);
+    const numberOfPages = await getNumberOfPages(bookKey);
+    response.data.numberOfPages = numberOfPages ?? undefined;
     return response.data;
   } catch (err) {
     console.error("Erreur lors de la récupération des infos du livre :", err);

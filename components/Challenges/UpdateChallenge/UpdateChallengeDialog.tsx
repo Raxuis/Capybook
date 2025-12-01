@@ -41,8 +41,9 @@ const UpdateChallengeDialog = memo(() => {
         try {
             const response = await updateChallenge(modalData.id, formData);
 
-            if (response) {
-                if (response.status !== 200) {
+            if (response && typeof response === 'object' && 'status' in response && 'data' in response) {
+                const axiosResponse = response as { status: number; data: { badges?: { newBadgesCount: number; newBadges: unknown[] } } };
+                if (axiosResponse.status !== 200) {
                     toast({
                         title: 'Erreur',
                         description: 'Impossible de mettre à jour le challenge.',
@@ -50,8 +51,8 @@ const UpdateChallengeDialog = memo(() => {
                     });
                     throw new Error('Erreur lors de la mise à jour du challenge');
                 }
-                if (response.data.badges && response.data.badges.newBadgesCount > 0) {
-                    addBadges(response.data.badges.newBadges);
+                if (axiosResponse.data.badges && axiosResponse.data.badges.newBadgesCount > 0) {
+                    addBadges(axiosResponse.data.badges.newBadges as Array<{name: string; ownerDescription: string; publicDescription?: string; category: string; requirement?: number; icon: string}>);
                 }
                 closeDialog();
                 toast({

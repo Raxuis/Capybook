@@ -299,7 +299,7 @@ export default function ReviewBookModal(
                                                         </div>
                                                         {(field.value || hoverRating) ? (
                                                             <div className="text-primary mt-1 font-medium">
-                                                                {getRatingText(hoverRating ? hoverRating.toString() : field.value)}
+                                                                {getRatingText(hoverRating ? hoverRating.toString() : field.value || null)}
                                                             </div>
                                                         ) : (
                                                             <div className="mt-1 text-gray-500">Sélectionnez une

@@ -2,12 +2,6 @@
 
 import { useEffect, useState, useCallback } from "react";
 
-interface ServiceWorkerRegistration {
-  waiting: ServiceWorker | null;
-  installing: ServiceWorker | null;
-  update: () => Promise<void>;
-}
-
 /**
  * Hook to detect service worker updates and prompt user to refresh
  */
@@ -25,20 +19,21 @@ export function useSWUpdate() {
 
     const checkForUpdates = async () => {
       try {
-        registration = await navigator.serviceWorker.getRegistration();
-        if (!registration) return;
+        const reg = await navigator.serviceWorker.getRegistration();
+        if (!reg) return;
 
-        setRegistration(registration as ServiceWorkerRegistration);
+        registration = reg;
+        setRegistration(reg);
 
         // Check if there's a waiting service worker
-        if (registration.waiting) {
+        if (reg.waiting) {
           setUpdateAvailable(true);
           return;
         }
 
         // Listen for new service worker installing
-        registration.addEventListener("updatefound", () => {
-          const newWorker = registration?.installing;
+        reg.addEventListener("updatefound", () => {
+          const newWorker = reg.installing;
           if (!newWorker) return;
 
           newWorker.addEventListener("statechange", () => {
@@ -51,7 +46,7 @@ export function useSWUpdate() {
 
         // Check for updates periodically
         setInterval(() => {
-          registration?.update();
+          reg.update();
         }, 60000); // Check every minute
       } catch (error) {
         console.error("Service worker registration error:", error);

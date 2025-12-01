@@ -59,15 +59,16 @@ export default function DashboardContentSimplified() {
 
         fetchMoreBookInfos(book.key)
             .then((bookInfos) => {
-                if (!bookInfos || bookInfos.error) {
+                if (!bookInfos || ('error' in bookInfos && bookInfos.error)) {
                     console.warn("Aucune information trouvée pour ce livre.");
                     return;
                 }
 
+                const book = bookInfos as MoreInfoBook;
                 setSelectedBook((prev) => ({
                     ...prev!,
-                    description: bookInfos.description?.value || "Aucune description disponible",
-                    subjects: bookInfos.subjects || [],
+                    description: book.description || "Aucune description disponible",
+                    subjects: book.subjects || [],
                 }));
             })
             .catch((error) => console.error("Erreur lors du chargement du livre :", error))
