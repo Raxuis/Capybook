@@ -282,7 +282,9 @@ Voir [TESTS.fr.md](./TESTS.fr.md) pour la documentation détaillée des tests.
 
 ## Licence
 
-Ce projet est privé et n'est pas licencié pour un usage public.
+Ce projet est sous licence Non-Commerciale. Voir [LICENSE.md](./LICENSE.md) pour plus de détails.
+
+**Résumé** : Vous êtes libre d'utiliser, modifier et distribuer ce logiciel à des fins non commerciales. L'utilisation commerciale nécessite une autorisation explicite du détenteur du droit d'auteur.
 
 ## Support
 

@@ -282,7 +282,9 @@ See [TESTS.md](./TESTS.md) for detailed testing documentation.
 
 ## License
 
-This project is private and not licensed for public use.
+This project is licensed under a Non-Commercial License. See [LICENSE.md](./LICENSE.md) for details.
+
+**Summary**: You are free to use, modify, and distribute this software for non-commercial purposes. Commercial use requires explicit permission from the copyright holder.
 
 ## Support
 
