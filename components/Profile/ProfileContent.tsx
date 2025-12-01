@@ -135,28 +135,28 @@ const ProfileContent = ({username}: { username: string }) => {
                 initial={{opacity: 0, y: 20}}
                 animate={{opacity: 1, y: 0}}
                 transition={{duration: 0.5, delay: 0.2}}
-                className="mb-32 overflow-hidden rounded-xl bg-card border shadow-lg"
+                className="bg-card mb-32 overflow-hidden rounded-xl border shadow-lg"
             >
                 <Tabs defaultValue="overview" value={activeTab} onValueChange={handleTabChange} className="w-full">
-                    <div className="overflow-hidden border-b border-border">
+                    <div className="border-border overflow-hidden border-b">
                         <div className="overflow-x-auto overflow-y-hidden">
                             <TabsList className="flex w-max min-w-full bg-transparent p-0">
                                 <TabsTrigger
                                     value="overview"
-                                    className="min-w-[100px] shrink-0 whitespace-nowrap rounded-none px-2 py-3 text-xs font-medium transition-all data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary sm:px-6 sm:py-4 sm:text-sm"
+                                    className="data-[state=active]:text-primary data-[state=active]:border-primary min-w-[100px] shrink-0 whitespace-nowrap rounded-none px-2 py-3 text-xs font-medium transition-all data-[state=active]:border-b-2 data-[state=active]:bg-transparent data-[state=active]:shadow-none sm:px-6 sm:py-4 sm:text-sm"
                                 >
                                     <span className="hidden sm:inline">Vue d&#39;ensemble</span>
                                     <span className="sm:hidden">Aperçu</span>
                                 </TabsTrigger>
                                 <TabsTrigger
                                     value="badges"
-                                    className="min-w-[80px] shrink-0 whitespace-nowrap rounded-none px-2 py-3 text-xs font-medium transition-all text-muted-foreground data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary sm:px-6 sm:py-4 sm:text-sm"
+                                    className="text-muted-foreground data-[state=active]:text-primary data-[state=active]:border-primary min-w-[80px] shrink-0 whitespace-nowrap rounded-none px-2 py-3 text-xs font-medium transition-all data-[state=active]:border-b-2 data-[state=active]:bg-transparent data-[state=active]:shadow-none sm:px-6 sm:py-4 sm:text-sm"
                                 >
                                     Badges
                                 </TabsTrigger>
                                 <TabsTrigger
                                     value="relations"
-                                    className="min-w-[80px] shrink-0 whitespace-nowrap rounded-none px-2 py-3 text-xs font-medium transition-all text-muted-foreground data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary sm:px-6 sm:py-4 sm:text-sm"
+                                    className="text-muted-foreground data-[state=active]:text-primary data-[state=active]:border-primary min-w-[80px] shrink-0 whitespace-nowrap rounded-none px-2 py-3 text-xs font-medium transition-all data-[state=active]:border-b-2 data-[state=active]:bg-transparent data-[state=active]:shadow-none sm:px-6 sm:py-4 sm:text-sm"
                                 >
                                     Relations
                                 </TabsTrigger>
@@ -164,13 +164,13 @@ const ProfileContent = ({username}: { username: string }) => {
                                     <>
                                         <TabsTrigger
                                             value="books"
-                                            className="min-w-[80px] shrink-0 whitespace-nowrap rounded-none px-2 py-3 text-xs font-medium transition-all text-muted-foreground data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary sm:px-6 sm:py-4 sm:text-sm"
+                                            className="text-muted-foreground data-[state=active]:text-primary data-[state=active]:border-primary min-w-[80px] shrink-0 whitespace-nowrap rounded-none px-2 py-3 text-xs font-medium transition-all data-[state=active]:border-b-2 data-[state=active]:bg-transparent data-[state=active]:shadow-none sm:px-6 sm:py-4 sm:text-sm"
                                         >
                                             Livres
                                         </TabsTrigger>
                                         <TabsTrigger
                                             value="reviews"
-                                            className="min-w-[80px] shrink-0 whitespace-nowrap rounded-none px-2 py-3 text-xs font-medium transition-all text-muted-foreground data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary sm:px-6 sm:py-4 sm:text-sm"
+                                            className="text-muted-foreground data-[state=active]:text-primary data-[state=active]:border-primary min-w-[80px] shrink-0 whitespace-nowrap rounded-none px-2 py-3 text-xs font-medium transition-all data-[state=active]:border-b-2 data-[state=active]:bg-transparent data-[state=active]:shadow-none sm:px-6 sm:py-4 sm:text-sm"
                                         >
                                             Avis
                                         </TabsTrigger>

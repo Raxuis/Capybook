@@ -48,14 +48,14 @@ export function BookCoverPlaceholder({
       variantStyles[variant],
       className
     )}>
-      <div className="mb-3 flex size-16 items-center justify-center rounded-full bg-white/60 backdrop-blur-sm shadow-sm">
+      <div className="mb-3 flex size-16 items-center justify-center rounded-full bg-white/60 shadow-sm backdrop-blur-sm">
         {initials ? (
           <span className="text-lg font-bold text-slate-600">{initials}</span>
         ) : (
           <BookOpen className={cn("size-8", iconColors[variant])} />
         )}
       </div>
-      <p className="line-clamp-2 text-xs font-semibold text-slate-700 leading-tight">
+      <p className="line-clamp-2 text-xs font-semibold leading-tight text-slate-700">
         {title}
       </p>
       {authorText && (

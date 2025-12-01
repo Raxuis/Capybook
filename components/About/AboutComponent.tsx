@@ -115,7 +115,7 @@ const AboutComponent = () => {
                                     transition={{type: "spring", stiffness: 300}}
                                     className="relative rounded-full bg-gradient-to-r from-[#673ab7] via-[#4caf50] to-[#00bcd4] p-1">
                                     <Link
-                                        className="relative size-[280px] overflow-hidden rounded-full block"
+                                        className="relative block size-[280px] overflow-hidden rounded-full"
                                         href={team[0].link}
                                         target="_blank"
                                         rel="noopener noreferrer"

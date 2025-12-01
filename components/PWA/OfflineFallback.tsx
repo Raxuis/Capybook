@@ -28,8 +28,8 @@ export function OfflineFallback({
     <div className="flex min-h-[60vh] flex-col items-center justify-center px-4 py-16 text-center">
       <div className="mx-auto max-w-md space-y-6">
         <div className="flex justify-center">
-          <div className="rounded-full bg-muted p-6">
-            <WifiOff className="size-12 text-muted-foreground" />
+          <div className="bg-muted rounded-full p-6">
+            <WifiOff className="text-muted-foreground size-12" />
           </div>
         </div>
 
@@ -52,7 +52,7 @@ export function OfflineFallback({
           </Button>
         )}
 
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           Les données mises en cache peuvent être disponibles. Vérifiez votre connexion pour accéder aux dernières informations.
         </p>
       </div>

@@ -41,7 +41,7 @@ export function ErrorState({
       )}>
         {title}
       </h3>
-      <p className="text-muted-foreground text-sm mb-4 max-w-md">
+      <p className="text-muted-foreground mb-4 max-w-md text-sm">
         {message}
       </p>
       {onRetry && (

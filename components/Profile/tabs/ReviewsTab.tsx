@@ -30,8 +30,8 @@ const ReviewsTab = memo<ReviewsTabProps>(({reviews}) => {
         return (
             <div className="py-12 text-center">
                 <div className="mb-4 text-4xl">✒️</div>
-                <h3 className="text-xl font-semibold text-foreground">Aucun avis pour le moment</h3>
-                <p className="mt-2 text-muted-foreground">Partagez votre opinion sur les livres que vous avez lus.</p>
+                <h3 className="text-foreground text-xl font-semibold">Aucun avis pour le moment</h3>
+                <p className="text-muted-foreground mt-2">Partagez votre opinion sur les livres que vous avez lus.</p>
             </div>
         );
     }
@@ -48,10 +48,10 @@ const ReviewsTab = memo<ReviewsTabProps>(({reviews}) => {
                         animate={{opacity: 1, y: 0}}
                         transition={{duration: 0.3, delay: index * 0.05}}
                         whileHover={{y: -2}}
-                        className="rounded-lg border border-border bg-card p-3 shadow-sm transition-all hover:shadow-md sm:p-4"
+                        className="border-border bg-card rounded-lg border p-3 shadow-sm transition-all hover:shadow-md sm:p-4"
                     >
                         <div className="mb-2 flex flex-wrap items-start justify-between sm:flex-nowrap">
-                            <h3 className="mr-2 font-semibold text-foreground">{review.Book.title}</h3>
+                            <h3 className="text-foreground mr-2 font-semibold">{review.Book.title}</h3>
                             <div className="flex items-center space-x-2">
                                 <TooltipProvider>
                                     <Tooltip>
@@ -131,11 +131,11 @@ const ReviewsTab = memo<ReviewsTabProps>(({reviews}) => {
                                 </div>
                             </div>
                         </div>
-                        <p className="mb-3 text-xs text-muted-foreground sm:text-sm">{review.Book.authors.join(", ")}</p>
+                        <p className="text-muted-foreground mb-3 text-xs sm:text-sm">{review.Book.authors.join(", ")}</p>
                         {review.feedback && (
-                            <p className="text-sm text-foreground sm:text-base">{review.feedback}</p>
+                            <p className="text-foreground text-sm sm:text-base">{review.feedback}</p>
                         )}
-                        <div className="mt-3 text-xs text-muted-foreground">
+                        <div className="text-muted-foreground mt-3 text-xs">
                             Publié le {new Date(review.createdAt).toLocaleDateString('fr-FR')}
                         </div>
                     </motion.div>

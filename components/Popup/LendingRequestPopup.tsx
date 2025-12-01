@@ -84,7 +84,7 @@ const LendingRequestPopup = ({
                             <h2 className="text-xl font-semibold text-gray-900">
                                 Demande de prêt
                             </h2>
-                            <p className="text-destructive-foreground text-sm mt-1 font-medium text-gray-600">
+                            <p className="text-destructive-foreground mt-1 text-sm font-medium text-gray-600">
                                 Vous pouvez accepter ou refuser cette demande. Si vous acceptez, le livre sera dans
                                 votre
                                 bibliothèque.

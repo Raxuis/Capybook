@@ -32,11 +32,11 @@ export function EmptyState({
         <Icon className="text-muted-foreground mb-4 size-12 opacity-50" />
       )}
       {title && (
-        <h3 className="font-semibold text-foreground mb-2">
+        <h3 className="text-foreground mb-2 font-semibold">
           {title}
         </h3>
       )}
-      <p className="text-muted-foreground text-sm mb-4 max-w-md">
+      <p className="text-muted-foreground mb-4 max-w-md text-sm">
         {message}
       </p>
       {actionLabel && onAction && (

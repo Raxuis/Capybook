@@ -25,11 +25,11 @@ const ReviewsPreview = memo<ReviewsPreviewProps>(({reviews, onViewAll}) => {
 
     return (
         <div className="mb-6">
-            <div className="mb-4 flex items-center justify-between border-b border-border pb-2">
-                <h2 className="text-lg font-semibold text-foreground sm:text-xl">Avis récents</h2>
+            <div className="border-border mb-4 flex items-center justify-between border-b pb-2">
+                <h2 className="text-foreground text-lg font-semibold sm:text-xl">Avis récents</h2>
                 <button
                     onClick={onViewAll}
-                    className="flex items-center gap-1 text-sm text-primary hover:text-primary/80 transition-colors"
+                    className="text-primary hover:text-primary/80 flex items-center gap-1 text-sm transition-colors"
                 >
                     Voir tous
                     <Eye size={16}/>
@@ -46,10 +46,10 @@ const ReviewsPreview = memo<ReviewsPreviewProps>(({reviews, onViewAll}) => {
                             animate={{opacity: 1, y: 0}}
                             transition={{duration: 0.3, delay: index * 0.1}}
                             whileHover={{y: -2}}
-                            className="rounded-lg border border-border bg-card p-3 shadow-sm transition-all hover:shadow-md sm:p-4"
+                            className="border-border bg-card rounded-lg border p-3 shadow-sm transition-all hover:shadow-md sm:p-4"
                         >
                             <div className="mb-2 flex flex-wrap items-start justify-between sm:flex-nowrap">
-                                <h3 className="mr-2 font-semibold text-foreground">{review.Book.title}</h3>
+                                <h3 className="text-foreground mr-2 font-semibold">{review.Book.title}</h3>
                                 <div className="flex items-center space-x-2">
                                     <TooltipProvider>
                                         <Tooltip>
@@ -129,17 +129,17 @@ const ReviewsPreview = memo<ReviewsPreviewProps>(({reviews, onViewAll}) => {
                                     </div>
                                 </div>
                             </div>
-                            <p className="mb-2 text-xs text-muted-foreground sm:text-sm">{review.Book.authors.join(", ")}</p>
+                            <p className="text-muted-foreground mb-2 text-xs sm:text-sm">{review.Book.authors.join(", ")}</p>
                             {
                                 review.feedback && (
-                                    <p className="text-sm text-foreground sm:text-base">
+                                    <p className="text-foreground text-sm sm:text-base">
                                         {review.feedback.length > 150
                                             ? `${review.feedback.substring(0, 150)}...`
                                             : review.feedback}
                                     </p>
                                 )
                             }
-                            <div className="mt-2 text-xs text-muted-foreground">
+                            <div className="text-muted-foreground mt-2 text-xs">
                                 Publié le {new Date(review.createdAt).toLocaleDateString('fr-FR')}
                             </div>
                         </motion.div>
@@ -152,7 +152,7 @@ const ReviewsPreview = memo<ReviewsPreviewProps>(({reviews, onViewAll}) => {
                         transition={{duration: 0.3, delay: reviews.length * 0.1}}
                         whileHover={{scale: 1.02}}
                         onClick={onViewAll}
-                        className="flex w-full items-center justify-center border-t border-border bg-muted/30 py-3 text-center text-primary transition-colors hover:bg-muted/50"
+                        className="border-border bg-muted/30 text-primary hover:bg-muted/50 flex w-full items-center justify-center border-t py-3 text-center transition-colors"
                     >
                         <Eye size={16} className="mr-2"/>
                         Voir plus d&#39;avis

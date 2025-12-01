@@ -20,6 +20,9 @@ export default [
 
     // Tailwind settings override/customization
     {
+        rules: {
+            "tailwindcss/no-custom-classname": "off",
+        },
         settings: {
             tailwindcss: {
                 callees: ["classnames", "clsx", "ctl"],

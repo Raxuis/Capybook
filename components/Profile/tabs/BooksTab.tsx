@@ -14,8 +14,8 @@ const BooksTab = memo<BooksTabProps>(({books}) => {
         return (
             <div className="py-12 text-center">
                 <div className="mb-4 text-4xl">📚</div>
-                <h3 className="text-xl font-semibold text-foreground">Aucun livre pour le moment</h3>
-                <p className="mt-2 text-muted-foreground">Commencez à ajouter des livres à votre bibliothèque.</p>
+                <h3 className="text-foreground text-xl font-semibold">Aucun livre pour le moment</h3>
+                <p className="text-muted-foreground mt-2">Commencez à ajouter des livres à votre bibliothèque.</p>
             </div>
         );
     }
@@ -28,14 +28,14 @@ const BooksTab = memo<BooksTabProps>(({books}) => {
                     animate={{opacity: 1, y: 0}}
                     transition={{duration: 0.3, delay: index * 0.05}}
                     whileHover={{y: -2}}
-                    className="flex flex-wrap items-center rounded-lg border border-border bg-card p-3 shadow-sm transition-all hover:shadow-md sm:flex-nowrap sm:py-4 sm:px-4"
+                    className="border-border bg-card flex flex-wrap items-center rounded-lg border p-3 shadow-sm transition-all hover:shadow-md sm:flex-nowrap sm:p-4"
                 >
-                    <div className="mr-3 rounded-lg bg-primary/10 p-2 sm:mr-4 sm:p-3">
+                    <div className="bg-primary/10 mr-3 rounded-lg p-2 sm:mr-4 sm:p-3">
                         <BookIcon size={20} className="text-primary"/>
                     </div>
                     <div className="min-w-0 grow">
-                        <h3 className="truncate font-semibold text-foreground">{bookData.Book.title}</h3>
-                        <p className="truncate text-xs text-muted-foreground sm:text-sm">
+                        <h3 className="text-foreground truncate font-semibold">{bookData.Book.title}</h3>
+                        <p className="text-muted-foreground truncate text-xs sm:text-sm">
                             {bookData.Book.authors.join(", ")}
                             {bookData.Book.numberOfPages && ` · ${bookData.Book.numberOfPages} pages`}
                         </p>

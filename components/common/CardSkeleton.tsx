@@ -36,18 +36,18 @@ export function CardSkeleton({ variant = "library", className }: CardSkeletonPro
       {/* Cover skeleton */}
       <Skeleton className="aspect-[2/3] w-full" />
 
-      <CardHeader className="pb-2.5 pt-3.5 px-4">
+      <CardHeader className="px-4 pb-2.5 pt-3.5">
         <div className="space-y-2">
           <Skeleton className="h-4 w-full" />
           <Skeleton className="h-4 w-3/4" />
           <div className="flex items-center gap-1.5 pt-1">
-            <Skeleton className="h-3 w-3" />
+            <Skeleton className="size-3" />
             <Skeleton className="h-3 w-1/2" />
           </div>
         </div>
       </CardHeader>
 
-      <CardContent className="pt-0 pb-4 px-4">
+      <CardContent className="px-4 pb-4 pt-0">
         {variant === "wishlist" ? (
           <Skeleton className="h-6 w-32 rounded-md" />
         ) : (

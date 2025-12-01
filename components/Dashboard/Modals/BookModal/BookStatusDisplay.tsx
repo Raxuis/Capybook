@@ -27,7 +27,7 @@ export const BookStatusDisplay = ({bookStatus}: BookStatusDisplayProps) => {
                     {inLibrary && (
                         <Badge
                             variant="secondary"
-                            className="border border-blue-200/60 bg-blue-50 text-blue-700 flex items-center gap-1.5 text-xs font-medium"
+                            className="flex items-center gap-1.5 border border-blue-200/60 bg-blue-50 text-xs font-medium text-blue-700"
                         >
                             <BookIcon className="size-3"/>
                             Dans ma bibliothèque
@@ -36,7 +36,7 @@ export const BookStatusDisplay = ({bookStatus}: BookStatusDisplayProps) => {
                     {inWishlist && (
                         <Badge
                             variant="secondary"
-                            className="border border-rose-200/60 bg-rose-50 text-rose-700 flex items-center gap-1.5 text-xs font-medium"
+                            className="flex items-center gap-1.5 border border-rose-200/60 bg-rose-50 text-xs font-medium text-rose-700"
                         >
                             <Heart className="size-3"/>
                             Dans ma wishlist
@@ -45,7 +45,7 @@ export const BookStatusDisplay = ({bookStatus}: BookStatusDisplayProps) => {
                     {isBookLoanedInstance && (
                         <Badge
                             variant="secondary"
-                            className="border border-orange-200/60 bg-orange-50 text-orange-700 flex items-center gap-1.5 text-xs font-medium"
+                            className="flex items-center gap-1.5 border border-orange-200/60 bg-orange-50 text-xs font-medium text-orange-700"
                         >
                             <UserCheck className="size-3"/>
                             Prêté
@@ -54,7 +54,7 @@ export const BookStatusDisplay = ({bookStatus}: BookStatusDisplayProps) => {
                     {isPendingLoanInstance && (
                         <Badge
                             variant="secondary"
-                            className="border border-amber-200/60 bg-amber-50 text-amber-700 flex items-center gap-1.5 text-xs font-medium"
+                            className="flex items-center gap-1.5 border border-amber-200/60 bg-amber-50 text-xs font-medium text-amber-700"
                         >
                             <Clock className="size-3"/>
                             Prêt en attente
@@ -63,7 +63,7 @@ export const BookStatusDisplay = ({bookStatus}: BookStatusDisplayProps) => {
                     {!inLibrary && !inWishlist && (
                         <Badge
                             variant="secondary"
-                            className="border border-slate-200/60 bg-slate-100 text-slate-600 text-xs font-medium"
+                            className="border border-slate-200/60 bg-slate-100 text-xs font-medium text-slate-600"
                         >
                             Non ajouté
                         </Badge>
@@ -78,7 +78,7 @@ export const BookStatusDisplay = ({bookStatus}: BookStatusDisplayProps) => {
                         {isCurrentBookInstance ? (
                             <Badge
                                 variant="secondary"
-                                className="border border-blue-200/60 bg-blue-50 text-blue-700 flex items-center gap-1.5 text-xs font-medium"
+                                className="flex items-center gap-1.5 border border-blue-200/60 bg-blue-50 text-xs font-medium text-blue-700"
                             >
                                 <BookMarked className="size-3"/>
                                 En cours
@@ -87,7 +87,7 @@ export const BookStatusDisplay = ({bookStatus}: BookStatusDisplayProps) => {
                             isBookFinishedInstance ? (
                                 <Badge
                                     variant="secondary"
-                                    className="border border-emerald-200/60 bg-emerald-50 text-emerald-700 flex items-center gap-1.5 text-xs font-medium"
+                                    className="flex items-center gap-1.5 border border-emerald-200/60 bg-emerald-50 text-xs font-medium text-emerald-700"
                                 >
                                     <BookCopy className="size-3"/>
                                     Terminé
@@ -95,7 +95,7 @@ export const BookStatusDisplay = ({bookStatus}: BookStatusDisplayProps) => {
                             ) : (
                                 <Badge
                                     variant="secondary"
-                                    className="border border-slate-200/60 bg-slate-100 text-slate-600 flex items-center gap-1.5 text-xs font-medium"
+                                    className="flex items-center gap-1.5 border border-slate-200/60 bg-slate-100 text-xs font-medium text-slate-600"
                                 >
                                     <BookCopy className="size-3"/>
                                     Non commencé

@@ -14,7 +14,7 @@ const StatsCards = memo<StatsCardsProps>(({
                                           }) => {
     return (
         <div className="mb-8 grid grid-cols-3 gap-2 md:gap-4">
-            <div className="flex h-full items-center justify-center rounded-lg border bg-card p-2 transition-all hover:shadow-md md:p-4">
+            <div className="bg-card flex h-full items-center justify-center rounded-lg border p-2 transition-all hover:shadow-md md:p-4">
                 <div className="flex w-full flex-col items-center">
                     <div className="relative">
                         <div className="flex items-center justify-center rounded-full bg-green-800/10 p-3">
@@ -28,7 +28,7 @@ const StatsCards = memo<StatsCardsProps>(({
                 </div>
             </div>
 
-            <div className="flex h-full items-center justify-center rounded-lg border bg-card p-2 transition-all hover:shadow-md md:p-4">
+            <div className="bg-card flex h-full items-center justify-center rounded-lg border p-2 transition-all hover:shadow-md md:p-4">
                 <div className="flex w-full flex-col items-center">
                     <div className="relative">
                         <div className="bg-primary/10 flex items-center justify-center rounded-full p-3">
@@ -42,7 +42,7 @@ const StatsCards = memo<StatsCardsProps>(({
                 </div>
             </div>
 
-            <div className="flex h-full items-center justify-center rounded-lg border bg-card p-2 transition-all hover:shadow-md md:p-4">
+            <div className="bg-card flex h-full items-center justify-center rounded-lg border p-2 transition-all hover:shadow-md md:p-4">
                 <div className="flex w-full flex-col items-center">
                     <div className="relative">
                         <div className="flex items-center justify-center rounded-full bg-rose-100 p-3">

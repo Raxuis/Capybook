@@ -80,20 +80,20 @@ const RelationsTab = memo<RelationsTabProps>(({followers = [], following = [], i
         const initials = displayName.slice(0, 2).toUpperCase();
 
         return (
-            <div className="group flex items-center justify-between rounded-lg border bg-card p-3 transition-all hover:shadow-md sm:p-4">
+            <div className="bg-card group flex items-center justify-between rounded-lg border p-3 transition-all hover:shadow-md sm:p-4">
                 <Link
                     href={`/profile/${user.username}`}
                     className="flex min-w-0 flex-1 items-center space-x-3"
                 >
-                    <Avatar className="size-10 shrink-0 border-2 border-border sm:size-12">
+                    <Avatar className="border-border size-10 shrink-0 border-2 sm:size-12">
                         <AvatarImage src={user.image || undefined} alt={user.username}/>
                         <AvatarFallback className="bg-primary/10 text-primary font-semibold">
                             {initials}
                         </AvatarFallback>
                     </Avatar>
                     <div className="min-w-0 flex-1">
-                        <div className="truncate font-semibold text-foreground">{displayName}</div>
-                        <div className="truncate text-sm text-muted-foreground">@{user.username}</div>
+                        <div className="text-foreground truncate font-semibold">{displayName}</div>
+                        <div className="text-muted-foreground truncate text-sm">@{user.username}</div>
                     </div>
                 </Link>
                 {showFollowButton && currentUserId && user.id !== currentUserId && (
@@ -118,7 +118,7 @@ const RelationsTab = memo<RelationsTabProps>(({followers = [], following = [], i
                         ) : (
                             <>
                                 <UserPlus className="mr-1.5 size-4"/>
-                                <span className="hidden sm:inline">S'abonner</span>
+                                <span className="hidden sm:inline">S&apos;abonner</span>
                             </>
                         )}
                     </Button>
@@ -130,14 +130,14 @@ const RelationsTab = memo<RelationsTabProps>(({followers = [], following = [], i
     return (
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
             {/* Section Abonnés */}
-            <div className="rounded-lg border bg-card p-4 shadow-sm sm:p-6">
+            <div className="bg-card rounded-lg border p-4 shadow-sm sm:p-6">
                 <div className="mb-4 flex items-center justify-between">
                     <h2 className="flex items-center text-lg font-semibold sm:text-xl">
                         <div className="mr-2 flex size-8 items-center justify-center rounded-md bg-green-100">
                             <Users size={18} className="text-green-700"/>
                         </div>
                         <span>Abonnés</span>
-                        <span className="ml-2 text-sm font-normal text-muted-foreground">
+                        <span className="text-muted-foreground ml-2 text-sm font-normal">
                             ({followers.length})
                         </span>
                     </h2>
@@ -146,7 +146,7 @@ const RelationsTab = memo<RelationsTabProps>(({followers = [], following = [], i
                 {followers.length > 3 && (
                     <div className="mb-4">
                         <div className="relative">
-                            <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"/>
+                            <Search className="text-muted-foreground absolute left-3 top-1/2 size-4 -translate-y-1/2"/>
                             <Input
                                 type="text"
                                 placeholder="Rechercher un abonné..."
@@ -166,10 +166,10 @@ const RelationsTab = memo<RelationsTabProps>(({followers = [], following = [], i
                     ) : (
                         <div className="py-12 text-center">
                             <div className="mb-4 text-4xl">👥</div>
-                            <h3 className="text-lg font-semibold text-foreground">
+                            <h3 className="text-foreground text-lg font-semibold">
                                 {searchFollowers ? 'Aucun résultat' : 'Aucun abonné'}
                             </h3>
-                            <p className="mt-2 text-sm text-muted-foreground">
+                            <p className="text-muted-foreground mt-2 text-sm">
                                 {searchFollowers
                                     ? 'Essayez avec un autre terme de recherche'
                                     : 'Vous n\'avez pas encore d\'abonnés pour le moment'}
@@ -180,14 +180,14 @@ const RelationsTab = memo<RelationsTabProps>(({followers = [], following = [], i
             </div>
 
             {/* Section Abonnements */}
-            <div className="rounded-lg border bg-card p-4 shadow-sm sm:p-6">
+            <div className="bg-card rounded-lg border p-4 shadow-sm sm:p-6">
                 <div className="mb-4 flex items-center justify-between">
                     <h2 className="flex items-center text-lg font-semibold sm:text-xl">
                         <div className="mr-2 flex size-8 items-center justify-center rounded-md bg-indigo-100">
                             <UserPlus size={18} className="text-indigo-700"/>
                         </div>
                         <span>Abonnements</span>
-                        <span className="ml-2 text-sm font-normal text-muted-foreground">
+                        <span className="text-muted-foreground ml-2 text-sm font-normal">
                             ({following.length})
                         </span>
                     </h2>
@@ -196,7 +196,7 @@ const RelationsTab = memo<RelationsTabProps>(({followers = [], following = [], i
                 {following.length > 3 && (
                     <div className="mb-4">
                         <div className="relative">
-                            <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"/>
+                            <Search className="text-muted-foreground absolute left-3 top-1/2 size-4 -translate-y-1/2"/>
                             <Input
                                 type="text"
                                 placeholder="Rechercher un abonnement..."
@@ -216,10 +216,10 @@ const RelationsTab = memo<RelationsTabProps>(({followers = [], following = [], i
                     ) : (
                         <div className="py-12 text-center">
                             <div className="mb-4 text-4xl">🔍</div>
-                            <h3 className="text-lg font-semibold text-foreground">
+                            <h3 className="text-foreground text-lg font-semibold">
                                 {searchFollowing ? 'Aucun résultat' : 'Aucun abonnement'}
                             </h3>
-                            <p className="mt-2 text-sm text-muted-foreground">
+                            <p className="text-muted-foreground mt-2 text-sm">
                                 {searchFollowing
                                     ? 'Essayez avec un autre terme de recherche'
                                     : 'Vous ne suivez personne pour le moment'}

@@ -145,7 +145,7 @@ const BookStore = () => {
                                     <>
                                         Recherchez des livres par titre, auteur ou ISBN pour les ajouter à{" "}
                                         <Link href="/book-shelf"
-                                              className="text-primary underline hover:text-primary/80">
+                                              className="text-primary hover:text-primary/80 underline">
                                             votre bibliothèque
                                         </Link>
                                         .

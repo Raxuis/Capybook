@@ -25,7 +25,7 @@ const ReviewCard = ({review, openBookModal}: ReviewCardProps) => {
     return (
         <Card
             key={review.id}
-            className="group relative overflow-hidden border border-amber-200/60 bg-white transition-all duration-200 hover:border-amber-300 hover:shadow-md hover:-translate-y-0.5"
+            className="group relative overflow-hidden border border-amber-200/60 bg-white transition-all duration-200 hover:-translate-y-0.5 hover:border-amber-300 hover:shadow-md"
         >
             <div className="flex gap-3 p-4">
                 {/* Book Cover - more compact */}
@@ -53,7 +53,7 @@ const ReviewCard = ({review, openBookModal}: ReviewCardProps) => {
                     <div className="flex items-start justify-between gap-2">
                         <div className="min-w-0 flex-1">
                             <CardTitle
-                                className="line-clamp-2 text-base font-semibold leading-tight text-slate-900 group-hover:text-slate-700 transition-colors">
+                                className="line-clamp-2 text-base font-semibold leading-tight text-slate-900 transition-colors group-hover:text-slate-700">
                                 {review.Book.title}
                             </CardTitle>
                             <div className="mt-1 flex items-center gap-1.5 text-[10px] text-slate-500">
@@ -72,7 +72,7 @@ const ReviewCard = ({review, openBookModal}: ReviewCardProps) => {
                             <Button
                                 variant="ghost"
                                 size="sm"
-                                className="h-7 w-7 bg-white/80 p-0 shadow-sm hover:bg-white border border-slate-200/50 opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+                                className="size-7 border border-slate-200/50 bg-white/80 p-0 opacity-0 shadow-sm transition-opacity duration-200 hover:bg-white group-hover:opacity-100"
                                 onClick={() => openBookModal(review.Book as BookType)}
                             >
                                 <Info className="size-3.5 text-slate-600"/>

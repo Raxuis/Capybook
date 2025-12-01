@@ -150,7 +150,7 @@ const LibraryCard = ({userBook, openBookModal}: LibraryCardProps) => {
                         />
                         {/* Subtle vignette */}
                         <div
-                            className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent pointer-events-none"/>
+                            className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/5 to-transparent"/>
                     </>
                 ) : (
                     <BookCoverPlaceholder
@@ -180,7 +180,7 @@ const LibraryCard = ({userBook, openBookModal}: LibraryCardProps) => {
                             <Button
                                 variant="secondary"
                                 size="sm"
-                                className="h-7 w-7 bg-white/95 backdrop-blur-sm p-0 shadow-sm hover:bg-white border border-slate-200/50"
+                                className="size-7 border border-slate-200/50 bg-white/95 p-0 shadow-sm backdrop-blur-sm hover:bg-white"
                                 onClick={handleReviewClick}
                             >
                                 <Star className="size-3.5 text-amber-500"/>
@@ -188,7 +188,7 @@ const LibraryCard = ({userBook, openBookModal}: LibraryCardProps) => {
                             </Button>
                         ) : (
                             <div
-                                className="flex items-center gap-1 rounded-md bg-white/95 backdrop-blur-sm px-2 py-1 shadow-sm border border-slate-200/50">
+                                className="flex items-center gap-1 rounded-md border border-slate-200/50 bg-white/95 px-2 py-1 shadow-sm backdrop-blur-sm">
                                 <Star className="size-3 fill-amber-500 text-amber-500"/>
                                 <span className="text-xs font-semibold text-slate-700">{bookReview.rating}</span>
                             </div>
@@ -197,7 +197,7 @@ const LibraryCard = ({userBook, openBookModal}: LibraryCardProps) => {
                     <Button
                         variant="secondary"
                         size="sm"
-                        className="h-7 w-7 bg-white/95 backdrop-blur-sm p-0 shadow-sm hover:bg-white border border-slate-200/50"
+                        className="size-7 border border-slate-200/50 bg-white/95 p-0 shadow-sm backdrop-blur-sm hover:bg-white"
                         onClick={() => openBookModal(userBook.Book as BookType)}
                     >
                         <Info className="size-3.5 text-slate-600"/>
@@ -206,15 +206,15 @@ const LibraryCard = ({userBook, openBookModal}: LibraryCardProps) => {
                 </div>
             </div>
 
-            <CardHeader className="pb-2.5 pt-3.5 px-4">
+            <CardHeader className="px-4 pb-2.5 pt-3.5">
                 <div className="space-y-2">
                     <CardTitle
-                        className="line-clamp-2 text-base font-semibold leading-tight text-slate-900 group-hover:text-slate-700 transition-colors">
+                        className="line-clamp-2 text-base font-semibold leading-tight text-slate-900 transition-colors group-hover:text-slate-700">
                         {userBook.Book.title}
                     </CardTitle>
 
                     <div className="flex items-start gap-1.5 text-xs text-slate-500">
-                        <BookOpen className="size-3 mt-0.5 shrink-0"/>
+                        <BookOpen className="mt-0.5 size-3 shrink-0"/>
                         <span className="line-clamp-1">
                             {Array.isArray(userBook.Book.authors)
                                 ? userBook.Book.authors.join(", ")
@@ -224,7 +224,7 @@ const LibraryCard = ({userBook, openBookModal}: LibraryCardProps) => {
                 </div>
             </CardHeader>
 
-            <CardContent className="space-y-2.5 pt-0 pb-4 px-4">
+            <CardContent className="space-y-2.5 px-4 pb-4 pt-0">
                 {/* Information de prêt — plus compacte */}
                 {(isLoaned || isPendingLoan) && lendingInfo && (
                     <div className={cn(

@@ -47,13 +47,13 @@ export function Pagination({currentPage, totalPages, basePath}: PaginationProps)
                         <Button
                             variant="outline"
                             size="sm"
-                            className="min-w-[2.5rem]"
+                            className="min-w-10"
                         >
                             1
                         </Button>
                     </Link>
                     {visiblePages[0] > 2 && (
-                        <span className="px-2 text-muted-foreground">...</span>
+                        <span className="text-muted-foreground px-2">...</span>
                     )}
                 </>
             )}
@@ -76,13 +76,13 @@ export function Pagination({currentPage, totalPages, basePath}: PaginationProps)
             {visiblePages[visiblePages.length - 1] < totalPages && (
                 <>
                     {visiblePages[visiblePages.length - 1] < totalPages - 1 && (
-                        <span className="px-2 text-muted-foreground">...</span>
+                        <span className="text-muted-foreground px-2">...</span>
                     )}
                     <Link href={constructUrl(totalPages)}>
                         <Button
                             variant="outline"
                             size="sm"
-                            className="min-w-[2.5rem]"
+                            className="min-w-10"
                         >
                             {totalPages}
                         </Button>

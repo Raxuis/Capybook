@@ -52,7 +52,7 @@ export const BookActions = ({
             {(inLibrary && !isCurrentBookInstance && !isBookFinishedInstance && !isBookLoanedInstance && !isPendingLoanInstance) && (
                 <Button
                     variant="outline"
-                    className="w-full border-blue-200/60 bg-blue-50 text-blue-700 hover:bg-blue-100 hover:border-blue-300 sm:w-auto"
+                    className="w-full border-blue-200/60 bg-blue-50 text-blue-700 hover:border-blue-300 hover:bg-blue-100 sm:w-auto"
                     onClick={handleToggleCurrentBook}
                     disabled={isAnyLoading}
                 >
@@ -69,7 +69,7 @@ export const BookActions = ({
             {(inLibrary && isCurrentBookInstance && !isBookLoanedInstance && !isPendingLoanInstance) && (
                 <Button
                     variant="outline"
-                    className="w-full border-slate-200/60 bg-slate-50 text-slate-700 hover:bg-slate-100 hover:border-slate-300 sm:w-auto"
+                    className="w-full border-slate-200/60 bg-slate-50 text-slate-700 hover:border-slate-300 hover:bg-slate-100 sm:w-auto"
                     onClick={handleToggleCurrentBook}
                     disabled={isAnyLoading}
                 >
@@ -86,7 +86,7 @@ export const BookActions = ({
             {(inLibrary && !isBookLoanedInstance && !isPendingLoanInstance) && (
                 <Button
                     variant="outline"
-                    className="w-full border-slate-200/60 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300 sm:w-auto"
+                    className="w-full border-slate-200/60 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50 sm:w-auto"
                     onClick={() => setIsLendingModalOpened(true)}
                     disabled={isAnyLoading}
                 >
@@ -103,7 +103,7 @@ export const BookActions = ({
             {(inLibrary && (isBookLoanedInstance || isPendingLoanInstance)) && (
                 <Button
                     variant="outline"
-                    className="w-full border-orange-200/60 bg-orange-50 text-orange-700 hover:bg-orange-100 hover:border-orange-300 sm:w-auto"
+                    className="w-full border-orange-200/60 bg-orange-50 text-orange-700 hover:border-orange-300 hover:bg-orange-100 sm:w-auto"
                     onClick={() => handleCancelLending(book)}
                     disabled={isAnyLoading}
                 >
@@ -155,7 +155,7 @@ export const BookActions = ({
                 <>
                     <Button
                         variant="outline"
-                        className="w-full border-blue-200/60 bg-blue-50 text-blue-700 hover:bg-blue-100 hover:border-blue-300 sm:w-auto"
+                        className="w-full border-blue-200/60 bg-blue-50 text-blue-700 hover:border-blue-300 hover:bg-blue-100 sm:w-auto"
                         onClick={handleToggleLibrary}
                         disabled={loadingLibrary || loadingWishlist || loadingCurrentBook}
                     >
@@ -168,7 +168,7 @@ export const BookActions = ({
                     </Button>
                     <Button
                         variant="outline"
-                        className="w-full border-rose-200/60 bg-rose-50 text-rose-700 hover:bg-rose-100 hover:border-rose-300 sm:w-auto"
+                        className="w-full border-rose-200/60 bg-rose-50 text-rose-700 hover:border-rose-300 hover:bg-rose-100 sm:w-auto"
                         onClick={handleToggleWishlist}
                         disabled={loadingLibrary || loadingWishlist || loadingCurrentBook}
                     >
@@ -186,7 +186,7 @@ export const BookActions = ({
             <Button
                 onClick={() => setIsNotesModalOpened(true)}
                 variant="outline"
-                className="w-full border-slate-200/60 bg-slate-50 text-slate-700 hover:bg-slate-100 hover:border-slate-300 sm:w-auto"
+                className="w-full border-slate-200/60 bg-slate-50 text-slate-700 hover:border-slate-300 hover:bg-slate-100 sm:w-auto"
             >
                 <FileText className="mr-2 size-4"/>
                 Voir les notes

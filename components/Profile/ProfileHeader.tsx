@@ -48,7 +48,7 @@ const ProfileHeader = memo<ProfileHeaderProps>(({
             initial={{opacity: 0, y: 20}}
             animate={{opacity: 1, y: 0}}
             transition={{duration: 0.5, ease: "easeOut"}}
-            className="mb-6 overflow-hidden rounded-xl bg-card border shadow-lg"
+            className="bg-card mb-6 overflow-hidden rounded-xl border shadow-lg"
         >
             <motion.div
                 initial={{scale: 1.1}}
@@ -80,7 +80,7 @@ const ProfileHeader = memo<ProfileHeaderProps>(({
                                 initial={{scale: 0}}
                                 animate={{scale: 1}}
                                 transition={{duration: 0.3, delay: 0.4, type: "spring"}}
-                                className="absolute -bottom-2 -right-2 flex size-8 items-center justify-center rounded-full border-2 border-background bg-yellow-500 text-xs font-semibold text-yellow-950 shadow-md"
+                                className="border-background absolute -bottom-2 -right-2 flex size-8 items-center justify-center rounded-full border-2 bg-yellow-500 text-xs font-semibold text-yellow-950 shadow-md"
                                 title={`${badges.length} badges obtenus`}
                             >
                                 {badges.length}
@@ -94,8 +94,8 @@ const ProfileHeader = memo<ProfileHeaderProps>(({
                         transition={{duration: 0.5, delay: 0.3}}
                         className="mt-4 text-center sm:ml-6 sm:mt-0 sm:text-left"
                     >
-                        <h1 className="text-2xl font-bold text-foreground md:text-3xl">{displayName}</h1>
-                        <div className="mt-2 flex flex-wrap items-center justify-center gap-4 text-muted-foreground sm:justify-start">
+                        <h1 className="text-foreground text-2xl font-bold md:text-3xl">{displayName}</h1>
+                        <div className="text-muted-foreground mt-2 flex flex-wrap items-center justify-center gap-4 sm:justify-start">
                             <span className="flex items-center text-sm">
                                 <User size={16} className="mr-1.5"/>
                                 @{user.username}

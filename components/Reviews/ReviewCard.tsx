@@ -41,7 +41,7 @@ const ReviewCard = ({review, index}: ReviewCardProps) => {
             transition={{duration: 0.3, delay: index ? index * 0.05 : 0}}
             className="group"
         >
-            <Card className="overflow-hidden border border-slate-200 bg-white transition-all duration-200 hover:border-slate-300 hover:shadow-md hover:-translate-y-0.5">
+            <Card className="overflow-hidden border border-slate-200 bg-white transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md">
                 <CardContent className="p-0">
                     <div className="flex gap-4 p-4">
                         {/* Book Cover */}
@@ -97,7 +97,7 @@ const ReviewCard = ({review, index}: ReviewCardProps) => {
                                             href={`/book-store?search=${encodeURIComponent(review.Book.title)}`}
                                             className="block"
                                         >
-                                            <p className="text-xs text-slate-600 hover:text-slate-800 line-clamp-1">
+                                            <p className="line-clamp-1 text-xs text-slate-600 hover:text-slate-800">
                                                 {review.Book.title}
                                             </p>
                                         </Link>
@@ -126,7 +126,7 @@ const ReviewCard = ({review, index}: ReviewCardProps) => {
                             {/* Review Content */}
                             {review.feedback && (
                                 <div className="rounded border border-slate-100 bg-slate-50/50 p-2.5">
-                                    <p className="text-xs leading-relaxed text-slate-700 line-clamp-3">
+                                    <p className="line-clamp-3 text-xs leading-relaxed text-slate-700">
                                         {review.feedback}
                                     </p>
                                 </div>

@@ -215,7 +215,7 @@ export default function ClientHeader({user: initialUser, adminHeader = false}: C
                 </motion.div>
 
                 <button
-                    className="p-2 md:hidden min-h-[44px] min-w-[44px] flex items-center justify-center"
+                    className="flex min-h-[44px] min-w-[44px] items-center justify-center p-2 md:hidden"
                     onClick={toggleMenu}
                     aria-label={isMenuOpen ? "Fermer le menu" : "Ouvrir le menu"}
                 >

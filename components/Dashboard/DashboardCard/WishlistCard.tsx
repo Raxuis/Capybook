@@ -41,7 +41,7 @@ const WishlistCard = ({wishlistItem, openBookModal}: WishlistCardProps) => {
             : null;
 
     return (
-        <Card className="group relative overflow-hidden border border-rose-200/60 bg-white transition-all duration-200 hover:border-rose-300 hover:shadow-md hover:-translate-y-0.5 h-full flex flex-col">
+        <Card className="group relative flex h-full flex-col overflow-hidden border border-rose-200/60 bg-white transition-all duration-200 hover:-translate-y-0.5 hover:border-rose-300 hover:shadow-md">
             {/* Book Cover Section */}
             <div className="relative aspect-[2/3] w-full overflow-hidden bg-slate-50">
                 {bookCoverUrl ? (
@@ -53,7 +53,7 @@ const WishlistCard = ({wishlistItem, openBookModal}: WishlistCardProps) => {
                             className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
                             sizes="(max-width: 768px) 100vw, 50vw"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent pointer-events-none" />
+                        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/5 to-transparent" />
                     </>
                 ) : (
                     <BookCoverPlaceholder
@@ -68,7 +68,7 @@ const WishlistCard = ({wishlistItem, openBookModal}: WishlistCardProps) => {
                     <Button
                         variant="secondary"
                         size="sm"
-                        className="h-7 w-7 bg-white/95 backdrop-blur-sm p-0 shadow-sm hover:bg-white border border-slate-200/50"
+                        className="size-7 border border-slate-200/50 bg-white/95 p-0 shadow-sm backdrop-blur-sm hover:bg-white"
                         onClick={() => openBookModal(wishlistItem.Book as BookType)}
                     >
                         <Info className="size-3.5 text-slate-600"/>
@@ -77,23 +77,23 @@ const WishlistCard = ({wishlistItem, openBookModal}: WishlistCardProps) => {
                 </div>
             </div>
 
-            <CardHeader className="pb-2.5 pt-3.5 px-4">
-                <CardTitle className="line-clamp-2 text-base font-semibold leading-tight text-slate-900 group-hover:text-slate-700 transition-colors">
+            <CardHeader className="px-4 pb-2.5 pt-3.5">
+                <CardTitle className="line-clamp-2 text-base font-semibold leading-tight text-slate-900 transition-colors group-hover:text-slate-700">
                     {wishlistItem.Book.title}
                 </CardTitle>
 
                 <div className="flex items-start gap-1.5 pt-1.5 text-xs text-slate-500">
-                    <BookOpen className="size-3 mt-0.5 shrink-0"/>
+                    <BookOpen className="mt-0.5 size-3 shrink-0"/>
                     <span className="line-clamp-1">
                         {formatList(wishlistItem.Book.authors) || "Auteur(s) inconnu(s)"}
                     </span>
                 </div>
             </CardHeader>
 
-            <CardContent className="pt-0 pb-4 px-4 mt-auto">
-                <div className="flex items-center gap-1.5 rounded-md bg-rose-50/50 border border-rose-200/40 px-2.5 py-1.5">
+            <CardContent className="mt-auto px-4 pb-4 pt-0">
+                <div className="flex items-center gap-1.5 rounded-md border border-rose-200/40 bg-rose-50/50 px-2.5 py-1.5">
                     <Heart className="size-3 fill-rose-400 text-rose-400" />
-                    <span className="text-[10px] text-rose-700 font-medium">
+                    <span className="text-[10px] font-medium text-rose-700">
                         Souhaité {formatDate(wishlistItem.createdAt)}
                     </span>
                 </div>

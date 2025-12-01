@@ -16,11 +16,11 @@ const BooksPreview = memo<BooksPreviewProps>(({books, onViewAll}) => {
 
     return (
         <div className="mb-6">
-            <div className="mb-4 flex items-center justify-between border-b border-border pb-2">
-                <h2 className="text-lg font-semibold text-foreground sm:text-xl">Livres récents</h2>
+            <div className="border-border mb-4 flex items-center justify-between border-b pb-2">
+                <h2 className="text-foreground text-lg font-semibold sm:text-xl">Livres récents</h2>
                 <button
                     onClick={onViewAll}
-                    className="flex items-center gap-1 text-sm text-primary hover:text-primary/80 transition-colors"
+                    className="text-primary hover:text-primary/80 flex items-center gap-1 text-sm transition-colors"
                 >
                     Voir tous
                     <Eye size={16}/>
@@ -34,14 +34,14 @@ const BooksPreview = memo<BooksPreviewProps>(({books, onViewAll}) => {
                         animate={{opacity: 1, y: 0}}
                         transition={{duration: 0.3, delay: index * 0.05}}
                         whileHover={{y: -2}}
-                        className="flex flex-wrap items-center rounded-lg border border-border bg-card p-3 shadow-sm transition-all hover:shadow-md sm:flex-nowrap sm:p-4"
+                        className="border-border bg-card flex flex-wrap items-center rounded-lg border p-3 shadow-sm transition-all hover:shadow-md sm:flex-nowrap sm:p-4"
                     >
-                        <div className="mr-3 rounded-lg bg-primary/10 p-2 sm:mr-4 sm:p-3">
+                        <div className="bg-primary/10 mr-3 rounded-lg p-2 sm:mr-4 sm:p-3">
                             <BookIcon size={20} className="text-primary"/>
                         </div>
                         <div className="min-w-0 grow">
-                            <h3 className="truncate font-semibold text-foreground">{bookData.Book.title}</h3>
-                            <p className="truncate text-xs text-muted-foreground sm:text-sm">
+                            <h3 className="text-foreground truncate font-semibold">{bookData.Book.title}</h3>
+                            <p className="text-muted-foreground truncate text-xs sm:text-sm">
                                 {bookData.Book.authors.join(", ")}
                                 {bookData.Book.numberOfPages && ` · ${bookData.Book.numberOfPages} pages`}
                             </p>
@@ -68,7 +68,7 @@ const BooksPreview = memo<BooksPreviewProps>(({books, onViewAll}) => {
                         transition={{duration: 0.3, delay: previewBooks.length * 0.1}}
                         whileHover={{scale: 1.02}}
                         onClick={onViewAll}
-                        className="flex w-full items-center justify-center border-t border-border bg-muted/30 py-3 text-center text-primary transition-colors hover:bg-muted/50"
+                        className="border-border bg-muted/30 text-primary hover:bg-muted/50 flex w-full items-center justify-center border-t py-3 text-center transition-colors"
                     >
                         <Eye size={16} className="mr-2"/>
                         Voir plus de livres
