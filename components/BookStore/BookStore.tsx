@@ -1,5 +1,5 @@
 "use client";
-import {useState, useRef} from "react";
+import {useState} from "react";
 import {useBooks} from "@/hooks/useBooks";
 import {useQueryState} from "nuqs";
 import {Input} from "@/components/ui/input";
@@ -11,7 +11,7 @@ import {Link} from "next-view-transitions";
 import {Button} from "@/components/ui/button";
 import {cn} from "@/lib/utils";
 import {motion, AnimatePresence} from "motion/react";
-import {LoadingState, ErrorState, EmptyState} from "@/components/common";
+import {ErrorState, EmptyState} from "@/components/common";
 
 const BookStore = () => {
     const [search, setSearch] = useQueryState("search", {defaultValue: ""});
@@ -26,8 +26,6 @@ const BookStore = () => {
     } = useBooks(debouncedSearch, parseInt(page));
 
     const [searchFocused, setSearchFocused] = useState<boolean>(false);
-
-    const hasAnimatedInitialPrompt = useRef<boolean>(false);
 
     const handlePageChange = (newPage: number) => {
         if (newPage >= 1 && newPage <= totalPages) {
@@ -146,7 +144,8 @@ const BookStore = () => {
                                 message={
                                     <>
                                         Recherchez des livres par titre, auteur ou ISBN pour les ajouter à{" "}
-                                        <Link href="/book-shelf" className="text-primary underline hover:text-primary/80">
+                                        <Link href="/book-shelf"
+                                              className="text-primary underline hover:text-primary/80">
                                             votre bibliothèque
                                         </Link>
                                         .
