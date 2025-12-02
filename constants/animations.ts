@@ -1,9 +1,16 @@
-import {Variants} from "motion";
+import {Variants, Transition} from "motion/react";
 
 // Fade-in animations
 const fadeInUp: Variants = {
     hidden: {opacity: 0, y: 40},
-    visible: {opacity: 1, y: 0, transition: {duration: 0.6, ease: "easeOut"}}
+    visible: {
+        opacity: 1,
+        y: 0,
+        transition: {
+            duration: 0.6,
+            ease: "easeOut" as const
+        }
+    }
 };
 
 const staggerChildren: Variants = {
@@ -12,7 +19,7 @@ const staggerChildren: Variants = {
         opacity: 1,
         transition: {
             staggerChildren: 0.2
-        }
+        } as Transition
     }
 };
 
@@ -21,7 +28,10 @@ const cardHover: Variants = {
     hover: {
         scale: 1.03,
         boxShadow: "0px 10px 20px rgba(0, 0, 0, 0.15)",
-        transition: {duration: 0.3, ease: "easeInOut"}
+        transition: {
+            duration: 0.3,
+            ease: "easeInOut" as const
+        } as Transition
     }
 };
 
@@ -30,9 +40,12 @@ const mainTestimonialCardHover: Variants = {
     hover: {
         scale: 1.01,
         boxShadow: "0px 10px 20px rgba(0, 0, 0, 0.15)",
-        transition: {duration: 0.3, ease: "easeInOut"}
+        transition: {
+            duration: 0.3,
+            ease: "easeInOut" as const
+        } as Transition
     }
-}
+};
 
 const tabContentAnimation: Variants = {
     hidden: {opacity: 0, x: -20},
@@ -42,17 +55,16 @@ const tabContentAnimation: Variants = {
         transition: {
             duration: 0.5,
             ease: [0.25, 0.1, 0.25, 1.0]
-        }
+        } as Transition
     },
     exit: {
         opacity: 0,
         x: 20,
         transition: {
             duration: 0.3
-        }
+        } as Transition
     }
 };
-
 
 export {
     fadeInUp,
@@ -60,4 +72,4 @@ export {
     cardHover,
     mainTestimonialCardHover,
     tabContentAnimation
-}
+};

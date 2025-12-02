@@ -1,6 +1,6 @@
 import {BookNoteType, GoalType} from "@prisma/client";
 import { z } from "zod";
-import {NoteFormSchema} from "@/utils/zod";
+import {NoteFormSchema} from "@/lib/validators";
 
 export type Note = {
   id: string;

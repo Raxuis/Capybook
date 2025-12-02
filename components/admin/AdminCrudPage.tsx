@@ -200,7 +200,7 @@ export default function AdminCrudPage({slug}: AdminCrudPageProps) {
                             {field.type === 'textarea' ? (
                                 <Textarea {...formField} />
                             ) : field.type === 'select' ? (
-                                <Select onValueChange={formField.onChange} value={formField.value as string}>
+                                <Select onValueChange={formField.onChange} value={formField.value ? String(formField.value) : undefined}>
                                     <SelectTrigger>
                                         <SelectValue placeholder={`Sélectionner ${field.label.toLowerCase()}`}/>
                                     </SelectTrigger>

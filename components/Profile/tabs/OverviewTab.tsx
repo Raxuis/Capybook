@@ -44,10 +44,10 @@ const OverviewTab = memo<OverviewTabProps>(({
 
     return (
         <>
-            <div className="mb-4 flex items-center justify-between border-b pb-2">
-                <h2 className="mb-2 flex items-center text-lg font-semibold sm:mb-0 sm:text-xl">
-                    <span className="mr-2 shrink-0 rounded-md bg-blue-100 p-1">
-                        <ChartBarIcon size={18} className="text-blue-700"/>
+            <div className="border-border mb-4 flex items-center justify-between border-b pb-2">
+                <h2 className="text-foreground mb-2 flex items-center text-lg font-semibold sm:mb-0 sm:text-xl">
+                    <span className="bg-primary/10 mr-2 shrink-0 rounded-md p-1.5">
+                        <ChartBarIcon size={18} className="text-primary"/>
                     </span>
                     <span className="truncate">Vos statistiques</span>
                 </h2>
@@ -56,7 +56,7 @@ const OverviewTab = memo<OverviewTabProps>(({
                     className={cn(buttonVariants({
                         variant: "default",
                         size: "sm",
-                    }), "text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg transition-colors flex items-center shadow-sm whitespace-nowrap")}
+                    }), "text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg transition-all hover:shadow-md flex items-center shadow-sm whitespace-nowrap")}
                 >
                     <span className="hidden sm:inline">Tableau de bord</span>
                     <span className="sm:hidden">Dashboard</span>

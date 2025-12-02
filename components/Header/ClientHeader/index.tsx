@@ -49,9 +49,12 @@ export default function ClientHeader({user: initialUser, adminHeader = false}: C
                 className={cn(
                     "sticky top-0 z-50 transition-all duration-300",
                     scrolled
-                        ? "bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b shadow-sm py-4"
-                        : "bg-transparent py-4"
+                        ? "bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b shadow-sm py-3 sm:py-4"
+                        : "bg-transparent py-3 sm:py-4"
                 )}
+                style={{
+                    paddingTop: `max(0.75rem, env(safe-area-inset-top))`,
+                }}
             >
                 <div className="container mx-auto flex items-center justify-between px-4">
                     <motion.div
@@ -190,9 +193,12 @@ export default function ClientHeader({user: initialUser, adminHeader = false}: C
             className={cn(
                 "sticky top-0 z-50 transition-all duration-300",
                 scrolled
-                    ? "bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b shadow-sm py-4"
-                    : "bg-transparent py-4"
+                    ? "bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b shadow-sm py-3 sm:py-4"
+                    : "bg-transparent py-3 sm:py-4"
             )}
+            style={{
+                paddingTop: `max(0.75rem, env(safe-area-inset-top))`,
+            }}
         >
             <div className="container mx-auto flex items-center justify-between px-4">
                 <motion.div whileHover={{scale: 1.05}} transition={{type: "spring", stiffness: 300}}>
@@ -209,7 +215,7 @@ export default function ClientHeader({user: initialUser, adminHeader = false}: C
                 </motion.div>
 
                 <button
-                    className="p-2 md:hidden"
+                    className="flex min-h-[44px] min-w-[44px] items-center justify-center p-2 md:hidden"
                     onClick={toggleMenu}
                     aria-label={isMenuOpen ? "Fermer le menu" : "Ouvrir le menu"}
                 >

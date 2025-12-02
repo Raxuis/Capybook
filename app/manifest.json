@@ -8,6 +8,10 @@
   "theme_color": "#7a31c0",
   "background_color": "#ffffff",
   "description": "La façon la plus simple de suivre votre progression en lecture.",
+  "categories": ["books", "education", "productivity"],
+  "dir": "ltr",
+  "lang": "fr",
+  "prefer_related_applications": false,
   "icons": [
     {
       "src": "/web-app-manifest-192x192.png",
@@ -20,6 +24,33 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Ma bibliothèque",
+      "short_name": "Bibliothèque",
+      "description": "Accéder à ma bibliothèque",
+      "url": "/book-shelf",
+      "icons": [
+        {
+          "src": "/web-app-manifest-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Librairie",
+      "short_name": "Librairie",
+      "description": "Parcourir la librairie",
+      "url": "/book-store",
+      "icons": [
+        {
+          "src": "/web-app-manifest-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
     }
   ]
 }

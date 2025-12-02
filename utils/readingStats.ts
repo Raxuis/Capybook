@@ -1,6 +1,6 @@
 "use server";
 
-import prisma from "@/utils/prisma";
+import prisma from "@/lib/db/prisma";
 import { GoalType } from "@prisma/client";
 
 export async function updateReadingStats(userId: string, goalType: GoalType, progressAdded: number) {

@@ -6,7 +6,12 @@ import {dockRoutes} from "@/constants/dock";
 
 export function Dock() {
     return (
-        <div className="fixed bottom-5 left-1/2 z-50 w-full max-w-screen-sm -translate-x-1/2 transform-gpu px-4 pt-4">
+        <div
+            className="fixed bottom-5 left-1/2 z-50 w-full max-w-screen-sm -translate-x-1/2 transform-gpu px-4 pt-4"
+            style={{
+                bottom: `max(1.25rem, env(safe-area-inset-bottom))`,
+            }}
+        >
             <div className="relative w-full">
                 <div
                     className="pointer-events-none absolute inset-x-0 bottom-0 z-10 min-h-[72px] rounded-3xl border border-gray-200/60 bg-gray-200/60 shadow-sm max-sm:min-h-[52px] dark:border-gray-600/60 dark:bg-gray-800/60"/>

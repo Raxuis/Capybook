@@ -1,6 +1,6 @@
-import bcrypt from "bcryptjs"
+/**
+ * @deprecated Use @/lib/helpers/password instead
+ * This file is kept for backward compatibility during migration
+ */
 
-export async function saltAndHashPassword(password: string) {
-    const saltRounds = 10
-    return await bcrypt.hash(password, saltRounds)
-}
+export { hashPassword as saltAndHashPassword } from "@/lib/helpers/password";

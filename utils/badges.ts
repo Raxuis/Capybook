@@ -1,6 +1,6 @@
 "use server";
 
-import prisma from "@/utils/prisma";
+import prisma from "@/lib/db/prisma";
 
 // Fonction d'aide pour vérifier et attribuer les badges
 export async function checkAndAssignBadges(userId: string) {

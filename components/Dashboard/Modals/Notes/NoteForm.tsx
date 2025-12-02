@@ -12,7 +12,7 @@ import {X, Save, Loader2} from 'lucide-react';
 import {getTypeIcon} from '@/utils/bookNotes';
 import {NoteFormData} from "@/types";
 import {cn} from "@/lib/utils";
-import {formatBookNoteType} from "@/utils/format";
+import {formatBookNoteType} from "@/lib/helpers/format";
 
 interface NoteFormProps {
     form: UseFormReturn<NoteFormData>;

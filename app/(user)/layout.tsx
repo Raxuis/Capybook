@@ -11,7 +11,9 @@ export default function UserLayout({
     return (
         <div className="min-w-screen flex min-h-screen flex-col">
             <Header/>
-            {children}
+            <main className="flex-1 pb-safe-bottom pt-safe-top">
+                {children}
+            </main>
             <Dock/>
             <LendingRequestsManager/>
         </div>

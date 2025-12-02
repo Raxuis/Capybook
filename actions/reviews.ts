@@ -1,6 +1,6 @@
 "use server";
 
-import prisma from "@/utils/prisma";
+import prisma from "@/lib/db/prisma";
 import {auth} from "@/auth";
 
 export async function getReviews(page: number = 1, limit: number = 10, type: "public" | "friends" = "public") {

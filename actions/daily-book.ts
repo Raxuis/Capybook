@@ -1,8 +1,9 @@
 "use server"
 
 import axios from "axios";
-import {fetchMoreBookInfos} from "./book";
-import prisma from "@/utils/prisma";
+import {fetchMoreBookInfos} from "@/lib/services/book";
+import prisma from "@/lib/db/prisma";
+import {MoreInfoBook} from "@/types";
 
 interface OpenLibrarySearchResult {
     docs: Array<{
@@ -313,29 +314,36 @@ export async function getDailyBookWithDetails(
     try {
         const bookDetails = await fetchMoreBookInfos(bookKey);
 
-        if (bookDetails.error) {
+        if ('error' in bookDetails && bookDetails.error) {
             console.error('Erreur lors de la récupération des détails:', bookDetails.error);
             return null;
         }
 
+        // Type guard: bookDetails is MoreInfoBook at this point
+        const book = bookDetails as MoreInfoBook;
+
         // Traiter les auteurs
         let authors: string[] = [];
-        if (bookDetails.authors && Array.isArray(bookDetails.authors)) {
+        if (book.authors && Array.isArray(book.authors) && book.authors.length > 0) {
             // Si les auteurs sont des références (avec des clés)
-            if (bookDetails.authors.length > 0 && bookDetails.authors[0].author && bookDetails.authors[0].author.key) {
-                authors = await fetchMultipleAuthors(bookDetails.authors);
-            } else if (typeof bookDetails.authors[0] === 'string') {
+            const firstAuthor = book.authors[0];
+            if (typeof firstAuthor === 'object' && firstAuthor !== null && 'author' in firstAuthor) {
+                const authorRef = firstAuthor as {author: {key: string}};
+                if (authorRef.author && 'key' in authorRef.author) {
+                    authors = await fetchMultipleAuthors(book.authors as unknown as Array<{author: {key: string}}>);
+                }
+            } else if (typeof firstAuthor === 'string') {
                 // Si les auteurs sont déjà des chaînes
-                authors = bookDetails.authors;
+                authors = book.authors as string[];
             }
         }
 
         // Traiter la couverture
         let cover: string | undefined;
-        if (bookDetails.covers && bookDetails.covers.length > 0) {
-            cover = getCoverUrl(bookDetails.covers[0], 'L');
-        } else if (bookDetails.cover_i) {
-            cover = getCoverUrl(bookDetails.cover_i, 'L');
+        if ('covers' in book && book.covers && Array.isArray(book.covers) && book.covers.length > 0) {
+            cover = getCoverUrl(book.covers[0], 'L');
+        } else if (book.cover_i) {
+            cover = getCoverUrl(book.cover_i, 'L');
         }
 
         // Le livre est déjà marqué comme vu dans selectDailyBookForUser
@@ -345,12 +353,12 @@ export async function getDailyBookWithDetails(
 
         return {
             key: bookKey,
-            title: bookDetails.title || 'Titre inconnu',
+            title: book.title || 'Titre inconnu',
             authors: authors,
             cover: cover,
-            numberOfPages: bookDetails.numberOfPages || bookDetails.number_of_pages,
-            subjects: bookDetails.subjects,
-            publishYear: bookDetails.first_publish_year
+            numberOfPages: book.numberOfPages || ('number_of_pages' in book && typeof (book as {number_of_pages?: number}).number_of_pages === 'number' ? (book as {number_of_pages: number}).number_of_pages : undefined),
+            subjects: book.subjects || [],
+            publishYear: book.first_publish_year
         };
     } catch (error) {
         console.error('Erreur lors de la récupération des détails du livre:', error);

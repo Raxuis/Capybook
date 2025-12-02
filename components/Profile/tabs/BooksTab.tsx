@@ -1,6 +1,9 @@
+'use client';
+
 import React, {memo} from 'react';
 import {Book as BookIcon} from "lucide-react";
 import {Book} from "@/types/profile";
+import {motion} from "motion/react";
 
 interface BooksTabProps {
     books: Book[];
@@ -11,21 +14,28 @@ const BooksTab = memo<BooksTabProps>(({books}) => {
         return (
             <div className="py-12 text-center">
                 <div className="mb-4 text-4xl">📚</div>
-                <h3 className="text-xl font-semibold">Aucun livre pour le moment</h3>
-                <p className="mt-2 text-gray-500">Commencez à ajouter des livres à votre bibliothèque.</p>
+                <h3 className="text-foreground text-xl font-semibold">Aucun livre pour le moment</h3>
+                <p className="text-muted-foreground mt-2">Commencez à ajouter des livres à votre bibliothèque.</p>
             </div>
         );
     }
     return (
-        <div className="divide-y">
-            {books.map(bookData => (
-                <div key={bookData.id} className="flex flex-wrap items-center py-3 sm:flex-nowrap sm:py-4">
-                    <div className="mr-3 rounded-lg bg-blue-100 p-2 sm:mr-4 sm:p-3">
-                        <BookIcon size={20} className="text-blue-600"/>
+        <div className="flex flex-col gap-4">
+            {books.map((bookData, index) => (
+                <motion.div
+                    key={bookData.id}
+                    initial={{opacity: 0, y: 20}}
+                    animate={{opacity: 1, y: 0}}
+                    transition={{duration: 0.3, delay: index * 0.05}}
+                    whileHover={{y: -2}}
+                    className="border-border bg-card flex flex-wrap items-center rounded-lg border p-3 shadow-sm transition-all hover:shadow-md sm:flex-nowrap sm:p-4"
+                >
+                    <div className="bg-primary/10 mr-3 rounded-lg p-2 sm:mr-4 sm:p-3">
+                        <BookIcon size={20} className="text-primary"/>
                     </div>
                     <div className="min-w-0 grow">
-                        <h3 className="truncate font-semibold">{bookData.Book.title}</h3>
-                        <p className="truncate text-xs text-gray-600 sm:text-sm">
+                        <h3 className="text-foreground truncate font-semibold">{bookData.Book.title}</h3>
+                        <p className="text-muted-foreground truncate text-xs sm:text-sm">
                             {bookData.Book.authors.join(", ")}
                             {bookData.Book.numberOfPages && ` · ${bookData.Book.numberOfPages} pages`}
                         </p>
@@ -33,17 +43,17 @@ const BooksTab = memo<BooksTabProps>(({books}) => {
                     <div className="ml-auto mt-2 w-full text-right sm:mt-0 sm:w-auto">
                         {bookData.finishedAt ? (
                             <span
-                                className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
+                                className="inline-flex items-center rounded-full bg-green-500/10 px-2.5 py-0.5 text-xs font-medium text-green-700 dark:text-green-400">
                 Lu le {new Date(bookData.finishedAt).toLocaleDateString('fr-FR')}
               </span>
                         ) : (
                             <span
-                                className="inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800">
+                                className="inline-flex items-center rounded-full bg-yellow-500/10 px-2.5 py-0.5 text-xs font-medium text-yellow-700 dark:text-yellow-400">
                 En cours
               </span>
                         )}
                     </div>
-                </div>
+                </motion.div>
             ))}
         </div>
     );

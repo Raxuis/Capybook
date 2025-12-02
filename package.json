@@ -1,6 +1,6 @@
 {
   "name": "capybook",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
@@ -11,7 +11,15 @@
     "eslint:debug": "eslint ./components --debug",
     "eslint:fix": "eslint ./components --fix",
     "vercel-build": "prisma generate && prisma migrate deploy && node prisma/seed-badges.js && next build",
-    "seed-badges": "node prisma/seed-badges.js"
+    "seed-badges": "node prisma/seed-badges.js",
+    "type-check": "tsc --noEmit",
+    "postinstall": "prisma generate",
+    "test": "vitest",
+    "test:unit": "vitest run",
+    "test:unit:watch": "vitest",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:report": "playwright show-report"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.1",
@@ -46,53 +54,70 @@
     "@sentry/nextjs": "^9.47.1",
     "@types/canvas-confetti": "^1.9.0",
     "@uidotdev/usehooks": "^2.4.1",
-    "axios": "1.8.2",
+    "axios": "^1.13.2",
     "bcryptjs": "^3.0.3",
     "canvas-confetti": "^1.9.4",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "1.0.0",
     "date-fns": "^4.1.0",
+    "import-in-the-middle": "^1.15.0",
     "lucide-react": "^0.475.0",
-    "motion": "^12.23.24",
+    "motion": "^12.23.25",
     "next": "15.4.7",
     "next-auth": "5.0.0-beta.25",
     "next-pwa": "^5.6.0",
     "next-themes": "^0.4.6",
     "next-view-transitions": "^0.3.4",
+    "next-zod-route": "^0.1.4",
     "nextjs-toploader": "^3.9.17",
-    "nuqs": "^2.8.1",
+    "nuqs": "^2.8.2",
+    "pg": "^8.16.3",
     "react": "^19.2.0",
     "react-aria-components": "^1.13.0",
     "react-day-picker": "8.10.1",
     "react-dom": "^19.2.0",
-    "react-hook-form": "^7.66.1",
+    "react-hook-form": "^7.67.0",
     "react-icons": "^5.5.0",
     "react-twc": "^1.5.1",
     "recharts": "^2.15.4",
+    "require-in-the-middle": "^7.5.2",
     "sonner": "^1.7.4",
-    "swr": "^2.3.6",
+    "swr": "^2.3.7",
     "tailwind-merge": "^3.4.0",
     "tailwindcss-animate": "^1.0.7",
     "ws": "^8.18.3",
     "zod": "^3.25.76",
-    "zustand": "^5.0.8"
+    "zustand": "^5.0.9"
   },
   "devDependencies": {
     "@ducanh2912/next-pwa": "^10.2.9",
-    "@eslint/eslintrc": "^3.3.1",
+    "@eslint/eslintrc": "^3.3.3",
+    "@playwright/test": "^1.57.0",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
     "@types/next-pwa": "^5.6.9",
     "@types/node": "^20.19.25",
-    "@types/react": "^19.2.6",
+    "@types/pg": "^8.15.6",
+    "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "@types/ws": "^8.18.1",
+    "@vitejs/plugin-react": "^5.1.1",
+    "@vitest/ui": "^4.0.14",
     "eslint": "^9.39.1",
     "eslint-config-next": "15.1.0",
+    "eslint-plugin-playwright": "^2.4.0",
     "eslint-plugin-tailwindcss": "^3.18.2",
+    "eslint-plugin-testing-library": "^7.13.5",
+    "happy-dom": "^20.0.11",
+    "jsdom": "^27.2.0",
+    "playwright": "^1.57.0",
     "postcss": "^8.5.6",
     "prisma": "^6.19.0",
     "tailwindcss": "^3.4.18",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.14"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
@@ -101,7 +126,10 @@
       "esbuild",
       "prisma",
       "sharp"
-    ]
+    ],
+    "overrides": {
+      "import-in-the-middle": "^1.15.0"
+    }
   },
   "trustedDependencies": [
     "unrs-resolver"

@@ -1,11 +1,6 @@
-import axios from 'axios';
+/**
+ * @deprecated Use @/lib/helpers/api instead
+ * This file is kept for backward compatibility during migration
+ */
 
-export const fetcher = async <T>(url: string): Promise<T> => {
-    try {
-        const res = await axios.get<T>(url);
-        return res.data;
-    } catch (error) {
-        console.error("❌ Erreur API:", error);
-        throw error;
-    }
-};
+export { fetcher } from "@/lib/helpers/api";

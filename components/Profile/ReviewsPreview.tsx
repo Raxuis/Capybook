@@ -1,3 +1,5 @@
+'use client';
+
 import React, {memo, useCallback} from 'react';
 import {Review} from "@/types/profile";
 import {Star, Eye, CheckIcon, CopyIcon} from "lucide-react";
@@ -7,6 +9,7 @@ import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/compon
 import {Badge} from "@/components/ui/badge";
 import {cn} from "@/lib/utils";
 import {Link} from "next-view-transitions";
+import {motion} from "motion/react";
 
 interface ReviewsPreviewProps {
     reviews: Review[];
@@ -22,24 +25,31 @@ const ReviewsPreview = memo<ReviewsPreviewProps>(({reviews, onViewAll}) => {
 
     return (
         <div className="mb-6">
-            <div className="mb-4 flex items-center justify-between border-b pb-2">
-                <h2 className="text-lg font-semibold sm:text-xl">Avis récents</h2>
+            <div className="border-border mb-4 flex items-center justify-between border-b pb-2">
+                <h2 className="text-foreground text-lg font-semibold sm:text-xl">Avis récents</h2>
                 <button
                     onClick={onViewAll}
-                    className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800"
+                    className="text-primary hover:text-primary/80 flex items-center gap-1 text-sm transition-colors"
                 >
                     Voir tous
                     <Eye size={16}/>
                 </button>
             </div>
             <div className="space-y-4">
-                {reviews.map(review => {
+                {reviews.map((review, index) => {
                     const privacyConfig = getPrivacyConfigMemo(review.privacy);
                     const PrivacyIcon = privacyConfig.icon;
                     return (
-                        <div key={review.id} className="rounded-lg bg-gray-50 p-3 sm:p-4">
+                        <motion.div
+                            key={review.id}
+                            initial={{opacity: 0, y: 20}}
+                            animate={{opacity: 1, y: 0}}
+                            transition={{duration: 0.3, delay: index * 0.1}}
+                            whileHover={{y: -2}}
+                            className="border-border bg-card rounded-lg border p-3 shadow-sm transition-all hover:shadow-md sm:p-4"
+                        >
                             <div className="mb-2 flex flex-wrap items-start justify-between sm:flex-nowrap">
-                                <h3 className="mr-2 font-semibold">{review.Book.title}</h3>
+                                <h3 className="text-foreground mr-2 font-semibold">{review.Book.title}</h3>
                                 <div className="flex items-center space-x-2">
                                     <TooltipProvider>
                                         <Tooltip>
@@ -108,38 +118,45 @@ const ReviewsPreview = memo<ReviewsPreviewProps>(({reviews, onViewAll}) => {
                                             <Star
                                                 key={i}
                                                 size={14}
-                                                className="sm:ml-0.5"
+                                                className={cn(
+                                                    "sm:ml-0.5",
+                                                    i < (review.rating ?? 0) ? "text-yellow-400 fill-yellow-400" : "text-muted-foreground"
+                                                )}
                                                 fill={i < (review.rating ?? 0) ? "#FBBF24" : "none"}
-                                                stroke={i < (review.rating ?? 0) ? "#FBBF24" : "#D1D5DB"}
+                                                stroke={i < (review.rating ?? 0) ? "#FBBF24" : "currentColor"}
                                             />
                                         ))}
                                     </div>
                                 </div>
                             </div>
-                            <p className="mb-2 text-xs text-gray-600 sm:text-sm">{review.Book.authors.join(", ")}</p>
+                            <p className="text-muted-foreground mb-2 text-xs sm:text-sm">{review.Book.authors.join(", ")}</p>
                             {
                                 review.feedback && (
-                                    <p className="text-sm text-gray-700 sm:text-base">
+                                    <p className="text-foreground text-sm sm:text-base">
                                         {review.feedback.length > 150
                                             ? `${review.feedback.substring(0, 150)}...`
                                             : review.feedback}
                                     </p>
                                 )
                             }
-                            <div className="mt-2 text-xs text-gray-500">
+                            <div className="text-muted-foreground mt-2 text-xs">
                                 Publié le {new Date(review.createdAt).toLocaleDateString('fr-FR')}
                             </div>
-                        </div>
+                        </motion.div>
                     )
                 })}
                 {hasMore && (
-                    <button
+                    <motion.button
+                        initial={{opacity: 0}}
+                        animate={{opacity: 1}}
+                        transition={{duration: 0.3, delay: reviews.length * 0.1}}
+                        whileHover={{scale: 1.02}}
                         onClick={onViewAll}
-                        className="flex w-full items-center justify-center border-t border-gray-100 py-3 text-center text-blue-600 hover:text-blue-800"
+                        className="border-border bg-muted/30 text-primary hover:bg-muted/50 flex w-full items-center justify-center border-t py-3 text-center transition-colors"
                     >
                         <Eye size={16} className="mr-2"/>
                         Voir plus d&#39;avis
-                    </button>
+                    </motion.button>
                 )}
             </div>
         </div>

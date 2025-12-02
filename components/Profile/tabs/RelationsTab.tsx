@@ -1,86 +1,229 @@
-import React, {memo} from 'react';
-import {Users, UserPlus} from "lucide-react";
+'use client';
+
+import React, {memo, useState, useCallback, useMemo} from 'react';
+import {Users, UserPlus, UserMinus, Loader2, Search} from "lucide-react";
 import {UserProfile} from "@/types/profile";
-import Image from "next/image";
 import {Link} from "next-view-transitions";
+import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
+import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input";
+import {useRouter} from "nextjs-toploader/app";
 
 interface RelationsTabProps {
     followers?: UserProfile[];
     following?: UserProfile[];
+    isOwner?: boolean;
+    currentUserId?: string;
 }
 
-const RelationsTab = memo<RelationsTabProps>(({followers, following}) => {
+const RelationsTab = memo<RelationsTabProps>(({followers = [], following = [], isOwner = false, currentUserId}) => {
+    const router = useRouter();
+    const [searchFollowers, setSearchFollowers] = useState('');
+    const [searchFollowing, setSearchFollowing] = useState('');
+    const [loadingFollows, setLoadingFollows] = useState<Set<string>>(new Set());
+
+    // Create a set of following IDs for quick lookup
+    const followingIds = useMemo(() => new Set(following.map(f => f.id)), [following]);
+
+    const filteredFollowers = useMemo(() => {
+        if (!searchFollowers.trim()) return followers;
+        const search = searchFollowers.toLowerCase();
+        return followers.filter(user =>
+            user.username.toLowerCase().includes(search) ||
+            (user.name?.toLowerCase().includes(search) ?? false)
+        );
+    }, [followers, searchFollowers]);
+
+    const filteredFollowing = useMemo(() => {
+        if (!searchFollowing.trim()) return following;
+        const search = searchFollowing.toLowerCase();
+        return following.filter(user =>
+            user.username.toLowerCase().includes(search) ||
+            (user.name?.toLowerCase().includes(search) ?? false)
+        );
+    }, [following, searchFollowing]);
+
+    const handleFollowToggle = useCallback(async (username: string, userId: string, isCurrentlyFollowing: boolean) => {
+        if (!currentUserId || loadingFollows.has(userId)) return;
+
+        setLoadingFollows(prev => new Set(prev).add(userId));
+        try {
+            const response = await fetch(`/api/user/follow/${username}`, {
+                method: isCurrentlyFollowing ? 'DELETE' : 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: isCurrentlyFollowing ? null : JSON.stringify({username}),
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to update follow status');
+            }
+
+            // Refresh the page to update the relations
+            router.refresh();
+        } catch (error) {
+            console.error('Error updating follow status:', error);
+        } finally {
+            setLoadingFollows(prev => {
+                const next = new Set(prev);
+                next.delete(userId);
+                return next;
+            });
+        }
+    }, [currentUserId, loadingFollows, router]);
+
+    const UserCard = ({user, showFollowButton = false}: { user: UserProfile; showFollowButton?: boolean }) => {
+        const isFollowingUser = followingIds.has(user.id);
+        const isLoading = loadingFollows.has(user.id);
+        const displayName = user.name || user.username;
+        const initials = displayName.slice(0, 2).toUpperCase();
+
+        return (
+            <div className="bg-card group flex items-center justify-between rounded-lg border p-3 transition-all hover:shadow-md sm:p-4">
+                <Link
+                    href={`/profile/${user.username}`}
+                    className="flex min-w-0 flex-1 items-center space-x-3"
+                >
+                    <Avatar className="border-border size-10 shrink-0 border-2 sm:size-12">
+                        <AvatarImage src={user.image || undefined} alt={user.username}/>
+                        <AvatarFallback className="bg-primary/10 text-primary font-semibold">
+                            {initials}
+                        </AvatarFallback>
+                    </Avatar>
+                    <div className="min-w-0 flex-1">
+                        <div className="text-foreground truncate font-semibold">{displayName}</div>
+                        <div className="text-muted-foreground truncate text-sm">@{user.username}</div>
+                    </div>
+                </Link>
+                {showFollowButton && currentUserId && user.id !== currentUserId && (
+                    <Button
+                        size="sm"
+                        variant={isFollowingUser ? "outline" : "default"}
+                        className="ml-3 shrink-0"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            handleFollowToggle(user.username, user.id, isFollowingUser);
+                        }}
+                        disabled={isLoading}
+                    >
+                        {isLoading ? (
+                            <Loader2 className="size-4 animate-spin"/>
+                        ) : isFollowingUser ? (
+                            <>
+                                <UserMinus className="mr-1.5 size-4"/>
+                                <span className="hidden sm:inline">Se désabonner</span>
+                            </>
+                        ) : (
+                            <>
+                                <UserPlus className="mr-1.5 size-4"/>
+                                <span className="hidden sm:inline">S&apos;abonner</span>
+                            </>
+                        )}
+                    </Button>
+                )}
+            </div>
+        );
+    };
+
     return (
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
             {/* Section Abonnés */}
-            <div className="rounded-lg border bg-white p-4">
-                <h2 className="mb-4 flex items-center text-lg font-semibold">
-                    <Users size={20} className="mr-2 text-green-600"/>
-                    Abonnés ({followers?.length || 0})
-                </h2>
-                <div className="space-y-3">
-                    {followers?.length ? (
-                        followers.map((follower) => (
-                            <Link key={follower.id}
-                                  href={`/profile/${follower.username}`}
-                                  className="flex items-center space-x-3 rounded-lg p-2 transition-colors hover:bg-gray-50">
-                                <div className="flex size-10 items-center justify-center rounded-full bg-gray-200">
-                                    {follower.image ? (
-                                        <Image src={follower.image} alt={follower.username}
-                                               width={40} height={40}
-                                               className="size-full rounded-full"/>
-                                    ) : (
-                                        <span className="text-lg font-semibold text-gray-600">
-                      {(follower.name || follower.username)[0].toUpperCase()}
-                    </span>
-                                    )}
-                                </div>
-                                <div>
-                                    <div className="font-medium">{follower.name || follower.username}</div>
-                                    <div className="text-sm text-gray-500">@{follower.username}</div>
-                                </div>
-                            </Link>
+            <div className="bg-card rounded-lg border p-4 shadow-sm sm:p-6">
+                <div className="mb-4 flex items-center justify-between">
+                    <h2 className="flex items-center text-lg font-semibold sm:text-xl">
+                        <div className="mr-2 flex size-8 items-center justify-center rounded-md bg-green-100">
+                            <Users size={18} className="text-green-700"/>
+                        </div>
+                        <span>Abonnés</span>
+                        <span className="text-muted-foreground ml-2 text-sm font-normal">
+                            ({followers.length})
+                        </span>
+                    </h2>
+                </div>
+
+                {followers.length > 3 && (
+                    <div className="mb-4">
+                        <div className="relative">
+                            <Search className="text-muted-foreground absolute left-3 top-1/2 size-4 -translate-y-1/2"/>
+                            <Input
+                                type="text"
+                                placeholder="Rechercher un abonné..."
+                                value={searchFollowers}
+                                onChange={(e) => setSearchFollowers(e.target.value)}
+                                className="pl-9"
+                            />
+                        </div>
+                    </div>
+                )}
+
+                <div className="space-y-2">
+                    {filteredFollowers.length > 0 ? (
+                        filteredFollowers.map((follower) => (
+                            <UserCard key={follower.id} user={follower} showFollowButton={isOwner}/>
                         ))
                     ) : (
-                        <div className="py-4 text-center text-gray-500">
-                            Aucun abonné pour le moment
+                        <div className="py-12 text-center">
+                            <div className="mb-4 text-4xl">👥</div>
+                            <h3 className="text-foreground text-lg font-semibold">
+                                {searchFollowers ? 'Aucun résultat' : 'Aucun abonné'}
+                            </h3>
+                            <p className="text-muted-foreground mt-2 text-sm">
+                                {searchFollowers
+                                    ? 'Essayez avec un autre terme de recherche'
+                                    : 'Vous n\'avez pas encore d\'abonnés pour le moment'}
+                            </p>
                         </div>
                     )}
                 </div>
             </div>
 
             {/* Section Abonnements */}
-            <div className="rounded-lg border bg-white p-4">
-                <h2 className="mb-4 flex items-center text-lg font-semibold">
-                    <UserPlus size={20} className="mr-2 text-indigo-600"/>
-                    Abonnements ({following?.length || 0})
-                </h2>
-                <div className="space-y-3">
-                    {following?.length ? (
-                        following.map((followed) => (
-                            <Link key={followed.id}
-                                  href={`/profile/${followed.username}`}
-                                  className="flex items-center space-x-3 rounded-lg p-2 transition-colors hover:bg-gray-50">
-                                <div className="flex size-10 items-center justify-center rounded-full bg-gray-200">
-                                    {followed.image ? (
-                                        <Image src={followed.image} alt={followed.username}
-                                               width={40} height={40}
-                                               className="size-full rounded-full"/>
-                                    ) : (
-                                        <span className="text-lg font-semibold text-gray-600">
-                      {(followed.name || followed.username)[0].toUpperCase()}
-                    </span>
-                                    )}
-                                </div>
-                                <div>
-                                    <div className="font-medium">{followed.name || followed.username}</div>
-                                    <div className="text-sm text-gray-500">@{followed.username}</div>
-                                </div>
-                            </Link>
+            <div className="bg-card rounded-lg border p-4 shadow-sm sm:p-6">
+                <div className="mb-4 flex items-center justify-between">
+                    <h2 className="flex items-center text-lg font-semibold sm:text-xl">
+                        <div className="mr-2 flex size-8 items-center justify-center rounded-md bg-indigo-100">
+                            <UserPlus size={18} className="text-indigo-700"/>
+                        </div>
+                        <span>Abonnements</span>
+                        <span className="text-muted-foreground ml-2 text-sm font-normal">
+                            ({following.length})
+                        </span>
+                    </h2>
+                </div>
+
+                {following.length > 3 && (
+                    <div className="mb-4">
+                        <div className="relative">
+                            <Search className="text-muted-foreground absolute left-3 top-1/2 size-4 -translate-y-1/2"/>
+                            <Input
+                                type="text"
+                                placeholder="Rechercher un abonnement..."
+                                value={searchFollowing}
+                                onChange={(e) => setSearchFollowing(e.target.value)}
+                                className="pl-9"
+                            />
+                        </div>
+                    </div>
+                )}
+
+                <div className="space-y-2">
+                    {filteredFollowing.length > 0 ? (
+                        filteredFollowing.map((followed) => (
+                            <UserCard key={followed.id} user={followed} showFollowButton={isOwner}/>
                         ))
                     ) : (
-                        <div className="py-4 text-center text-gray-500">
-                            Aucun abonnement pour le moment
+                        <div className="py-12 text-center">
+                            <div className="mb-4 text-4xl">🔍</div>
+                            <h3 className="text-foreground text-lg font-semibold">
+                                {searchFollowing ? 'Aucun résultat' : 'Aucun abonnement'}
+                            </h3>
+                            <p className="text-muted-foreground mt-2 text-sm">
+                                {searchFollowing
+                                    ? 'Essayez avec un autre terme de recherche'
+                                    : 'Vous ne suivez personne pour le moment'}
+                            </p>
                         </div>
                     )}
                 </div>

@@ -1,8 +1,8 @@
 import {NextRequest, NextResponse} from 'next/server';
 import {auth} from "@/auth";
-import prisma from "@/utils/prisma";
+import prisma from "@/lib/db/prisma";
 import {z} from "zod";
-import {formatUsername} from "@/utils/format";
+import {formatUsername} from "@/lib/helpers/format";
 import {
     validateParams,
     validateBody,

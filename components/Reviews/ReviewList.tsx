@@ -92,12 +92,13 @@ export default function ReviewList({page = "1"}: ReviewListProps) {
         }
     };
 
+    // const currentTabCount = tab === "public" ? counts?.publicCount : counts?.friendsCount;
     return (
         <div className="space-y-6">
             <Tabs value={tab} onValueChange={handleTabChange} className="w-full">
                 <TabsList className="grid w-full grid-cols-2">
                     <TabsTrigger value="public" className="flex items-center gap-2">
-                        Publique
+                        <span>Publique</span>
                         {counts && (
                             <span className="bg-muted ml-1 rounded-full px-2 py-0.5 text-xs font-medium">
                                 {counts.publicCount}
@@ -105,7 +106,7 @@ export default function ReviewList({page = "1"}: ReviewListProps) {
                         )}
                     </TabsTrigger>
                     <TabsTrigger value="friends" className="flex items-center gap-2">
-                        Amis
+                        <span>Amis</span>
                         {counts && (
                             <span className="bg-muted ml-1 rounded-full px-2 py-0.5 text-xs font-medium">
                                 {counts.friendsCount}
