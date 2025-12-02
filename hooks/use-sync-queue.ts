@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
+import { useOnlineStatus } from "./use-online-status";
 
 export interface QueuedAction {
   id: string;
@@ -14,12 +15,13 @@ const SYNC_QUEUE_KEY = "capybook_sync_queue";
 const MAX_RETRIES = 3;
 
 /**
- * Hook to manage a queue of actions that need to be synced
- * Actions are stored in localStorage and automatically retried
+ * Hook to manage a queue of actions that need to be synced when online
+ * Actions are stored in localStorage and automatically retried when connection is restored
  */
 export function useSyncQueue() {
   const [queue, setQueue] = useState<QueuedAction[]>([]);
   const [isSyncing, setIsSyncing] = useState(false);
+  const isOnline = useOnlineStatus();
   const syncTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Load queue from localStorage on mount
@@ -57,7 +59,7 @@ export function useSyncQueue() {
   }, [queue]);
 
   const processQueue = useCallback(async () => {
-    if (queue.length === 0 || isSyncing) return;
+    if (queue.length === 0 || isSyncing || !isOnline) return;
 
     setIsSyncing(true);
 
@@ -89,11 +91,11 @@ export function useSyncQueue() {
 
     setQueue(remaining);
     setIsSyncing(false);
-  }, [queue, isSyncing]);
+  }, [queue, isOnline, isSyncing]);
 
-  // Process queue when queue changes
+  // Process queue when coming back online
   useEffect(() => {
-    if (queue.length > 0 && !isSyncing) {
+    if (isOnline && queue.length > 0 && !isSyncing) {
       // Small delay to ensure network is stable
       syncTimeoutRef.current = setTimeout(() => {
         processQueue();
@@ -105,7 +107,7 @@ export function useSyncQueue() {
         clearTimeout(syncTimeoutRef.current);
       }
     };
-  }, [queue.length, isSyncing, processQueue]);
+  }, [isOnline, queue.length, isSyncing, processQueue]);
 
   const addToQueue = useCallback(
     (action: () => Promise<void>, options?: { maxRetries?: number }) => {
@@ -120,14 +122,14 @@ export function useSyncQueue() {
 
       setQueue((prev) => [...prev, newItem]);
 
-      // Try to process immediately
-      if (!isSyncing) {
+      // If online, try to process immediately
+      if (isOnline && !isSyncing) {
         setTimeout(() => processQueue(), 100);
       }
 
       return id;
     },
-    [isSyncing, processQueue]
+    [isOnline, isSyncing, processQueue]
   );
 
   const removeFromQueue = useCallback((id: string) => {
