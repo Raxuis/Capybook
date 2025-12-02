@@ -111,8 +111,9 @@ const withPWA = createPWA({
                 },
             },
         ],
-        navigateFallback: "/offline.html",
-        navigateFallbackDenylist: [/^\/api\/.*/, /^\/_next\/.*/],
+        // Removed navigateFallback to avoid aggressive offline redirects
+        // navigateFallback: "/offline.html",
+        // navigateFallbackDenylist: [/^\/api\/.*/, /^\/_next\/.*/],
         skipWaiting: true,
         clientsClaim: true,
     },
