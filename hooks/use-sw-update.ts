@@ -3,7 +3,13 @@
 import { useEffect, useState, useCallback } from "react";
 
 /**
+ * Check if we're in production environment
+ */
+const isProduction = process.env.NODE_ENV === "production";
+
+/**
  * Hook to detect service worker updates and prompt user to refresh
+ * Only works in production where service workers are enabled
  */
 export function useSWUpdate() {
   const [updateAvailable, setUpdateAvailable] = useState(false);
@@ -11,16 +17,33 @@ export function useSWUpdate() {
   const [isUpdating, setIsUpdating] = useState(false);
 
   useEffect(() => {
+    // Only run in production where service workers are enabled
+    if (!isProduction) {
+      return;
+    }
+
     if (typeof window === "undefined" || !("serviceWorker" in navigator)) {
       return;
     }
 
     let registration: ServiceWorkerRegistration | null = null;
+    let updateInterval: NodeJS.Timeout | null = null;
 
     const checkForUpdates = async () => {
       try {
         const reg = await navigator.serviceWorker.getRegistration();
         if (!reg) return;
+
+        // Verify the service worker script exists by attempting a safe update check
+        // This will fail if sw.js doesn't exist (e.g., 404 error)
+        try {
+          await reg.update();
+        } catch (updateError) {
+          // If update fails (e.g., 404), the service worker script doesn't exist
+          // This shouldn't happen in production, but handle it gracefully
+          console.warn("Service worker update failed, script may not exist:", updateError);
+          return;
+        }
 
         registration = reg;
         setRegistration(reg);
@@ -45,20 +68,33 @@ export function useSWUpdate() {
         });
 
         // Check for updates periodically
-        setInterval(() => {
-          reg.update();
+        updateInterval = setInterval(() => {
+          reg.update().catch(() => {
+            // Silently fail if update check fails (e.g., in dev mode)
+          });
         }, 60000); // Check every minute
       } catch (error) {
-        console.error("Service worker registration error:", error);
+        // Silently handle errors in development or if service worker is not available
+        if (isProduction) {
+          console.error("Service worker registration error:", error);
+        }
       }
     };
 
     checkForUpdates();
 
     // Listen for controller change (service worker activated)
-    navigator.serviceWorker.addEventListener("controllerchange", () => {
+    const handleControllerChange = () => {
       window.location.reload();
-    });
+    };
+    navigator.serviceWorker.addEventListener("controllerchange", handleControllerChange);
+
+    return () => {
+      if (updateInterval) {
+        clearInterval(updateInterval);
+      }
+      navigator.serviceWorker.removeEventListener("controllerchange", handleControllerChange);
+    };
   }, []);
 
   const updateServiceWorker = useCallback(async () => {

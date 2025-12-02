@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { useOnlineStatus } from "@/hooks/use-online-status";
 import { WifiOff, Wifi } from "lucide-react";
@@ -10,19 +10,51 @@ export function OfflineBanner() {
   const isOnline = useOnlineStatus();
   const [showBanner, setShowBanner] = useState(false);
   const [wasOffline, setWasOffline] = useState(false);
+  const offlineTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const isMountedRef = useRef(false);
 
   useEffect(() => {
-    if (!isOnline) {
-      setShowBanner(true);
-      setWasOffline(true);
-    } else if (wasOffline) {
-      // Show online message briefly
-      setShowBanner(true);
-      setTimeout(() => {
-        setShowBanner(false);
-        setWasOffline(false);
-      }, 3000);
+    isMountedRef.current = true;
+
+    // Clear any pending timeout
+    if (offlineTimeoutRef.current) {
+      clearTimeout(offlineTimeoutRef.current);
+      offlineTimeoutRef.current = null;
     }
+
+    if (!isOnline) {
+      // Add a small delay before showing offline banner
+      // This prevents false positives during navigation or initial load
+      offlineTimeoutRef.current = setTimeout(() => {
+        if (isMountedRef.current) {
+          setShowBanner(true);
+          setWasOffline(true);
+        }
+      }, 1000); // Wait 1 second to confirm we're really offline
+    } else {
+      // We're online
+      if (wasOffline) {
+        // Show online message briefly
+        setShowBanner(true);
+        setTimeout(() => {
+          if (isMountedRef.current) {
+            setShowBanner(false);
+            setWasOffline(false);
+          }
+        }, 3000);
+      } else {
+        // If we're online and weren't offline, make sure banner is hidden
+        // This handles the case where we might have started with a false offline state
+        setShowBanner(false);
+      }
+    }
+
+    return () => {
+      isMountedRef.current = false;
+      if (offlineTimeoutRef.current) {
+        clearTimeout(offlineTimeoutRef.current);
+      }
+    };
   }, [isOnline, wasOffline]);
 
   if (!showBanner) return null;
