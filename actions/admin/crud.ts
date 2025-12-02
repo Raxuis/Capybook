@@ -1,6 +1,6 @@
 "use server";
 
-import prisma from "@/utils/prisma";
+import prisma from "@/lib/db/prisma";
 import { Badge, Book, BookReview, Genre, ReadingGoal, User } from "@prisma/client";
 
 // Types pour les entrées de données qui correspondent aux modèles Prisma

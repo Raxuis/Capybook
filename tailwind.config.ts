@@ -12,9 +12,30 @@ export default {
     ],
     theme: {
         extend: {
+            screens: {
+                xs: "475px",
+            },
             fontFamily: {
                 inter: ["Inter", "sans-serif"],
                 manrope: ["manrope", "serif"]
+            },
+            spacing: {
+                "safe-top": "env(safe-area-inset-top)",
+                "safe-bottom": "env(safe-area-inset-bottom)",
+                "safe-left": "env(safe-area-inset-left)",
+                "safe-right": "env(safe-area-inset-right)",
+            },
+            padding: {
+                "safe-top": "env(safe-area-inset-top)",
+                "safe-bottom": "env(safe-area-inset-bottom)",
+                "safe-left": "env(safe-area-inset-left)",
+                "safe-right": "env(safe-area-inset-right)",
+            },
+            margin: {
+                "safe-top": "env(safe-area-inset-top)",
+                "safe-bottom": "env(safe-area-inset-bottom)",
+                "safe-left": "env(safe-area-inset-left)",
+                "safe-right": "env(safe-area-inset-right)",
             },
             colors: {
                 background: 'hsl(var(--background))',
@@ -99,6 +120,10 @@ export default {
                 'accordion-down': 'accordion-down 0.2s ease-out',
                 'accordion-up': 'accordion-up 0.2s ease-out',
                 "shrink": "shrink linear forwards",
+            },
+            touchAction: {
+                'pan-x': 'pan-x',
+                'pan-y': 'pan-y',
             }
         }
     },

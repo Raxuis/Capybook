@@ -198,34 +198,31 @@ const BookModal = ({
             }}
         >
             <Dialog open={isOpen || isAnimating} onOpenChange={(open) => !open && handleClose()}>
-                <DialogContent className="max-h-[90vh] w-full overflow-y-auto sm:max-w-md md:max-w-lg lg:max-w-xl">
-                    <DialogHeader className="space-y-2">
-                        <DialogTitle className="break-words text-xl font-bold">
+                <DialogContent className="max-h-[90vh] w-full overflow-y-auto sm:max-w-md md:max-w-lg lg:max-w-2xl">
+                    <DialogHeader className="space-y-3 pb-4">
+                        <DialogTitle className="break-words text-xl font-semibold text-slate-900">
                             {book?.title || "Détails du livre"}
                         </DialogTitle>
 
                         {isLoading ? (
                             <>
-                                <Skeleton className="mb-1 h-4 w-full"/>
-                                <DialogDescription className="sr-only">
-                                    Chargement...
-                                </DialogDescription>
+                                <Skeleton className="h-4 w-full"/>
+                                <Skeleton className="h-4 w-3/4"/>
                             </>
                         ) : book?.description ? (
-                            <DialogDescription
-                                className="overflow-wrap-anywhere w-3/4 overflow-hidden break-words text-sm text-gray-500">
-                                {book.description.length > 200
-                                    ? book.description.substring(0, 200) + "..."
+                            <DialogDescription className="overflow-wrap-anywhere overflow-hidden break-words text-sm leading-relaxed text-slate-600">
+                                {book.description.length > 250
+                                    ? book.description.substring(0, 250) + "..."
                                     : book.description}
                             </DialogDescription>
                         ) : (
                             <DialogDescription>
-                                <span className="text-sm text-gray-500">Aucune description disponible</span>
+                                <span className="text-sm text-slate-500">Aucune description disponible</span>
                             </DialogDescription>
                         )}
                     </DialogHeader>
 
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                    <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
                         {/* Cover */}
                         {book && <BookCover book={book}/>}
 

@@ -16,7 +16,7 @@ import {useToast} from "@/hooks/use-toast";
 import {useRouter} from "next/navigation";
 import {useForm} from "react-hook-form";
 import z from "zod";
-import {EditProfileSchema} from "@/utils/zod";
+import {EditProfileSchema} from "@/lib/validators";
 import {zodResolver} from "@hookform/resolvers/zod";
 import axios from "axios";
 import {useSession} from "next-auth/react";

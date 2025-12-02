@@ -19,7 +19,7 @@ import {
     UserEntity,
     UserFormData
 } from "@/types/admin/crud";
-import {BadgeSchema, BookSchema, GenreSchema, GoalSchema, UserSchema} from "@/utils/zod";
+import {BadgeSchema, BookSchema, GenreSchema, GoalSchema, UserSchema} from "@/lib/validators";
 
 export const entityConfig = {
     users: {

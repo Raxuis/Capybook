@@ -1,6 +1,6 @@
 import {NextRequest, NextResponse} from 'next/server';
-import prisma from "@/utils/prisma";
-import {CreateChallengeSchema, BaseUpdateChallengeSchema} from "@/utils/zod";
+import prisma from "@/lib/db/prisma";
+import {CreateChallengeSchema, BaseUpdateChallengeSchema} from "@/lib/validators";
 import {z} from "zod";
 import {checkAndAssignBadges} from "@/utils/badges";
 import {updateReadingStats} from "@/utils/readingStats";

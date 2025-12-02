@@ -1,4 +1,4 @@
-import type {Metadata} from "next";
+import type {Metadata, Viewport} from "next";
 import {Inter, Manrope} from "next/font/google";
 import React from "react";
 import {SessionProvider} from "next-auth/react";
@@ -8,6 +8,7 @@ import {NuqsAdapter} from "nuqs/adapters/next/app";
 import {ViewTransitions} from "next-view-transitions";
 import NextTopLoader from "nextjs-toploader";
 import {Toaster} from "@/components/ui/toaster";
+import {PWAProvider} from "@/components/PWA/PWAProvider";
 import {getServerUrl} from "@/utils/get-server-url";
 import "./globals.css";
 
@@ -29,7 +30,7 @@ export const metadata: Metadata = {
     manifest: "/manifest.json",
     appleWebApp: {
         capable: true,
-        statusBarStyle: "default",
+        statusBarStyle: "black-translucent",
         title: "Capybook",
     },
     applicationName: "Capybook",
@@ -39,6 +40,14 @@ export const metadata: Metadata = {
         apple: "/web-app-manifest-192x192.png",
     },
 };
+
+export const viewport: Viewport = {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 5,
+    userScalable: true,
+    viewportFit: "cover",
+}
 
 export default function RootLayout({
                                        children,
@@ -53,19 +62,21 @@ export default function RootLayout({
                 <BadgeQueueProvider>
                     <NuqsAdapter>
                         <ViewTransitions>
-                            {children}
-                            <NextTopLoader
-                                color="#7a31c0"
-                                initialPosition={0.08}
-                                crawlSpeed={200}
-                                height={3}
-                                crawl={true}
-                                showSpinner={false}
-                                easing="ease"
-                                speed={200}
-                                shadow="0 0 10px #2299DD,0 0 5px #2299DD"
-                            />
-                            <Toaster/>
+                            <PWAProvider>
+                                {children}
+                                <NextTopLoader
+                                    color="#7a31c0"
+                                    initialPosition={0.08}
+                                    crawlSpeed={200}
+                                    height={3}
+                                    crawl={true}
+                                    showSpinner={false}
+                                    easing="ease"
+                                    speed={200}
+                                    shadow="0 0 10px #2299DD,0 0 5px #2299DD"
+                                />
+                                <Toaster/>
+                            </PWAProvider>
                         </ViewTransitions>
                     </NuqsAdapter>
                 </BadgeQueueProvider>

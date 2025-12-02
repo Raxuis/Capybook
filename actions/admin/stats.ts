@@ -22,7 +22,7 @@ import {
 } from "@/types/admin";
 import {ReadingDay} from "@prisma/client";
 import {currentUser} from "../auth/current-user";
-import prisma from "@/utils/prisma";
+import prisma from "@/lib/db/prisma";
 
 /**
  * Get period date range based on the selected period

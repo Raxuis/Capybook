@@ -1,7 +1,7 @@
 import {NextResponse} from 'next/server';
 import {z} from "zod";
-import prisma from "@/utils/prisma";
-import {formatUsername} from "@/utils/format";
+import prisma from "@/lib/db/prisma";
+import {formatUsername} from "@/lib/helpers/format";
 import {auth} from "@/auth";
 import {BadgeCategory} from "@prisma/client";
 import {

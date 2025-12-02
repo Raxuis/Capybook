@@ -28,10 +28,13 @@ export function Pagination({currentPage, totalPages, basePath}: PaginationProps)
     };
 
     return (
-        <nav className="flex items-center justify-center space-x-2">
+        <nav className="flex items-center justify-center gap-1.5 pt-4">
             {currentPage > 1 && (
                 <Link href={constructUrl(currentPage - 1)}>
-                    <Button variant="outline" size="icon">
+                    <Button
+                        variant="outline"
+                        size="icon"
+                    >
                         <ChevronLeft className="size-4"/>
                         <span className="sr-only">Page précédente</span>
                     </Button>
@@ -41,11 +44,17 @@ export function Pagination({currentPage, totalPages, basePath}: PaginationProps)
             {visiblePages[0] > 1 && (
                 <>
                     <Link href={constructUrl(1)}>
-                        <Button variant="outline" size="sm">
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            className="min-w-10"
+                        >
                             1
                         </Button>
                     </Link>
-                    {visiblePages[0] > 2 && <span className="px-2">...</span>}
+                    {visiblePages[0] > 2 && (
+                        <span className="text-muted-foreground px-2">...</span>
+                    )}
                 </>
             )}
 
@@ -67,10 +76,14 @@ export function Pagination({currentPage, totalPages, basePath}: PaginationProps)
             {visiblePages[visiblePages.length - 1] < totalPages && (
                 <>
                     {visiblePages[visiblePages.length - 1] < totalPages - 1 && (
-                        <span className="px-2">...</span>
+                        <span className="text-muted-foreground px-2">...</span>
                     )}
                     <Link href={constructUrl(totalPages)}>
-                        <Button variant="outline" size="sm">
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            className="min-w-10"
+                        >
                             {totalPages}
                         </Button>
                     </Link>
@@ -79,7 +92,10 @@ export function Pagination({currentPage, totalPages, basePath}: PaginationProps)
 
             {currentPage < totalPages && (
                 <Link href={constructUrl(currentPage + 1)}>
-                    <Button variant="outline" size="icon">
+                    <Button
+                        variant="outline"
+                        size="icon"
+                    >
                         <ChevronRight className="size-4"/>
                         <span className="sr-only">Page suivante</span>
                     </Button>

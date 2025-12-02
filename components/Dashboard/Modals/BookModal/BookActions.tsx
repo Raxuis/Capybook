@@ -47,12 +47,12 @@ export const BookActions = ({
     const isAnyLoading = loadingLibrary || loadingWishlist || loadingCurrentBook || loadingLending;
 
     return (
-        <div className="mt-4 flex flex-col flex-wrap gap-2 sm:flex-row sm:justify-start">
+        <div className="mt-6 flex flex-col flex-wrap gap-2 border-t border-slate-200 pt-4 sm:flex-row sm:justify-start">
             {/* Marquer comme en lecture */}
             {(inLibrary && !isCurrentBookInstance && !isBookFinishedInstance && !isBookLoanedInstance && !isPendingLoanInstance) && (
                 <Button
                     variant="outline"
-                    className="w-full border-indigo-300 text-indigo-700 hover:bg-indigo-200 sm:w-auto"
+                    className="w-full border-blue-200/60 bg-blue-50 text-blue-700 hover:border-blue-300 hover:bg-blue-100 sm:w-auto"
                     onClick={handleToggleCurrentBook}
                     disabled={isAnyLoading}
                 >
@@ -69,7 +69,7 @@ export const BookActions = ({
             {(inLibrary && isCurrentBookInstance && !isBookLoanedInstance && !isPendingLoanInstance) && (
                 <Button
                     variant="outline"
-                    className="w-full border-gray-300 hover:bg-gray-200 sm:w-auto"
+                    className="w-full border-slate-200/60 bg-slate-50 text-slate-700 hover:border-slate-300 hover:bg-slate-100 sm:w-auto"
                     onClick={handleToggleCurrentBook}
                     disabled={isAnyLoading}
                 >
@@ -85,8 +85,8 @@ export const BookActions = ({
             {/* Prêter le livre */}
             {(inLibrary && !isBookLoanedInstance && !isPendingLoanInstance) && (
                 <Button
-                    variant="info"
-                    className="w-full sm:w-auto"
+                    variant="outline"
+                    className="w-full border-slate-200/60 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50 sm:w-auto"
                     onClick={() => setIsLendingModalOpened(true)}
                     disabled={isAnyLoading}
                 >
@@ -103,7 +103,7 @@ export const BookActions = ({
             {(inLibrary && (isBookLoanedInstance || isPendingLoanInstance)) && (
                 <Button
                     variant="outline"
-                    className="w-full border-orange-300 text-orange-700 hover:bg-orange-200 sm:w-auto"
+                    className="w-full border-orange-200/60 bg-orange-50 text-orange-700 hover:border-orange-300 hover:bg-orange-100 sm:w-auto"
                     onClick={() => handleCancelLending(book)}
                     disabled={isAnyLoading}
                 >
@@ -155,7 +155,7 @@ export const BookActions = ({
                 <>
                     <Button
                         variant="outline"
-                        className="w-full hover:bg-green-300 sm:w-auto"
+                        className="w-full border-blue-200/60 bg-blue-50 text-blue-700 hover:border-blue-300 hover:bg-blue-100 sm:w-auto"
                         onClick={handleToggleLibrary}
                         disabled={loadingLibrary || loadingWishlist || loadingCurrentBook}
                     >
@@ -168,7 +168,7 @@ export const BookActions = ({
                     </Button>
                     <Button
                         variant="outline"
-                        className="w-full hover:bg-amber-300 sm:w-auto"
+                        className="w-full border-rose-200/60 bg-rose-50 text-rose-700 hover:border-rose-300 hover:bg-rose-100 sm:w-auto"
                         onClick={handleToggleWishlist}
                         disabled={loadingLibrary || loadingWishlist || loadingCurrentBook}
                     >
@@ -185,13 +185,16 @@ export const BookActions = ({
             {/* Voir les notes */}
             <Button
                 onClick={() => setIsNotesModalOpened(true)}
-                variant="notes"
+                variant="outline"
+                className="w-full border-slate-200/60 bg-slate-50 text-slate-700 hover:border-slate-300 hover:bg-slate-100 sm:w-auto"
             >
                 <FileText className="mr-2 size-4"/>
                 Voir les notes
-                <span className="text-xs text-gray-500">
-                    ({notesCount || 0})
-                </span>
+                {notesCount > 0 && (
+                    <span className="ml-1.5 rounded-full bg-slate-200 px-1.5 py-0.5 text-xs font-medium text-slate-700">
+                        {notesCount}
+                    </span>
+                )}
             </Button>
         </div>
     );

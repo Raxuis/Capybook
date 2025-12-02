@@ -1,3 +1,5 @@
+'use client';
+
 import React, {memo, useCallback} from 'react';
 import {Review} from "@/types/profile";
 import {CheckIcon, CopyIcon, Star} from "lucide-react";
@@ -12,6 +14,7 @@ import {Badge} from "@/components/ui/badge";
 import {getPrivacyConfig} from "@/utils/reviews";
 import {cn} from "@/lib/utils";
 import {useCopyToClipboard} from "@/hooks/use-copy-to-clipboard";
+import {motion} from "motion/react";
 
 interface ReviewsTabProps {
     reviews: Review[];
@@ -27,21 +30,28 @@ const ReviewsTab = memo<ReviewsTabProps>(({reviews}) => {
         return (
             <div className="py-12 text-center">
                 <div className="mb-4 text-4xl">✒️</div>
-                <h3 className="text-xl font-semibold">Aucun avis pour le moment</h3>
-                <p className="mt-2 text-gray-500">Partagez votre opinion sur les livres que vous avez lus.</p>
+                <h3 className="text-foreground text-xl font-semibold">Aucun avis pour le moment</h3>
+                <p className="text-muted-foreground mt-2">Partagez votre opinion sur les livres que vous avez lus.</p>
             </div>
         );
     }
 
     return (
         <div className="space-y-4 sm:space-y-6">
-            {reviews.map(review => {
+            {reviews.map((review, index) => {
                 const privacyConfig = getPrivacyConfigMemo(review.privacy);
                 const PrivacyIcon = privacyConfig.icon;
                 return (
-                    <div key={review.id} className="rounded-lg bg-gray-50 p-3 sm:p-4">
+                    <motion.div
+                        key={review.id}
+                        initial={{opacity: 0, y: 20}}
+                        animate={{opacity: 1, y: 0}}
+                        transition={{duration: 0.3, delay: index * 0.05}}
+                        whileHover={{y: -2}}
+                        className="border-border bg-card rounded-lg border p-3 shadow-sm transition-all hover:shadow-md sm:p-4"
+                    >
                         <div className="mb-2 flex flex-wrap items-start justify-between sm:flex-nowrap">
-                            <h3 className="mr-2 font-semibold">{review.Book.title}</h3>
+                            <h3 className="text-foreground mr-2 font-semibold">{review.Book.title}</h3>
                             <div className="flex items-center space-x-2">
                                 <TooltipProvider>
                                     <Tooltip>
@@ -110,22 +120,25 @@ const ReviewsTab = memo<ReviewsTabProps>(({reviews}) => {
                                         <Star
                                             key={i}
                                             size={16}
-                                            className="sm:ml-0.5"
+                                            className={cn(
+                                                "sm:ml-0.5",
+                                                i < (review.rating ?? 0) ? "text-yellow-400 fill-yellow-400" : "text-muted-foreground"
+                                            )}
                                             fill={i < (review.rating ?? 0) ? "#FBBF24" : "none"}
-                                            stroke={i < (review.rating ?? 0) ? "#FBBF24" : "#D1D5DB"}
+                                            stroke={i < (review.rating ?? 0) ? "#FBBF24" : "currentColor"}
                                         />
                                     ))}
                                 </div>
                             </div>
                         </div>
-                        <p className="mb-3 text-xs text-gray-600 sm:text-sm">{review.Book.authors.join(", ")}</p>
+                        <p className="text-muted-foreground mb-3 text-xs sm:text-sm">{review.Book.authors.join(", ")}</p>
                         {review.feedback && (
-                            <p className="text-sm text-gray-700 sm:text-base">{review.feedback}</p>
+                            <p className="text-foreground text-sm sm:text-base">{review.feedback}</p>
                         )}
-                        <div className="mt-3 text-xs text-gray-500">
+                        <div className="text-muted-foreground mt-3 text-xs">
                             Publié le {new Date(review.createdAt).toLocaleDateString('fr-FR')}
                         </div>
-                    </div>
+                    </motion.div>
                 )
             })}
         </div>

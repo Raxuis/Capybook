@@ -1,40 +1,45 @@
 "use client";
 
 import {memo} from "react";
-import {AlertCircle, Loader2} from "lucide-react";
 import {DashboardLayout} from "@/components/Layout";
 import ChallengeHeader from "@/components/Challenges/ChallengeHeader/ChallengeHeader";
 import ChallengeTabs from "@/components/Challenges/ChallengeTabs/ChallengeTabs";
 import {useUser} from "@/hooks/useUser";
+import {LoadingState, ErrorState} from "@/components/common";
 
 const ChallengesContent = memo(() => {
     const {user, isError, isLoading, isValidating} = useUser();
 
     if ((isLoading || isValidating) && !user) {
         return (
-            <div className="flex min-h-screen flex-col items-center justify-center p-4">
-                <Loader2 className="text-primary mb-2 size-8 animate-spin"/>
-                <p className="text-muted-foreground">Chargement des challenges...</p>
-            </div>
+            <LoadingState
+                message="Chargement des challenges..."
+                className="min-h-screen"
+            />
         );
     }
 
     if (isError) {
         return (
-            <div className="flex min-h-screen flex-col items-center justify-center p-4">
-                <AlertCircle className="text-destructive mb-2 size-8"/>
-                <p className="font-medium">Erreur lors du chargement des challenges</p>
-                <p className="text-muted-foreground mt-1">Veuillez réessayer ultérieurement</p>
-            </div>
+            <ErrorState
+                title="Erreur lors du chargement des challenges"
+                message="Veuillez réessayer ultérieurement"
+                onRetry={() => window.location.reload()}
+                className="min-h-screen"
+            />
         );
     }
 
-    if (!user) return (
-        <div className="flex min-h-screen flex-col items-center justify-center p-4">
-            <AlertCircle className="mb-2 size-8 text-amber-500"/>
-            <p className="font-medium">Utilisateur non trouvé</p>
-        </div>
-    );
+    if (!user) {
+        return (
+            <ErrorState
+                title="Utilisateur non trouvé"
+                message="Impossible de charger les informations utilisateur"
+                variant="warning"
+                className="min-h-screen"
+            />
+        );
+    }
 
     return (
         <DashboardLayout>

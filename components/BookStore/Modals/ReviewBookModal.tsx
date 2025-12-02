@@ -12,7 +12,7 @@ import {useForm} from "react-hook-form";
 import {z} from "zod";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {Star, Copy, CheckCircle} from "lucide-react";
-import {ReviewBookSchema} from "@/utils/zod";
+import {ReviewBookSchema} from "@/lib/validators";
 import axios from "axios";
 import {mutate} from "swr";
 import {useToast} from "@/hooks/use-toast";
@@ -299,7 +299,7 @@ export default function ReviewBookModal(
                                                         </div>
                                                         {(field.value || hoverRating) ? (
                                                             <div className="text-primary mt-1 font-medium">
-                                                                {getRatingText(hoverRating ? hoverRating.toString() : field.value)}
+                                                                {getRatingText(hoverRating ? hoverRating.toString() : field.value || null)}
                                                             </div>
                                                         ) : (
                                                             <div className="mt-1 text-gray-500">Sélectionnez une

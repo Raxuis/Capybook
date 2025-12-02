@@ -12,9 +12,9 @@ const protectedRoutes = [
     '/daily-book'
 ]
 
-const publicRoutes = ['/about', '/register', '/login']
+const publicRoutes = ['/about', '/register', '/login', '/offline']
 
-const pwaFiles = ['/manifest.json', '/sw.js', '/workbox'];
+const pwaFiles = ['/manifest.json', '/sw.js', '/workbox', '/offline.html'];
 
 export default async function middleware(req: NextRequest) {
     const path = req.nextUrl.pathname

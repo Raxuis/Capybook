@@ -1,6 +1,6 @@
 import {NextResponse} from 'next/server';
 import {z} from "zod";
-import prisma from "@/utils/prisma";
+import prisma from "@/lib/db/prisma";
 import {
     validateParams,
     createResponse,

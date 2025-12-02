@@ -31,7 +31,7 @@ test.describe('Homepage', () => {
     );
 
     // Check that the page has a main element
-    const main = page.locator('main');
+    const main = page.locator('main').first();
     await expect(main).toBeVisible({ timeout: 5000 });
   });
 
@@ -42,7 +42,7 @@ test.describe('Homepage', () => {
     await page.waitForLoadState('domcontentloaded');
 
     // Check that main content is rendered
-    const main = page.locator('main');
+    const main = page.locator('main').first();
     await expect(main).toBeVisible({ timeout: 5000 });
   });
 

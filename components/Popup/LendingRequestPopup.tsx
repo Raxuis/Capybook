@@ -80,13 +80,16 @@ const LendingRequestPopup = ({
                     className="pointer-events-auto max-h-[90vh] w-full max-w-md overflow-y-auto rounded-lg bg-white shadow-xl">
                     {/* Header */}
                     <div className="flex items-center justify-between border-b p-6">
-                        <h2 className="text-xl font-semibold text-gray-900">
-                            Demande de prêt
-                        </h2>
-                        <p className="text-destructive-foreground text-sm">
-                            Vous pouvez accepter ou refuser cette demande. Si vous acceptez, le livre sera dans votre
-                            bibliothèque.
-                        </p>
+                        <div className="flex flex-col">
+                            <h2 className="text-xl font-semibold text-gray-900">
+                                Demande de prêt
+                            </h2>
+                            <p className="text-destructive-foreground mt-1 text-sm font-medium text-gray-600">
+                                Vous pouvez accepter ou refuser cette demande. Si vous acceptez, le livre sera dans
+                                votre
+                                bibliothèque.
+                            </p>
+                        </div>
                         <button
                             onClick={onClose}
                             className="rounded-full p-1 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"

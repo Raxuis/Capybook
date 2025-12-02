@@ -16,7 +16,7 @@ import {z} from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {useBooks} from "@/hooks/useBooks";
-import {PageNumberSchema} from "@/utils/zod";
+import {PageNumberSchema} from "@/lib/validators";
 
 export function PageNumberModal() {
     const {showPageNumberModal, setShowPageNumberModal, closeModal, bookId, bookKey} = usePageNumberModal();

@@ -62,9 +62,10 @@ const ProgressTracker = ({book, initialProgress = 0}: Props) => {
         try {
             const response = await updateBookProgress(book.key, progress);
             setIsDirty(false);
-            if (response?.status === 200 && response.data) {
-                if (response.data.badges.newBadgesCount > 0) {
-                    addBadges(response.data.badges.newBadges);
+            if (response && typeof response === 'object' && 'status' in response && 'data' in response) {
+                const axiosResponse = response as { status: number; data: { badges?: { newBadgesCount: number; newBadges: unknown[] } } };
+                if (axiosResponse.status === 200 && axiosResponse.data.badges && axiosResponse.data.badges.newBadgesCount > 0) {
+                    addBadges(axiosResponse.data.badges.newBadges as Array<{name: string; ownerDescription: string; publicDescription?: string; category: string; requirement?: number; icon: string}>);
                 }
             }
         } catch (error) {

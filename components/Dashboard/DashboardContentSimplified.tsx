@@ -2,13 +2,13 @@
 
 import {useState} from "react";
 import {useUser} from "@/hooks/useUser";
-import {Loader2, AlertCircle} from "lucide-react";
 import DashboardStats from "@/components/Dashboard/DashboardStats";
 import DashboardTabs from "@/components/Dashboard/DashboardTabs";
-import {fetchMoreBookInfos} from "@/actions/book";
+import {fetchMoreBookInfos} from "@/lib/services/book";
 import {MoreInfoBook, Book as BookType} from "@/types";
 import ReviewBookModal from "@/components/BookStore/Modals/ReviewBookModal";
 import BookModal from "@/components/Dashboard/Modals/BookModal/BookModal";
+import {LoadingState, ErrorState} from "@/components/common";
 
 export default function DashboardContentSimplified() {
     const {user, isError, isValidating, isLoading} = useUser();
@@ -18,29 +18,34 @@ export default function DashboardContentSimplified() {
 
     if (!user && (isLoading || isValidating)) {
         return (
-            <div className="flex min-h-screen flex-col items-center justify-center p-4">
-                <Loader2 className="text-primary mb-2 size-8 animate-spin"/>
-                <p className="text-muted-foreground">Chargement des données...</p>
-            </div>
+            <LoadingState
+                message="Chargement des données..."
+                className="min-h-screen"
+            />
         );
     }
 
     if (isError) {
         return (
-            <div className="flex min-h-screen flex-col items-center justify-center p-4">
-                <AlertCircle className="text-destructive mb-2 size-8"/>
-                <p className="font-medium">Erreur lors du chargement des données</p>
-                <p className="text-muted-foreground mt-1">Veuillez réessayer ultérieurement</p>
-            </div>
+            <ErrorState
+                title="Erreur lors du chargement des données"
+                message="Veuillez réessayer ultérieurement"
+                onRetry={() => window.location.reload()}
+                className="min-h-screen"
+            />
         );
     }
 
-    if (!user) return (
-        <div className="flex min-h-screen flex-col items-center justify-center p-4">
-            <AlertCircle className="mb-2 size-8 text-amber-500"/>
-            <p className="font-medium">Utilisateur non trouvé</p>
-        </div>
-    );
+    if (!user) {
+        return (
+            <ErrorState
+                title="Utilisateur non trouvé"
+                message="Impossible de charger les informations utilisateur"
+                variant="warning"
+                className="min-h-screen"
+            />
+        );
+    }
 
     const openBookModal = (book: BookType) => {
         setIsModalOpen(true);
@@ -54,15 +59,16 @@ export default function DashboardContentSimplified() {
 
         fetchMoreBookInfos(book.key)
             .then((bookInfos) => {
-                if (!bookInfos || bookInfos.error) {
+                if (!bookInfos || ('error' in bookInfos && bookInfos.error)) {
                     console.warn("Aucune information trouvée pour ce livre.");
                     return;
                 }
 
+                const book = bookInfos as MoreInfoBook;
                 setSelectedBook((prev) => ({
                     ...prev!,
-                    description: bookInfos.description?.value || "Aucune description disponible",
-                    subjects: bookInfos.subjects || [],
+                    description: book.description || "Aucune description disponible",
+                    subjects: book.subjects || [],
                 }));
             })
             .catch((error) => console.error("Erreur lors du chargement du livre :", error))
