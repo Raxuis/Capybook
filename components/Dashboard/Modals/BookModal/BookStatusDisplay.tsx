@@ -83,24 +83,23 @@ export const BookStatusDisplay = ({bookStatus}: BookStatusDisplayProps) => {
                                 <BookMarked className="size-3"/>
                                 En cours
                             </Badge>
-                        ) : inLibrary ?
-                            isBookFinishedInstance ? (
-                                <Badge
-                                    variant="secondary"
-                                    className="flex items-center gap-1.5 border border-emerald-200/60 bg-emerald-50 text-xs font-medium text-emerald-700"
-                                >
-                                    <BookCopy className="size-3"/>
-                                    Terminé
-                                </Badge>
-                            ) : (
-                                <Badge
-                                    variant="secondary"
-                                    className="flex items-center gap-1.5 border border-slate-200/60 bg-slate-100 text-xs font-medium text-slate-600"
-                                >
-                                    <BookCopy className="size-3"/>
-                                    Non commencé
-                                </Badge>
-                            ) : null}
+                        ) : isBookFinishedInstance ? (
+                            <Badge
+                                variant="secondary"
+                                className="flex items-center gap-1.5 border border-emerald-200/60 bg-emerald-50 text-xs font-medium text-emerald-700"
+                            >
+                                <BookCopy className="size-3"/>
+                                Terminé
+                            </Badge>
+                        ) : (
+                            <Badge
+                                variant="secondary"
+                                className="flex items-center gap-1.5 border border-slate-200/60 bg-slate-100 text-xs font-medium text-slate-600"
+                            >
+                                <BookCopy className="size-3"/>
+                                Non commencé
+                            </Badge>
+                        )}
                     </div>
                 </div>
             )}
