@@ -48,6 +48,7 @@ const ReviewsTab = memo<ReviewsTabProps>(({reviews}) => {
                         animate={{opacity: 1, y: 0}}
                         transition={{duration: 0.3, delay: index * 0.05}}
                         whileHover={{y: -2}}
+                        style={{transition: "transform 0.1s ease-out"}}
                         className="border-border bg-card rounded-lg border p-3 shadow-sm transition-all hover:shadow-md sm:p-4"
                     >
                         <div className="mb-2 flex flex-wrap items-start justify-between sm:flex-nowrap">

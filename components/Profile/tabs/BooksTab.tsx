@@ -28,6 +28,7 @@ const BooksTab = memo<BooksTabProps>(({books}) => {
                     animate={{opacity: 1, y: 0}}
                     transition={{duration: 0.3, delay: index * 0.05}}
                     whileHover={{y: -2}}
+                    style={{transition: "all 0.1s ease-out"}}
                     className="border-border bg-card flex flex-wrap items-center rounded-lg border p-3 shadow-sm transition-all hover:shadow-md sm:flex-nowrap sm:p-4"
                 >
                     <div className="bg-primary/10 mr-3 rounded-lg p-2 sm:mr-4 sm:p-3">

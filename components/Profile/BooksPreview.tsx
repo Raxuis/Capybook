@@ -34,6 +34,7 @@ const BooksPreview = memo<BooksPreviewProps>(({books, onViewAll}) => {
                         animate={{opacity: 1, y: 0}}
                         transition={{duration: 0.3, delay: index * 0.05}}
                         whileHover={{y: -2}}
+                        style={{transition: "transform 0.1s ease-out"}}
                         className="border-border bg-card flex flex-wrap items-center rounded-lg border p-3 shadow-sm transition-all hover:shadow-md sm:flex-nowrap sm:p-4"
                     >
                         <div className="bg-primary/10 mr-3 rounded-lg p-2 sm:mr-4 sm:p-3">
@@ -66,7 +67,7 @@ const BooksPreview = memo<BooksPreviewProps>(({books, onViewAll}) => {
                         initial={{opacity: 0}}
                         animate={{opacity: 1}}
                         transition={{duration: 0.3, delay: previewBooks.length * 0.1}}
-                        whileHover={{scale: 1.02}}
+                        style={{transition: "transform 0.1s ease-out"}}
                         onClick={onViewAll}
                         className="border-border bg-muted/30 text-primary hover:bg-muted/50 flex w-full items-center justify-center border-t py-3 text-center transition-colors"
                     >

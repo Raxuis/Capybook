@@ -53,7 +53,8 @@ const BadgesTab = memo<BadgesTabProps>(({badges, isOwner}) => {
                                 initial={{opacity: 0, scale: 0.9}}
                                 animate={{opacity: 1, scale: 1}}
                                 transition={{duration: 0.3, delay: (categoryIndex * 0.1) + (index * 0.05)}}
-                                whileHover={{scale: 1.05, y: -4}}
+                                whileHover={{y: -4}}
+                                style={{transition: "transform 0.1s ease-out"}}
                                 className="border-border bg-card flex flex-col items-center rounded-lg border p-3 shadow-sm transition-all hover:shadow-md sm:p-4"
                             >
                                 <div className="mb-2 text-3xl sm:mb-3 sm:text-4xl">{badge.icon || '🏆'}</div>

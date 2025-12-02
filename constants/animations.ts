@@ -29,8 +29,8 @@ const cardHover: Variants = {
         scale: 1.03,
         boxShadow: "0px 10px 20px rgba(0, 0, 0, 0.15)",
         transition: {
-            duration: 0.3,
-            ease: "easeInOut" as const
+            duration: 0.15,
+            ease: "easeOut" as const
         } as Transition
     }
 };
@@ -41,8 +41,8 @@ const mainTestimonialCardHover: Variants = {
         scale: 1.01,
         boxShadow: "0px 10px 20px rgba(0, 0, 0, 0.15)",
         transition: {
-            duration: 0.3,
-            ease: "easeInOut" as const
+            duration: 0.15,
+            ease: "easeOut" as const
         } as Transition
     }
 };

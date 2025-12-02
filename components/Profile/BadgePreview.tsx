@@ -28,7 +28,8 @@ const BadgePreview = memo<BadgePreviewProps>(({
                         initial={{opacity: 0, y: 20}}
                         animate={{opacity: 1, y: 0}}
                         transition={{duration: 0.3, delay: index * 0.1}}
-                        whileHover={{scale: 1.05, y: -4}}
+                        whileHover={{ y: -4}}
+                        style={{transition: "transform 0.1s ease-out"}}
                         className="border-border bg-card group col-span-4 flex w-full cursor-default flex-col items-center rounded-lg border p-3 shadow-sm transition-all hover:shadow-md sm:col-span-2 sm:p-4 md:col-span-1"
                         title={isOwner ? badge.ownerDescription : badge.publicDescription}
                     >
@@ -48,7 +49,7 @@ const BadgePreview = memo<BadgePreviewProps>(({
                         initial={{opacity: 0, y: 20}}
                         animate={{opacity: 1, y: 0}}
                         transition={{duration: 0.3, delay: previewBadges.length * 0.1}}
-                        whileHover={{scale: 1.05}}
+                        style={{transition: "transform 0.1s ease-out"}}
                         onClick={onViewAll}
                         className="border-border bg-muted/50 hover:bg-muted col-span-4 flex flex-col items-center justify-center rounded-lg border p-3 transition-all hover:shadow-sm sm:p-4"
                     >

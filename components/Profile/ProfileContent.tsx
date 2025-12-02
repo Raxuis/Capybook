@@ -120,21 +120,41 @@ const ProfileContent = ({username}: { username: string }) => {
     const {user, isOwner, stats, badges, detailedData, followers, following} = data;
 
     return (
-        <div className="container mx-auto max-w-5xl px-4 sm:px-6">
-            <ProfileHeader
-                user={user}
-                isOwner={isOwner}
-                badges={badges}
-                isFollowing={data.isFollowing}
-                isFollowingOrUnfollowing={isFollowingOrUnfollowing}
-                onEditProfile={handleEditProfile}
-                onFollowToggle={handleFollowToggle}
-            />
+        <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={{
+                hidden: { opacity: 0 },
+                visible: {
+                    opacity: 1,
+                    transition: {
+                        staggerChildren: 0.1,
+                        delayChildren: 0.1,
+                    },
+                },
+            }}
+            className="container mx-auto max-w-5xl px-4 sm:px-6"
+        >
+            <motion.div variants={{
+                hidden: { opacity: 0, y: 20 },
+                visible: { opacity: 1, y: 0 },
+            }}>
+                <ProfileHeader
+                    user={user}
+                    isOwner={isOwner}
+                    badges={badges}
+                    isFollowing={data.isFollowing}
+                    isFollowingOrUnfollowing={isFollowingOrUnfollowing}
+                    onEditProfile={handleEditProfile}
+                    onFollowToggle={handleFollowToggle}
+                />
+            </motion.div>
 
             <motion.div
-                initial={{opacity: 0, y: 20}}
-                animate={{opacity: 1, y: 0}}
-                transition={{duration: 0.5, delay: 0.2}}
+                variants={{
+                    hidden: { opacity: 0, y: 20 },
+                    visible: { opacity: 1, y: 0 },
+                }}
                 className="bg-card mb-32 overflow-hidden rounded-xl border shadow-lg"
             >
                 <Tabs defaultValue="overview" value={activeTab} onValueChange={handleTabChange} className="w-full">
@@ -265,7 +285,7 @@ const ProfileContent = ({username}: { username: string }) => {
                     }}
                 />
             )}
-        </div>
+        </motion.div>
     );
 };
 
