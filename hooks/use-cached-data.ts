@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { useOnlineStatus } from "./use-online-status";
 
 interface CacheOptions {
   ttl?: number; // Time to live in milliseconds
@@ -9,8 +8,8 @@ interface CacheOptions {
 }
 
 /**
- * Hook to fetch and cache data with offline support
- * Returns cached data when offline and refetches when online
+ * Hook to fetch and cache data
+ * Returns cached data as fallback when fetch fails
  */
 export function useCachedData<T>(
   key: string,
@@ -26,7 +25,6 @@ export function useCachedData<T>(
   const [data, setData] = useState<T | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-  const isOnline = useOnlineStatus();
 
   const { ttl = 5 * 60 * 1000, staleWhileRevalidate = true } = options;
 
@@ -83,13 +81,6 @@ export function useCachedData<T>(
 
     // Try to get cached data first
     const cached = getCachedData();
-    if (cached && !isOnline) {
-      // Offline - use cache
-      setData(cached);
-      setIsLoading(false);
-      return;
-    }
-
     if (cached && staleWhileRevalidate) {
       // Show cached data immediately
       setData(cached);
@@ -111,19 +102,11 @@ export function useCachedData<T>(
     } finally {
       setIsLoading(false);
     }
-  }, [key, fetcher, isOnline, getCachedData, setCachedData, staleWhileRevalidate]);
+  }, [key, fetcher, getCachedData, setCachedData, staleWhileRevalidate]);
 
   useEffect(() => {
     fetchData();
   }, [fetchData]);
-
-  // Refetch when coming back online
-  useEffect(() => {
-    if (isOnline && data) {
-      // Revalidate stale data
-      fetchData();
-    }
-  }, [isOnline]);
 
   return {
     data,

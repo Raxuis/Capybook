@@ -1,10 +1,8 @@
 "use client";
 
 import { ReactNode, useEffect } from "react";
-import { OfflineBanner } from "./OfflineBanner";
 import { UpdatePrompt } from "./UpdatePrompt";
 import { useSyncQueue } from "@/hooks/use-sync-queue";
-import { useOnlineStatus } from "@/hooks/use-online-status";
 
 const isProduction = process.env.NODE_ENV === "production";
 
@@ -14,13 +12,10 @@ interface PWAProviderProps {
 
 /**
  * Global PWA provider that handles:
- * - Offline/online status
  * - Sync queue management
  * - Service worker updates
- * - Offline banners
  */
 export function PWAProvider({ children }: PWAProviderProps) {
-  const isOnline = useOnlineStatus();
   const { processQueue } = useSyncQueue();
 
   // Unregister service workers in development to avoid 404 errors
@@ -47,22 +42,27 @@ export function PWAProvider({ children }: PWAProviderProps) {
     }
   }, []);
 
-  // Process sync queue when coming back online
+  // Process sync queue on mount and periodically
   useEffect(() => {
-    if (isOnline) {
-      // Small delay to ensure network is stable
-      const timeout = setTimeout(() => {
-        processQueue();
-      }, 1000);
+    // Process queue on mount
+    const timeout = setTimeout(() => {
+      processQueue();
+    }, 1000);
 
-      return () => clearTimeout(timeout);
-    }
-  }, [isOnline, processQueue]);
+    // Process queue periodically
+    const interval = setInterval(() => {
+      processQueue();
+    }, 30000); // Every 30 seconds
+
+    return () => {
+      clearTimeout(timeout);
+      clearInterval(interval);
+    };
+  }, [processQueue]);
 
   return (
     <>
       {children}
-      <OfflineBanner />
       <UpdatePrompt />
     </>
   );
