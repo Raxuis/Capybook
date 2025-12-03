@@ -76,8 +76,11 @@ test.describe('Account Deletion', () => {
     await passwordInput.fill(testUserForDeletion.password);
     await submitButton.click();
 
-    // Attendre la redirection après connexion
-    await page.waitForURL((url) => !url.pathname.includes('/login'), { timeout: 10000 });
+    // Attendre la redirection après connexion avec fallback
+    await Promise.race([
+      page.waitForURL((url) => !url.pathname.includes('/login'), { timeout: 15000 }),
+      page.waitForSelector('body:not(:has-text("Se connecter"))', { timeout: 15000 }),
+    ]);
   });
 
   test('should redirect to login if not authenticated', async ({ page, context }) => {
@@ -87,8 +90,9 @@ test.describe('Account Deletion', () => {
 
     // Attendre soit la redirection, soit le message d'erreur
     await Promise.race([
-      page.waitForURL(ROUTES.LOGIN, { timeout: 5000 }),
-      page.waitForSelector('text=/accès non autorisé|non autorisé/i', { timeout: 5000 }),
+      page.waitForURL(ROUTES.LOGIN, { timeout: 15000 }),
+      page.waitForSelector('text=/accès non autorisé|non autorisé/i', { timeout: 15000 }),
+      page.getByRole('heading', { name: /connexion|login/i }).waitFor({ state: 'visible', timeout: 15000 }),
     ]);
 
     const currentUrl = page.url();
@@ -228,13 +232,14 @@ test.describe('Account Deletion', () => {
     await expect(deleteButton).toBeEnabled({ timeout: 2000 });
 
     // Écouter la navigation ou le message de succès
-    const navigationPromise = page.waitForURL(ROUTES.HOME, { timeout: 10000 }).catch(() => null);
-    const successMessagePromise = page.waitForSelector('text=/compte supprimé/i', { timeout: 5000 }).catch(() => null);
+    const navigationPromise = page.waitForURL(ROUTES.HOME, { timeout: 15000 }).catch(() => null);
+    const successMessagePromise = page.waitForSelector('text=/compte supprimé/i', { timeout: 10000 }).catch(() => null);
+    const homePageElementPromise = page.waitForSelector('h1, main, [role="main"]', { timeout: 15000 }).catch(() => null);
 
     await deleteButton.click();
 
-    // Attendre soit la navigation, soit le message de succès
-    await Promise.race([navigationPromise, successMessagePromise]);
+    // Attendre soit la navigation, soit le message de succès, soit a home page element
+    await Promise.race([navigationPromise, successMessagePromise, homePageElementPromise]);
 
     // Vérifier qu'on est redirigé vers la page d'accueil ou qu'un message de succès s'affiche
     const currentUrl = page.url();

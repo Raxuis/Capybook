@@ -115,7 +115,7 @@ jobs:
       - name: Run E2E tests
         env:
           AUTH_URL: 'http://localhost:3000'
-          NODE_ENV: 'test'
+          NODE_ENV: 'production'
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET || 'test-secret-for-ci' }}
           NEXTAUTH_URL: 'http://localhost:3000'
@@ -145,6 +145,17 @@ jobs:
         with:
           name: playwright-screenshots
           path: test-results/**/*.png
+          retention-days: 7
+          if-no-files-found: ignore
+
+      - name: Upload server logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: server-logs
+          path: |
+            playwright-server.log
+            *.log
           retention-days: 7
           if-no-files-found: ignore
 

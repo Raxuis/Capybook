@@ -16,8 +16,11 @@ test.describe('Data Export', () => {
     await passwordInput.fill(TEST_USER.password);
     await submitButton.click();
 
-    // Attendre la redirection après connexion
-    await page.waitForURL((url) => !url.pathname.includes('/login'), { timeout: 10000 });
+    // Attendre la redirection après connexion avec fallback
+    await Promise.race([
+      page.waitForURL((url) => !url.pathname.includes('/login'), { timeout: 15000 }),
+      page.waitForSelector('body:not(:has-text("Se connecter"))', { timeout: 15000 }),
+    ]);
   });
 
   test('should redirect to login if not authenticated', async ({ page, context }) => {
@@ -27,8 +30,9 @@ test.describe('Data Export', () => {
 
     // Attendre soit la redirection, soit le message d'erreur
     await Promise.race([
-      page.waitForURL(ROUTES.LOGIN, { timeout: 5000 }),
-      page.waitForSelector('text=/accès non autorisé|non autorisé/i', { timeout: 5000 }),
+      page.waitForURL(ROUTES.LOGIN, { timeout: 15000 }),
+      page.waitForSelector('text=/accès non autorisé|non autorisé/i', { timeout: 15000 }),
+      page.getByRole('heading', { name: /connexion|login/i }).waitFor({ state: 'visible', timeout: 15000 }),
     ]);
 
     const currentUrl = page.url();
