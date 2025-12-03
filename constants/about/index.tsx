@@ -25,7 +25,7 @@ const faqs = [
     },
     {
         question: "Mes données sont-elles sécurisées ?",
-        answer: "Absolument. Nous utilisons les dernières technologies de cryptage et respectons scrupuleusement le RGPD pour protéger vos données personnelles.",
+        answer: "Absolument. Nous utilisons les dernières technologies de chiffrement et respectons scrupuleusement le RGPD pour protéger vos données personnelles.",
     },
     {
         question: "Comment contacter le support ?",

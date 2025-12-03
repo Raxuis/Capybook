@@ -69,14 +69,6 @@ const ChallengeCard = memo(({
                 isPast ? 'border-red-300 bg-red-50/30' : 'border-blue-200 bg-blue-50/20',
                 "active:scale-[0.98] touch-manipulation"
             )}>
-                {/* Indicateur de statut plus visible */}
-                <div className={cn(
-                    "h-2",
-                    isCompleted ? "bg-gradient-to-r from-green-400 to-green-500" :
-                        isPast ? "bg-gradient-to-r from-red-400 to-red-500" :
-                            "bg-gradient-to-r from-blue-400 to-blue-500"
-                )}></div>
-
                 <CardHeader className="pb-3">
                     <div className="flex items-start justify-between">
                         <div className="flex min-w-0 flex-1 items-center space-x-3">
@@ -88,7 +80,7 @@ const ChallengeCard = memo(({
                                     {challenge.target} {getChallengeTypeText(challenge.type)}
                                 </CardTitle>
                                 <CardDescription className="mt-1 text-sm text-gray-600">
-                                    {isPast ? 'Terminé' : 'À compléter'} d&#39;ici le{' '}
+                                    {isPast ? 'Terminé' : 'À compléter d\'ici '} le{' '}
                                     <span className="font-medium">
                                         {format(new Date(challenge.deadline), 'dd MMMM yyyy', {locale: fr})}
                                     </span>
