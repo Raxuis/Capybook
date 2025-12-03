@@ -150,7 +150,7 @@ export function CookieConsentBanner() {
                             </ul>
                         </div>
 
-                        {/* Cookies d'analyse */}
+                        {/* Cookies d&apos;analyse */}
                         <div className="space-y-2">
                             <div className="flex items-center justify-between">
                                 <div>

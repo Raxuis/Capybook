@@ -53,13 +53,13 @@ export default function LegalNoticePage() {
         <section className="mb-8">
           <h2 className="text-2xl font-semibold mb-4">4. Propriété intellectuelle</h2>
           <p>
-            L'ensemble de ce site relève de la législation française et internationale sur le droit d'auteur
+            L&apos;ensemble de ce site relève de la législation française et internationale sur le droit d&apos;auteur
             et la propriété intellectuelle. Tous les droits de reproduction sont réservés, y compris pour les
             documents téléchargeables et les représentations iconographiques et photographiques.
           </p>
           <p className="mt-4">
-            La reproduction de tout ou partie de ce site sur un support électronique quel qu'il soit est formellement
-            interdite sauf autorisation expresse de l'éditeur.
+            La reproduction de tout ou partie de ce site sur un support électronique quel qu&apos;il soit est formellement
+            interdite sauf autorisation expresse de l&apos;éditeur.
           </p>
           <p className="mt-4">
             Les marques, logos et autres signes distinctifs présents sur le site sont la propriété de leurs
@@ -70,9 +70,9 @@ export default function LegalNoticePage() {
         <section className="mb-8">
           <h2 className="text-2xl font-semibold mb-4">5. Données de livres</h2>
           <p>
-            Les données de livres (titres, auteurs, couvertures, descriptions) proviennent de l'API publique
-            d'Open Library, un projet de l'Internet Archive. Ces données sont utilisées conformément aux
-            conditions d'utilisation d'Open Library.
+            Les données de livres (titres, auteurs, couvertures, descriptions) proviennent de l&apos;API publique
+            d&apos;Open Library, un projet de l&apos;Internet Archive. Ces données sont utilisées conformément aux
+            conditions d&apos;utilisation d&apos;Open Library.
           </p>
           <p className="mt-4">
             <strong>Open Library</strong> : <a href="https://openlibrary.org" target="_blank" rel="noopener noreferrer" className="text-primary underline">openlibrary.org</a>
@@ -82,21 +82,21 @@ export default function LegalNoticePage() {
         <section className="mb-8">
           <h2 className="text-2xl font-semibold mb-4">6. Responsabilité</h2>
           <p>
-            L'éditeur s'efforce d'assurer l'exactitude et la mise à jour des informations diffusées sur le site,
+            L&apos;éditeur s&apos;efforce d&apos;assurer l&apos;exactitude et la mise à jour des informations diffusées sur le site,
             dont il se réserve le droit de corriger, à tout moment et sans préavis, le contenu.
           </p>
           <p className="mt-4">
-            Toutefois, l'éditeur ne peut garantir l'exactitude, la précision ou l'exhaustivité des informations
-            mises à disposition sur ce site. En conséquence, l'éditeur décline toute responsabilité :
+            Toutefois, l&apos;éditeur ne peut garantir l&apos;exactitude, la précision ou l&apos;exhaustivité des informations
+            mises à disposition sur ce site. En conséquence, l&apos;éditeur décline toute responsabilité :
           </p>
           <ul className="list-disc pl-6 mb-4">
             <li>pour toute interruption du site</li>
             <li>pour toute survenance de bugs</li>
             <li>pour toute erreur ou omission portant sur des informations disponibles sur le site</li>
-            <li>pour tout dommage résultant d'une intrusion frauduleuse d'un tiers ayant entraîné une modification
+            <li>pour tout dommage résultant d&apos;une intrusion frauduleuse d&apos;un tiers ayant entraîné une modification
                 des informations mises à disposition sur le site</li>
-            <li>et plus généralement pour tout dommage, direct ou indirect, quelles qu'en soient les causes, origines,
-                nature ou conséquences, provoqué à raison de l'accès de quiconque au site ou de l'impossibilité d'y accéder</li>
+            <li>et plus généralement pour tout dommage, direct ou indirect, quelles qu&apos;en soient les causes, origines,
+                nature ou conséquences, provoqué à raison de l&apos;accès de quiconque au site ou de l&apos;impossibilité d&apos;y accéder</li>
           </ul>
         </section>
 
@@ -108,8 +108,8 @@ export default function LegalNoticePage() {
           </p>
           <p className="mt-4">
             Il est possible de créer un lien vers la page de présentation de ce site sans autorisation expresse
-            de l'éditeur. Aucune autorisation ni demande d'information préalable ne peut être exigée par l'éditeur
-            à l'égard d'un site qui souhaite établir un lien vers le site de l'éditeur. Il convient toutefois
+            de l&apos;éditeur. Aucune autorisation ni demande d&apos;information préalable ne peut être exigée par l&apos;éditeur
+            à l&apos;égard d&apos;un site qui souhaite établir un lien vers le site de l&apos;éditeur. Il convient toutefois
             d'afficher ce site dans une nouvelle fenêtre du navigateur.
           </p>
         </section>
@@ -117,9 +117,9 @@ export default function LegalNoticePage() {
         <section className="mb-8">
           <h2 className="text-2xl font-semibold mb-4">8. Protection des données personnelles</h2>
           <p>
-            Conformément à la loi "Informatique et Libertés" du 6 janvier 1978 modifiée et au Règlement Général
-            sur la Protection des Données (RGPD), vous disposez d'un droit d'accès, de rectification, de suppression
-            et d'opposition aux données personnelles vous concernant.
+            Conformément à la loi &quot;Informatique et Libertés&quot; du 6 janvier 1978 modifiée et au Règlement Général
+            sur la Protection des Données (RGPD), vous disposez d&apos;un droit d&apos;accès, de rectification, de suppression
+            et d&apos;opposition aux données personnelles vous concernant.
           </p>
           <p className="mt-4">
             Pour plus d'informations, consultez notre <a href="/privacy" className="text-primary underline">Politique de Confidentialité</a>.
@@ -127,20 +127,20 @@ export default function LegalNoticePage() {
         </section>
 
         <section className="mb-8">
-          <h2 className="text-2xl font-semibold mb-4">9. Conditions d'utilisation</h2>
+          <h2 className="text-2xl font-semibold mb-4">9. Conditions d&apos;utilisation</h2>
           <p>
-            L'utilisation du site implique l'acceptation pleine et entière des conditions générales d'utilisation
-            décrites ci-après. Ces conditions d'utilisation sont susceptibles d'être modifiées ou complétées à tout moment.
+            L&apos;utilisation du site implique l&apos;acceptation pleine et entière des conditions générales d&apos;utilisation
+            décrites ci-après. Ces conditions d&apos;utilisation sont susceptibles d&apos;être modifiées ou complétées à tout moment.
           </p>
           <p className="mt-4">
-            Pour plus d'informations, consultez nos <a href="/terms" className="text-primary underline">Conditions Générales d'Utilisation</a>.
+            Pour plus d&apos;informations, consultez nos <a href="/terms" className="text-primary underline">Conditions Générales d&apos;Utilisation</a>.
           </p>
         </section>
 
         <section className="mb-8">
           <h2 className="text-2xl font-semibold mb-4">10. Droit applicable</h2>
           <p>
-            Les présentes mentions légales sont régies par le droit français. En cas de litige et à défaut d'accord
+            Les présentes mentions légales sont régies par le droit français. En cas de litige et à défaut d&apos;accord
             amiable, le litige sera porté devant les tribunaux français conformément aux règles de compétence en vigueur.
           </p>
         </section>

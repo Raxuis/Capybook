@@ -22,10 +22,10 @@ export default function CookiesPolicyPage() {
         </p>
 
         <section className="mb-8">
-          <h2 className="text-2xl font-semibold mb-4">1. Qu'est-ce qu'un cookie ?</h2>
+          <h2 className="text-2xl font-semibold mb-4">1. Qu&apos;est-ce qu&apos;un cookie ?</h2>
           <p>
             Un cookie est un petit fichier texte déposé sur votre terminal (ordinateur, tablette, smartphone)
-            lors de la visite d'un site web. Il permet au site de reconnaître votre navigateur et de mémoriser
+            lors de la visite d&apos;un site web. Il permet au site de reconnaître votre navigateur et de mémoriser
             certaines informations vous concernant.
           </p>
         </section>
@@ -35,7 +35,7 @@ export default function CookiesPolicyPage() {
 
           <h3 className="text-xl font-semibold mb-3 mt-6">2.1. Cookies strictement nécessaires</h3>
           <p>
-            Ces cookies sont indispensables au fonctionnement de l'application et ne peuvent pas être désactivés.
+            Ces cookies sont indispensables au fonctionnement de l&apos;application et ne peuvent pas être désactivés.
             Ils sont généralement définis en réponse à des actions que vous effectuez et qui équivalent à une demande
             de services, comme définir vos préférences de confidentialité, vous connecter ou remplir des formulaires.
           </p>
@@ -64,7 +64,7 @@ export default function CookiesPolicyPage() {
             </table>
           </div>
 
-          <h3 className="text-xl font-semibold mb-3 mt-6">2.2. Cookies de performance et d'analyse</h3>
+          <h3 className="text-xl font-semibold mb-3 mt-6">2.2. Cookies de performance et d&apos;analyse</h3>
           <p>
             Ces cookies nous permettent de comprendre comment les visiteurs interagissent avec notre application
             en collectant et en rapportant des informations de manière anonyme. Ils nous aident à améliorer le
@@ -105,7 +105,7 @@ export default function CookiesPolicyPage() {
         <section className="mb-8">
           <h2 className="text-2xl font-semibold mb-4">3. Cookies tiers</h2>
           <p>
-            Capybook n'utilise pas de cookies de réseaux sociaux ou de publicité. Nous n'intégrons pas de
+            Capybook n&apos;utilise pas de cookies de réseaux sociaux ou de publicité. Nous n&apos;intégrons pas de
             services publicitaires tiers qui déposeraient des cookies de tracking.
           </p>
         </section>
@@ -144,7 +144,7 @@ export default function CookiesPolicyPage() {
           <p>Les cookies sont conservés pour les durées suivantes :</p>
           <ul className="list-disc pl-6 mb-4">
             <li><strong>Cookies de session</strong> : supprimés à la fermeture du navigateur</li>
-            <li><strong>Cookies d'authentification</strong> : 30 jours maximum</li>
+            <li><strong>Cookies d&apos;authentification</strong> : 30 jours maximum</li>
             <li><strong>Cookies de consentement</strong> : 13 mois maximum (conformément aux recommandations CNIL)</li>
             <li><strong>Cookies de monitoring (Sentry)</strong> : 90 jours maximum</li>
           </ul>

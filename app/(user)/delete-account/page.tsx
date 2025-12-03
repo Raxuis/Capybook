@@ -269,7 +269,7 @@ export default function DeleteAccountPage() {
             <ul className="text-sm text-muted-foreground list-disc pl-6 space-y-1">
               <li>Accéder à vos données personnelles</li>
               <li>Rectifier vos données</li>
-              <li>Supprimer vos données (droit à l'effacement)</li>
+              <li>Supprimer vos données (droit à l&apos;effacement)</li>
               <li>Demander la portabilité de vos données</li>
               <li>Vous opposer au traitement de vos données</li>
             </ul>

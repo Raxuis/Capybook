@@ -26,7 +26,7 @@ export default function PrivacyPolicyPage() {
         <section className="mb-8">
           <h2 className="text-2xl font-semibold mb-4">1. Introduction</h2>
           <p>
-            La présente Politique de Confidentialité décrit la manière dont Capybook ("nous", "notre", "l'application")
+            La présente Politique de Confidentialité décrit la manière dont Capybook (&quot;nous&quot;, &quot;notre&quot;, &quot;l&apos;application&quot;)
             collecte, utilise, stocke et protège vos données personnelles lorsque vous utilisez notre application web
             de suivi de lecture accessible à l'adresse <strong>{baseUrl}</strong>.
           </p>
@@ -36,7 +36,7 @@ export default function PrivacyPolicyPage() {
             communauté de lecteurs.
           </p>
           <p>
-            En utilisant Capybook, vous acceptez les pratiques décrites dans cette politique. Si vous n'acceptez pas
+            En utilisant Capybook, vous acceptez les pratiques décrites dans cette politique. Si vous n&apos;acceptez pas
             cette politique, veuillez ne pas utiliser notre application.
           </p>
         </section>
@@ -56,14 +56,14 @@ export default function PrivacyPolicyPage() {
         <section className="mb-8">
           <h2 className="text-2xl font-semibold mb-4">3. Données Collectées</h2>
 
-          <h3 className="text-xl font-semibold mb-3 mt-6">3.1. Données d'identification</h3>
+          <h3 className="text-xl font-semibold mb-3 mt-6">3.1. Données d&apos;identification</h3>
           <ul className="list-disc pl-6 mb-4">
             <li><strong>Email</strong> : collecté lors de l'inscription, utilisé pour l'authentification et la communication</li>
-            <li><strong>Nom d'utilisateur</strong> : collecté lors de l'inscription, visible publiquement sur votre profil</li>
+            <li><strong>Nom d&apos;utilisateur</strong> : collecté lors de l&apos;inscription, visible publiquement sur votre profil</li>
             <li><strong>Nom complet</strong> : optionnel, peut être ajouté à votre profil</li>
             <li><strong>Mot de passe</strong> : stocké de manière sécurisée (hashé avec bcrypt), jamais accessible en clair</li>
             <li><strong>Photo de profil</strong> : optionnelle, stockée si vous en uploadez une</li>
-            <li><strong>Couleur favorite</strong> : préférence de personnalisation de l'interface</li>
+            <li><strong>Couleur favorite</strong> : préférence de personnalisation de l&apos;interface</li>
           </ul>
 
           <h3 className="text-xl font-semibold mb-3 mt-6">3.2. Données de lecture</h3>
@@ -80,13 +80,13 @@ export default function PrivacyPolicyPage() {
           <h3 className="text-xl font-semibold mb-3 mt-6">3.3. Données sociales</h3>
           <ul className="list-disc pl-6 mb-4">
             <li><strong>Relations de suivi</strong> : utilisateurs que vous suivez et qui vous suivent</li>
-            <li><strong>Demandes de prêt</strong> : demandes d'emprunt et de prêt de livres entre utilisateurs</li>
+            <li><strong>Demandes de prêt</strong> : demandes d&apos;emprunt et de prêt de livres entre utilisateurs</li>
             <li><strong>Vues du livre du jour</strong> : historique des livres du jour que vous avez consultés</li>
           </ul>
 
           <h3 className="text-xl font-semibold mb-3 mt-6">3.4. Données techniques</h3>
           <ul className="list-disc pl-6 mb-4">
-            <li><strong>Cookies de session</strong> : cookies nécessaires à l'authentification (durée : 30 jours)</li>
+            <li><strong>Cookies de session</strong> : cookies nécessaires à l&apos;authentification (durée : 30 jours)</li>
             <li><strong>Données de navigation</strong> : collectées par Sentry pour le monitoring des erreurs (avec votre consentement)</li>
             <li><strong>Adresse IP</strong> : collectée automatiquement par le serveur pour des raisons de sécurité</li>
             <li><strong>User-Agent</strong> : type de navigateur et système d'exploitation</li>
@@ -98,7 +98,7 @@ export default function PrivacyPolicyPage() {
           <p>Vos données personnelles sont traitées pour les finalités suivantes :</p>
           <ul className="list-disc pl-6 mb-4">
             <li><strong>Gestion de votre compte</strong> : création, authentification, gestion du profil</li>
-            <li><strong>Fonctionnalités de l'application</strong> : suivi de lecture, gestion de bibliothèque, statistiques</li>
+            <li><strong>Fonctionnalités de l&apos;application</strong> : suivi de lecture, gestion de bibliothèque, statistiques</li>
             <li><strong>Interactions sociales</strong> : suivi d'autres utilisateurs, partage d'avis, système de prêt</li>
             <li><strong>Personnalisation</strong> : recommandations de livres, livre du jour personnalisé</li>
             <li><strong>Sécurité</strong> : prévention de la fraude, protection contre les abus</li>
@@ -111,7 +111,7 @@ export default function PrivacyPolicyPage() {
           <h2 className="text-2xl font-semibold mb-4">5. Base Légale du Traitement</h2>
           <p>Le traitement de vos données personnelles est basé sur :</p>
           <ul className="list-disc pl-6 mb-4">
-            <li><strong>Exécution d'un contrat</strong> : données nécessaires à la fourniture du service (email, mot de passe, données de lecture)</li>
+            <li><strong>Exécution d&apos;un contrat</strong> : données nécessaires à la fourniture du service (email, mot de passe, données de lecture)</li>
             <li><strong>Consentement</strong> : pour les cookies non essentiels et le monitoring via Sentry</li>
             <li><strong>Intérêt légitime</strong> : amélioration du service, sécurité, prévention de la fraude</li>
             <li><strong>Obligation légale</strong> : conservation de certaines données pour répondre aux obligations légales</li>
@@ -122,15 +122,15 @@ export default function PrivacyPolicyPage() {
           <h2 className="text-2xl font-semibold mb-4">6. Conservation des Données</h2>
           <p>Vos données sont conservées pour les durées suivantes :</p>
           <ul className="list-disc pl-6 mb-4">
-            <li><strong>Données de compte</strong> : jusqu'à la suppression de votre compte ou 3 ans d'inactivité</li>
-            <li><strong>Données de lecture</strong> : jusqu'à la suppression de votre compte</li>
+            <li><strong>Données de compte</strong> : jusqu&apos;à la suppression de votre compte ou 3 ans d&apos;inactivité</li>
+            <li><strong>Données de lecture</strong> : jusqu&apos;à la suppression de votre compte</li>
             <li><strong>Cookies de session</strong> : 30 jours maximum</li>
             <li><strong>Données de monitoring (Sentry)</strong> : 90 jours maximum</li>
             <li><strong>Logs serveur</strong> : 12 mois maximum</li>
             <li><strong>Données à caractère probatoire</strong> : conformément aux obligations légales (généralement 5 ans)</li>
           </ul>
           <p>
-            À l'expiration de ces durées, vos données sont supprimées de manière sécurisée, sauf si une obligation
+            À l&apos;expiration de ces durées, vos données sont supprimées de manière sécurisée, sauf si une obligation
             légale impose une conservation plus longue.
           </p>
         </section>
@@ -143,7 +143,7 @@ export default function PrivacyPolicyPage() {
             Certaines de vos données sont visibles publiquement sur votre profil :
           </p>
           <ul className="list-disc pl-6 mb-4">
-            <li>Nom d'utilisateur</li>
+            <li>Nom d&apos;utilisateur</li>
             <li>Photo de profil (si vous en avez une)</li>
             <li>Avis publics que vous publiez</li>
             <li>Statistiques de lecture (si vous les partagez)</li>
@@ -152,7 +152,7 @@ export default function PrivacyPolicyPage() {
           <h3 className="text-xl font-semibold mb-3 mt-6">7.2. Sous-traitants</h3>
           <p>Nous partageons vos données avec les sous-traitants suivants :</p>
           <ul className="list-disc pl-6 mb-4">
-            <li><strong>Vercel</strong> : hébergement de l'application (États-Unis - conforme au Privacy Shield)</li>
+            <li><strong>Vercel</strong> : hébergement de l&apos;application (États-Unis - conforme au Privacy Shield)</li>
             <li><strong>PostgreSQL/Neon</strong> : base de données (localisation selon votre région)</li>
             <li><strong>Sentry</strong> : monitoring et gestion des erreurs (États-Unis - avec votre consentement)</li>
             <li><strong>Open Library</strong> : récupération des données de livres (API publique, aucune donnée personnelle transmise)</li>
@@ -164,7 +164,7 @@ export default function PrivacyPolicyPage() {
 
           <h3 className="text-xl font-semibold mb-3 mt-6">7.3. Transferts hors UE</h3>
           <p>
-            Certains de nos sous-traitants sont situés hors de l'Union Européenne. Dans ce cas, nous nous assurons
+            Certains de nos sous-traitants sont situés hors de l&apos;Union Européenne. Dans ce cas, nous nous assurons
             que des garanties appropriées sont en place (clauses contractuelles types, Privacy Shield, etc.).
           </p>
         </section>
@@ -190,7 +190,7 @@ export default function PrivacyPolicyPage() {
           </div>
 
           <div className="bg-muted p-4 rounded-lg my-4">
-            <h3 className="text-xl font-semibold mb-3">8.3. Droit à l'effacement</h3>
+            <h3 className="text-xl font-semibold mb-3">8.3. Droit à l&apos;effacement</h3>
             <p>
               Vous pouvez demander la suppression de votre compte et de toutes vos données personnelles.
               Vous pouvez faire cette demande depuis la page <a href="/delete-account" className="text-primary underline">Suppression de compte</a>.
@@ -206,7 +206,7 @@ export default function PrivacyPolicyPage() {
           </div>
 
           <div className="bg-muted p-4 rounded-lg my-4">
-            <h3 className="text-xl font-semibold mb-3">8.5. Droit d'opposition</h3>
+            <h3 className="text-xl font-semibold mb-3">8.5. Droit d&apos;opposition</h3>
             <p>
               Vous pouvez vous opposer au traitement de vos données pour des motifs légitimes, notamment
               pour le monitoring via Sentry (vous pouvez retirer votre consentement dans les paramètres).
@@ -222,7 +222,7 @@ export default function PrivacyPolicyPage() {
 
           <p className="mt-4">
             Pour exercer ces droits, contactez-nous à <strong>raxuis@proton.me</strong>. Nous répondrons à votre
-            demande dans un délai d'un mois maximum.
+            demande dans un délai d&apos;un mois maximum.
           </p>
         </section>
 
@@ -251,11 +251,11 @@ export default function PrivacyPolicyPage() {
         <section className="mb-8">
           <h2 className="text-2xl font-semibold mb-4">11. Mineurs</h2>
           <p>
-            Capybook n'est pas destiné aux personnes de moins de 16 ans. Si vous avez moins de 16 ans,
-            vous devez obtenir l'autorisation de vos parents ou tuteurs légaux avant d'utiliser l'application.
+            Capybook n&apos;est pas destiné aux personnes de moins de 16 ans. Si vous avez moins de 16 ans,
+            vous devez obtenir l&apos;autorisation de vos parents ou tuteurs légaux avant d&apos;utiliser l&apos;application.
           </p>
           <p>
-            Si nous apprenons qu'un mineur de moins de 16 ans a fourni des données personnelles sans autorisation,
+            Si nous apprenons qu&apos;un mineur de moins de 16 ans a fourni des données personnelles sans autorisation,
             nous supprimerons ces données dans les plus brefs délais.
           </p>
         </section>
@@ -264,7 +264,7 @@ export default function PrivacyPolicyPage() {
           <h2 className="text-2xl font-semibold mb-4">12. Modifications de la Politique</h2>
           <p>
             Nous pouvons modifier cette politique de confidentialité à tout moment. Les modifications importantes
-            vous seront notifiées par email ou via une notification dans l'application. La date de dernière mise
+            vous seront notifiées par email ou via une notification dans l&apos;application. La date de dernière mise
             à jour est indiquée en haut de cette page.
           </p>
         </section>
@@ -273,10 +273,10 @@ export default function PrivacyPolicyPage() {
           <h2 className="text-2xl font-semibold mb-4">13. Réclamation</h2>
           <p>
             Si vous estimez que le traitement de vos données personnelles constitue une violation du RGPD,
-            vous avez le droit d'introduire une réclamation auprès de l'autorité de contrôle compétente :
+            vous avez le droit d&apos;introduire une réclamation auprès de l&apos;autorité de contrôle compétente :
           </p>
           <div className="bg-muted p-4 rounded-lg my-4">
-            <p className="mb-2"><strong>CNIL (Commission Nationale de l'Informatique et des Libertés)</strong></p>
+            <p className="mb-2"><strong>CNIL (Commission Nationale de l&apos;Informatique et des Libertés)</strong></p>
             <p className="mb-2">3 Place de Fontenoy - TSA 80715</p>
             <p className="mb-2">75334 PARIS CEDEX 07</p>
             <p className="mb-2">Téléphone : 01 53 73 22 22</p>
