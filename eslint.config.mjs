@@ -22,6 +22,7 @@ export default [
     {
         rules: {
             "tailwindcss/no-custom-classname": "off",
+            "react/no-unescaped-entities": 0
         },
         settings: {
             tailwindcss: {
