@@ -13,27 +13,53 @@ test.describe('Account Deletion', () => {
 
   test.beforeAll(async () => {
     // Créer ou mettre à jour un utilisateur de test pour la suppression
-    if (process.env.DATABASE_URL) {
-      try {
-        const hashedPassword = await saltAndHashPassword(testUserForDeletion.password);
-        await prisma.user.upsert({
-          where: { email: testUserForDeletion.email },
-          update: {
-            password: hashedPassword,
-            username: testUserForDeletion.username,
-          },
-          create: {
-            email: testUserForDeletion.email,
-            username: testUserForDeletion.username,
-            password: hashedPassword,
-            role: 'USER',
-          },
-        });
-      } catch (error) {
+    if (!process.env.DATABASE_URL) {
+      return;
+    }
+
+    // Check if database is available
+    let dbAvailable = false;
+    try {
+      await prisma.$connect();
+      await prisma.$queryRaw`SELECT 1`;
+      dbAvailable = true;
+    } catch (error) {
+      console.warn('[account-deletion] Database not available, skipping test user setup');
+      return;
+    } finally {
+      await prisma.$disconnect().catch(() => {
+        // Ignore disconnect errors
+      });
+    }
+
+    if (!dbAvailable) {
+      return;
+    }
+
+    try {
+      const hashedPassword = await saltAndHashPassword(testUserForDeletion.password);
+      await prisma.user.upsert({
+        where: { email: testUserForDeletion.email },
+        update: {
+          password: hashedPassword,
+          username: testUserForDeletion.username,
+        },
+        create: {
+          email: testUserForDeletion.email,
+          username: testUserForDeletion.username,
+          password: hashedPassword,
+          role: 'USER',
+        },
+      });
+    } catch (error: any) {
+      // Only log if it's not a connection error (already handled above)
+      if (error?.code !== 'P1001') {
         console.error('Error setting up test user for deletion:', error);
-      } finally {
-        await prisma.$disconnect();
       }
+    } finally {
+      await prisma.$disconnect().catch(() => {
+        // Ignore disconnect errors
+      });
     }
   });
 
@@ -148,22 +174,45 @@ test.describe('Account Deletion', () => {
   test('should delete account when confirmed', async ({ page }) => {
     // Recréer l'utilisateur avant le test de suppression
     if (process.env.DATABASE_URL) {
+      // Check if database is available
+      let dbAvailable = false;
       try {
-        const hashedPassword = await saltAndHashPassword(testUserForDeletion.password);
-        await prisma.user.upsert({
-          where: { email: testUserForDeletion.email },
-          update: { password: hashedPassword },
-          create: {
-            email: testUserForDeletion.email,
-            username: testUserForDeletion.username,
-            password: hashedPassword,
-            role: 'USER',
-          },
-        });
+        await prisma.$connect();
+        await prisma.$queryRaw`SELECT 1`;
+        dbAvailable = true;
       } catch (error) {
-        console.error('Error recreating test user:', error);
+        // Database not available, skip user recreation but continue test
+        // (user might already exist from beforeAll)
       } finally {
-        await prisma.$disconnect();
+        await prisma.$disconnect().catch(() => {
+          // Ignore disconnect errors
+        });
+      }
+
+      if (dbAvailable) {
+        try {
+          const hashedPassword = await saltAndHashPassword(testUserForDeletion.password);
+          await prisma.user.upsert({
+            where: { email: testUserForDeletion.email },
+            update: { password: hashedPassword },
+            create: {
+              email: testUserForDeletion.email,
+              username: testUserForDeletion.username,
+              password: hashedPassword,
+              role: 'USER',
+            },
+          });
+        } catch (error: any) {
+          // Only log if it's not a connection error
+          if (error?.code !== 'P1001') {
+            console.error('Error recreating test user:', error);
+          }
+          // Continue test anyway (user might already exist)
+        } finally {
+          await prisma.$disconnect().catch(() => {
+            // Ignore disconnect errors
+          });
+        }
       }
     }
 
