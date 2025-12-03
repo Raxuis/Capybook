@@ -5,11 +5,11 @@ test.describe('Cookie Consent Banner', () => {
   test('should display cookie banner on first visit', async ({ page, context }) => {
     // Nettoyer le localStorage et les cookies avant le test
     await context.clearCookies();
-    await page.goto(ROUTES.HOME, { waitUntil: 'networkidle' });
+    await page.goto(ROUTES.HOME, { waitUntil: 'load' });
 
     // Attendre que le bandeau soit visible (il peut prendre un peu de temps à s'afficher)
     const cookieBanner = page.getByText('Nous utilisons des cookies', { exact: false });
-    await expect(cookieBanner).toBeVisible({ timeout: 10000 });
+    await expect(cookieBanner).toBeVisible({ timeout: 5000 });
 
     // Vérifier la présence des boutons
     await expect(page.getByRole('button', { name: 'Tout accepter' })).toBeVisible({ timeout: 5000 });
@@ -20,11 +20,11 @@ test.describe('Cookie Consent Banner', () => {
   test('should not display banner after accepting cookies', async ({ page, context }) => {
     // Nettoyer le localStorage et les cookies
     await context.clearCookies();
-    await page.goto(ROUTES.HOME, { waitUntil: 'networkidle' });
+    await page.goto(ROUTES.HOME, { waitUntil: 'load' });
 
     // Attendre que le bandeau soit visible
     const cookieBanner = page.getByText('Nous utilisons des cookies', { exact: false });
-    await expect(cookieBanner).toBeVisible({ timeout: 10000 });
+    await expect(cookieBanner).toBeVisible({ timeout: 5000 });
 
     // Accepter tous les cookies
     const acceptButton = page.getByRole('button', { name: 'Tout accepter' });
@@ -34,7 +34,7 @@ test.describe('Cookie Consent Banner', () => {
     await expect(cookieBanner).not.toBeVisible({ timeout: 5000 });
 
     // Recharger la page
-    await page.reload({ waitUntil: 'networkidle' });
+    await page.reload({ waitUntil: 'load' });
 
     // Vérifier que le bandeau ne réapparaît pas
     await expect(cookieBanner).not.toBeVisible({ timeout: 3000 });
@@ -43,11 +43,11 @@ test.describe('Cookie Consent Banner', () => {
   test('should not display banner after rejecting cookies', async ({ page, context }) => {
     // Nettoyer le localStorage et les cookies
     await context.clearCookies();
-    await page.goto(ROUTES.HOME, { waitUntil: 'networkidle' });
+    await page.goto(ROUTES.HOME, { waitUntil: 'load' });
 
     // Attendre que le bandeau soit visible
     const cookieBanner = page.getByText('Nous utilisons des cookies', { exact: false });
-    await expect(cookieBanner).toBeVisible({ timeout: 10000 });
+    await expect(cookieBanner).toBeVisible({ timeout: 5000 });
 
     // Refuser tous les cookies
     const rejectButton = page.getByRole('button', { name: 'Refuser' });
@@ -57,7 +57,7 @@ test.describe('Cookie Consent Banner', () => {
     await expect(cookieBanner).not.toBeVisible({ timeout: 5000 });
 
     // Recharger la page
-    await page.reload({ waitUntil: 'networkidle' });
+    await page.reload({ waitUntil: 'load' });
 
     // Vérifier que le bandeau ne réapparaît pas
     await expect(cookieBanner).not.toBeVisible({ timeout: 3000 });
@@ -66,11 +66,11 @@ test.describe('Cookie Consent Banner', () => {
   test('should open settings modal when clicking customize', async ({ page, context }) => {
     // Nettoyer le localStorage et les cookies
     await context.clearCookies();
-    await page.goto(ROUTES.HOME, { waitUntil: 'networkidle' });
+    await page.goto(ROUTES.HOME, { waitUntil: 'load' });
 
     // Attendre que le bandeau soit visible
     const cookieBanner = page.getByText('Nous utilisons des cookies', { exact: false });
-    await expect(cookieBanner).toBeVisible({ timeout: 10000 });
+    await expect(cookieBanner).toBeVisible({ timeout: 5000 });
 
     // Cliquer sur personnaliser
     const customizeButton = page.getByRole('button', { name: 'Personnaliser' });
@@ -87,11 +87,11 @@ test.describe('Cookie Consent Banner', () => {
   test('should save preferences when clicking save in settings', async ({ page, context }) => {
     // Nettoyer le localStorage et les cookies
     await context.clearCookies();
-    await page.goto(ROUTES.HOME, { waitUntil: 'networkidle' });
+    await page.goto(ROUTES.HOME, { waitUntil: 'load' });
 
     // Attendre que le bandeau soit visible
     const cookieBanner = page.getByText('Nous utilisons des cookies', { exact: false });
-    await expect(cookieBanner).toBeVisible({ timeout: 10000 });
+    await expect(cookieBanner).toBeVisible({ timeout: 5000 });
 
     // Ouvrir les paramètres
     const customizeButton = page.getByRole('button', { name: 'Personnaliser' });
@@ -135,11 +135,11 @@ test.describe('Cookie Consent Banner', () => {
   test('should show cookie button after consent is given', async ({ page, context }) => {
     // Nettoyer le localStorage et les cookies
     await context.clearCookies();
-    await page.goto(ROUTES.HOME, { waitUntil: 'networkidle' });
+    await page.goto(ROUTES.HOME, { waitUntil: 'load' });
 
     // Attendre que le bandeau soit visible
     const cookieBanner = page.getByText('Nous utilisons des cookies', { exact: false });
-    await expect(cookieBanner).toBeVisible({ timeout: 10000 });
+    await expect(cookieBanner).toBeVisible({ timeout: 5000 });
 
     // Accepter les cookies
     const acceptButton = page.getByRole('button', { name: 'Tout accepter' });
@@ -156,11 +156,11 @@ test.describe('Cookie Consent Banner', () => {
   test('should reopen settings when clicking cookie button', async ({ page, context }) => {
     // Nettoyer le localStorage et les cookies
     await context.clearCookies();
-    await page.goto(ROUTES.HOME, { waitUntil: 'networkidle' });
+    await page.goto(ROUTES.HOME, { waitUntil: 'load' });
 
     // Attendre que le bandeau soit visible
     const cookieBanner = page.getByText('Nous utilisons des cookies', { exact: false });
-    await expect(cookieBanner).toBeVisible({ timeout: 10000 });
+    await expect(cookieBanner).toBeVisible({ timeout: 5000 });
 
     // Accepter les cookies
     const acceptButton = page.getByRole('button', { name: 'Tout accepter' });
@@ -180,11 +180,11 @@ test.describe('Cookie Consent Banner', () => {
   test('should link to cookies policy page', async ({ page, context }) => {
     // Nettoyer le localStorage et les cookies
     await context.clearCookies();
-    await page.goto(ROUTES.HOME, { waitUntil: 'networkidle' });
+    await page.goto(ROUTES.HOME, { waitUntil: 'load' });
 
     // Attendre que le bandeau soit visible
     const cookieBanner = page.getByText('Nous utilisons des cookies', { exact: false });
-    await expect(cookieBanner).toBeVisible({ timeout: 10000 });
+    await expect(cookieBanner).toBeVisible({ timeout: 5000 });
 
     // Vérifier le lien dans le bandeau
     const linkInBanner = page.locator('a[href="/cookies"]').filter({ hasText: /politique de cookies/i });

@@ -39,30 +39,30 @@ test.describe('Account Deletion', () => {
 
   test.beforeEach(async ({ page }) => {
     // Se connecter avec l'utilisateur de test pour suppression
-    await page.goto(ROUTES.LOGIN, { waitUntil: 'networkidle' });
+    await page.goto(ROUTES.LOGIN, { waitUntil: 'load' });
 
     const emailInput = page.getByLabel(/email/i).or(page.locator('input[type="email"]'));
     const passwordInput = page.getByLabel(/mot de passe|password/i).or(page.locator('input[type="password"]'));
     const submitButton = page.getByRole('button', { name: /se connecter|login|sign in/i });
 
-    await emailInput.waitFor({ state: 'visible', timeout: 10000 });
+    await emailInput.waitFor({ state: 'visible', timeout: 5000 });
     await emailInput.fill(testUserForDeletion.email);
     await passwordInput.fill(testUserForDeletion.password);
     await submitButton.click();
 
     // Attendre la redirection après connexion
-    await page.waitForURL((url) => !url.pathname.includes('/login'), { timeout: 15000 });
+    await page.waitForURL((url) => !url.pathname.includes('/login'), { timeout: 10000 });
   });
 
   test('should redirect to login if not authenticated', async ({ page, context }) => {
     // Nettoyer les cookies pour être non authentifié
     await context.clearCookies();
-    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'networkidle' });
+    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'load' });
 
     // Attendre soit la redirection, soit le message d'erreur
     await Promise.race([
-      page.waitForURL(ROUTES.LOGIN, { timeout: 10000 }),
-      page.waitForSelector('text=/accès non autorisé|non autorisé/i', { timeout: 10000 }),
+      page.waitForURL(ROUTES.LOGIN, { timeout: 5000 }),
+      page.waitForSelector('text=/accès non autorisé|non autorisé/i', { timeout: 5000 }),
     ]);
 
     const currentUrl = page.url();
@@ -73,13 +73,12 @@ test.describe('Account Deletion', () => {
   });
 
   test('should display delete account page with warning', async ({ page }) => {
-    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'networkidle' });
+    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'load' });
 
     // Attendre que la page se charge complètement
-    await page.waitForLoadState('networkidle');
 
     // Vérifier que la page s'affiche
-    await expect(page.getByRole('heading', { name: /suppression de compte/i, level: 1 })).toBeVisible({ timeout: 10000 });
+    await expect(page.getByRole('heading', { name: /suppression de compte/i, level: 1 })).toBeVisible({ timeout: 5000 });
 
     // Vérifier la présence de l'alerte d'avertissement
     await expect(page.getByText(/attention/i)).toBeVisible({ timeout: 5000 });
@@ -87,12 +86,11 @@ test.describe('Account Deletion', () => {
   });
 
   test('should require confirmation text before deletion', async ({ page }) => {
-    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'networkidle' });
-    await page.waitForLoadState('networkidle');
+    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'load' });
 
     // Trouver le bouton de suppression
     const deleteButton = page.getByRole('button', { name: /supprimer définitivement/i });
-    await expect(deleteButton).toBeVisible({ timeout: 10000 });
+    await expect(deleteButton).toBeVisible({ timeout: 5000 });
 
     // Vérifier que le bouton est désactivé initialement
     await expect(deleteButton).toBeDisabled();
@@ -115,8 +113,7 @@ test.describe('Account Deletion', () => {
   });
 
   test('should show error if confirmation text is incorrect', async ({ page }) => {
-    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'networkidle' });
-    await page.waitForLoadState('networkidle');
+    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'load' });
 
     const confirmInput = page.locator('input[type="text"]').first();
     await expect(confirmInput).toBeVisible({ timeout: 5000 });
@@ -133,8 +130,7 @@ test.describe('Account Deletion', () => {
   });
 
   test('should list all data that will be deleted', async ({ page }) => {
-    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'networkidle' });
-    await page.waitForLoadState('networkidle');
+    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'load' });
 
     // Vérifier la présence des catégories dans la liste
     await expect(page.getByText(/profil utilisateur/i)).toBeVisible({ timeout: 5000 });
@@ -171,8 +167,7 @@ test.describe('Account Deletion', () => {
       }
     }
 
-    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'networkidle' });
-    await page.waitForLoadState('networkidle');
+    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'load' });
 
     // Remplir le champ de confirmation
     const confirmInput = page.locator('input[type="text"]').first();
@@ -184,8 +179,8 @@ test.describe('Account Deletion', () => {
     await expect(deleteButton).toBeEnabled({ timeout: 2000 });
 
     // Écouter la navigation ou le message de succès
-    const navigationPromise = page.waitForURL(ROUTES.HOME, { timeout: 15000 }).catch(() => null);
-    const successMessagePromise = page.waitForSelector('text=/compte supprimé/i', { timeout: 10000 }).catch(() => null);
+    const navigationPromise = page.waitForURL(ROUTES.HOME, { timeout: 10000 }).catch(() => null);
+    const successMessagePromise = page.waitForSelector('text=/compte supprimé/i', { timeout: 5000 }).catch(() => null);
 
     await deleteButton.click();
 
@@ -203,8 +198,7 @@ test.describe('Account Deletion', () => {
   });
 
   test('should show loading state during deletion', async ({ page }) => {
-    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'networkidle' });
-    await page.waitForLoadState('networkidle');
+    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'load' });
 
     const confirmInput = page.locator('input[type="text"]').first();
     await expect(confirmInput).toBeVisible({ timeout: 5000 });
@@ -236,8 +230,7 @@ test.describe('Account Deletion', () => {
       });
     });
 
-    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'networkidle' });
-    await page.waitForLoadState('networkidle');
+    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'load' });
 
     const confirmInput = page.locator('input[type="text"]').first();
     await expect(confirmInput).toBeVisible({ timeout: 5000 });
@@ -250,12 +243,11 @@ test.describe('Account Deletion', () => {
     // Vérifier qu'un message d'erreur s'affiche (peut être dans un toast)
     await expect(
       page.getByText(/erreur|error|impossible/i)
-    ).toBeVisible({ timeout: 10000 });
+    ).toBeVisible({ timeout: 5000 });
   });
 
   test('should display user rights information', async ({ page }) => {
-    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'networkidle' });
-    await page.waitForLoadState('networkidle');
+    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'load' });
 
     // Vérifier la présence des informations sur les droits RGPD
     await expect(page.getByText(/vos droits/i)).toBeVisible({ timeout: 5000 });
@@ -267,8 +259,7 @@ test.describe('Account Deletion', () => {
   });
 
   test('should allow exporting data before deletion', async ({ page }) => {
-    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'networkidle' });
-    await page.waitForLoadState('networkidle');
+    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'load' });
 
     // Vérifier que la section d'export est visible avant la section de suppression
     const exportSection = page.getByText(/exporter vos données/i);

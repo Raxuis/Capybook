@@ -15,7 +15,7 @@ export default defineConfig({
   testDir: './tests/e2e',
 
   /* Maximum time one test can run for. */
-  timeout: 30 * 1000,
+  timeout: 60 * 1000, // Increased to 60s to handle slower operations
 
   /* Run tests in files in parallel */
   fullyParallel: true,
@@ -26,8 +26,8 @@ export default defineConfig({
   /* Retry on CI only */
   retries: process.env.CI ? 2 : 0,
 
-  /* Opt out of parallel tests on CI. */
-  workers: process.env.CI ? 1 : undefined,
+  /* Use more workers in CI for faster execution */
+  workers: process.env.CI ? 4 : undefined,
 
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: process.env.CI
@@ -55,9 +55,9 @@ export default defineConfig({
     /* Video on failure in CI */
     video: process.env.CI ? 'retain-on-failure' : 'off',
 
-    /* Timeouts */
-    actionTimeout: 15 * 1000,
-    navigationTimeout: 30 * 1000,
+    /* Timeouts - reduced for faster tests */
+    actionTimeout: 10 * 1000,
+    navigationTimeout: 15 * 1000,
 
     /* Viewport */
     viewport: { width: 1280, height: 720 },

@@ -5,30 +5,30 @@ import { TEST_USER } from '../fixtures/test-users';
 test.describe('Data Export', () => {
   test.beforeEach(async ({ page }) => {
     // Se connecter avant chaque test
-    await page.goto(ROUTES.LOGIN, { waitUntil: 'networkidle' });
+    await page.goto(ROUTES.LOGIN, { waitUntil: 'load' });
 
     const emailInput = page.getByLabel(/email/i).or(page.locator('input[type="email"]'));
     const passwordInput = page.getByLabel(/mot de passe|password/i).or(page.locator('input[type="password"]'));
     const submitButton = page.getByRole('button', { name: /se connecter|login|sign in/i });
 
-    await emailInput.waitFor({ state: 'visible', timeout: 10000 });
+    await emailInput.waitFor({ state: 'visible', timeout: 5000 });
     await emailInput.fill(TEST_USER.email);
     await passwordInput.fill(TEST_USER.password);
     await submitButton.click();
 
     // Attendre la redirection après connexion
-    await page.waitForURL((url) => !url.pathname.includes('/login'), { timeout: 15000 });
+    await page.waitForURL((url) => !url.pathname.includes('/login'), { timeout: 10000 });
   });
 
   test('should redirect to login if not authenticated', async ({ page, context }) => {
     // Nettoyer les cookies pour être non authentifié
     await context.clearCookies();
-    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'networkidle' });
+    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'load' });
 
     // Attendre soit la redirection, soit le message d'erreur
     await Promise.race([
-      page.waitForURL(ROUTES.LOGIN, { timeout: 10000 }),
-      page.waitForSelector('text=/accès non autorisé|non autorisé/i', { timeout: 10000 }),
+      page.waitForURL(ROUTES.LOGIN, { timeout: 5000 }),
+      page.waitForSelector('text=/accès non autorisé|non autorisé/i', { timeout: 5000 }),
     ]);
 
     const currentUrl = page.url();
@@ -39,11 +39,10 @@ test.describe('Data Export', () => {
   });
 
   test('should display delete account page when authenticated', async ({ page }) => {
-    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'networkidle' });
-    await page.waitForLoadState('networkidle');
+    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'load' });
 
     // Vérifier que la page s'affiche
-    await expect(page.getByRole('heading', { name: /suppression de compte/i, level: 1 })).toBeVisible({ timeout: 10000 });
+    await expect(page.getByRole('heading', { name: /suppression de compte/i, level: 1 })).toBeVisible({ timeout: 5000 });
 
     // Vérifier la présence de la section d'export
     await expect(page.getByText(/exporter vos données/i)).toBeVisible({ timeout: 5000 });
@@ -53,15 +52,14 @@ test.describe('Data Export', () => {
   });
 
   test('should export user data as JSON file', async ({ page }) => {
-    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'networkidle' });
-    await page.waitForLoadState('networkidle');
+    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'load' });
 
     // Attendre que le bouton soit visible
     const exportButton = page.getByRole('button', { name: /télécharger/i });
-    await expect(exportButton).toBeVisible({ timeout: 10000 });
+    await expect(exportButton).toBeVisible({ timeout: 5000 });
 
     // Écouter les téléchargements
-    const downloadPromise = page.waitForEvent('download', { timeout: 30000 });
+    const downloadPromise = page.waitForEvent('download', { timeout: 15000 });
 
     // Cliquer sur le bouton d'export
     await exportButton.click();
@@ -102,11 +100,10 @@ test.describe('Data Export', () => {
   });
 
   test('should show loading state during export', async ({ page }) => {
-    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'networkidle' });
-    await page.waitForLoadState('networkidle');
+    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'load' });
 
     const exportButton = page.getByRole('button', { name: /télécharger/i });
-    await expect(exportButton).toBeVisible({ timeout: 10000 });
+    await expect(exportButton).toBeVisible({ timeout: 5000 });
 
     // Cliquer et vérifier l'état de chargement
     await exportButton.click();
@@ -125,22 +122,20 @@ test.describe('Data Export', () => {
       });
     });
 
-    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'networkidle' });
-    await page.waitForLoadState('networkidle');
+    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'load' });
 
     const exportButton = page.getByRole('button', { name: /télécharger/i });
-    await expect(exportButton).toBeVisible({ timeout: 10000 });
+    await expect(exportButton).toBeVisible({ timeout: 5000 });
     await exportButton.click();
 
     // Vérifier qu'un message d'erreur s'affiche (peut être dans un toast)
     await expect(
       page.getByText(/erreur|error|impossible/i)
-    ).toBeVisible({ timeout: 10000 });
+    ).toBeVisible({ timeout: 5000 });
   });
 
   test('should display user rights information', async ({ page }) => {
-    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'networkidle' });
-    await page.waitForLoadState('networkidle');
+    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'load' });
 
     // Vérifier la présence des informations sur les droits RGPD
     await expect(page.getByText(/vos droits/i)).toBeVisible({ timeout: 5000 });
@@ -152,8 +147,7 @@ test.describe('Data Export', () => {
   });
 
   test('should list all data categories in export section', async ({ page }) => {
-    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'networkidle' });
-    await page.waitForLoadState('networkidle');
+    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'load' });
 
     // Vérifier la présence des catégories mentionnées dans la description
     await expect(page.getByText(/profil/i)).toBeVisible({ timeout: 5000 });
