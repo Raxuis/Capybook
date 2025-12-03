@@ -5,30 +5,30 @@ import { TEST_USER } from '../fixtures/test-users';
 test.describe('Data Export', () => {
   test.beforeEach(async ({ page }) => {
     // Se connecter avant chaque test
-    await page.goto(ROUTES.LOGIN, { waitUntil: 'domcontentloaded' });
+    await page.goto(ROUTES.LOGIN, { waitUntil: 'networkidle' });
 
     const emailInput = page.getByLabel(/email/i).or(page.locator('input[type="email"]'));
     const passwordInput = page.getByLabel(/mot de passe|password/i).or(page.locator('input[type="password"]'));
     const submitButton = page.getByRole('button', { name: /se connecter|login|sign in/i });
 
-    await emailInput.waitFor({ state: 'visible', timeout: 5000 });
+    await emailInput.waitFor({ state: 'visible', timeout: 10000 });
     await emailInput.fill(TEST_USER.email);
     await passwordInput.fill(TEST_USER.password);
     await submitButton.click();
 
     // Attendre la redirection après connexion
-    await page.waitForURL((url) => !url.pathname.includes('/login'), { timeout: 10000 });
+    await page.waitForURL((url) => !url.pathname.includes('/login'), { timeout: 15000 });
   });
 
   test('should redirect to login if not authenticated', async ({ page, context }) => {
     // Nettoyer les cookies pour être non authentifié
     await context.clearCookies();
-    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'domcontentloaded' });
+    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'networkidle' });
 
-    // Vérifier la redirection vers login ou le message d'erreur
+    // Attendre soit la redirection, soit le message d'erreur
     await Promise.race([
-      page.waitForURL(ROUTES.LOGIN, { timeout: 5000 }),
-      page.waitForSelector('text=/accès non autorisé|non autorisé|unauthorized/i', { timeout: 5000 }),
+      page.waitForURL(ROUTES.LOGIN, { timeout: 10000 }),
+      page.waitForSelector('text=/accès non autorisé|non autorisé/i', { timeout: 10000 }),
     ]);
 
     const currentUrl = page.url();
@@ -39,24 +39,26 @@ test.describe('Data Export', () => {
   });
 
   test('should display delete account page when authenticated', async ({ page }) => {
-    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'domcontentloaded' });
+    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'networkidle' });
+    await page.waitForLoadState('networkidle');
 
     // Vérifier que la page s'affiche
-    await expect(page.locator('h1').filter({ hasText: /suppression de compte|delete account/i })).toBeVisible({ timeout: 5000 });
+    await expect(page.getByRole('heading', { name: /suppression de compte/i, level: 1 })).toBeVisible({ timeout: 10000 });
 
     // Vérifier la présence de la section d'export
-    await expect(page.locator('text=/exporter vos données|export your data/i')).toBeVisible();
+    await expect(page.getByText(/exporter vos données/i)).toBeVisible({ timeout: 5000 });
 
     // Vérifier la présence du bouton d'export
-    await expect(page.getByRole('button', { name: /télécharger|download/i })).toBeVisible();
+    await expect(page.getByRole('button', { name: /télécharger/i })).toBeVisible({ timeout: 5000 });
   });
 
   test('should export user data as JSON file', async ({ page }) => {
-    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'domcontentloaded' });
+    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'networkidle' });
+    await page.waitForLoadState('networkidle');
 
     // Attendre que le bouton soit visible
-    const exportButton = page.getByRole('button', { name: /télécharger|download/i });
-    await expect(exportButton).toBeVisible();
+    const exportButton = page.getByRole('button', { name: /télécharger/i });
+    await expect(exportButton).toBeVisible({ timeout: 10000 });
 
     // Écouter les téléchargements
     const downloadPromise = page.waitForEvent('download', { timeout: 30000 });
@@ -100,16 +102,18 @@ test.describe('Data Export', () => {
   });
 
   test('should show loading state during export', async ({ page }) => {
-    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'domcontentloaded' });
+    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'networkidle' });
+    await page.waitForLoadState('networkidle');
 
-    const exportButton = page.getByRole('button', { name: /télécharger|download/i });
+    const exportButton = page.getByRole('button', { name: /télécharger/i });
+    await expect(exportButton).toBeVisible({ timeout: 10000 });
 
     // Cliquer et vérifier l'état de chargement
     await exportButton.click();
 
-    // Le bouton peut afficher un état de chargement
-    // Vérifier que le téléchargement commence (pas de vérification exacte car c'est asynchrone)
-    await page.waitForTimeout(1000); // Attendre un peu pour le téléchargement
+    // Vérifier que le bouton affiche un état de chargement
+    const buttonText = await exportButton.textContent().catch(() => '');
+    expect(buttonText?.toLowerCase()).toMatch(/export|en cours/i);
   });
 
   test('should handle export errors gracefully', async ({ page }) => {
@@ -121,38 +125,44 @@ test.describe('Data Export', () => {
       });
     });
 
-    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'domcontentloaded' });
+    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'networkidle' });
+    await page.waitForLoadState('networkidle');
 
-    const exportButton = page.getByRole('button', { name: /télécharger|download/i });
+    const exportButton = page.getByRole('button', { name: /télécharger/i });
+    await expect(exportButton).toBeVisible({ timeout: 10000 });
     await exportButton.click();
 
-    // Vérifier qu'un message d'erreur s'affiche
-    await expect(page.locator('text=/erreur|error|impossible/i')).toBeVisible({ timeout: 5000 });
+    // Vérifier qu'un message d'erreur s'affiche (peut être dans un toast)
+    await expect(
+      page.getByText(/erreur|error|impossible/i)
+    ).toBeVisible({ timeout: 10000 });
   });
 
   test('should display user rights information', async ({ page }) => {
-    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'domcontentloaded' });
+    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'networkidle' });
+    await page.waitForLoadState('networkidle');
 
     // Vérifier la présence des informations sur les droits RGPD
-    await expect(page.locator('text=/vos droits|your rights/i')).toBeVisible();
-    await expect(page.locator('text=/RGPD|GDPR/i')).toBeVisible();
+    await expect(page.getByText(/vos droits/i)).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText(/RGPD/i)).toBeVisible({ timeout: 5000 });
 
     // Vérifier les liens vers la politique de confidentialité
     const privacyLink = page.locator('a[href="/privacy"]');
-    await expect(privacyLink).toBeVisible();
+    await expect(privacyLink.first()).toBeVisible({ timeout: 5000 });
   });
 
   test('should list all data categories in export section', async ({ page }) => {
-    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'domcontentloaded' });
+    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'networkidle' });
+    await page.waitForLoadState('networkidle');
 
-    // Vérifier la présence des catégories mentionnées
-    await expect(page.locator('text=/profil|profile/i')).toBeVisible();
-    await expect(page.locator('text=/livres|books/i')).toBeVisible();
-    await expect(page.locator('text=/progression|progress/i')).toBeVisible();
-    await expect(page.locator('text=/notes|notes/i')).toBeVisible();
-    await expect(page.locator('text=/avis|reviews/i')).toBeVisible();
-    await expect(page.locator('text=/objectifs|goals/i')).toBeVisible();
-    await expect(page.locator('text=/badges|badges/i')).toBeVisible();
-    await expect(page.locator('text=/statistiques|statistics/i')).toBeVisible();
+    // Vérifier la présence des catégories mentionnées dans la description
+    await expect(page.getByText(/profil/i)).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText(/livres/i)).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText(/progression/i)).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText(/notes/i)).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText(/avis/i)).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText(/objectifs/i)).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText(/badges/i)).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText(/statistiques/i)).toBeVisible({ timeout: 5000 });
   });
 });

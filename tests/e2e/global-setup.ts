@@ -16,29 +16,18 @@ async function globalSetup() {
   }
 
   try {
-    // Check if test user already exists
-    const existingUser = await prisma.user.findUnique({
-      where: { email: TEST_USER.email },
-    });
-
-    if (existingUser) {
-      console.log(`[global-setup] Test user ${TEST_USER.email} already exists`);
-      // Update password in case it changed
-      const hashedPassword = await saltAndHashPassword(TEST_USER.password);
-      await prisma.user.update({
-        where: { email: TEST_USER.email },
-        data: { password: hashedPassword },
-      });
-      console.log(`[global-setup] Updated password for test user: ${TEST_USER.email}`);
-      return;
-    }
-
-    // Create test user
+    // Use upsert to create or update test user (handles race conditions)
     const hashedPassword = await saltAndHashPassword(TEST_USER.password);
     const username = TEST_USER.email.split('@')[0]; // Use email prefix as username
 
-    await prisma.user.create({
-      data: {
+    await prisma.user.upsert({
+      where: { email: TEST_USER.email },
+      update: {
+        password: hashedPassword,
+        username: username,
+        name: TEST_USER.name,
+      },
+      create: {
         email: TEST_USER.email,
         username: username,
         password: hashedPassword,
@@ -47,13 +36,13 @@ async function globalSetup() {
       },
     });
 
-    console.log(`[global-setup] Created test user: ${TEST_USER.email} with username: ${username}`);
-  } catch (error: any) {
-    console.error('[global-setup] Error creating test user:', error);
-    // Don't fail the setup if user creation fails (might already exist or DB issue)
-    if (error.code !== 'P2002') { // P2002 is unique constraint violation
-      console.warn('[global-setup] Non-unique constraint error, continuing...');
+    // Only log in debug mode to reduce noise
+    if (process.env.DEBUG) {
+      console.log(`[global-setup] Test user ${TEST_USER.email} ready (username: ${username})`);
     }
+  } catch (error: any) {
+    console.error('[global-setup] Error setting up test user:', error);
+    // Don't fail the setup if there's a DB issue
   } finally {
     await prisma.$disconnect();
   }
