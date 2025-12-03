@@ -11,6 +11,7 @@ const disallowPaths = [
   '/profile/',
   '/private-review/',
   '/daily-book/',
+  '/delete-account/',
   '/_next/',
   '/offline/',
 ];

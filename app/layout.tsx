@@ -9,6 +9,7 @@ import {ViewTransitions} from "next-view-transitions";
 import NextTopLoader from "nextjs-toploader";
 import {Toaster} from "@/components/ui/toaster";
 import {PWAProvider} from "@/components/PWA/PWAProvider";
+import {CookieConsentBanner} from "@/components/CookieConsent/CookieConsentBanner";
 import {getServerUrl} from "@/utils/get-server-url";
 import "./globals.css";
 
@@ -59,7 +60,7 @@ export const metadata: Metadata = {
         "challenges de lecture",
         "reading challenges",
     ],
-    authors: [{ name: "CapyBook Team" }],
+    authors: [{name: "CapyBook Team"}],
     creator: "CapyBook",
     publisher: "CapyBook",
     formatDetection: {
@@ -69,11 +70,11 @@ export const metadata: Metadata = {
     },
     icons: {
         icon: [
-            { url: "/web-app-manifest-192x192.png", sizes: "192x192", type: "image/png" },
-            { url: "/web-app-manifest-512x512.png", sizes: "512x512", type: "image/png" },
+            {url: "/web-app-manifest-192x192.png", sizes: "192x192", type: "image/png"},
+            {url: "/web-app-manifest-512x512.png", sizes: "512x512", type: "image/png"},
         ],
         apple: [
-            { url: "/web-app-manifest-192x192.png", sizes: "192x192", type: "image/png" },
+            {url: "/web-app-manifest-192x192.png", sizes: "192x192", type: "image/png"},
         ],
     },
     openGraph: {
@@ -151,6 +152,7 @@ export default function RootLayout({
                                     shadow="0 0 10px #2299DD,0 0 5px #2299DD"
                                 />
                                 <Toaster/>
+                                <CookieConsentBanner/>
                             </PWAProvider>
                         </ViewTransitions>
                     </NuqsAdapter>
