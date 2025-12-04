@@ -211,9 +211,21 @@ const BookModal = ({
                             </>
                         ) : book?.description ? (
                             <DialogDescription className="overflow-wrap-anywhere overflow-hidden break-words text-sm leading-relaxed text-slate-600">
-                                {book.description.length > 250
-                                    ? book.description.substring(0, 250) + "..."
-                                    : book.description}
+                                {(() => {
+                                    // Handle case where description might be an object (e.g., from API response)
+                                    let description: string;
+                                    if (typeof book.description === 'string') {
+                                        description = book.description;
+                                    } else if (book.description && typeof book.description === 'object' && 'value' in book.description) {
+                                        // Handle object with {type, value} structure
+                                        description = String((book.description as { value: unknown }).value || '');
+                                    } else {
+                                        description = String(book.description || '');
+                                    }
+                                    return description.length > 250
+                                        ? description.substring(0, 250) + "..."
+                                        : description;
+                                })()}
                             </DialogDescription>
                         ) : (
                             <DialogDescription>

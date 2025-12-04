@@ -24,6 +24,19 @@ test.describe('Authentication', () => {
   test('should display login form', async ({ page }) => {
     await page.goto(ROUTES.LOGIN, { waitUntil: 'domcontentloaded' });
 
+    // Accept cookie consent if banner appears
+    try {
+      const cookieHeading = page.getByRole('heading', { name: 'Nous utilisons des cookies' });
+      const isBannerVisible = await cookieHeading.isVisible({ timeout: 2000 }).catch(() => false);
+      if (isBannerVisible) {
+        const acceptButton = page.getByRole('button', { name: 'Tout accepter' });
+        await acceptButton.click({ timeout: 3000 });
+        await cookieHeading.waitFor({ state: 'hidden', timeout: 3000 }).catch(() => {});
+      }
+    } catch (error) {
+      // Banner might not be present, continue
+    }
+
     // Wait for form to be visible using more specific selectors
     const emailInput = page.getByLabel(/email/i).or(page.locator('input[type="email"]'));
     const passwordInput = page.getByLabel(/mot de passe|password/i).or(page.locator('input[type="password"]'));
@@ -36,6 +49,19 @@ test.describe('Authentication', () => {
 
   test('should attempt login with test credentials', async ({ page }) => {
     await page.goto(ROUTES.LOGIN, { waitUntil: 'domcontentloaded' });
+
+    // Accept cookie consent if banner appears
+    try {
+      const cookieHeading = page.getByRole('heading', { name: 'Nous utilisons des cookies' });
+      const isBannerVisible = await cookieHeading.isVisible({ timeout: 2000 }).catch(() => false);
+      if (isBannerVisible) {
+        const acceptButton = page.getByRole('button', { name: 'Tout accepter' });
+        await acceptButton.click({ timeout: 3000 });
+        await cookieHeading.waitFor({ state: 'hidden', timeout: 3000 }).catch(() => {});
+      }
+    } catch (error) {
+      // Banner might not be present, continue
+    }
 
     // Wait for form elements
     const emailInput = page.getByLabel(/email/i).or(page.locator('input[type="email"]'));
@@ -59,6 +85,19 @@ test.describe('Authentication', () => {
 
   test('should show error for invalid credentials', async ({ page }) => {
     await page.goto(ROUTES.LOGIN, { waitUntil: 'domcontentloaded' });
+
+    // Accept cookie consent if banner appears
+    try {
+      const cookieHeading = page.getByRole('heading', { name: 'Nous utilisons des cookies' });
+      const isBannerVisible = await cookieHeading.isVisible({ timeout: 2000 }).catch(() => false);
+      if (isBannerVisible) {
+        const acceptButton = page.getByRole('button', { name: 'Tout accepter' });
+        await acceptButton.click({ timeout: 3000 });
+        await cookieHeading.waitFor({ state: 'hidden', timeout: 3000 }).catch(() => {});
+      }
+    } catch (error) {
+      // Banner might not be present, continue
+    }
 
     const emailInput = page.getByLabel(/email/i).or(page.locator('input[type="email"]'));
     const passwordInput = page.getByLabel(/mot de passe|password/i).or(page.locator('input[type="password"]'));

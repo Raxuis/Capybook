@@ -211,7 +211,7 @@ const CreateChallengeForm = memo(() => {
 
                 <DialogFooter>
                     <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}
-                            className="transition-colors hover:bg-black/10">
+                            className="transition-colors">
                         Annuler
                     </Button>
                     <Button type="submit">Créer le challenge</Button>
