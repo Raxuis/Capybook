@@ -1,4 +1,4 @@
-import NextAuth from "next-auth";
+import NextAuth, {AuthError} from "next-auth";
 import {PrismaAdapter} from "@auth/prisma-adapter";
 import prisma from "@/lib/db/prisma";
 import Credentials from "next-auth/providers/credentials";
@@ -41,8 +41,20 @@ export const {handlers, signIn, auth} = NextAuth({
                         role: user.role,
                     };
                 } catch (error) {
-                    if (error instanceof ZodError) return null;
-                    return null;
+                    if (error instanceof AuthError) {
+                        switch (error.type) {
+                            case "CredentialsSignin":
+                                return {msg: "Invalid credentials", status: "error"};
+                            case "CredentialsSignin":
+                                throw error;
+                            default:
+                                return {msg: "Something went wrong", status: "error"};
+                        }
+                    } else if (error instanceof ZodError) {
+                        const firstError = error.errors[0];
+                        return {msg: firstError.message, status: "error"};
+                    }
+                    throw error;
                 }
             }
         }),
