@@ -88,6 +88,22 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
+    # Add PostgreSQL service container
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: testdb
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -107,32 +123,32 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Generate Prisma Client
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/testdb
         run: pnpm prisma generate
 
-      - name: Sync database schema (no migration locks)
+      - name: Setup test database
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-        run: pnpm prisma db push
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/testdb
+        run: pnpm prisma db push --skip-generate
 
       - name: Install Playwright browsers
         run: pnpm exec playwright install --with-deps
 
-      # 🔍 DEBUG STEP HERE
       - name: Debug environment vars
         run: |
+          echo "DATABASE_URL is set to test database: postgresql://postgres:postgres@localhost:5432/testdb"
           echo "NEXTAUTH_SECRET is: $([[ -z \"$NEXTAUTH_SECRET\" ]] && echo 'undefined' || echo 'defined')"
-          echo "DATABASE_URL is: $([[ -z \"$DATABASE_URL\" ]] && echo 'undefined' || echo 'defined')"
-        env:
-          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
       - name: Run E2E tests
         env:
-          AUTH_URL: 'http://localhost:3000'
-          NODE_ENV: 'production'
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
-          NEXTAUTH_URL: 'http://localhost:3000'
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/testdb
+          NEXTAUTH_SECRET: test-secret-for-ci-testing
+          NEXTAUTH_URL: http://localhost:3000
+          AUTH_URL: http://localhost:3000
+          NEXT_PUBLIC_SITE_URL: http://localhost:3000
+          NODE_ENV: production
+          CI: true
         run: pnpm test:e2e
 
       - name: Upload test results
@@ -172,6 +188,7 @@ jobs:
             *.log
           retention-days: 7
           if-no-files-found: ignore
+
   build:
     name: Build
     runs-on: ubuntu-latest

@@ -1,10 +1,9 @@
 import {TEST_USER} from '../fixtures/test-users';
 import prisma from '@/utils/prisma';
-import {saltAndHashPassword} from '@/utils/password';
+import {comparePassword, saltAndHashPassword} from "@/utils/password";
 
 /**
  * Global setup: Ensure test user exists before running E2E tests.
- * This must ALWAYS attempt to run when DATABASE_URL is set.
  */
 async function globalSetup() {
     if (!process.env.DATABASE_URL) {
@@ -16,13 +15,14 @@ async function globalSetup() {
         console.log('[global-setup] Connecting to database...');
         await prisma.$connect();
 
+        // Use the same hashPassword function as your app
         const hashedPassword = await saltAndHashPassword(TEST_USER.password);
         const username = TEST_USER.email.split('@')[0];
 
         console.log('[global-setup] Seeding test user...');
 
         // Create or update test user
-        await prisma.user.upsert({
+        const user = await prisma.user.upsert({
             where: {email: TEST_USER.email},
             update: {
                 password: hashedPassword,
@@ -39,12 +39,25 @@ async function globalSetup() {
             },
         });
 
-        console.log(`[global-setup] Test user ready: ${TEST_USER.email}`);
+        console.log(`[global-setup] Test user ready: ${TEST_USER.email} (ID: ${user.id})`);
+
+        // Verify the password hash works
+
+        const isValid = await comparePassword(TEST_USER.password, user.password!);
+        console.log(`[global-setup] Password verification: ${isValid ? 'PASSED' : 'FAILED'}`);
+
+        if (!isValid) {
+            throw new Error('Password hash verification failed!');
+        }
+
     } catch (error: any) {
-        console.error('[global-setup] ERROR while seeding test user: ', error);
+        console.error('[global-setup] ERROR while seeding test user:', error);
+        console.error('[global-setup] Stack:', error.stack);
+        throw error; // Fail fast if setup fails
     } finally {
         console.log('[global-setup] Disconnecting prisma...');
-        await prisma.$disconnect().catch(() => {
+        await prisma.$disconnect().catch((e) => {
+            console.error('[global-setup] Error disconnecting:', e);
         });
     }
 }

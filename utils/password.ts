@@ -4,3 +4,4 @@
  */
 
 export { hashPassword as saltAndHashPassword } from "@/lib/helpers/password";
+export { comparePassword } from "@/lib/helpers/password";

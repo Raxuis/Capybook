@@ -23,7 +23,11 @@
     "test:unit:watch": "vitest",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
-    "test:e2e:report": "playwright show-report"
+    "test:e2e:report": "playwright show-report",
+    "test:e2e:debug": "playwright test --debug",
+    "test:db-setup": "tsx scripts/test-db-setup.ts",
+    "test:setup": "tsx tests/e2e/global-setup.ts",
+    "test:ci": "pnpm prisma generate && pnpm prisma db push && pnpm playwright test"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.1",
