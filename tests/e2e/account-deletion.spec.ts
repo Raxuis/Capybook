@@ -161,7 +161,7 @@ test.describe('Account Deletion', () => {
   test('should redirect to login if not authenticated', async ({ page, context }) => {
     // Nettoyer les cookies pour être non authentifié
     await context.clearCookies();
-    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'networkidle' });
+    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'load' });
 
     // Accepter les cookies si nécessaire
     try {
@@ -197,7 +197,7 @@ test.describe('Account Deletion', () => {
   });
 
   test('should display delete account page with warning', async ({ page }) => {
-    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'networkidle' });
+    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'load' });
 
     // Accepter les cookies si nécessaire
     try {
@@ -237,7 +237,7 @@ test.describe('Account Deletion', () => {
   });
 
   test('should require confirmation text before deletion', async ({ page }) => {
-    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'networkidle' });
+    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'load' });
 
     // Accepter les cookies si nécessaire
     try {
@@ -253,6 +253,15 @@ test.describe('Account Deletion', () => {
     }
 
     await page.waitForLoadState('domcontentloaded');
+
+    // Wait for session to load
+    try {
+      await page.waitForSelector('text=/Chargement de la session/i', { state: 'hidden', timeout: 5000 });
+    } catch {
+      // Loading state might not be present, continue
+    }
+
+    await page.waitForTimeout(1000);
 
     // Trouver le bouton de suppression
     const deleteButton = page.getByTestId('delete-account-button');
@@ -279,7 +288,7 @@ test.describe('Account Deletion', () => {
   });
 
   test('should show error if confirmation text is incorrect', async ({ page }) => {
-    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'networkidle' });
+    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'load' });
 
     // Accepter les cookies si nécessaire
     try {
@@ -296,6 +305,15 @@ test.describe('Account Deletion', () => {
 
     await page.waitForLoadState('domcontentloaded');
 
+    // Wait for session to load
+    try {
+      await page.waitForSelector('text=/Chargement de la session/i', { state: 'hidden', timeout: 5000 });
+    } catch {
+      // Loading state might not be present, continue
+    }
+
+    await page.waitForTimeout(1000);
+
     const confirmInput = page.getByTestId('delete-confirm-input');
     await expect(confirmInput).toBeVisible({ timeout: 10000 });
 
@@ -311,7 +329,7 @@ test.describe('Account Deletion', () => {
   });
 
   test('should list all data that will be deleted', async ({ page }) => {
-    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'networkidle' });
+    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'load' });
 
     // Accepter les cookies si nécessaire
     try {
@@ -402,7 +420,7 @@ test.describe('Account Deletion', () => {
       }
     }
 
-    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'networkidle' });
+    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'load' });
 
     // Accepter les cookies si nécessaire
     try {
@@ -418,6 +436,15 @@ test.describe('Account Deletion', () => {
     }
 
     await page.waitForLoadState('domcontentloaded');
+
+    // Wait for session to load
+    try {
+      await page.waitForSelector('text=/Chargement de la session/i', { state: 'hidden', timeout: 5000 });
+    } catch {
+      // Loading state might not be present, continue
+    }
+
+    await page.waitForTimeout(1000);
 
     // Remplir le champ de confirmation
     const confirmInput = page.getByTestId('delete-confirm-input');
@@ -454,7 +481,7 @@ test.describe('Account Deletion', () => {
   });
 
   test('should show loading state during deletion', async ({ page }) => {
-    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'networkidle' });
+    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'load' });
 
     // Accepter les cookies si nécessaire
     try {
@@ -519,14 +546,15 @@ test.describe('Account Deletion', () => {
 
   test('should handle deletion errors gracefully', async ({ page }) => {
     // Intercepter la requête API et la faire échouer
-    await page.route('**/api/user/*/delete', route => {
+    // Use regex pattern to match /api/user/{userId}/delete more reliably
+    await page.route(/\/api\/user\/[^/]+\/delete/, route => {
       route.fulfill({
         status: 500,
         body: JSON.stringify({ error: 'Internal server error' }),
       });
     });
 
-    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'networkidle' });
+    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'load' });
 
     // Accepter les cookies si nécessaire
     try {
@@ -543,22 +571,32 @@ test.describe('Account Deletion', () => {
 
     await page.waitForLoadState('domcontentloaded');
 
-    const confirmInput = page.locator('input[type="text"]').first();
+    // Wait for session to load
+    try {
+      await page.waitForSelector('text=/Chargement de la session/i', { state: 'hidden', timeout: 5000 });
+    } catch {
+      // Loading state might not be present, continue
+    }
+
+    await page.waitForTimeout(1000);
+
+    const confirmInput = page.getByTestId('delete-confirm-input');
     await expect(confirmInput).toBeVisible({ timeout: 10000 });
     await confirmInput.fill('SUPPRIMER');
 
-    const deleteButton = page.getByRole('button', { name: /supprimer définitivement/i });
+    const deleteButton = page.getByTestId('delete-account-button');
     await expect(deleteButton).toBeEnabled({ timeout: 5000 });
     await deleteButton.click();
 
     // Vérifier qu'un message d'erreur s'affiche (peut être dans un toast)
+    // Use first() to avoid strict mode violation
     await expect(
-      page.getByText(/erreur|error|impossible/i)
+      page.getByText(/erreur|error|impossible/i).first()
     ).toBeVisible({ timeout: 10000 });
   });
 
   test('should display user rights information', async ({ page }) => {
-    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'networkidle' });
+    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'load' });
 
     // Accepter les cookies si nécessaire
     try {
@@ -594,7 +632,7 @@ test.describe('Account Deletion', () => {
   });
 
   test('should allow exporting data before deletion', async ({ page }) => {
-    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'networkidle' });
+    await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'load' });
 
     // Accepter les cookies si nécessaire
     try {
