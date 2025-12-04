@@ -4,7 +4,9 @@
 
 import * as Sentry from "@sentry/nextjs";
 
-Sentry.init({
+// Only initialize Sentry in production
+if (process.env.NODE_ENV === "production") {
+  Sentry.init({
     dsn: "https://267697a630e4a1cd0bbc55f445529dd4@o4509650804342784.ingest.de.sentry.io/4509650806767696",
 
     // Add optional integrations for additional features
@@ -25,6 +27,10 @@ Sentry.init({
     integrations: [
         Sentry.replayIntegration(),
     ],
-});
+  });
+}
 
-export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;
+// Export a no-op function for development
+export const onRouterTransitionStart = process.env.NODE_ENV === "production"
+  ? Sentry.captureRouterTransitionStart
+  : () => {};

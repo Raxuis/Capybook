@@ -3,7 +3,11 @@
   "version": "3.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "node scripts/dev-with-cleanup.js",
+    "dev:raw": "next dev --turbopack",
+    "dev:clean": "node scripts/kill-port.js 3000 && next dev --turbopack",
+    "kill:3000": "node scripts/kill-port.js 3000",
+    "kill:port": "node scripts/kill-port.js",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
