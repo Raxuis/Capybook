@@ -109,7 +109,7 @@ export default defineConfig({
         url: 'http://localhost:3000',
         reuseExistingServer: !process.env.CI,
         timeout: process.env.CI ? 180 * 1000 : 120 * 1000,
-        stdout: process.env.CI ? 'pipe' : 'ignore',
+        stdout: 'pipe', // Changed from 'ignore' to see server output for debugging
         stderr: 'pipe',
         env: {
             AUTH_URL: 'http://localhost:3000',

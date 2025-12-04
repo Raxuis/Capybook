@@ -67,6 +67,19 @@ test.describe('Account Deletion', () => {
     // Se connecter avec l'utilisateur de test pour suppression
     await page.goto(ROUTES.LOGIN, { waitUntil: 'load' });
 
+    // Accepter les cookies si le bandeau apparaît (important pour RGPD)
+    try {
+      const cookieHeading = page.getByRole('heading', { name: 'Nous utilisons des cookies' });
+      const isBannerVisible = await cookieHeading.isVisible({ timeout: 2000 }).catch(() => false);
+      if (isBannerVisible) {
+        const acceptButton = page.getByRole('button', { name: 'Tout accepter' });
+        await acceptButton.click({ timeout: 3000 });
+        await cookieHeading.waitFor({ state: 'hidden', timeout: 3000 }).catch(() => { });
+      }
+    } catch (error) {
+      // Le bandeau n'est peut-être pas présent, continuer quand même
+    }
+
     const emailInput = page.getByLabel(/email/i).or(page.locator('input[type="email"]'));
     const passwordInput = page.getByLabel(/mot de passe|password/i).or(page.locator('input[type="password"]'));
     const submitButton = page.getByRole('button', { name: /se connecter|login|sign in/i });
