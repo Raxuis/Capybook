@@ -117,12 +117,21 @@ jobs:
       - name: Install Playwright browsers
         run: pnpm exec playwright install --with-deps
 
+      # 🔍 DEBUG STEP HERE
+      - name: Debug environment vars
+        run: |
+          echo "NEXTAUTH_SECRET is: $([[ -z \"$NEXTAUTH_SECRET\" ]] && echo 'undefined' || echo 'defined')"
+          echo "DATABASE_URL is: $([[ -z \"$DATABASE_URL\" ]] && echo 'undefined' || echo 'defined')"
+        env:
+          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
       - name: Run E2E tests
         env:
           AUTH_URL: 'http://localhost:3000'
           NODE_ENV: 'production'
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET || 'test-secret-for-ci' }}
+          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
           NEXTAUTH_URL: 'http://localhost:3000'
         run: pnpm test:e2e
 
@@ -163,7 +172,6 @@ jobs:
             *.log
           retention-days: 7
           if-no-files-found: ignore
-
   build:
     name: Build
     runs-on: ubuntu-latest
