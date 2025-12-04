@@ -88,13 +88,6 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
-    env:
-      DATABASE_URL: ${{ secrets.DATABASE_URL }}
-      NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
-      NEXTAUTH_URL: 'http://localhost:3000'
-      AUTH_URL: 'http://localhost:3000'
-      NODE_ENV: 'production'
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
