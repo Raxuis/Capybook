@@ -109,10 +109,10 @@ jobs:
       - name: Generate Prisma Client
         run: pnpm prisma generate
 
-      - name: Deploy database migrations
+      - name: Sync database schema (no migration locks)
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-        run: pnpm prisma migrate deploy
+        run: pnpm prisma db push
 
       - name: Install Playwright browsers
         run: pnpm exec playwright install --with-deps
