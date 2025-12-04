@@ -132,6 +132,32 @@ jobs:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/testdb
         run: pnpm prisma db push --skip-generate
 
+      - name: Verify test user in database
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/testdb
+        run: |
+          node -e "
+          const { PrismaClient } = require('@prisma/client');
+          const prisma = new PrismaClient();
+          (async () => {
+            try {
+              await prisma.\$connect();
+              const user = await prisma.user.findUnique({
+                where: { email: 'test@example.com' }
+              });
+              console.log('User found:', !!user);
+              console.log('User has password:', !!user?.password);
+              if (user?.password) {
+                console.log('Password hash preview:', user.password.substring(0, 20) + '...');
+              }
+              await prisma.\$disconnect();
+            } catch (e) {
+              console.error('Error:', e);
+              process.exit(1);
+            }
+          })();
+          "
+
       - name: Install Playwright browsers
         run: pnpm exec playwright install --with-deps
 

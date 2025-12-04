@@ -22,17 +22,49 @@ export const {handlers, signIn, auth} = NextAuth({
             credentials: {email: {}, password: {}},
             authorize: async (credentials) => {
                 try {
+                    console.log('[auth] Starting authorization...');
+                    console.log('[auth] Credentials received:', {
+                        email: credentials?.email,
+                        hasPassword: !!credentials?.password
+                    });
+
                     const {email, password} = await SignInSchema.parseAsync(credentials);
+                    console.log('[auth] Schema validation passed');
+                    console.log(`[auth] Attempting login for: ${email}`);
+
                     const user = await prisma.user.findUnique({
                         where: {email},
                         select: {id: true, email: true, name: true, username: true, password: true, role: true}
                     });
 
-                    if (!user || !user.password) throw new Error("Invalid credentials");
+                    console.log(`[auth] User lookup result:`, {
+                        found: !!user,
+                        hasPassword: !!user?.password,
+                        email: user?.email,
+                    });
+
+                    if (!user) {
+                        console.log(`[auth] ❌ User not found: ${email}`);
+                        throw new Error("Invalid credentials");
+                    }
+
+                    if (!user.password) {
+                        console.log(`[auth] ❌ User has no password: ${email}`);
+                        throw new Error("Invalid credentials");
+                    }
+
+                    console.log(`[auth] Comparing passwords...`);
+                    console.log(`[auth] Stored hash preview: ${user.password.substring(0, 20)}...`);
 
                     const passwordMatch = await bcrypt.compare(password, user.password);
-                    if (!passwordMatch) throw new Error("Invalid credentials");
+                    console.log(`[auth] Password match result: ${passwordMatch}`);
 
+                    if (!passwordMatch) {
+                        console.log(`[auth] ❌ Password mismatch for: ${email}`);
+                        throw new Error("Invalid credentials");
+                    }
+
+                    console.log(`[auth] ✓ Authentication successful for: ${email}`);
                     return {
                         id: user.id,
                         email: user.email,
@@ -41,17 +73,19 @@ export const {handlers, signIn, auth} = NextAuth({
                         role: user.role,
                     };
                 } catch (error) {
+                    console.error('[auth] Authorization error:', error);
+
                     if (error instanceof AuthError) {
+                        console.log('[auth] AuthError type:', error.type);
                         switch (error.type) {
                             case "CredentialsSignin":
                                 return {msg: "Invalid credentials", status: "error"};
-                            case "CredentialsSignin":
-                                throw error;
                             default:
                                 return {msg: "Something went wrong", status: "error"};
                         }
                     } else if (error instanceof ZodError) {
                         const firstError = error.errors[0];
+                        console.log('[auth] Zod validation error:', firstError);
                         return {msg: firstError.message, status: "error"};
                     }
                     throw error;
