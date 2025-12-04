@@ -21,6 +21,8 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import axios from "axios";
 import {useSession} from "next-auth/react";
 import {useEffect} from "react";
+import {Trash2} from "lucide-react";
+import Link from "next/link";
 
 type Props = {
     isOpen: boolean;
@@ -170,10 +172,26 @@ function EditProfileModal({
                                     </FormItem>
                                 )}
                             />
+                            <div className="border-t border-destructive/20 pt-4 mt-4">
+                                <p className="text-sm text-muted-foreground mb-3">
+                                    Zone de danger
+                                </p>
+                                <Button
+                                    variant="destructive"
+                                    onClick={() => onOpenChange(false)}
+                                    asChild
+                                    className="w-full"
+                                >
+                                    <Link href="/delete-account" className="flex items-center justify-center">
+                                        <Trash2 className="mr-2 h-4 w-4"/>
+                                        Supprimer mon compte
+                                    </Link>
+                                </Button>
+                            </div>
                         </div>
                         <DialogFooter className="border-border border-t px-6 py-4">
                             <DialogClose asChild>
-                                <Button type="button" variant="outline" className="transition-colors hover:bg-black/10">
+                                <Button type="button" variant="outline" className="transition-colors hover:bg-black/10 hover:text-foreground">
                                     Annuler
                                 </Button>
                             </DialogClose>
