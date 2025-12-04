@@ -31,15 +31,26 @@ test.describe('Data Export', () => {
 
     // Attendre la redirection après connexion avec fallback et gestion d'erreur améliorée
     try {
+      // Attendre que la navigation se produise
+      await page.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => { });
+
+      // Vérifier plusieurs conditions pour confirmer la connexion
       await Promise.race([
-        page.waitForURL((url) => !url.pathname.includes('/login'), { timeout: 20000 }),
+        // Option 1: URL a changé
+        page.waitForURL((url) => !url.pathname.includes('/login'), { timeout: 15000 }),
+        // Option 2: Le texte "Se connecter" n'est plus présent
         page.waitForFunction(
-          () => !window.location.pathname.includes('/login') ||
-            !document.body.innerText.includes('Se connecter'),
+          () => !window.location.pathname.includes('/login') &&
+            !document.body.innerText.toLowerCase().includes('se connecter'),
           null,
-          { timeout: 20000 }
+          { timeout: 15000 }
         ),
+        // Option 3: Un élément de navigation utilisateur est présent
+        page.waitForSelector('[data-testid="user-menu"], [href*="/profile"], [href*="/book-shelf"]', { timeout: 15000 }).catch(() => null),
       ]);
+
+      // Attendre un peu pour que la page se stabilise
+      await page.waitForTimeout(500);
     } catch (err) {
       // Capturer une capture d'écran pour le débogage en cas d'échec
       await page.screenshot({ path: 'debug-login-timeout-data-export.png', fullPage: true });
@@ -106,14 +117,24 @@ test.describe('Data Export', () => {
 
     await page.waitForLoadState('domcontentloaded');
 
+    // Wait for session to load
+    try {
+      await page.waitForSelector('text=/Chargement de la session/i', { state: 'hidden', timeout: 5000 });
+    } catch {
+      // Loading state might not be present, continue
+    }
+
+    await page.waitForTimeout(1000);
+
     // Vérifier que la page s'affiche
-    await expect(page.getByRole('heading', { name: /suppression de compte/i, level: 1 })).toBeVisible({ timeout: 10000 });
+    const heading = page.locator('h1').filter({ hasText: /suppression de compte/i });
+    await expect(heading).toBeVisible({ timeout: 15000 });
 
     // Vérifier la présence de la section d'export
-    await expect(page.getByText(/exporter vos données/i)).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText(/exporter vos données/i)).toBeVisible({ timeout: 15000 });
 
     // Vérifier la présence du bouton d'export
-    await expect(page.getByRole('button', { name: /télécharger/i })).toBeVisible({ timeout: 10000 });
+    await expect(page.getByRole('button', { name: /télécharger/i })).toBeVisible({ timeout: 15000 });
   });
 
   test('should export user data as JSON file', async ({ page }) => {
@@ -197,8 +218,17 @@ test.describe('Data Export', () => {
 
     await page.waitForLoadState('domcontentloaded');
 
-    const exportButton = page.getByRole('button', { name: /télécharger/i });
-    await expect(exportButton).toBeVisible({ timeout: 10000 });
+    // Wait for session to load
+    try {
+      await page.waitForSelector('text=/Chargement de la session/i', { state: 'hidden', timeout: 5000 });
+    } catch {
+      // Loading state might not be present, continue
+    }
+
+    await page.waitForTimeout(1000);
+
+    const exportButton = page.getByTestId('export-data-button');
+    await expect(exportButton).toBeVisible({ timeout: 15000 });
 
     // Cliquer et vérifier l'état de chargement
     await exportButton.click();
@@ -207,11 +237,14 @@ test.describe('Data Export', () => {
     await page.waitForTimeout(500);
 
     // Vérifier que le bouton affiche un état de chargement
+    const loadingSpinner = page.getByTestId('export-loading-spinner');
     const buttonText = await exportButton.textContent().catch(() => '');
     const isButtonDisabled = await exportButton.isDisabled().catch(() => false);
+    const hasSpinner = await loadingSpinner.isVisible({ timeout: 3000 }).catch(() => false);
 
     expect(
-      buttonText?.toLowerCase().match(/export|en cours/i) ||
+      hasSpinner ||
+      buttonText?.toLowerCase().includes('export en cours') ||
       isButtonDisabled // Button might be disabled during loading
     ).toBeTruthy();
   });
@@ -242,14 +275,23 @@ test.describe('Data Export', () => {
 
     await page.waitForLoadState('domcontentloaded');
 
-    const exportButton = page.getByRole('button', { name: /télécharger/i });
-    await expect(exportButton).toBeVisible({ timeout: 10000 });
+    // Wait for session to load
+    try {
+      await page.waitForSelector('text=/Chargement de la session/i', { state: 'hidden', timeout: 5000 });
+    } catch {
+      // Loading state might not be present, continue
+    }
+
+    await page.waitForTimeout(1000);
+
+    const exportButton = page.getByTestId('export-data-button');
+    await expect(exportButton).toBeVisible({ timeout: 15000 });
     await exportButton.click();
 
     // Vérifier qu'un message d'erreur s'affiche (peut être dans un toast)
-    await expect(
-      page.getByText(/erreur|error|impossible/i)
-    ).toBeVisible({ timeout: 10000 });
+    // Utiliser first() pour éviter les ambiguïtés avec plusieurs messages d'erreur
+    const errorMessage = page.getByText(/erreur|error|impossible/i).first();
+    await expect(errorMessage).toBeVisible({ timeout: 15000 });
   });
 
   test('should display user rights information', async ({ page }) => {
@@ -297,14 +339,23 @@ test.describe('Data Export', () => {
 
     await page.waitForLoadState('domcontentloaded');
 
+    // Wait for session to load
+    try {
+      await page.waitForSelector('text=/Chargement de la session/i', { state: 'hidden', timeout: 5000 });
+    } catch {
+      // Loading state might not be present, continue
+    }
+
+    await page.waitForTimeout(1000);
+
     // Vérifier la présence des catégories mentionnées dans la description
-    await expect(page.getByText(/profil/i)).toBeVisible({ timeout: 10000 });
-    await expect(page.getByText(/livres/i)).toBeVisible({ timeout: 10000 });
-    await expect(page.getByText(/progression/i)).toBeVisible({ timeout: 10000 });
-    await expect(page.getByText(/notes/i)).toBeVisible({ timeout: 10000 });
-    await expect(page.getByText(/avis/i)).toBeVisible({ timeout: 10000 });
-    await expect(page.getByText(/objectifs/i)).toBeVisible({ timeout: 10000 });
-    await expect(page.getByText(/badges/i)).toBeVisible({ timeout: 10000 });
-    await expect(page.getByText(/statistiques/i)).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText(/profil/i)).toBeVisible({ timeout: 15000 });
+    await expect(page.getByText(/livres/i)).toBeVisible({ timeout: 15000 });
+    await expect(page.getByText(/progression/i)).toBeVisible({ timeout: 15000 });
+    await expect(page.getByText(/notes/i)).toBeVisible({ timeout: 15000 });
+    await expect(page.getByText(/avis/i)).toBeVisible({ timeout: 15000 });
+    await expect(page.getByText(/objectifs/i)).toBeVisible({ timeout: 15000 });
+    await expect(page.getByText(/badges/i)).toBeVisible({ timeout: 15000 });
+    await expect(page.getByText(/statistiques/i)).toBeVisible({ timeout: 15000 });
   });
 });

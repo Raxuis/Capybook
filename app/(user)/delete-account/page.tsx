@@ -133,13 +133,13 @@ export default function DeleteAccountPage() {
         <div className="container mx-auto px-4 py-8 max-w-2xl relative">
             {/* Overlay de chargement pour la suppression */}
             {isDeleting && (
-                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center">
+                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center" data-testid="delete-loading-overlay">
                     <Card className="max-w-md mx-4">
                         <CardContent className="pt-6">
                             <div className="flex flex-col items-center justify-center space-y-4">
-                                <Loader2 className="h-12 w-12 animate-spin text-destructive"/>
+                                <Loader2 className="h-12 w-12 animate-spin text-destructive" data-testid="delete-overlay-spinner"/>
                                 <div className="text-center">
-                                    <h3 className="text-lg font-semibold mb-2">Suppression en cours...</h3>
+                                    <h3 className="text-lg font-semibold mb-2" data-testid="delete-loading-title">Suppression en cours...</h3>
                                     <p className="text-sm text-muted-foreground">
                                         Veuillez patienter pendant que nous supprimons votre compte et toutes vos
                                         données.
@@ -151,9 +151,9 @@ export default function DeleteAccountPage() {
                 </div>
             )}
 
-            <h1 className="text-4xl font-bold mb-8">Suppression de compte</h1>
+            <h1 className="text-4xl font-bold mb-8" data-testid="delete-account-page-title">Suppression de compte</h1>
 
-            <Alert className="mb-6">
+            <Alert className="mb-6" data-testid="delete-warning-alert">
                 <AlertTriangle className="h-4 w-4"/>
                 <AlertTitle>Attention</AlertTitle>
                 <AlertDescription>
@@ -180,9 +180,10 @@ export default function DeleteAccountPage() {
                             disabled={isExporting || isDeleting}
                             variant="outline"
                             className="relative"
+                            data-testid="export-data-button"
                         >
                             {isExporting && (
-                                <Loader2 className="mr-2 h-4 w-4 animate-spin"/>
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" data-testid="export-loading-spinner"/>
                             )}
                             {isExporting ? "Export en cours..." : "Télécharger mes données"}
                         </Button>
@@ -233,6 +234,7 @@ export default function DeleteAccountPage() {
                                 disabled={isDeleting}
                                 className="w-full px-3 py-2 border border-input bg-background rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
                                 placeholder="SUPPRIMER"
+                                data-testid="delete-confirm-input"
                             />
                         </div>
 
@@ -241,9 +243,10 @@ export default function DeleteAccountPage() {
                             disabled={isDeleting || confirmText !== "SUPPRIMER" || isExporting}
                             variant="destructive"
                             className="w-full relative"
+                            data-testid="delete-account-button"
                         >
                             {isDeleting && (
-                                <Loader2 className="mr-2 h-4 w-4 animate-spin"/>
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" data-testid="delete-loading-spinner"/>
                             )}
                             {isDeleting ? "Suppression en cours..." : "Supprimer définitivement mon compte"}
                         </Button>

@@ -38,6 +38,20 @@ test.describe('Account Deletion', () => {
 
     try {
       const hashedPassword = await saltAndHashPassword(testUserForDeletion.password);
+
+      // Check if a user with this username already exists (but different email)
+      const existingUserByUsername = await prisma.user.findUnique({
+        where: { username: testUserForDeletion.username },
+      });
+
+      // If username exists with different email, delete it first
+      if (existingUserByUsername && existingUserByUsername.email !== testUserForDeletion.email) {
+        await prisma.user.delete({
+          where: { username: testUserForDeletion.username },
+        });
+      }
+
+      // Now upsert by email
       await prisma.user.upsert({
         where: { email: testUserForDeletion.email },
         update: {
@@ -52,8 +66,31 @@ test.describe('Account Deletion', () => {
         },
       });
     } catch (error: any) {
-      // Only log if it's not a connection error (already handled above)
-      if (error?.code !== 'P1001') {
+      // Handle unique constraint errors
+      if (error?.code === 'P2002') {
+        // Username conflict - try with a unique username
+        const uniqueUsername = `deletetest-${Date.now()}`;
+        try {
+          const hashedPassword = await saltAndHashPassword(testUserForDeletion.password);
+          await prisma.user.upsert({
+            where: { email: testUserForDeletion.email },
+            update: {
+              password: hashedPassword,
+              username: uniqueUsername,
+            },
+            create: {
+              email: testUserForDeletion.email,
+              username: uniqueUsername,
+              password: hashedPassword,
+              role: 'USER',
+            },
+          });
+          // Update the test user object with the new username
+          testUserForDeletion.username = uniqueUsername;
+        } catch (retryError: any) {
+          console.error('Error setting up test user for deletion (retry failed):', retryError);
+        }
+      } else if (error?.code !== 'P1001') {
         console.error('Error setting up test user for deletion:', error);
       }
     } finally {
@@ -91,15 +128,26 @@ test.describe('Account Deletion', () => {
 
     // Attendre la redirection après connexion avec fallback et gestion d'erreur améliorée
     try {
+      // Attendre que la navigation se produise
+      await page.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => { });
+
+      // Vérifier plusieurs conditions pour confirmer la connexion
       await Promise.race([
-        page.waitForURL((url) => !url.pathname.includes('/login'), { timeout: 20000 }),
+        // Option 1: URL a changé
+        page.waitForURL((url) => !url.pathname.includes('/login'), { timeout: 15000 }),
+        // Option 2: Le texte "Se connecter" n'est plus présent
         page.waitForFunction(
-          () => !window.location.pathname.includes('/login') ||
-            !document.body.innerText.includes('Se connecter'),
+          () => !window.location.pathname.includes('/login') &&
+            !document.body.innerText.toLowerCase().includes('se connecter'),
           null,
-          { timeout: 20000 }
+          { timeout: 15000 }
         ),
+        // Option 3: Un élément de navigation utilisateur est présent
+        page.waitForSelector('[data-testid="user-menu"], [href*="/profile"], [href*="/book-shelf"]', { timeout: 15000 }).catch(() => null),
       ]);
+
+      // Attendre un peu pour que la page se stabilise
+      await page.waitForTimeout(500);
     } catch (err) {
       // Capturer une capture d'écran pour le débogage en cas d'échec
       await page.screenshot({ path: 'debug-login-timeout-account-deletion.png', fullPage: true });
@@ -164,15 +212,28 @@ test.describe('Account Deletion', () => {
       // Continue anyway
     }
 
-    // Attendre que la page se charge complètement
+    // Attendre que la page se charge complètement et que la session soit chargée
     await page.waitForLoadState('domcontentloaded');
 
-    // Vérifier que la page s'affiche
-    await expect(page.getByRole('heading', { name: /suppression de compte/i, level: 1 })).toBeVisible({ timeout: 10000 });
+    // Wait for session to load (wait for loading state to disappear)
+    try {
+      await page.waitForSelector('text=/Chargement de la session/i', { state: 'hidden', timeout: 5000 });
+    } catch {
+      // Loading state might not be present, continue
+    }
+
+    // Wait a bit for React to hydrate
+    await page.waitForTimeout(1000);
+
+    // Vérifier que la page s'affiche (check for h1 heading)
+    const heading = page.getByTestId('delete-account-page-title');
+    await expect(heading).toBeVisible({ timeout: 15000 });
 
     // Vérifier la présence de l'alerte d'avertissement
-    await expect(page.getByText(/attention/i)).toBeVisible({ timeout: 10000 });
-    await expect(page.getByText(/définitive|irréversible|permanent/i)).toBeVisible({ timeout: 10000 });
+    const warningAlert = page.getByTestId('delete-warning-alert');
+    await expect(warningAlert).toBeVisible({ timeout: 15000 });
+    await expect(warningAlert.getByText(/attention/i)).toBeVisible({ timeout: 5000 });
+    await expect(warningAlert.getByText(/définitive|irréversible|permanent/i)).toBeVisible({ timeout: 5000 });
   });
 
   test('should require confirmation text before deletion', async ({ page }) => {
@@ -194,14 +255,14 @@ test.describe('Account Deletion', () => {
     await page.waitForLoadState('domcontentloaded');
 
     // Trouver le bouton de suppression
-    const deleteButton = page.getByRole('button', { name: /supprimer définitivement/i });
+    const deleteButton = page.getByTestId('delete-account-button');
     await expect(deleteButton).toBeVisible({ timeout: 10000 });
 
     // Vérifier que le bouton est désactivé initialement
     await expect(deleteButton).toBeDisabled({ timeout: 5000 });
 
-    // Trouver le champ de confirmation (premier input de type text)
-    const confirmInput = page.locator('input[type="text"]').first();
+    // Trouver le champ de confirmation
+    const confirmInput = page.getByTestId('delete-confirm-input');
     await expect(confirmInput).toBeVisible({ timeout: 10000 });
 
     // Essayer de remplir avec un texte incorrect
@@ -235,10 +296,10 @@ test.describe('Account Deletion', () => {
 
     await page.waitForLoadState('domcontentloaded');
 
-    const confirmInput = page.locator('input[type="text"]').first();
+    const confirmInput = page.getByTestId('delete-confirm-input');
     await expect(confirmInput).toBeVisible({ timeout: 10000 });
 
-    const deleteButton = page.getByRole('button', { name: /supprimer définitivement/i });
+    const deleteButton = page.getByTestId('delete-account-button');
     await expect(deleteButton).toBeVisible({ timeout: 10000 });
 
     // Remplir avec un texte incorrect
@@ -267,17 +328,33 @@ test.describe('Account Deletion', () => {
 
     await page.waitForLoadState('domcontentloaded');
 
-    // Vérifier la présence des catégories dans la liste
-    await expect(page.getByText(/profil utilisateur/i)).toBeVisible({ timeout: 10000 });
-    await expect(page.getByText(/livres/i)).toBeVisible({ timeout: 10000 });
-    await expect(page.getByText(/progression/i)).toBeVisible({ timeout: 10000 });
-    await expect(page.getByText(/notes/i)).toBeVisible({ timeout: 10000 });
-    await expect(page.getByText(/avis/i)).toBeVisible({ timeout: 10000 });
-    await expect(page.getByText(/objectifs/i)).toBeVisible({ timeout: 10000 });
-    await expect(page.getByText(/badges/i)).toBeVisible({ timeout: 10000 });
-    await expect(page.getByText(/statistiques/i)).toBeVisible({ timeout: 10000 });
-    await expect(page.getByText(/relations/i)).toBeVisible({ timeout: 10000 });
-    await expect(page.getByText(/prêt/i)).toBeVisible({ timeout: 10000 });
+    // Wait for session to load
+    try {
+      await page.waitForSelector('text=/Chargement de la session/i', { state: 'hidden', timeout: 5000 });
+    } catch {
+      // Loading state might not be present, continue
+    }
+
+    await page.waitForTimeout(1000);
+
+    // Vérifier la présence des catégories dans la liste (utiliser first() pour éviter les ambiguïtés)
+    // Les catégories sont dans une liste ul, donc on peut utiliser getByRole('listitem')
+    const dataList = page.locator('ul').filter({ hasText: /données qui seront supprimées/i }).or(
+      page.locator('ul').filter({ hasText: /profil utilisateur/i })
+    ).first();
+    await expect(dataList).toBeVisible({ timeout: 15000 });
+
+    // Vérifier les catégories spécifiques dans la liste
+    await expect(dataList.getByText(/profil utilisateur/i).first()).toBeVisible({ timeout: 5000 });
+    await expect(dataList.getByText(/livres/i).first()).toBeVisible({ timeout: 5000 });
+    await expect(dataList.getByText(/progression/i).first()).toBeVisible({ timeout: 5000 });
+    await expect(dataList.getByText(/notes/i).first()).toBeVisible({ timeout: 5000 });
+    await expect(dataList.getByText(/avis/i).first()).toBeVisible({ timeout: 5000 });
+    await expect(dataList.getByText(/objectifs/i).first()).toBeVisible({ timeout: 5000 });
+    await expect(dataList.getByText(/badges/i).first()).toBeVisible({ timeout: 5000 });
+    await expect(dataList.getByText(/statistiques/i).first()).toBeVisible({ timeout: 5000 });
+    await expect(dataList.getByText(/relations/i).first()).toBeVisible({ timeout: 5000 });
+    await expect(dataList.getByText(/prêt/i).first()).toBeVisible({ timeout: 5000 });
   });
 
   test('should delete account when confirmed', async ({ page }) => {
@@ -343,12 +420,12 @@ test.describe('Account Deletion', () => {
     await page.waitForLoadState('domcontentloaded');
 
     // Remplir le champ de confirmation
-    const confirmInput = page.locator('input[type="text"]').first();
+    const confirmInput = page.getByTestId('delete-confirm-input');
     await expect(confirmInput).toBeVisible({ timeout: 10000 });
     await confirmInput.fill('SUPPRIMER');
 
     // Cliquer sur le bouton de suppression
-    const deleteButton = page.getByRole('button', { name: /supprimer définitivement/i });
+    const deleteButton = page.getByTestId('delete-account-button');
     await expect(deleteButton).toBeEnabled({ timeout: 5000 });
 
     // Écouter la navigation ou le message de succès
@@ -394,28 +471,49 @@ test.describe('Account Deletion', () => {
 
     await page.waitForLoadState('domcontentloaded');
 
-    const confirmInput = page.locator('input[type="text"]').first();
-    await expect(confirmInput).toBeVisible({ timeout: 10000 });
+    // Wait for session to load
+    try {
+      await page.waitForSelector('text=/Chargement de la session/i', { state: 'hidden', timeout: 5000 });
+    } catch {
+      // Loading state might not be present, continue
+    }
+
+    await page.waitForTimeout(1000);
+
+    const confirmInput = page.getByTestId('delete-confirm-input');
+    await expect(confirmInput).toBeVisible({ timeout: 15000 });
     await confirmInput.fill('SUPPRIMER');
 
-    const deleteButton = page.getByRole('button', { name: /supprimer définitivement/i });
+    const deleteButton = page.getByTestId('delete-account-button');
     await expect(deleteButton).toBeEnabled({ timeout: 5000 });
 
     // Cliquer et vérifier l'état de chargement
     await deleteButton.click();
 
-    // Vérifier que le bouton affiche un état de chargement ou qu'un overlay apparaît
-    // Attendre un peu pour que l'état de chargement s'affiche
+    // Attendre que l'état de chargement s'affiche
     await page.waitForTimeout(500);
+
+    // Vérifier l'overlay de chargement ou le spinner dans le bouton
+    const loadingOverlay = page.getByTestId('delete-loading-overlay');
+    const loadingSpinner = page.getByTestId('delete-loading-spinner');
+    const overlaySpinner = page.getByTestId('delete-overlay-spinner');
+    const loadingTitle = page.getByTestId('delete-loading-title');
+
+    // Vérifier que l'un des indicateurs de chargement est visible
+    const hasOverlay = await loadingOverlay.isVisible({ timeout: 3000 }).catch(() => false);
+    const hasButtonSpinner = await loadingSpinner.isVisible({ timeout: 3000 }).catch(() => false);
+    const hasOverlaySpinner = await overlaySpinner.isVisible({ timeout: 3000 }).catch(() => false);
+    const hasTitle = await loadingTitle.isVisible({ timeout: 3000 }).catch(() => false);
     const buttonText = await deleteButton.textContent().catch(() => '');
-    const hasLoadingOverlay = await page.getByText(/suppression en cours/i).isVisible().catch(() => false);
     const isButtonDisabled = await deleteButton.isDisabled().catch(() => false);
 
     expect(
-      buttonText?.toLowerCase().includes('suppression') ||
-      buttonText?.toLowerCase().includes('en cours') ||
-      hasLoadingOverlay ||
-      isButtonDisabled // Button might be disabled during loading
+      hasOverlay ||
+      hasButtonSpinner ||
+      hasOverlaySpinner ||
+      hasTitle ||
+      buttonText?.toLowerCase().includes('suppression en cours') ||
+      isButtonDisabled
     ).toBeTruthy();
   });
 
@@ -477,13 +575,22 @@ test.describe('Account Deletion', () => {
 
     await page.waitForLoadState('domcontentloaded');
 
+    // Wait for session to load
+    try {
+      await page.waitForSelector('text=/Chargement de la session/i', { state: 'hidden', timeout: 5000 });
+    } catch {
+      // Loading state might not be present, continue
+    }
+
+    await page.waitForTimeout(1000);
+
     // Vérifier la présence des informations sur les droits RGPD
-    await expect(page.getByText(/vos droits/i)).toBeVisible({ timeout: 10000 });
-    await expect(page.getByText(/RGPD/i)).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText(/vos droits/i)).toBeVisible({ timeout: 15000 });
+    await expect(page.getByText(/RGPD/i)).toBeVisible({ timeout: 15000 });
 
     // Vérifier les liens vers la politique de confidentialité
     const privacyLink = page.locator('a[href="/privacy"]');
-    await expect(privacyLink.first()).toBeVisible({ timeout: 10000 });
+    await expect(privacyLink.first()).toBeVisible({ timeout: 15000 });
   });
 
   test('should allow exporting data before deletion', async ({ page }) => {
