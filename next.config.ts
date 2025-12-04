@@ -138,12 +138,17 @@ const nextConfig: NextConfig = {
     serverExternalPackages: ['require-in-the-middle', 'import-in-the-middle'],
 };
 
-export default withSentryConfig(withPWA(nextConfig), {
-    org: "capybook",
-    project: "capybook",
-    silent: !process.env.CI,
-    widenClientFileUpload: true,
-    tunnelRoute: true,
-    disableLogger: isProd,
-    automaticVercelMonitors: true,
-});
+// Only wrap with Sentry config in production
+const configWithSentry = isProd
+  ? withSentryConfig(withPWA(nextConfig), {
+      org: "capybook",
+      project: "capybook",
+      silent: !process.env.CI,
+      widenClientFileUpload: true,
+      tunnelRoute: true,
+      disableLogger: isProd,
+      automaticVercelMonitors: true,
+    })
+  : withPWA(nextConfig);
+
+export default configWithSentry;

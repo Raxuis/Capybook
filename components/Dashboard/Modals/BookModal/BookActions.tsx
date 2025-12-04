@@ -86,7 +86,7 @@ export const BookActions = ({
             {(inLibrary && !isBookLoanedInstance && !isPendingLoanInstance) && (
                 <Button
                     variant="outline"
-                    className="w-full border-slate-200/60 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50 sm:w-auto"
+                    className="w-full border-slate-200/60 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50 hover:text-slate-800 sm:w-auto"
                     onClick={() => setIsLendingModalOpened(true)}
                     disabled={isAnyLoading}
                 >
@@ -103,7 +103,7 @@ export const BookActions = ({
             {(inLibrary && (isBookLoanedInstance || isPendingLoanInstance)) && (
                 <Button
                     variant="outline"
-                    className="w-full border-orange-200/60 bg-orange-50 text-orange-700 hover:border-orange-300 hover:bg-orange-100 sm:w-auto"
+                    className="w-full border-orange-200/60 bg-orange-50 text-orange-700 hover:border-orange-300 hover:bg-orange-100 hover:text-orange-800 sm:w-auto"
                     onClick={() => handleCancelLending(book)}
                     disabled={isAnyLoading}
                 >
@@ -185,8 +185,8 @@ export const BookActions = ({
             {/* Voir les notes */}
             <Button
                 onClick={() => setIsNotesModalOpened(true)}
-                variant="outline"
-                className="w-full border-slate-200/60 bg-slate-50 text-slate-700 hover:border-slate-300 hover:bg-slate-100 sm:w-auto"
+                variant="notes"
+                className="w-full sm:w-auto"
             >
                 <FileText className="mr-2 size-4"/>
                 Voir les notes

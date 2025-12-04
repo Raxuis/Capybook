@@ -1,4 +1,4 @@
-import {BookOpen, Github, Heart, Mail} from "lucide-react";
+import {BookOpen, FileText, Github, Heart, Mail, Shield, Cookie} from "lucide-react";
 import React from "react";
 
 type Footer = {
@@ -46,6 +46,26 @@ export const footer: Footer = {
             label: "Blog",
             href: "/blog",
             isAvailable: false
+        },
+        {
+            icon: <Shield className="size-5"/>,
+            label: "Confidentialité",
+            href: "/privacy"
+        },
+        {
+            icon: <Cookie className="size-5"/>,
+            label: "Cookies",
+            href: "/cookies"
+        },
+        {
+            icon: <FileText className="size-5"/>,
+            label: "Mentions légales",
+            href: "/legal"
+        },
+        {
+            icon: <FileText className="size-5"/>,
+            label: "CGU",
+            href: "/terms"
         }
     ],
     socialNetworksLinks: [

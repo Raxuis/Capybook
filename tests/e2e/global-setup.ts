@@ -1,62 +1,52 @@
-import { TEST_USER } from '../fixtures/test-users';
+import {TEST_USER} from '../fixtures/test-users';
 import prisma from '@/utils/prisma';
-import { saltAndHashPassword } from '@/utils/password';
+import {saltAndHashPassword} from '@/utils/password';
 
 /**
- * Global setup: Create test user before running E2E tests
- *
- * This function is called by Playwright before all tests run.
- * It should export an async function that Playwright will execute.
+ * Global setup: Ensure test user exists before running E2E tests.
+ * This must ALWAYS attempt to run when DATABASE_URL is set.
  */
 async function globalSetup() {
-  // Only run if DATABASE_URL is set
-  if (!process.env.DATABASE_URL) {
-    console.warn('[global-setup] DATABASE_URL not set, skipping test user creation');
-    return;
-  }
-
-  try {
-    // Check if test user already exists
-    const existingUser = await prisma.user.findUnique({
-      where: { email: TEST_USER.email },
-    });
-
-    if (existingUser) {
-      console.log(`[global-setup] Test user ${TEST_USER.email} already exists`);
-      // Update password in case it changed
-      const hashedPassword = await saltAndHashPassword(TEST_USER.password);
-      await prisma.user.update({
-        where: { email: TEST_USER.email },
-        data: { password: hashedPassword },
-      });
-      console.log(`[global-setup] Updated password for test user: ${TEST_USER.email}`);
-      return;
+    if (!process.env.DATABASE_URL) {
+        console.warn('[global-setup] DATABASE_URL not set, skipping test user creation');
+        return;
     }
 
-    // Create test user
-    const hashedPassword = await saltAndHashPassword(TEST_USER.password);
-    const username = TEST_USER.email.split('@')[0]; // Use email prefix as username
+    try {
+        console.log('[global-setup] Connecting to database...');
+        await prisma.$connect();
 
-    await prisma.user.create({
-      data: {
-        email: TEST_USER.email,
-        username: username,
-        password: hashedPassword,
-        name: TEST_USER.name,
-        role: 'USER', // Default role
-      },
-    });
+        const hashedPassword = await saltAndHashPassword(TEST_USER.password);
+        const username = TEST_USER.email.split('@')[0];
 
-    console.log(`[global-setup] Created test user: ${TEST_USER.email} with username: ${username}`);
-  } catch (error: any) {
-    console.error('[global-setup] Error creating test user:', error);
-    // Don't fail the setup if user creation fails (might already exist or DB issue)
-    if (error.code !== 'P2002') { // P2002 is unique constraint violation
-      console.warn('[global-setup] Non-unique constraint error, continuing...');
+        console.log('[global-setup] Seeding test user...');
+
+        // Create or update test user
+        await prisma.user.upsert({
+            where: {email: TEST_USER.email},
+            update: {
+                password: hashedPassword,
+                username,
+                name: TEST_USER.name,
+                role: 'USER',
+            },
+            create: {
+                email: TEST_USER.email,
+                username,
+                password: hashedPassword,
+                name: TEST_USER.name,
+                role: 'USER',
+            },
+        });
+
+        console.log(`[global-setup] Test user ready: ${TEST_USER.email}`);
+    } catch (error: any) {
+        console.error('[global-setup] ERROR while seeding test user: ', error);
+    } finally {
+        console.log('[global-setup] Disconnecting prisma...');
+        await prisma.$disconnect().catch(() => {
+        });
     }
-  } finally {
-    await prisma.$disconnect();
-  }
 }
 
 export default globalSetup;

@@ -145,7 +145,7 @@ const LibraryCard = ({userBook, openBookModal}: LibraryCardProps) => {
                             src={bookCoverUrl}
                             alt={userBook.Book.title}
                             fill
-                            className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                            className="object-cover transition-transform duration-300"
                             sizes="(max-width: 768px) 100vw, 50vw"
                         />
                         {/* Subtle vignette */}
@@ -163,7 +163,7 @@ const LibraryCard = ({userBook, openBookModal}: LibraryCardProps) => {
                 {/* Status indicator - corner badge */}
                 {statusConfig.badge && (
                     <div className={cn(
-                        "absolute top-2 left-2 rounded-full px-2 py-1 shadow-sm backdrop-blur-sm",
+                        "absolute top-3 left-3 rounded-full px-2 py-1 shadow-sm backdrop-blur-sm",
                         "flex items-center gap-1.5 text-[10px] font-medium",
                         statusConfig.badge.className
                     )}>
