@@ -82,7 +82,7 @@ test.describe('Account Deletion', () => {
         page.waitForURL((url) => !url.pathname.includes('/login'), { timeout: 20000 }),
         page.waitForFunction(
           () => !window.location.pathname.includes('/login') ||
-                !document.body.innerText.includes('Se connecter'),
+            !document.body.innerText.includes('Se connecter'),
           null,
           { timeout: 20000 }
         ),
@@ -92,7 +92,7 @@ test.describe('Account Deletion', () => {
       await page.screenshot({ path: 'debug-login-timeout-account-deletion.png', fullPage: true });
       console.error('[account-deletion] Login timeout - Current URL:', page.url());
       console.error('[account-deletion] Page title:', await page.title().catch(() => 'N/A'));
-      console.error('[account-deletion] Body text preview:', await page.locator('body').textContent().catch(() => 'N/A')?.substring(0, 200));
+      console.error('[account-deletion] Body text preview:', (await page.locator('body').textContent().catch(() => 'N/A'))?.slice(0, 200));
       throw err;
     }
   });

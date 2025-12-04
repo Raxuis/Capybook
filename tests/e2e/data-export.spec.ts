@@ -22,7 +22,7 @@ test.describe('Data Export', () => {
         page.waitForURL((url) => !url.pathname.includes('/login'), { timeout: 20000 }),
         page.waitForFunction(
           () => !window.location.pathname.includes('/login') ||
-                !document.body.innerText.includes('Se connecter'),
+            !document.body.innerText.includes('Se connecter'),
           null,
           { timeout: 20000 }
         ),
@@ -32,7 +32,7 @@ test.describe('Data Export', () => {
       await page.screenshot({ path: 'debug-login-timeout-data-export.png', fullPage: true });
       console.error('[data-export] Login timeout - Current URL:', page.url());
       console.error('[data-export] Page title:', await page.title().catch(() => 'N/A'));
-      console.error('[data-export] Body text preview:', await page.locator('body').textContent().catch(() => 'N/A')?.substring(0, 200));
+      console.error('[data-export] Body text preview:', (await page.locator('body').textContent().catch(() => 'N/A'))?.slice(0, 200));
       throw err;
     }
   });
