@@ -147,7 +147,7 @@ const Testimonials = () => {
                                         <div
                                             className="absolute left-1/2 top-0 flex h-8 w-48 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border bg-white sm:w-36 dark:bg-gray-800"
                                         >
-                                            <p className="text-primary text-xs font-medium text-center px-1">
+                                            <p className="text-primary px-1 text-center text-xs font-medium">
                                                 {userTestimonials[activeTestimonialIndex].gender === "male"
                                                     ? "Utilisateur"
                                                     : userTestimonials[activeTestimonialIndex].gender === "female"

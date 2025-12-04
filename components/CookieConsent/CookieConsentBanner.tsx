@@ -96,7 +96,7 @@ export function CookieConsentBanner() {
                     size="sm"
                     className="shadow-lg"
                 >
-                    <Settings className="size-4 mr-2"/>
+                    <Settings className="mr-2 size-4"/>
                     Cookies
                 </Button>
             </div>
@@ -106,11 +106,11 @@ export function CookieConsentBanner() {
     if (showSettings) {
         return (
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-                <Card className="w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+                <Card className="max-h-[90vh] w-full max-w-2xl overflow-y-auto">
                     <CardHeader>
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
-                                <Cookie className="h-5 w-5"/>
+                                <Cookie className="size-5"/>
                                 <CardTitle>Paramètres des cookies</CardTitle>
                             </div>
                             <Button
@@ -118,7 +118,7 @@ export function CookieConsentBanner() {
                                 size="icon"
                                 onClick={() => setShowSettings(false)}
                             >
-                                <X className="h-4 w-4"/>
+                                <X className="size-4"/>
                             </Button>
                         </div>
                         <CardDescription>
@@ -132,7 +132,7 @@ export function CookieConsentBanner() {
                             <div className="flex items-center justify-between">
                                 <div>
                                     <h3 className="font-semibold">Cookies nécessaires</h3>
-                                    <p className="text-sm text-muted-foreground">
+                                    <p className="text-muted-foreground text-sm">
                                         Ces cookies sont essentiels au fonctionnement de l&apos;application.
                                         Ils ne peuvent pas être désactivés.
                                     </p>
@@ -144,7 +144,7 @@ export function CookieConsentBanner() {
                                     className="size-4"
                                 />
                             </div>
-                            <ul className="text-sm text-muted-foreground list-disc pl-6 space-y-1">
+                            <ul className="text-muted-foreground list-disc space-y-1 pl-6 text-sm">
                                 <li>Cookies de session (authentification)</li>
                                 <li>Cookies de sécurité (protection CSRF)</li>
                             </ul>
@@ -155,7 +155,7 @@ export function CookieConsentBanner() {
                             <div className="flex items-center justify-between">
                                 <div>
                                     <h3 className="font-semibold">Cookies d&apos;analyse et de performance</h3>
-                                    <p className="text-sm text-muted-foreground">
+                                    <p className="text-muted-foreground text-sm">
                                         Ces cookies nous aident à comprendre comment vous utilisez l&apos;application
                                         et à améliorer ses performances.
                                     </p>
@@ -167,7 +167,7 @@ export function CookieConsentBanner() {
                                     className="size-4"
                                 />
                             </div>
-                            <ul className="text-sm text-muted-foreground list-disc pl-6 space-y-1">
+                            <ul className="text-muted-foreground list-disc space-y-1 pl-6 text-sm">
                                 <li>Sentry : monitoring des erreurs et des performances</li>
                             </ul>
                         </div>
@@ -185,7 +185,7 @@ export function CookieConsentBanner() {
                             </Button>
                         </div>
 
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-muted-foreground text-xs">
                             Pour plus d&apos;informations, consultez notre{" "}
                             <Link href="/cookies" className="text-primary underline">
                                 Politique de Cookies
@@ -199,20 +199,20 @@ export function CookieConsentBanner() {
     }
 
     return (
-        <div className="fixed bottom-0 left-0 right-0 z-50 bg-background border-t shadow-lg p-4">
+        <div className="bg-background fixed inset-x-0 bottom-0 z-50 border-t p-4 shadow-lg">
             <div className="container mx-auto max-w-4xl">
-                <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
+                <div className="flex flex-col items-start gap-4 md:flex-row md:items-center">
                     <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-2">
-                            <Cookie className="h-5 w-5"/>
+                        <div className="mb-2 flex items-center gap-2">
+                            <Cookie className="size-5"/>
                             <h3 className="font-semibold">Nous utilisons des cookies</h3>
                         </div>
-                        <p className="text-sm text-muted-foreground">
+                        <p className="text-muted-foreground text-sm">
                             Nous utilisons des cookies pour améliorer votre expérience, analyser les performances
                             et assurer la sécurité de l&apos;application. Vous pouvez accepter tous les cookies ou
                             personnaliser vos préférences.
                         </p>
-                        <p className="text-xs text-muted-foreground mt-2">
+                        <p className="text-muted-foreground mt-2 text-xs">
                             En continuant, vous acceptez notre{" "}
                             <Link href="/cookies" className="text-primary underline">
                                 Politique de Cookies
@@ -220,7 +220,7 @@ export function CookieConsentBanner() {
                             .
                         </p>
                     </div>
-                    <div className="flex gap-2 flex-shrink-0">
+                    <div className="flex shrink-0 gap-2">
                         <Button
                             variant="outline"
                             onClick={() => setShowSettings(true)}

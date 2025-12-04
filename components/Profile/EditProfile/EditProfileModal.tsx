@@ -172,8 +172,8 @@ function EditProfileModal({
                                     </FormItem>
                                 )}
                             />
-                            <div className="border-t border-destructive/20 pt-4 mt-4">
-                                <p className="text-sm text-muted-foreground mb-3">
+                            <div className="border-destructive/20 mt-4 border-t pt-4">
+                                <p className="text-muted-foreground mb-3 text-sm">
                                     Zone de danger
                                 </p>
                                 <Button
@@ -183,7 +183,7 @@ function EditProfileModal({
                                     className="w-full"
                                 >
                                     <Link href="/delete-account" className="flex items-center justify-center">
-                                        <Trash2 className="mr-2 h-4 w-4"/>
+                                        <Trash2 className="mr-2 size-4"/>
                                         Supprimer mon compte
                                     </Link>
                                 </Button>
@@ -191,7 +191,7 @@ function EditProfileModal({
                         </div>
                         <DialogFooter className="border-border border-t px-6 py-4">
                             <DialogClose asChild>
-                                <Button type="button" variant="outline" className="transition-colors hover:bg-black/10 hover:text-foreground">
+                                <Button type="button" variant="outline" className="hover:text-foreground transition-colors hover:bg-black/10">
                                     Annuler
                                 </Button>
                             </DialogClose>

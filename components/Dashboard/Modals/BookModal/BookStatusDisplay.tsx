@@ -36,7 +36,7 @@ export const BookStatusDisplay = ({bookStatus}: BookStatusDisplayProps) => {
                     {inWishlist && (
                         <Badge
                             variant="secondary"
-                            className="flex items-center gap-1.5 text-xs font-medium border border-pink-200/60 bg-pink-50 text-pink-700 hover:bg-pink-100"
+                            className="flex items-center gap-1.5 border border-pink-200/60 bg-pink-50 text-xs font-medium text-pink-700 hover:bg-pink-100"
                         >
                             <Heart className="size-3"/>
                             Dans ma wishlist
