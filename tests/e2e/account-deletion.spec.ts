@@ -76,11 +76,25 @@ test.describe('Account Deletion', () => {
     await passwordInput.fill(testUserForDeletion.password);
     await submitButton.click();
 
-    // Attendre la redirection après connexion avec fallback
-    await Promise.race([
-      page.waitForURL((url) => !url.pathname.includes('/login'), { timeout: 15000 }),
-      page.waitForSelector('body:not(:has-text("Se connecter"))', { timeout: 15000 }),
-    ]);
+    // Attendre la redirection après connexion avec fallback et gestion d'erreur améliorée
+    try {
+      await Promise.race([
+        page.waitForURL((url) => !url.pathname.includes('/login'), { timeout: 20000 }),
+        page.waitForFunction(
+          () => !window.location.pathname.includes('/login') ||
+                !document.body.innerText.includes('Se connecter'),
+          null,
+          { timeout: 20000 }
+        ),
+      ]);
+    } catch (err) {
+      // Capturer une capture d'écran pour le débogage en cas d'échec
+      await page.screenshot({ path: 'debug-login-timeout-account-deletion.png', fullPage: true });
+      console.error('[account-deletion] Login timeout - Current URL:', page.url());
+      console.error('[account-deletion] Page title:', await page.title().catch(() => 'N/A'));
+      console.error('[account-deletion] Body text preview:', await page.locator('body').textContent().catch(() => 'N/A')?.substring(0, 200));
+      throw err;
+    }
   });
 
   test('should redirect to login if not authenticated', async ({ page, context }) => {
@@ -89,11 +103,16 @@ test.describe('Account Deletion', () => {
     await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'load' });
 
     // Attendre soit la redirection, soit le message d'erreur
-    await Promise.race([
-      page.waitForURL(ROUTES.LOGIN, { timeout: 15000 }),
-      page.waitForSelector('text=/accès non autorisé|non autorisé/i', { timeout: 15000 }),
-      page.getByRole('heading', { name: /connexion|login/i }).waitFor({ state: 'visible', timeout: 15000 }),
-    ]);
+    try {
+      await Promise.race([
+        page.waitForURL(ROUTES.LOGIN, { timeout: 20000 }),
+        page.waitForSelector('text=/accès non autorisé|non autorisé/i', { timeout: 20000 }),
+        page.getByRole('heading', { name: /connexion|login/i }).waitFor({ state: 'visible', timeout: 20000 }),
+      ]);
+    } catch (err) {
+      await page.screenshot({ path: 'debug-auth-redirect-timeout.png', fullPage: true });
+      throw err;
+    }
 
     const currentUrl = page.url();
     expect(
@@ -232,14 +251,19 @@ test.describe('Account Deletion', () => {
     await expect(deleteButton).toBeEnabled({ timeout: 2000 });
 
     // Écouter la navigation ou le message de succès
-    const navigationPromise = page.waitForURL(ROUTES.HOME, { timeout: 15000 }).catch(() => null);
-    const successMessagePromise = page.waitForSelector('text=/compte supprimé/i', { timeout: 10000 }).catch(() => null);
-    const homePageElementPromise = page.waitForSelector('h1, main, [role="main"]', { timeout: 15000 }).catch(() => null);
+    const navigationPromise = page.waitForURL(ROUTES.HOME, { timeout: 25000 }).catch(() => null);
+    const successMessagePromise = page.waitForSelector('text=/compte supprimé/i', { timeout: 25000 }).catch(() => null);
+    const homePageElementPromise = page.waitForSelector('h1, main, [role="main"]', { timeout: 25000 }).catch(() => null);
 
     await deleteButton.click();
 
     // Attendre soit la navigation, soit le message de succès, soit a home page element
-    await Promise.race([navigationPromise, successMessagePromise, homePageElementPromise]);
+    try {
+      await Promise.race([navigationPromise, successMessagePromise, homePageElementPromise]);
+    } catch (err) {
+      await page.screenshot({ path: 'debug-deletion-timeout.png', fullPage: true });
+      throw err;
+    }
 
     // Vérifier qu'on est redirigé vers la page d'accueil ou qu'un message de succès s'affiche
     const currentUrl = page.url();

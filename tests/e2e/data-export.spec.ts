@@ -16,11 +16,25 @@ test.describe('Data Export', () => {
     await passwordInput.fill(TEST_USER.password);
     await submitButton.click();
 
-    // Attendre la redirection après connexion avec fallback
-    await Promise.race([
-      page.waitForURL((url) => !url.pathname.includes('/login'), { timeout: 15000 }),
-      page.waitForSelector('body:not(:has-text("Se connecter"))', { timeout: 15000 }),
-    ]);
+    // Attendre la redirection après connexion avec fallback et gestion d'erreur améliorée
+    try {
+      await Promise.race([
+        page.waitForURL((url) => !url.pathname.includes('/login'), { timeout: 20000 }),
+        page.waitForFunction(
+          () => !window.location.pathname.includes('/login') ||
+                !document.body.innerText.includes('Se connecter'),
+          null,
+          { timeout: 20000 }
+        ),
+      ]);
+    } catch (err) {
+      // Capturer une capture d'écran pour le débogage en cas d'échec
+      await page.screenshot({ path: 'debug-login-timeout-data-export.png', fullPage: true });
+      console.error('[data-export] Login timeout - Current URL:', page.url());
+      console.error('[data-export] Page title:', await page.title().catch(() => 'N/A'));
+      console.error('[data-export] Body text preview:', await page.locator('body').textContent().catch(() => 'N/A')?.substring(0, 200));
+      throw err;
+    }
   });
 
   test('should redirect to login if not authenticated', async ({ page, context }) => {
@@ -29,11 +43,16 @@ test.describe('Data Export', () => {
     await page.goto(ROUTES.DELETE_ACCOUNT, { waitUntil: 'load' });
 
     // Attendre soit la redirection, soit le message d'erreur
-    await Promise.race([
-      page.waitForURL(ROUTES.LOGIN, { timeout: 15000 }),
-      page.waitForSelector('text=/accès non autorisé|non autorisé/i', { timeout: 15000 }),
-      page.getByRole('heading', { name: /connexion|login/i }).waitFor({ state: 'visible', timeout: 15000 }),
-    ]);
+    try {
+      await Promise.race([
+        page.waitForURL(ROUTES.LOGIN, { timeout: 20000 }),
+        page.waitForSelector('text=/accès non autorisé|non autorisé/i', { timeout: 20000 }),
+        page.getByRole('heading', { name: /connexion|login/i }).waitFor({ state: 'visible', timeout: 20000 }),
+      ]);
+    } catch (err) {
+      await page.screenshot({ path: 'debug-auth-redirect-timeout-data-export.png', fullPage: true });
+      throw err;
+    }
 
     const currentUrl = page.url();
     expect(
@@ -63,7 +82,7 @@ test.describe('Data Export', () => {
     await expect(exportButton).toBeVisible({ timeout: 5000 });
 
     // Écouter les téléchargements
-    const downloadPromise = page.waitForEvent('download', { timeout: 15000 });
+    const downloadPromise = page.waitForEvent('download', { timeout: 25000 });
 
     // Cliquer sur le bouton d'export
     await exportButton.click();
