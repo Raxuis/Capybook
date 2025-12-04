@@ -109,6 +109,11 @@ jobs:
       - name: Generate Prisma Client
         run: pnpm prisma generate
 
+      - name: Deploy database migrations
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: pnpm prisma migrate deploy
+
       - name: Install Playwright browsers
         run: pnpm exec playwright install --with-deps
 
