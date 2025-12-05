@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import {TEST_USER} from '../fixtures/test-users';
 import {saltAndHashPassword, comparePassword} from '@/utils/password';
 
